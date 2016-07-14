@@ -43,7 +43,7 @@ CipRevision revision_ = { OPENER_DEVICE_MAJOR_REVISION,
 EipUint16 status_ = 0; /**< Attribute 5: Status */
 EipUint32 serial_number_ = 0; /**< Attribute 6: Serial Number, has to be set prior to OpENer initialization */
 CipShortString product_name_ = { sizeof(OPENER_DEVICE_NAME) - 1,
-    OPENER_DEVICE_NAME }; /**< Attribute 7: Product Name */
+    (EipByte *) OPENER_DEVICE_NAME }; /**< Attribute 7: Product Name */
 
 /** Private functions, sets the devices serial number
  * @param serial_number The serial number of the device
