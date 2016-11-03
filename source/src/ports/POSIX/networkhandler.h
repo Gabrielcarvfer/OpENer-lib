@@ -11,7 +11,7 @@
 
 #include "typedefs.h"
 
-EipStatus NetworkHandlerInitializePlatform(void);
+CipStatus NetworkHandlerInitializePlatform(void);
 
 void CloseSocketPlatform(int socket_handle);
 

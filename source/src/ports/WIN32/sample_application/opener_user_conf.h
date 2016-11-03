@@ -25,12 +25,12 @@
 typedef unsigned short in_port_t;
 
 /*! Identity configuration of the device */
-#define OPENER_DEVICE_VENDOR_ID           1
-#define OPENER_DEVICE_TYPE               12
-#define OPENER_DEVICE_PRODUCT_CODE      65001
-#define OPENER_DEVICE_MAJOR_REVISION      1
-#define OPENER_DEVICE_MINOR_REVISION      2
-#define OPENER_DEVICE_NAME      "OpENer PC"
+#define OPENER_DEVICE_VENDOR_ID 1
+#define OPENER_DEVICE_TYPE 12
+#define OPENER_DEVICE_PRODUCT_CODE 65001
+#define OPENER_DEVICE_MAJOR_REVISION 1
+#define OPENER_DEVICE_MINOR_REVISION 2
+#define OPENER_DEVICE_NAME "OpENer PC"
 
 /** @brief Define the number of objects that may be used in connections
  *
@@ -72,7 +72,7 @@ typedef unsigned short in_port_t;
 
 /** @brief Define the number of supported Listen only connections per connection path
  */
-#define OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH   3
+#define OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH 3
 
 /** @brief The number of bytes used for the buffer that will be used for generating any
  *  reply data of messages. There are two uses in OpENer:
@@ -85,7 +85,7 @@ typedef unsigned short in_port_t;
  */
 #define OPENER_NUMBER_OF_SUPPORTED_SESSIONS 20
 
- /** @brief  The time in ms of the timer used in this implementations
+/** @brief  The time in ms of the timer used in this implementations
  */
 static const int kOpenerTimerTickInMilliSeconds = 10;
 
@@ -103,20 +103,22 @@ static const int kOpenerProducedDataHasRunIdleHeader = 0;
 /* If we have tracing enabled provide print tracing macro */
 #include <stdio.h>
 
-#define LOG_TRACE(...)  fprintf(stderr,__VA_ARGS__)
+#define LOG_TRACE(...) fprintf(stderr, __VA_ARGS__)
 
 /*#define PRINT_TRACE(args...)  fprintf(stderr,args);*/
 
 /** @brief A specialized assertion command that will log the assertion and block
  *  further execution in an while(1) loop.
  */
-#define OPENER_ASSERT(assertion) \
-    do { \
-      if(!(assertion)) { \
-        LOG_TRACE("Assertion \"%s\" failed: file \"%s\", line %d\n", #assertion, __FILE__, __LINE__); \
-        while(1){;} \
-      } \
-    } while(0)
+#define OPENER_ASSERT(assertion)                                                                          \
+    do {                                                                                                  \
+        if (!(assertion)) {                                                                               \
+            LOG_TRACE("Assertion \"%s\" failed: file \"%s\", line %d\n", #assertion, __FILE__, __LINE__); \
+            while (1) {                                                                                   \
+                ;                                                                                         \
+            }                                                                                             \
+        }                                                                                                 \
+    } while (0)
 
 /* else use standard assert() */
 //#include <assert.h>

@@ -10,7 +10,7 @@
 
 typedef unsigned long socklen_t;
 
-EipStatus NetworkHandlerInitializePlatform(void);
+CipStatus NetworkHandlerInitializePlatform(void);
 
 void CloseSocketPlatform(int socket_handle);
 

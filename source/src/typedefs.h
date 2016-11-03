@@ -28,12 +28,12 @@ typedef uint8_t EipByte; /**< 8-bit bit string */
 typedef int8_t EipInt8; /**< 8-bit signed number */
 typedef int16_t EipInt16; /**< 16-bit signed number */
 typedef int32_t EipInt32; /**< 32-bit signed number */
-typedef uint8_t EipUint8; /**< 8-bit unsigned number */
-typedef uint16_t EipUint16; /**< 16-bit unsigned number */
-typedef uint32_t EipUint32; /**< 32-bit unsigned number */
+typedef uint8_t CipUsint; /**< 8-bit unsigned number */
+typedef uint16_t CipUint; /**< 16-bit unsigned number */
+typedef uint32_t CipUdint; /**< 32-bit unsigned number */
 typedef float EipFloat; /**< IEEE 754 32-bit floating point number */
 typedef double EipDfloat; /**< IEEE 754 64-bit floating point number */
-typedef uint8_t EipBool8; /**< bool data types */
+typedef uint8_t CipBool; /**< bool data types */
 
 /** @brief Data types as defined in the CIP Specification Vol 1 Appendix C
  */
@@ -53,7 +53,7 @@ typedef double CipLreal; /**< 64-bit IEEE 754 floating point */
 
 #ifdef OPENER_SUPPORT_64BIT_DATATYPES
 typedef int64_t EipInt64; /**< 64-bit signed number */
-typedef uint64_t EipUint64; /**< 64-bit unsigned number */
+typedef uint64_t CipUlint; /**< 64-bit unsigned number */
 
 typedef int64_t CipLint; /**< 64-bit signed integer */
 typedef uint64_t CipUlint; /**< 64-bit unsigned integer */
@@ -90,10 +90,10 @@ typedef unsigned long long MicroSeconds;
  *
  */
 typedef enum {
-  kEipStatusOk = 0, /**< Stack is ok */
-  kEipStatusOkSend = 1, /**< Stack is ok, after send */
-  kEipStatusError = -1 /**< Stack is in error */
-} EipStatus;
+    kCipStatusOk = 0, /**< Stack is ok */
+    kCipStatusOkSend = 1, /**< Stack is ok, after send */
+    kCipStatusError = -1 /**< Stack is in error */
+} CipStatus;
 
 /** @brief Communication direction of an UDP socket; consuming is receiver,
  * producing is sender
@@ -101,16 +101,16 @@ typedef enum {
  * These are used as array indexes, watch out if changing these values
  */
 typedef enum {
-  kUdpCommuncationDirectionConsuming = 0, /**< Consuming direction; receiver */
-  kUdpCommuncationDirectionProducing = 1 /**< Producing direction; sender */
+    kUdpCommuncationDirectionConsuming = 0, /**< Consuming direction; receiver */
+    kUdpCommuncationDirectionProducing = 1 /**< Producing direction; sender */
 } UdpCommuncationDirection;
 
 #ifndef __cplusplus
 /** @brief If we don't have C++ define a C++ -like "bool" keyword defines
  */
 typedef enum {
-  false = 0, /**< defines "false" as 0 */
-  true = 1 /**< defines "true" as 1 */
+    false = 0, /**< defines "false" as 0 */
+    true = 1 /**< defines "true" as 1 */
 } BoolKeywords;
 #endif /* __cplusplus */
 

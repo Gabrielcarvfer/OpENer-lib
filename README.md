@@ -1,3 +1,18 @@
+OpENer Version whatever
+====================
+
+
+*ITS NOT WORKING YET*
+---------------------
+
+The current objectives are to port OpENer to C++, reduce code coupling and add support to DeviceNET (using Linux's SocketCAN)
+
+
+
+
+
+Old Readme:
+
 OpENer Version 1.2.0
 ====================
 

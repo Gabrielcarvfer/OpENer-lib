@@ -11,8 +11,8 @@
  *  @brief CIP Class 3 connection
  */
 
-#include "opener_api.h"
 #include "cipconnectionmanager.h"
+#include "opener_api.h"
 
 /** @brief Check if Class3 connection is available and if yes setup all data.
  *
@@ -23,8 +23,8 @@
  *    - EIP_OK ... on success
  *    - On an error the general status code to be put into the response
  */
-EipStatus EstablishClass3Connection(ConnectionObject *connection_object,
-                              EipUint16 *extended_error);
+CipStatus EstablishClass3Connection(ConnectionObject* connection_object,
+    CipUint* extended_error);
 
 void InitializeClass3ConnectionData(void);
 

@@ -6,8 +6,10 @@
 #ifndef OPENER_CIPMESSAGEROUTER_H_
 #define OPENER_CIPMESSAGEROUTER_H_
 
-#include "typedefs.h"
+
 #include "ciptypes.h"
+#include "typedefs.h"
+#include <map>
 
 static const int kCipMessageRouterClassCode = 0x02;
 
@@ -18,36 +20,84 @@ static const int kCipMessageRouterClassCode = 0x02;
  */
 extern CipMessageRouterResponse g_message_router_response;
 
-/* public functions */
 
-/** @brief Initialize the data structures of the message router
- *  @return kEipStatusOk if class was initialized, otherwise kEipStatusError
- */
-EipStatus CipMessageRouterInit(void);
 
-/** @brief Free all data allocated by the classes created in the CIP stack
- */
-void DeleteAllClasses(void);
+class CIPMessageRouter : public CIPClass
+{
+    public:
 
-/** @brief Notify the MessageRouter that an explicit message (connected or unconnected)
- *  has been received. This function will be called from the encapsulation layer.
- *  The CPF structure is already parsed an can be accessed via the global variable:
- *  g_stCPFDataItem.
- *  @param data pointer to the data buffer of the message directly at the beginning of the CIP part.
- *  @param data_length number of bytes in the data buffer
- *  @return  EIP_ERROR on fault
- *           EIP_OK on success           
- */
-EipStatus NotifyMR(EipUint8 *data, int data_length);
+        /** @brief Initialize the data structures of the message router
+         *  @return kCipStatusOk if class was initialized, otherwise kCipStatusError
+         */
+        static CipStatus CipMessageRouterInit();
 
-/*! Register a class at the message router.
- *  In order that the message router can deliver
- *  explicit messages each class has to register.
- *  Will be automatically done when invoking create
- *  createCIPClass.
- *  @param object CIP class to be registered
- *  @return EIP_OK on success
- */
-EipStatus RegisterCipClass(CipClass *object);
+
+        /** @brief A class registry
+         *
+         * A std::map is used as the registry of classes known to the message router
+         * for small devices with very limited memory it could make sense to change this list into an
+         * array with a given max size for removing the need for having to dynamically allocate 
+         * memory. The size of the array could be a parameter in the platform config file.
+         */
+        static std::map<CIPClass const *> message_router_registered_classes;
+
+
+        /*! Register a class at the message router.
+         *  In order that the message router can deliver
+         *  explicit messages each class has to register.
+         *  Will be automatically done when invoking create
+         *  createCIPClass.
+         *  @param object CIP class to be registered
+         *  @return EIP_OK on success
+         */
+        /** @brief Register an Class to the message router
+         *  @param cip_class Pointer to a class object to be registered.
+         *  @return status      0 .. success
+         *                     -1 .. error no memory available to register more objects
+         */
+        static CipStatus RegisterCIPClass(CIPClass* cip_class);
+
+
+        /** @brief Get the registered MessageRouter object corresponding to ClassID.
+         *  given a class ID, return a pointer to the registration node for that object
+         *
+         *  @param class_id Class code to be searched for.
+         *  @return Pointer to registered message router object
+         *      0 .. Class not registered
+         */
+        static CIPClass* GetRegisteredObject(CipUdint class_id);
+
+
+        /** @brief Create Message Router Request structure out of the received data.
+         * 
+         * Parses the UCMM header consisting of: service, IOI size, IOI, data into a request structure
+         * @param data pointer to the message data received
+         * @param data_length number of bytes in the message
+         * @param message_router_request pointer to structure of MRRequest data item.
+         * @return status  0 .. success
+         *                 -1 .. error
+         */
+        static CipError CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request);
+
+                
+        /** @brief Notify the MessageRouter that an explicit message (connected or unconnected)
+         *  has been received. This function will be called from the encapsulation layer.
+         *  The CPF structure is already parsed an can be accessed via the global variable:
+         *  g_stCPFDataItem.
+         *  @param data pointer to the data buffer of the message directly at the beginning of the CIP part.
+         *  @param data_length number of bytes in the data buffer
+         *  @return  EIP_ERROR on fault
+         *           EIP_OK on success           
+         */
+        static CipStatus NotifyMR(CipUsint* data, int data_length);
+
+
+        /** @brief Free all data allocated by the classes created in the CIP stack
+         */
+        static void DeleteAllClasses(void);
+
+};
+
+
 
 #endif /* OPENER_CIPMESSAGEROUTER_H_ */

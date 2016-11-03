@@ -46,38 +46,41 @@
  *  In order to activate this trace level set the OPENER_TRACE_LEVEL_ERROR flag
  *  in OPENER_TRACE_LEVEL.
  */
-#define OPENER_TRACE_ERR(...)                                                  \
-  do {                                                                         \
-    if (OPENER_TRACE_LEVEL_ERROR & OPENER_TRACE_LEVEL) LOG_TRACE(__VA_ARGS__); \
-  } while (0)
+#define OPENER_TRACE_ERR(...)                              \
+    do {                                                   \
+        if (OPENER_TRACE_LEVEL_ERROR & OPENER_TRACE_LEVEL) \
+            LOG_TRACE(__VA_ARGS__);                        \
+    } while (0)
 
 /** @def OPENER_TRACE_WARN(...) Trace warning messages.
  *  In order to activate this trace level set the OPENER_TRACE_LEVEL_WARNING
  * flag in OPENER_TRACE_LEVEL.
  */
-#define OPENER_TRACE_WARN(...)                           \
-  do {                                                   \
-    if (OPENER_TRACE_LEVEL_WARNING & OPENER_TRACE_LEVEL) \
-      LOG_TRACE(__VA_ARGS__);                            \
-  } while (0)
+#define OPENER_TRACE_WARN(...)                               \
+    do {                                                     \
+        if (OPENER_TRACE_LEVEL_WARNING & OPENER_TRACE_LEVEL) \
+            LOG_TRACE(__VA_ARGS__);                          \
+    } while (0)
 
 /** @def OPENER_TRACE_STATE(...) Trace state messages.
  *  In order to activate this trace level set the OPENER_TRACE_LEVEL_STATE flag
  *  in OPENER_TRACE_LEVEL.
  */
-#define OPENER_TRACE_STATE(...)                                                \
-  do {                                                                         \
-    if (OPENER_TRACE_LEVEL_STATE & OPENER_TRACE_LEVEL) LOG_TRACE(__VA_ARGS__); \
-  } while (0)
+#define OPENER_TRACE_STATE(...)                            \
+    do {                                                   \
+        if (OPENER_TRACE_LEVEL_STATE & OPENER_TRACE_LEVEL) \
+            LOG_TRACE(__VA_ARGS__);                        \
+    } while (0)
 
 /** @def OPENER_TRACE_INFO(...) Trace information messages.
  *  In order to activate this trace level set the OPENER_TRACE_LEVEL_INFO flag
  *  in OPENER_TRACE_LEVEL.
  */
-#define OPENER_TRACE_INFO(...)                                                \
-  do {                                                                        \
-    if (OPENER_TRACE_LEVEL_INFO & OPENER_TRACE_LEVEL) LOG_TRACE(__VA_ARGS__); \
-  } while (0)
+#define OPENER_TRACE_INFO(...)                            \
+    do {                                                  \
+        if (OPENER_TRACE_LEVEL_INFO & OPENER_TRACE_LEVEL) \
+            LOG_TRACE(__VA_ARGS__);                       \
+    } while (0)
 
 #else
 /* define the tracing macros empty in order to save space */

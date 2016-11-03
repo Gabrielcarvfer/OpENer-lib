@@ -14,23 +14,23 @@
 #ifndef GENERIC_NETWORKHANDLER_H_
 #define GENERIC_NETWORKHANDLER_H_
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
+#include "cipconnectionmanager.h"
+#include "endianconv.h"
+#include "networkhandler.h"
 #include "opener_api.h"
 #include "typedefs.h"
-#include "endianconv.h"
-#include "cipconnectionmanager.h"
-#include "networkhandler.h"
 
 #define MAX_NO_OF_TCP_SOCKETS 10
 
 /* values needed from the connection manager */
-extern ConnectionObject *g_active_connection_list;
+extern ConnectionObject* g_active_connection_list;
 
-EipUint8 g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE]; /**< communication buffer */
+CipUsint g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE]; /**< communication buffer */
 
 fd_set master_socket;
 fd_set read_socket;
@@ -51,10 +51,10 @@ MilliSeconds g_last_time;
  *
  */
 typedef struct {
-  int tcp_listener; /**< TCP listener socket */
-  int udp_unicast_listener; /**< UDP unicast listener socket */
-  int udp_global_broadcast_listener; /**< UDP global network broadcast listener */
-  MilliSeconds elapsed_time;
+    int tcp_listener; /**< TCP listener socket */
+    int udp_unicast_listener; /**< UDP unicast listener socket */
+    int udp_global_broadcast_listener; /**< UDP global network broadcast listener */
+    MilliSeconds elapsed_time;
 } NetworkStatus;
 
 NetworkStatus g_network_status; /**< Global variable holding the current network status */
@@ -63,28 +63,27 @@ NetworkStatus g_network_status; /**< Global variable holding the current network
  *
  *  @return Returns the OpENer status after the initialization routine
  */
-EipStatus NetworkHandlerInitialize(void);
+CipStatus NetworkHandlerInitialize(void);
 
 void IApp_CloseSocket_udp(int socket_handle);
 
 void IApp_CloseSocket_tcp(int socket_handle);
 
-
 /** @brief Initializes the network handler, shall be implemented by a port-specific networkhandler
  *
- *  @return EipStatus, if initialization failed EipError is returned
+ *  @return CipStatus, if initialization failed EipError is returned
  */
-EipStatus NetworkHandlerInitialize(void);
+CipStatus NetworkHandlerInitialize(void);
 
-EipStatus NetworkHandlerProcessOnce(void);
+CipStatus NetworkHandlerProcessOnce(void);
 
-EipStatus NetworkHandlerFinish(void);
+CipStatus NetworkHandlerFinish(void);
 
 /** @brief check if the given socket is set in the read set
  * @param socket The socket to check
  * @return true if socket is set
  */
-EipBool8 CheckSocketSet(int socket);
+CipBool CheckSocketSet(int socket);
 
 /** @brief Returns the socket with the highest id
  * @param socket1 First socket
