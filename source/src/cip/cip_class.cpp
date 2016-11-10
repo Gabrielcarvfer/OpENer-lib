@@ -1,6 +1,11 @@
-#include "cip_objects_class.h"
+#include "cip_class.h"
+#include "trace.h"
+#include "cipcommon.h"
+#include <utility>
 
-CIPClass::CIPClass( 
+
+
+CIPClass::CIPClass(
                     CipUdint class_id, 
                     int number_of_class_attributes,
                     CipUdint get_all_class_attributes_mask,
@@ -20,25 +25,19 @@ CIPClass::CIPClass(
     /* initialize the class-specific fields of the Class struct*/
 
     // the class remembers the class ID 
-    class_id = class_id; 
+    this->class_id = class_id;
 
     // the class remembers the class ID 
-    revision = revision; 
-
-    // the number of instances initially zero (more created below) 
-    number_of_instances = 0; 
-
-    // the class remembers the number of instances of that class 
-    number_of_attributes = number_of_instance_attributes;
+    this->revision = revision;
 
     // indicate which attributes are included in instance getAttributeAll  
-    get_attribute_all_mask = get_all_instance_attributes_mask; 
+    this->get_attribute_all_mask = get_all_instance_attributes_mask;
 
     // the class manages the behavior of the instances 
-    number_of_services = number_of_instance_services + ((0 == get_all_instance_attributes_mask) ? 1 : 2); 
+    this->number_of_services = number_of_instance_services + ((0 == get_all_instance_attributes_mask) ? 1 : 2);
 
     /* initialize the class-specific fields of the metaClass struct */
-    class_name = std::string(name); 
+    this->class_name = std::string(name);
 
     highest_attribute_number = 0;
 
@@ -47,66 +46,93 @@ CIPClass::CIPClass(
     //}
 
     /* create the standard class attributes*/
-    // revision 
-    this.InsertAttribute(1, kCipUint, (void *) &this.revision, kGetableSingleAndAll); 
+    if (number_of_instances == 0) {
+        // revision
+        this->InsertAttribute(1, kCipUint, (void *) &this->revision, kGetableSingleAndAll);
 
-    //  largest instance number 
-    this.InsertAttribute(2, kCipUint, (void *) &this.number_of_instances, kGetableSingleAndAll);     
+        //  largest instance number
+        this->InsertAttribute(2, kCipUint, (void *) &this->number_of_instances, kGetableSingleAndAll);
 
-    // number of instances currently existing
-    this.InsertAttribute(3, kCipUint, (void *) &this.number_of_instances, kGetableSingleAndAll); 
-    
-    // optional attribute list - default = 0 
-    this.InsertAttribute(4, kCipUint, (void *) &kCipUintZero, kGetableAll); 
+        // number of instances currently existing
+        this->InsertAttribute(3, kCipUint, (void *) &this->number_of_instances, kGetableSingleAndAll);
 
-    // optional service list - default = 0 
-    this.InsertAttribute(5, kCipUint, (void *) &kCipUintZero, kGetableAll); 
+        // optional attribute list - default = 0
+        this->InsertAttribute(4, kCipUint, (void *) &kCipUintZero, kGetableAll);
 
-    // max class attribute number
-    this.InsertAttribute(6, kCipUint, (void *) &this.highest_attribute_number, kGetableSingleAndAll); 
-    
-    // max instance attribute number
-    this.InsertAttribute(7, kCipUint, (void *) &this.highest_attribute_number, kGetableSingleAndAll); 
-    
-    /* create the standard instance services*/
-    // only if the mask has values add the get_attribute_all service 
-    if (0 != get_all_instance_attributes_mask) 
-    {
-        // bind instance services to the class
-        this.InsertService(class, kGetAttributeAll, &this.GetAttributeAll, "GetAttributeAll"); 
+        // optional service list - default = 0
+        this->InsertAttribute(5, kCipUint, (void *) &kCipUintZero, kGetableAll);
+
+        // max class attribute number
+        this->InsertAttribute(6, kCipUint, (void *) &this->highest_attribute_number, kGetableSingleAndAll);
+
+        // max instance attribute number
+        this->InsertAttribute(7, kCipUint, (void *) &this->highest_attribute_number, kGetableSingleAndAll);
+
+        /* create the standard instance services*/
+        // only if the mask has values add the get_attribute_all service
+        if (0 != get_all_instance_attributes_mask) {
+            // bind instance services to the class
+            this->InsertService(kGetAttributeAll, &this->GetAttributeAll, "GetAttributeAll");
+        }
+        this->InsertService(kGetAttributeSingle, &this->GetAttributeSingle, "GetAttributeSingle");
+        AddCipClassInstance(this, 0);
     }
-    this.InsertService(class, kGetAttributeSingle, &this.GetAttributeSingle, "GetAttributeSingle");
-
-    //Insert to set
-    CIP_object_set[class_id].insert(CIP_object_set[class_id].size(), this);
-    return this;
+    //instances attributes
+    else
+    {
+        AddCipClassInstance(this, number_of_instances);
+    }
 }
 
 CIPClass::~CIPClass()
 {
-    CIP_object_set[this.class_id].erase(this);
+    auto it = CIP_object_set[this->class_id].find(this);
+    CIP_object_set[this->class_id].erase(it);
     delete services;
     delete attributes;
     delete this;
 }
 
-void * CIPClass::GetCipInstance(CipUdint instance_number)
+CIPClass * CIPClass::GetCipClassInstance(CipUdint class_id, CipUdint instance_number)
 {
-    auto it = CIPClass::CIP_object_set[this.class_id].find([instance_number]);
-
-    if (it != std::end)
-        /* if the number matches, return the instance*/
-        return &CIPClass::CIP_object_set[this.class_id][instance_number]; 
-
-    return NULL;
+    if (CIP_object_set[class_id].size() >= instance_number)
+        return CIP_object_set[class_id][instance_number];
+    else
+        return NULL;
 }
 
+CIPClass * CIPClass::GetCipClass(CipUdint class_id)
+{
+    if (CIP_object_set[class_id].size() > 0)
+        return CIP_object_set[class_id][0];
+    else
+        return NULL;
+}
+
+CipUdint CIPClass::GetCipClassNumberInstances(CipUdint class_id)
+{
+    return CIP_object_set[class_id].size();
+}
+
+CipUdint CIPClass::GetCipInstanceNumber(CIPClass * instance)
+{
+    return std::distance(CIP_object_set[instance->class_id].begin(), CIP_object_set[instance->class_id].find(instance) );
+}
+
+bool CIPClass::AddCipClassInstance(CIPClass* instance, CipUdint position)
+{
+    std::pair<std::map<CipUdint, CIPClass *>::iterator,bool> ret;
+
+    ret = CIP_object_set[instance->class_id].emplace(position,instance);
+
+    return ret.second;
+}
 void CIPClass::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipByte cip_flags)
 {
-    auto it = this.attributes.find(attribute_number);
+    auto it = this->attributes.find(attribute_number);
 
     /* cant add attribute that already exists */
-    if (it == std::end)
+    if (it != this->attributes.end())
     {
         OPENER_ASSERT(true);
     }
@@ -119,13 +145,7 @@ void CIPClass::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void
         attribute->attribute_flags = cip_flags;
         attribute->data = data;
 
-        /* remember the max attribute number that was defined*/
-        if (attribute_number > this.highest_attribute_number) 
-        {
-            this.highest_attribute_number = attribute_number;
-        }
-
-        this.attributes.insert(attribute_number, attribute);
+        this->attributes.emplace(attribute_number, attribute);
 
         return;
         
@@ -134,9 +154,9 @@ void CIPClass::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void
     /* trying to insert too many attributes*/
 }
 
-void CIPClass::InsertService(CipUsint service_number, CipServiceFunction service_function, char* service_name)
+void CIPClass::InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name)
 {
-    auto it = this.attributes.find(attribute_number);
+    auto it = this->attributes.find(attribute_number);
 
     /* cant add attribute that already exists */
     if (it == std::end)
@@ -153,7 +173,7 @@ void CIPClass::InsertService(CipUsint service_number, CipServiceFunction service
         /* fill in function address*/
         p->service_function = service_function; 
         p->name = service_name;
-        this.services.insert(service_number, p);
+        this->services.emplace(service_number, p);
 
         return;
     }

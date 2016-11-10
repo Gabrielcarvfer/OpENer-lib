@@ -8,7 +8,9 @@
 
 #include "typedefs.h"
 
+#ifndef WIN32
 typedef unsigned long socklen_t;
+#endif
 
 CipStatus NetworkHandlerInitializePlatform(void);
 

@@ -11,4 +11,4 @@ opener_platform_support("INCLUDES")
 
 opener_platform_support("INCLUDES")
 
-add_library(SAMPLE_APP sampleapplication.c)
+add_library(SAMPLE_APP sampleapplication.cpp)

@@ -3,10 +3,10 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_APPCONTYPE_H_
-#define OPENER_APPCONTYPE_H_
+#pragma once
 
 #include "cipconnectionmanager.h"
+#include "ciptypes.h"
 
 void InitializeIoConnectionData(void);
 
@@ -67,5 +67,3 @@ void CloseAllConnections(void);
  * @return true if connection was found, otherwise false
  */
 CipBool ConnectionWithSameConfigPointExists(CipUdint config_point);
-
-#endif /* OPENER_APPCONTYPE_H_ */

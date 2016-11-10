@@ -3,11 +3,9 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_TYPEDEFS_H_
-#define OPENER_TYPEDEFS_H_
+#pragma once
 
-#include <inttypes.h>
-#include <stddef.h>
+#include <cstdint>
 
 /** @file typedefs.h
  Do not use interface types for internal variables, such as "int i;", which is
@@ -24,38 +22,38 @@
 
 /** @brief EIP Data type definitions
  */
-typedef uint8_t EipByte; /**< 8-bit bit string */
-typedef int8_t EipInt8; /**< 8-bit signed number */
-typedef int16_t EipInt16; /**< 16-bit signed number */
-typedef int32_t EipInt32; /**< 32-bit signed number */
-typedef uint8_t CipUsint; /**< 8-bit unsigned number */
-typedef uint16_t CipUint; /**< 16-bit unsigned number */
-typedef uint32_t CipUdint; /**< 32-bit unsigned number */
-typedef float EipFloat; /**< IEEE 754 32-bit floating point number */
-typedef double EipDfloat; /**< IEEE 754 64-bit floating point number */
-typedef uint8_t CipBool; /**< bool data types */
+typedef uint8_t  EipByte;   /**< 8-bit bit string */
+typedef int8_t   EipInt8;   /**< 8-bit signed number */
+typedef int16_t  EipInt16;  /**< 16-bit signed number */
+typedef int32_t  EipInt32;  /**< 32-bit signed number */
+typedef uint8_t  CipUsint;  /**< 8-bit unsigned number */
+typedef uint16_t CipUint;   /**< 16-bit unsigned number */
+typedef uint32_t CipUdint;  /**< 32-bit unsigned number */
+typedef float    EipFloat;  /**< IEEE 754 32-bit floating point number */
+typedef double   EipDfloat; /**< IEEE 754 64-bit floating point number */
+typedef uint8_t  CipBool;   /**< bool data types */
 
 /** @brief Data types as defined in the CIP Specification Vol 1 Appendix C
  */
-typedef uint8_t CipOctet; /**< 8 bit value that indicates particular data type */
-typedef uint8_t CipBool; /**< Boolean data type */
-typedef uint8_t CipByte; /**< 8-bit bit string */
-typedef uint16_t CipWord; /**< 16-bit bit string */
+typedef uint8_t  CipOctet; /**< 8 bit value that indicates particular data type */
+typedef uint8_t  CipBool;  /**< Boolean data type */
+typedef uint8_t  CipByte;  /**< 8-bit bit string */
+typedef uint16_t CipWord;  /**< 16-bit bit string */
 typedef uint32_t CipDword; /**< 32-bit bit string */
-typedef uint8_t CipUsint; /**< 8-bit unsigned integer */
-typedef uint16_t CipUint; /**< CipUint 16-bit unsigned integer */
+typedef uint8_t  CipUsint; /**< 8-bit unsigned integer */
+typedef uint16_t CipUint;  /**< CipUint 16-bit unsigned integer */
 typedef uint32_t CipUdint; /**< CipUdint 32-bit unsigned integer */
-typedef int8_t CipSint; /**< 8-bit signed integer */
-typedef int16_t CipInt; /**< 16-bit signed integer */
-typedef int32_t CipDint; /**< 32-bit signed integer */
-typedef float CipReal; /**< 32-bit IEEE 754 floating point */
-typedef double CipLreal; /**< 64-bit IEEE 754 floating point */
+typedef int8_t   CipSint;  /**< 8-bit signed integer */
+typedef int16_t  CipInt;   /**< 16-bit signed integer */
+typedef int32_t  CipDint;  /**< 32-bit signed integer */
+typedef float    CipReal;  /**< 32-bit IEEE 754 floating point */
+typedef double   CipLreal; /**< 64-bit IEEE 754 floating point */
 
 #ifdef OPENER_SUPPORT_64BIT_DATATYPES
-typedef int64_t EipInt64; /**< 64-bit signed number */
+typedef int64_t  EipInt64; /**< 64-bit signed number */
 typedef uint64_t CipUlint; /**< 64-bit unsigned number */
 
-typedef int64_t CipLint; /**< 64-bit signed integer */
+typedef int64_t  CipLint;  /**< 64-bit signed integer */
 typedef uint64_t CipUlint; /**< 64-bit unsigned integer */
 typedef uint64_t CipLword; /**< 64-bit bit string */
 #endif /* OPENER_SUPPORT_64BIT_DATATYPES */
@@ -113,5 +111,3 @@ typedef enum {
     true = 1 /**< defines "true" as 1 */
 } BoolKeywords;
 #endif /* __cplusplus */
-
-#endif /* OPENER_TYPEDEFS_H_ */

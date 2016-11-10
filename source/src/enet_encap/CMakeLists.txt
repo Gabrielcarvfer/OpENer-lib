@@ -2,7 +2,7 @@
 # Ethernet encapsulation library      #
 #######################################
 
-set( ENET_ENCAP_SRC eip_encap.c eip_endianconv.c ${UTILS_SRC})
+set( ENET_ENCAP_SRC eip_encap.cpp eip_endianconv.cpp ${UTILS_SRC})
 
 #######################################
 # Add common includes                 #

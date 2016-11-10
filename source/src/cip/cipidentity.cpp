@@ -68,7 +68,7 @@ void SetDeviceStatus(CipUint status)
  * @param message_router_response
  * @returns Currently always kEipOkSend is returned
  */
-static CipStatus Reset(CipInstance* instance, /* pointer to instance*/
+static CipStatus Reset(CIPClass* instance, /* pointer to instance*/
     CipMessageRouterRequest* message_router_request, /* pointer to message router request*/
     CipMessageRouterResponse* message_router_response) /* pointer to message router response*/
 {
@@ -124,7 +124,7 @@ static CipStatus Reset(CipInstance* instance, /* pointer to instance*/
 CipStatus CipIdentityInit()
 {
     CIPClass* class;
-    CipInstance* instance;
+    CIPClass* instance;
 
     class = CreateCIPClass(kIdentityClassCode, 0, /* # of non-default class attributes */
         MASK4(1, 2, 6, 7), /* class getAttributeAll mask		CIP spec 5-2.3.2 */
@@ -139,7 +139,7 @@ CipStatus CipIdentityInit()
     if (class == 0)
         return kCipStatusError;
 
-    instance = GetCipInstance(class, 1);
+    instance = GetCIPClass(class, 1);
 
     InsertAttribute(instance, 1, kCipUint, &vendor_id_, kGetableSingleAndAll);
     InsertAttribute(instance, 2, kCipUint, &device_type_, kGetableSingleAndAll);

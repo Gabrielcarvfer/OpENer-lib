@@ -5,20 +5,24 @@
  *      Author: mmm
  */
 
-#ifndef OPENER_RANDOM_H_
-#define OPENER_RANDOM_H_
+#pragma once
 
 #include <stdint.h>
 
-typedef void (*SetSeed)(uint32_t seed);
-typedef uint32_t (*GetNextUInt32)(void);
+enum randGenerators {XORShift=1};
 
-typedef struct {
-    uint32_t current_seed_value; /**< Holds the current seed/random value */
-    SetSeed set_seed; /**< Function pointer to SetSeed function */
-    GetNextUInt32 get_next_uint32; /**< Function pointer to GetNextUInt32 function */
-} Random;
+class RandomGen
+{
+    private:
+        uint32_t current_seed_value;
+        uint32_t randGenerator;
+    public:
+        RandomGen(uint32_t seed, uint32_t randGenerator);
+        ~RandomGen();
 
-Random* RandomNew(SetSeed, GetNextUInt32);
+        void set_seed(uint32_t seed);
+        uint32_t get_next_rand();
 
-#endif /* OPENER_RANDOM_H_ */
+
+};
+

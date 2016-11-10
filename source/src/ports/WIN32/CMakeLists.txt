@@ -1,6 +1,6 @@
 add_subdirectory(sample_application)
 
-set( PLATFORM_SPEC_SRC networkhandler.c)
+set( PLATFORM_SPEC_SRC networkhandler.cpp)
 
 #######################################
 # Add common includes                 #
@@ -16,6 +16,6 @@ set (PLATFORMLIBNAME ${OpENer_PLATFORM}PLATFORM)
 
 add_library( ${PLATFORMLIBNAME} ${PLATFORM_SPEC_SRC}) 
 
-add_executable(OpENer main.c)
+add_executable(OpENer main.cpp)
 
 target_link_libraries( OpENer PLATFORM_GENERIC ${PLATFORMLIBNAME} CIP SAMPLE_APP ENET_ENCAP ws2_32 ${OpENer_CIP_OBJECTS} )

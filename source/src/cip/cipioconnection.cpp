@@ -77,7 +77,7 @@ CipStatus EstablishIoConnction(ConnectionObject* connection_object,
     CipAttributeStruct* attribute;
     /* currently we allow I/O connections only to assembly objects */
     CIPClass* assembly_class = GetCIPClass(kCipAssemblyClassCode); /* we don't need to check for zero as this is handled in the connection path parsing */
-    CipInstance* instance = NULL;
+    CIPClass* instance = NULL;
 
     ConnectionObject* io_connection_object = GetIoConnectionForConnectionData(
         connection_object, extended_error);
@@ -145,7 +145,7 @@ CipStatus EstablishIoConnction(ConnectionObject* connection_object,
 
         if (originator_to_target_connection_type != 0) { /*setup consumer side*/
             if (0
-                != (instance = GetCipInstance(
+                != (instance = GetCIPClass(
                         assembly_class,
                         io_connection_object->connection_path.connection_point[0]))) { /* consuming Connection Point is present */
                 io_connection_object->consuming_instance = instance;
@@ -187,7 +187,7 @@ CipStatus EstablishIoConnction(ConnectionObject* connection_object,
 
         if (target_to_originator_connection_type != 0) { /*setup producer side*/
             if (0
-                != (instance = GetCipInstance(
+                != (instance = GetCIPClass(
                         assembly_class,
                         io_connection_object->connection_path.connection_point[producing_index]))) {
                 io_connection_object->producing_instance = instance;
@@ -471,7 +471,7 @@ CipUint HandleConfigData(CIPClass* assembly_class,
     ConnectionObject* connection_object)
 {
     CipUint connection_manager_status = 0;
-    CipInstance* config_instance = GetCipInstance(
+    CIPClass* config_instance = GetCIPClass(
         assembly_class, connection_object->connection_path.connection_point[2]);
 
     if (0 != g_config_data_length) {

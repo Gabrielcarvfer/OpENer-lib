@@ -7,7 +7,7 @@
 
 #include "cipcommon.h"
 
-#include "../enet_encap/cpf.h"
+#include "cpf.h"
 #include "../enet_encap/eip_encap.h"
 #include "appcontype.h"
 #include "cipassembly.h"
@@ -66,13 +66,13 @@ CipStatus CIPCommon::NotifyClass(CIPClass* cip_class,
     CipMessageRouterResponse* message_router_response)
 {
     int i;
-    CipInstance* instance;
+    CIPClass* instance;
     CipServiceStruct* service;
     unsigned instance_number; /* my instance number */
 
     /* find the instance: if instNr==0, the class is addressed, else find the instance */
     instance_number = message_router_request->request_path.instance_number; /* get the instance number */
-    instance = GetCipInstance(cip_class, instance_number); /* look up the instance (note that if inst==0 this will be the class itself) */
+    instance = GetCIPClass(cip_class, instance_number); /* look up the instance (note that if inst==0 this will be the class itself) */
     if (instance) /* if instance is found */
     {
         OPENER_TRACE_INFO("notify: found instance %d%s\n", instance_number,

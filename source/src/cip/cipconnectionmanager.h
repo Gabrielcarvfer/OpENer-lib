@@ -3,14 +3,13 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_CIPCONNECTIONMANAGER_H_
-#define OPENER_CIPCONNECTIONMANAGER_H_
+#pragma once
 
 #include "ciptypes.h"
 #include "opener_api.h"
 #include "opener_user_conf.h"
 #include "typedefs.h"
-#include "cip_objects_class.h"
+#include "cip_class.h"
 #include "cpf.h"
 #include <map>
 
@@ -174,7 +173,7 @@ class ConnectionObject : public CIPClass
         static void CloseConnection(ConnectionObject* connection_object);
 
         /* TODO: Missing documentation */
-        CipBool IsConnectedOutputAssembly(CipUdint instance_number);
+        static CipBool IsConnectedOutputAssembly(CipUdint instance_number);
 
         /** @brief Generate the ConnectionIDs and set the general configuration
          * parameter in the given connection object.
@@ -182,7 +181,7 @@ class ConnectionObject : public CIPClass
          * @param connection_object pointer to the connection object that should be set
          *up.
          */
-        void GeneralConnectionConfiguration(ConnectionObject* connection_object);
+        void GeneralConnectionConfiguration();
 
         /** @brief Insert the given connection object to the list of currently active
          *  and managed connections.
@@ -259,10 +258,10 @@ class ConnectionObject : public CIPClass
          CipConnectionPath connection_path; /* padded EPATH*/
          LinkObject link_object;
     
-         CipInstance* consuming_instance;
+         CIPClass* consuming_instance;
          /*S_CIP_CM_Object *p_stConsumingCMObject; */
     
-         CipInstance* producing_instance;
+         CIPClass* producing_instance;
          /*S_CIP_CM_Object *p_stProducingCMObject; */
     
          CipUdint eip_level_sequence_count_producing; /* the EIP level sequence Count
@@ -312,15 +311,15 @@ class ConnectionObject : public CIPClass
         
 
         /* private functions */
-        CipStatus ForwardOpen(CipInstance* instance,
+        CipStatus ForwardOpen(CIPClass* instance,
             CipMessageRouterRequest* message_router_request,
             CipMessageRouterResponse* message_router_response);
 
-        CipStatus ForwardClose(CipInstance* instance,
+        CipStatus ForwardClose(CIPClass* instance,
             CipMessageRouterRequest* message_router_request,
             CipMessageRouterResponse* message_router_response);
 
-        CipStatus GetConnectionOwner(CipInstance* instance,
+        CipStatus GetConnectionOwner(CIPClass* instance,
             CipMessageRouterRequest* message_router_request,
             CipMessageRouterResponse* message_router_response);
 
@@ -380,5 +379,3 @@ class ConnectionObject : public CIPClass
      /* End of instance info */
 
 };
-
-#endif /* OPENER_CIPCONNECTIONMANAGER_H_ */

@@ -1,5 +1,5 @@
 #pragma once
-
+#include "ciptypes.h"
 #include "../../typedefs.h"
 #include <string>
 #include <map>
@@ -8,20 +8,18 @@ class CIPClass
 {
     public:
         CipUdint class_id;
-        int number_of_class_attributes;
-        int number_of_class_services;
-        int number_of_instance_attributes;
-        int number_of_instance_services;
         CipUint number_of_instances;  //attribute 2 and 3
         CipUint highest_attribute_number;
-        std::string name;
+        CipUint get_attribute_all_mask;
+        int number_of_services;
+        std::string class_name;
         CipUint revision;
 
-        std::map< CipUdint, CipAttributeStruct const * > attributes;
-        std::map< CipUdint, CipServiceStruct const * > services;
+        std::map< CipUdint, CipAttributeStruct * > attributes;
+        std::map< CipUdint, CipServiceStruct * > services;
 
-        static std::map< CipUdint, std::map<CipUdint, CIPClass const *> >CIP_object_set;
-
+        static std::map< CipUdint, std::map<CipUdint, CIPClass *> > CIP_object_set;
+         CIPClass() = delete ;
 
         /** @ingroup CIP_API
         * @brief Allocate memory for new CIP Class and attributes
@@ -48,7 +46,7 @@ class CIPClass
         *  @return pointer to new class object
         *      0 on error
         */
-        CIPClass( 
+        CIPClass(
                  CipUdint class_id, 
                  int number_of_class_attributes,
                  CipUdint get_all_class_attributes_mask,
@@ -71,7 +69,12 @@ class CIPClass
         * @return pointer to CIP Instance
         *          0 if instance is not in the object
         */
-        void * GetCipInstance(CipUdint instance_number);
+        static CIPClass * GetCipClassInstance(CipUdint class_id, CipUdint instance_number);
+        static CIPClass * GetCipClass(CipUdint class_id);
+        static CipUdint   GetCipClassNumberInstances(CipUdint class_id);
+        static CipUdint   GetCipInstanceNumber(CIPClass * instance);
+
+        static bool AddCipClassInstance(CIPClass* instance, CipUdint position);
 
         /** @ingroup CIP_API
      * @brief Insert an attribute in an instance of a CIP class
@@ -102,7 +105,7 @@ class CIPClass
     * @param service_function pointer to function which represents the service.
     * @param service_name name of the service
     */
-    void InsertService(CipUsint service_number, CipServiceFunction service_function, char* service_name);
+    void InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name);
 
 
     /** @ingroup CIP_API

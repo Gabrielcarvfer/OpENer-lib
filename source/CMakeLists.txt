@@ -6,7 +6,7 @@ cmake_minimum_required( VERSION 2.8.9 )
 #######################################
 # Project name                        #
 #######################################
-project( OpENer C CXX )
+project( OpENer CXX )
 
 #######################################
 # Project version                     #

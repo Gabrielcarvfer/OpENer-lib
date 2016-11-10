@@ -1,71 +1,54 @@
-/*******************************************************************************
- * Gabriel Ferreira (gabrielcarvfer)
- ******************************************************************************/
-#include <string.h>
+//Connection ID in Slaves identify their purpose
+/*
+	Predefined IDs are:
 
-#include "cipdevicenetlink.h"
-
-#include "cipcommon.h"
-#include "ciperror.h"
-#include "cipmessagerouter.h"
-#include "endianconv.h"
-#include "opener_api.h"
-#include "typedefs.h"
+	ConnID #   |  Utility
+	1          |  references Explicit message conn into server
+	2          |  references Poll I/O conn
+	3          |  references bit-strobe I/O conn
+	4          |  references the Slave changeOfState or Cyclic conn
+	5          |  references multicast poll I/O
+*/
 
 typedef struct {
-    CipUsint mac_id;
-    CipUsint baud_rate;
-    CipBool BOI; //bus-off interrupt
-    CipUsint BOC; //bus-off counter
-    CipBool mac_id_switch;
-    CipBool baud_rate_switch;
-    CipUsint mac_id_switch_val;
-    CipUsint baud_rate_switch_val;
-    CipBool quick_connect;
-} CipDevicenetLinkObject;
+    kCipUsint mac_id;
+    kCipUsint baud_rate;
+    kCipBool BOI; //bus-off interrupt
+    kCipUsint BOC; //bus-off counter
+    kCipBool mac_id_switch;
+    kCipBool baud_rate_switch;
+    kCipUsint mac_id_switch_val;
+    kCipUsint baud_rate_switch_val;
+    kCipBool quick_connect;
+} CipDevicenetSlaveObject;
 
 /* global private variables */
-CipDevicenetLinkObject g_devicenet_link;
+CipDevicenetSlaveObject g_devicenet_slave;
 
-void ConfigureMacAddress(const CipUsint* mac_address)
+CipStatus CipDevicenetSlaveInit()
 {
-    memcpy(&g_devicenet_link.mac_id, mac_address,
-        sizeof(g_devicenet_link.mac_id));
-}
-
-class CIPDevicenetNetLink : public CIPClass
-{
-
-}
-
-CipStatus CIPDeviceNetLink::CipDevicenetLinkInit()
-{
-    this.attributes.insert(0, devicenet_link_class.revision);
-
-}
-CipStatus CipDevicenetLinkInit()
-{
-    CIPClass* devicenet_link_class;
-    CIPClass* devicenet_link_instance;
+    CIPClass* devicenet_slave_class = 0;
+    CIPClass* devicenet_slave_instance;
 
     /* set attributes to initial values */
-    g_devicenet_link.baud_rate = 0;
-    g_devicenet_link.BOI = false;
-    g_devicenet_link.BOC = 0;
-    g_devicenet_link.mac_id_switch = false;
-    g_devicenet_link.baud_rate_switch = false;
-    g_devicenet_link.baud_rate_switch_val = 0;
-    g_devicenet_link.quick_connect = false;
-    g_devicenet_link.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
+    g_devicenet_slave.baud_rate = 0;
+    g_devicenet_slave.BOI = false;
+    g_devicenet_slave.BOC = 0;
+    g_devicenet_slave.mac_id_switch = false;
+    g_devicenet_slave.baud_rate_switch = false;
+    g_devicenet_slave.baud_rate_switch_val = 0;
+    g_devicenet_slave.quick_connect = false;
+    g_devicenet_slave.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
 
-    if ((devicenet_link_class = CreateCIPClass(CIP_DEVICENETLINK_CLASS_CODE, 1, /* # class attributes*/
+    if ((devicenet_slave_class = CreateCIPClass(CIP_DEVICENETSLAVE_CLASS_CODE,
+             1, /* # class attributes*/
              0xffffffff, /* class getAttributeAll mask*/
              1, /* # class services*/
              9, /* # instance attributes*/
              0xffffffff, /* instance getAttributeAll mask*/
              0, /* # instance services*/
              1, /* # instances*/
-             "Devicenet Link", 1))
+             "Devicenet Slave Object", 1))
         != 0) {
 
         //DeviceNet Object Attribute - Revision

@@ -27,9 +27,6 @@
 
 #define MAX_NO_OF_TCP_SOCKETS 10
 
-/* values needed from the connection manager */
-extern ConnectionObject* g_active_connection_list;
-
 CipUsint g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE]; /**< communication buffer */
 
 fd_set master_socket;

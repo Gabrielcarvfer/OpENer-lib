@@ -3,12 +3,12 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_OPENER_API_H_
-#define OPENER_OPENER_API_H_
+#pragma once
 
-#include <assert.h>
+#include <cassert>
 #include "ciperror.h"
-#include "ciptypes.h"
+#include "cip/ciptypes.h"
+#include "cip/cip_class.h"
 #include "opener_user_conf.h"
 #include "typedefs.h"
 
@@ -29,8 +29,7 @@
  *  @return EIP_OK if the configuring worked otherwise EIP_ERROR
  */
 CipStatus
-ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask,
-    const char* gateway_address);
+ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask, const char* gateway_address);
 
 /** @ingroup CIP_API
  * @brief Configure the MAC address of the device
@@ -131,8 +130,7 @@ int DecodeData(CipUsint cip_data_type, void* cip_data, CipUsint** cip_message);
  * The notification on received configuration data is handled with the
  * IApp_after_receive function.
  */
-CipInstance* CreateAssemblyObject(CipUdint instance_number, EipByte* data,
-    CipUint data_length);
+CIPClass* CreateAssemblyObject(CipUdint instance_number, EipByte* data, CipUint data_length);
 
 struct connection_object;
 
@@ -198,9 +196,7 @@ typedef CipStatus (*ConnectionReceiveDataFunction)(
  * process
  * @return EIP_OK on success
  */
-CipStatus
-AddConnectableObject(CipUdint class_id,
-    OpenConnectionFunction open_connection_function);
+CipStatus AddConnectableObject(CipUdint class_id, OpenConnectionFunction open_connection_function);
 
 /** @ingroup CIP_API
  * @brief Configures the connection point for an exclusive owner connection.
@@ -267,9 +263,7 @@ void ConfigureListenOnlyConnectionPoint(unsigned int connection_number,
  * over after we're done here
  * @return length of reply that need to be sent back
  */
-int HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
-    unsigned int buffer_length,
-    int* number_of_remaining_bytes);
+int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes);
 
 /** @ingroup CIP_API
  * @brief Notify the encapsulation layer that an explicit message has been
@@ -300,9 +294,7 @@ int HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
  *           connection hijacking
  *  @return EIP_OK on success
  */
-CipStatus
-HandleReceivedConnectedData(CipUsint* received_data, int received_data_length,
-    struct sockaddr_in* from_address);
+CipStatus HandleReceivedConnectedData(CipUsint* received_data, int received_data_length, struct sockaddr_in* from_address);
 
 /** @ingroup CIP_API
  * @brief Check if any of the connection timers (TransmissionTrigger or
@@ -314,8 +306,7 @@ HandleReceivedConnectedData(CipUsint* received_data, int received_data_length,
  *
  * @return EIP_OK on success
  */
-CipStatus
-ManageConnections(MilliSeconds elapsed_time);
+CipStatus ManageConnections(MilliSeconds elapsed_time);
 
 /** @ingroup CIP_API
  * @brief Trigger the production of an application triggered connection.
@@ -336,9 +327,7 @@ ManageConnections(MilliSeconds elapsed_time);
  * connection
  * @return EIP_OK on success
  */
-CipStatus
-TriggerConnections(unsigned int output_assembly_id,
-    unsigned int input_assembly_id);
+CipStatus TriggerConnections(unsigned int output_assembly_id, unsigned int input_assembly_id);
 
 /** @ingroup CIP_API
  * @brief Inform the encapsulation layer that the remote host has closed the
@@ -391,9 +380,7 @@ void HandleApplication(void);
  * connection
  * @param io_connection_event information on the change occurred
  */
-void CheckIoConnectionEvent(unsigned int output_assembly_id,
-    unsigned int input_assembly_id,
-    IoConnectionEvent io_connection_event);
+void CheckIoConnectionEvent(unsigned int output_assembly_id, unsigned int input_assembly_id, IoConnectionEvent io_connection_event);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief Call back function to inform application on received data for an
@@ -411,7 +398,7 @@ void CheckIoConnectionEvent(unsigned int output_assembly_id,
  * The length of the data is already checked within the stack. Therefore the
  * user only has to check if the data is valid.
  */
-CipStatus AfterAssemblyDataReceived(CipInstance* instance);
+CipStatus AfterAssemblyDataReceived(CIPClass* instance);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief Inform the application that the data of an assembly
@@ -425,7 +412,7 @@ CipStatus AfterAssemblyDataReceived(CipInstance* instance);
  *          - true assembly data has changed
  *          - false assembly data has not changed
  */
-CipBool BeforeAssemblyDataSend(CipInstance* instance);
+CipBool BeforeAssemblyDataSend(CIPClass* instance);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief Emulate as close a possible a power cycle of the device
@@ -490,8 +477,7 @@ void RunIdleChanged(CipUdint run_idle_value);
  * @return socket identifier on success
  *         -1 on error
  */
-int CreateUdpSocket(UdpCommuncationDirection communication_direction,
-    struct sockaddr_in* socket_data);
+int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr_in* socket_data);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief create a producing or consuming UDP socket
@@ -502,9 +488,7 @@ int CreateUdpSocket(UdpCommuncationDirection communication_direction,
  * @param data_length length of the data to send
  * @return  EIP_SUCCESS on success
  */
-CipStatus
-SendUdpData(struct sockaddr_in* socket_data, int socket, CipUsint* data,
-    CipUint data_length);
+CipStatus SendUdpData(struct sockaddr_in* socket_data, int socket, CipUsint* data, CipUint data_length);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief Close the given socket and clean up the stack
@@ -693,5 +677,3 @@ void CloseSocket(int socket);
  * @include "license.txt"
  *
  */
-
-#endif /*OPENER_OPENER_API_H_*/

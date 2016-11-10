@@ -3,21 +3,18 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#ifndef OPENER_CIPASSEMBLY_H_
-#define OPENER_CIPASSEMBLY_H_
+#pragma once
 
 #include "ciptypes.h"
 #include "typedefs.h"
-#include "cip_objects_class.h"
+#include "cip_class.h"
+
+/** @brief Assembly Class Code */
+static const int kCipAssemblyClassCode = 0x04;
 
 class CIPAssembly : public CIPClass
 {
 	public:
-		/** @brief Assembly Class Code */
-		static const int kCipAssemblyClassCode = 0x04;
-
-		/* public functions */
-
 		/** @brief Setup the Assembly object
 		 * 
 		 * Creates the Assembly Class with zero instances and sets up all services.
@@ -47,18 +44,22 @@ class CIPAssembly : public CIPClass
 		 *     - EIP_OK the received data was okay
 		 *     - EIP_ERROR the received data was wrong
 		 */
-		CipStatus NotifyAssemblyConnectedDataReceived(CipInstance* instance, CipUsint* data, CipUint data_length);
+		CipStatus NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUint data_length);
 
-
-		/** @brief Implementation of the SetAttributeSingle CIP service for Assembly
+    /** @brief Implementation of the SetAttributeSingle CIP service for Assembly
 		 *          Objects.
 		 *  Currently only supports Attribute 3 (CIP_BYTE_ARRAY) of an Assembly
 		 */
-		CipStatus SetAssemblyAttributeSingle( CipInstance* instance, CipMessageRouterRequest* message_router_request,
-    																			CipMessageRouterResponse* message_router_response);
+    CipStatus SetAssemblyAttributeSingle( CIPClass* instance,
+                  CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+
+
 
 		CIPClass* CreateAssemblyClass(void);
+	    CIPClass* CreateAssemblyInstance(CipUdint instance_id);
 
 		CIPClass* CreateAssemblyObject(CipUdint instance_id, EipByte* data, CipUint data_length);
+	private:
+		
+};
 
-#endif /* OPENER_CIPASSEMBLY_H_ */

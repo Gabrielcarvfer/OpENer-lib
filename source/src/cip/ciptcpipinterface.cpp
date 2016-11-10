@@ -59,11 +59,11 @@ MulticastAddressConfiguration g_multicast_configuration = {
 
 /************** Functions ****************************************/
 CipStatus GetAttributeSingleTcpIpInterface(
-    CipInstance* instance, CipMessageRouterRequest* message_router_request,
+    CIPClass* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response);
 
 CipStatus GetAttributeAllTcpIpInterface(
-    CipInstance* instance, CipMessageRouterRequest* message_router_request,
+    CIPClass* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response);
 
 CipStatus ConfigureNetworkInterface(const char* ip_address,
@@ -124,7 +124,7 @@ void ConfigureHostName(const char* hostname)
 }
 
 CipStatus SetAttributeSingleTcp(
-    CipInstance* instance, CipMessageRouterRequest* message_router_request,
+    CIPClass* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
     CipAttributeStruct* attribute = GetCipAttribute(
@@ -163,7 +163,7 @@ CipStatus CipTcpIpInterfaceInit()
         == 0) {
         return kCipStatusError;
     }
-    CipInstance* instance = GetCipInstance(tcp_ip_class, 1); /* bind attributes to the instance #1 that was created above*/
+    CIPClass* instance = GetCIPClass(tcp_ip_class, 1); /* bind attributes to the instance #1 that was created above*/
 
     InsertAttribute(instance, 1, kCipDword, (void*)&tcp_status_,
         kGetableSingleAndAll);
@@ -211,7 +211,7 @@ void ShutdownTcpIpInterface(void)
 }
 
 CipStatus GetAttributeSingleTcpIpInterface(
-    CipInstance* instance, CipMessageRouterRequest* message_router_request,
+    CIPClass* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
 
@@ -249,7 +249,7 @@ CipStatus GetAttributeSingleTcpIpInterface(
 }
 
 CipStatus GetAttributeAllTcpIpInterface(
-    CipInstance* instance, CipMessageRouterRequest* message_router_request,
+    CIPClass* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
 

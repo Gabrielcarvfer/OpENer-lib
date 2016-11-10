@@ -12,7 +12,6 @@
 #include "ciperror.h"
 #include "cipmessagerouter.h"
 #include "../enet_encap/eip_endianconv.h"
-#include "../enet_encap/endianconv.h"
 #include "opener_api.h"
 #include "trace.h"
 

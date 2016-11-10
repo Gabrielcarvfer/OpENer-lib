@@ -31,7 +31,7 @@ void ConfigureMacAddress(const CipUsint* mac_address)
 CipStatus CipEthernetLinkInit()
 {
     CIPClass* ethernet_link_class;
-    CipInstance* ethernet_link_instance;
+    CIPClass* ethernet_link_instance;
 
     /* set attributes to initial values */
     g_ethernet_link.interface_speed = 100;
@@ -47,7 +47,7 @@ CipStatus CipEthernetLinkInit()
              "Ethernet Link", 1))
         != 0) {
 
-        ethernet_link_instance = GetCipInstance(ethernet_link_class, 1);
+        ethernet_link_instance = GetCIPClass(ethernet_link_class, 1);
         InsertAttribute(ethernet_link_instance, 1, kCipUdint,
             &g_ethernet_link.interface_speed, kGetableSingleAndAll); /* bind attributes to the instance*/
         InsertAttribute(ethernet_link_instance, 2, kCipDword,

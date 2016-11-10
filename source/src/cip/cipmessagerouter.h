@@ -39,7 +39,7 @@ class CIPMessageRouter : public CIPClass
          * array with a given max size for removing the need for having to dynamically allocate 
          * memory. The size of the array could be a parameter in the platform config file.
          */
-        static std::map<CIPClass const *> message_router_registered_classes;
+        static std::map<CipUdint, CIPClass const *> message_router_registered_classes;
 
 
         /*! Register a class at the message router.

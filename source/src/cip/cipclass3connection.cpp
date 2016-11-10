@@ -28,13 +28,13 @@ CipStatus EstablishClass3Connection(ConnectionObject* connection_object,
     ConnectionObject* explicit_connection = GetFreeExplicitConnection();
 
     if (NULL == explicit_connection) {
-        eip_status = kCipErrorConnectionFailure;
+        eip_status = (CipStatus)kCipErrorConnectionFailure;
         *extended_error = kConnectionManagerStatusCodeErrorNoMoreConnectionsAvailable;
     } else {
-        CopyConnectionData(explicit_connection, connection_object);
+        ConnectionObject::CopyConnectionData(explicit_connection, connection_object);
 
         produced_connection_id_buffer = explicit_connection->produced_connection_id;
-        GeneralConnectionConfiguration(explicit_connection);
+        explicit_connection->GeneralConnectionConfiguration();
         explicit_connection->produced_connection_id = produced_connection_id_buffer;
         explicit_connection->instance_type = kConnectionTypeExplicit;
         explicit_connection->socket[0] = explicit_connection->socket[1] = kEipInvalidSocket;
@@ -43,7 +43,7 @@ CipStatus EstablishClass3Connection(ConnectionObject* connection_object,
         /* explicit connection have to be closed on time out*/
         explicit_connection->connection_timeout_function = RemoveFromActiveConnections;
 
-        AddNewActiveConnection(explicit_connection);
+        ConnectionObject::AddNewActiveConnection(explicit_connection);
     }
     return eip_status;
 }

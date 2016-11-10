@@ -3,11 +3,9 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_CIPTYPES_H_
-#define OPENER_CIPTYPES_H_
-
+#pragma once
 #include "typedefs.h"
-
+#include <string>
 /** @brief Segment type Enum
  *
  * Bits 7-5 in the Segment Type/Format byte
@@ -274,23 +272,12 @@ typedef struct {
 typedef struct {
     CipUint attribute_number;
     CipUsint type;
-    CIPAttributeFlag attribute_flags; /*< 0 => getable_all, 1 => getable_single; 2 =>
-   setable_single; 3 => get and setable; all other
-   values reserved */
+    /*< 0 => getable_all, 1 => getable_single; 2 => setable_single; 3 => get and setable; all other values reserved */
+    CIPAttributeFlag attribute_flags;
     void* data;
 } CipAttributeStruct;
 
 /* type definition of CIP service structure */
-
-/* instances are stored in a linked list*/
-typedef struct cip_instance {
-    CipUdint instance_number; /**< this instance's number (unique within the class) */
-    CipAttributeStruct* attributes; /**< pointer to an array of attributes which
-   is unique to this instance */
-    struct cip_class* cip_class; /**< class the instance belongs to */
-    struct cip_instance* next; /**< next instance, all instances of a class live
-   in a linked list */
-} CipInstance;
 
 /** @ingroup CIP_API
  *  @typedef  EIP_STATUS (*TCIPServiceFunc)(S_CIP_Instance *pa_pstInstance,
@@ -308,14 +295,14 @@ typedef struct cip_instance {
  *should be sent
  */
 typedef CipStatus (*CipServiceFunction)(
-    CipInstance* instance, CipMessageRouterRequest* message_router_request,
+    void* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response);
 
 /** @brief Service descriptor. These are stored in an array */
 typedef struct cip_service_struct {
     CipUsint service_number; /**< service number*/
     CipServiceFunction service_function; /**< pointer to a function call*/
-    char* name; /**< name of the service */
+    std::string name; /**< name of the service */
 } CipServiceStruct;
 
 /**
@@ -367,5 +354,3 @@ typedef struct {
     (1 << (a) | 1 << (b) | 1 << (c) | 1 << (d) | 1 << (e) | 1 << (f) | 1 << (g))
 #define MASK8(a, b, c, d, e, f, g, h) \
     (1 << (a) | 1 << (b) | 1 << (c) | 1 << (d) | 1 << (e) | 1 << (f) | 1 << (g) | 1 << (h))
-
-#endif /* OPENER_CIPTYPES_H_ */
