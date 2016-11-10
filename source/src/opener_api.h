@@ -11,6 +11,7 @@
 #include "cip/cip_class.h"
 #include "opener_user_conf.h"
 #include "typedefs.h"
+#include "cip/cipconnectionmanager.h"
 
 /**  @defgroup CIP_API OpENer User interface
  * @brief This is the public interface of the OpENer. It provides all function
@@ -132,59 +133,56 @@ int DecodeData(CipUsint cip_data_type, void* cip_data, CipUsint** cip_message);
  */
 CIPClass* CreateAssemblyObject(CipUdint instance_number, EipByte* data, CipUint data_length);
 
-struct connection_object;
-
 /** @ingroup CIP_API
  * @brief Function prototype for handling the opening of connections
  *
- * @param connection_object The connection object which is opening the
+ * @param ConnectionObject The connection object which is opening the
  * connection
  * @param extended_error_code The returned error code of the connection object
  *
  * @return CIP error code
  */
 typedef CipStatus (*OpenConnectionFunction)(
-    struct connection_object* connection_object, CipUint* extended_error_code);
+    ConnectionObject* connection, CipUint* extended_error_code);
 
 /** @ingroup CIP_API
  * @brief Function prototype for handling the closing of connections
  *
- * @param connection_object The connection object which is closing the
+ * @param ConnectionObject The connection object which is closing the
  * connection
  */
 typedef void (*ConnectionCloseFunction)(
-    struct connection_object* connection_object);
+    ConnectionObject* connection);
 
 /** @ingroup CIP_API
  * @brief Function prototype for handling the timeout of connections
  *
- * @param connection_object The connection object which connection timed out
+ * @param ConnectionObject The connection object which connection timed out
  */
 typedef void (*ConnectionTimeoutFunction)(
-    struct connection_object* connection_object);
+    ConnectionObject* connection);
 
 /** @ingroup CIP_API
  * @brief Function prototype for sending data via a connection
  *
- * @param connection_object The connection object which connection timed out
+ * @param ConnectionObject The connection object which connection timed out
  *
  * @return EIP stack status
  */
 typedef CipStatus (*ConnectionSendDataFunction)(
-    struct connection_object* connection_object);
+    ConnectionObject* onnection);
 
 /** @ingroup CIP_API
  * @brief Function prototype for receiving data via a connection
  *
- * @param connection_object The connection object which connection timed out
+ * @param ConnectionObject The connection object which connection timed out
  * @param data The payload of the CIP message
  * @param data_length Length of the payload
  *
  * @return Stack status
  */
 typedef CipStatus (*ConnectionReceiveDataFunction)(
-    struct connection_object* connection_object, CipUsint* data,
-    CipUint data_length);
+    ConnectionObject* connection, CipUsint* data, CipUint data_length);
 
 /** @ingroup CIP_API
  * @brief register open functions for an specific object.

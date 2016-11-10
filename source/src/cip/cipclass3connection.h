@@ -14,6 +14,12 @@
 #include "cipconnectionmanager.h"
 #include "opener_api.h"
 
+
+/**** Global variables ****/
+
+/** @brief Array of the available explicit connections */
+ConnectionObject *g_explicit_connections[OPENER_CIP_NUM_EXPLICIT_CONNS];
+
 /** @brief Check if Class3 connection is available and if yes setup all data.
  *
  * This function can be called after all data has been parsed from the forward open request
@@ -23,9 +29,10 @@
  *    - EIP_OK ... on success
  *    - On an error the general status code to be put into the response
  */
-CipStatus EstablishClass3Connection(ConnectionObject* connection_object,
-    CipUint* extended_error);
+CipStatus EstablishClass3Connection(ConnectionObject* connection_object, CipUint* extended_error);
 
 void InitializeClass3ConnectionData(void);
+
+ConnectionObject* GetFreeExplicitConnection(void);
 
 #endif /* OPENER_CIPCLASS3CONNECTION_H_ */

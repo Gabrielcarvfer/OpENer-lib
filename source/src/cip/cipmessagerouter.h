@@ -9,6 +9,7 @@
 
 #include "ciptypes.h"
 #include "typedefs.h"
+#include "cip_class.h"
 #include <map>
 
 static const int kCipMessageRouterClassCode = 0x02;

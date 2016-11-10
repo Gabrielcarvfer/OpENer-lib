@@ -21,7 +21,7 @@ class CIPAssembly : public CIPClass
 		 *
 		 * @return Returns kCipStatusOk if assembly object was successfully created, otherwise kCipStatusError
 		 */
-		CipStatus CipAssemblyInitialize(void);
+		static CipStatus CipAssemblyInitialize(void);
 
 		/** @brief clean up the data allocated in the assembly object instances
 		 *
@@ -30,7 +30,7 @@ class CIPAssembly : public CIPClass
 		 * is not freed neither the assembly object instances. These are handled in the
 		 * main shutdown function.
 		 */
-		void ShutdownAssemblies(void);
+		static void ShutdownAssemblies(void);
 
 		/** @brief notify an Assembly object that data has been received for it.
 		 * 

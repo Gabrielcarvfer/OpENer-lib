@@ -5,6 +5,7 @@
  ******************************************************************************/
 #pragma once
 #include "typedefs.h"
+#include "ciperror.h"
 #include <string>
 /** @brief Segment type Enum
  *

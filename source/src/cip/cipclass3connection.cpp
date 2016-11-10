@@ -8,16 +8,10 @@
 
 #include "cipclass3connection.h"
 
-ConnectionObject* GetFreeExplicitConnection(void);
 
-/**** Global variables ****/
-
-/** @brief Array of the available explicit connections */
-ConnectionObject g_explicit_connections[OPENER_CIP_NUM_EXPLICIT_CONNS];
 
 /**** Implementation ****/
-CipStatus EstablishClass3Connection(ConnectionObject* connection_object,
-    CipUint* extended_error)
+CipStatus EstablishClass3Connection(ConnectionObject* connection_object, CipUint* extended_error)
 {
     CipStatus eip_status = kCipStatusOk;
     CipUdint produced_connection_id_buffer;
@@ -39,9 +33,9 @@ CipStatus EstablishClass3Connection(ConnectionObject* connection_object,
         explicit_connection->instance_type = kConnectionTypeExplicit;
         explicit_connection->socket[0] = explicit_connection->socket[1] = kEipInvalidSocket;
         /* set the connection call backs */
-        explicit_connection->connection_close_function = RemoveFromActiveConnections;
+        explicit_connection->connection_close_function = ConnectionObject::RemoveFromActiveConnections;
         /* explicit connection have to be closed on time out*/
-        explicit_connection->connection_timeout_function = RemoveFromActiveConnections;
+        explicit_connection->connection_timeout_function = ConnectionObject::RemoveFromActiveConnections;
 
         ConnectionObject::AddNewActiveConnection(explicit_connection);
     }
@@ -52,8 +46,8 @@ ConnectionObject* GetFreeExplicitConnection(void)
 {
     int i;
     for (i = 0; i < OPENER_CIP_NUM_EXPLICIT_CONNS; i++) {
-        if (g_explicit_connections[i].state == kConnectionStateNonExistent)
-            return &(g_explicit_connections[i]);
+        if (g_explicit_connections[i]->state == kConnectionStateNonExistent)
+            return g_explicit_connections[i];
     }
     return NULL;
 }
