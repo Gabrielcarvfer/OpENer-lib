@@ -17,7 +17,7 @@
 #include "trace.h"
 #include "typedefs.h"
 
-#include "ciptcpipinterface.h"
+#include "src/cip/network_stack/tcpip_link/ciptcpipinterface.h"
 #include "eip_encap.h"
 
 /** @brief handle any connection request coming in the TCP server socket.

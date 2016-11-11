@@ -10,9 +10,9 @@
 
 #include "appcontype.h"
 #include "cipassembly.h"
-#include "cipcommon.h"
-#include "cipconnectionmanager.h"
-#include "ciptcpipinterface.h"
+#include "src/cip/connection_stack/cipcommon.h"
+#include "src/cip/connection_stack/cipconnectionmanager.h"
+#include "src/cip/network_stack/tcpip_link/ciptcpipinterface.h"
 #include "cpf.h"
 #include "endianconv.h"
 #include "generic_networkhandler.h"
@@ -40,7 +40,7 @@ CipStatus OpenProducingPointToPointConnection(
     ConnectionObject* connection_object,
     CipCommonPacketFormatData* common_packet_format_data);
 
-CipUint HandleConfigData(CIPClass* assembly_class,
+CipUint HandleConfigData(CIP_Class* assembly_class,
     ConnectionObject* connection_object);
 
 /* Regularly close the IO connection. If it is an exclusive owner or input only
@@ -74,10 +74,10 @@ CipStatus EstablishIoConnction(ConnectionObject* connection_object,
     int originator_to_target_connection_type,
         target_to_originator_connection_type;
     CipStatus eip_status = kCipStatusOk;
-    CipAttributeStruct* attribute;
+    CIP_Attribute* attribute;
     /* currently we allow I/O connections only to assembly objects */
-    CIPClass* assembly_class = GetCIPClass(kCipAssemblyClassCode); /* we don't need to check for zero as this is handled in the connection path parsing */
-    CIPClass* instance = NULL;
+    CIP_Class* assembly_class = GetCIPClass(kCipAssemblyClassCode); /* we don't need to check for zero as this is handled in the connection path parsing */
+    CIP_Class* instance = NULL;
 
     ConnectionObject* io_connection_object = GetIoConnectionForConnectionData(
         connection_object, extended_error);
@@ -467,11 +467,11 @@ CipStatus OpenMulticastConnection(
     return kCipStatusOk;
 }
 
-CipUint HandleConfigData(CIPClass* assembly_class,
+CipUint HandleConfigData(CIP_Class* assembly_class,
     ConnectionObject* connection_object)
 {
     CipUint connection_manager_status = 0;
-    CIPClass* config_instance = GetCIPClass(
+    CIP_Class* config_instance = GetCIPClass(
         assembly_class, connection_object->connection_path.connection_point[2]);
 
     if (0 != g_config_data_length) {

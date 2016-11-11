@@ -7,17 +7,17 @@
 #include <cstring> /*needed for memcpy */
 
 #include "cipassembly.h"
-#include "cipcommon.h"
-#include "cipconnectionmanager.h"
+#include "src/cip/connection_stack/cipcommon.h"
+#include "src/cip/connection_stack/cipconnectionmanager.h"
 #include "opener_api.h"
 #include "trace.h"
 
 
-CIPClass* CIPAssembly::CreateAssemblyClass(void)
+CIP_Class* CIPAssembly::CreateAssemblyClass(void)
 {
-    CIPClass* assembly_class;
+    CIP_Class* assembly_class;
     /* create the CIP Assembly object with zero instances */
-    assembly_class = new CIPClass(kCipAssemblyClassCode,
+    assembly_class = new CIP_Class(kCipAssemblyClassCode,
                                                   0, /* # class attributes*/
                                                   0, /* 0 as the assembly object should not have a get_attribute_all service*/
                                                   0, /* # class services*/
@@ -35,11 +35,11 @@ CIPClass* CIPAssembly::CreateAssemblyClass(void)
     return assembly_class;
 }
 
-CIPClass* CIPAssembly::CreateAssemblyInstance(CipUdint instance_id)
+CIP_Class* CIPAssembly::CreateAssemblyInstance(CipUdint instance_id)
 {
-    CIPClass* assembly_class;
+    CIP_Class* assembly_class;
     /* create the CIP Assembly object with zero instances */
-    assembly_class = new CIPClass(kCipAssemblyClassCode,
+    assembly_class = new CIP_Class(kCipAssemblyClassCode,
                                   0, /* # class attributes*/
                                   0, /* 0 as the assembly object should not have a get_attribute_all service*/
                                   0, /* # class services*/
@@ -61,14 +61,14 @@ CipStatus CIPAssembly::CipAssemblyInitialize(void)
 
 void CIPAssembly::ShutdownAssemblies(void)
 {
-    if (CIPClass::GetCipClass(kCipAssemblyClassCode) != NULL) 
+    if (CIP_Class::GetCipClass(kCipAssemblyClassCode) != NULL)
     {
-        CipAttributeStruct* attribute;
-        CIPClass* instance;
+        CIP_Attribute* attribute;
+        CIP_Class* instance;
 
-        for(int i = 1; i <= CIPClass::GetCipClassNumberInstances(kCipAssemblyClassCode); i++)
+        for(int i = 1; i <= CIP_Class::GetCipClassNumberInstances(kCipAssemblyClassCode); i++)
         {
-            instance = CIPClass::GetCipClassInstance(kCipAssemblyClassCode, i);
+            instance = CIP_Class::GetCipClassInstance(kCipAssemblyClassCode, i);
 
             attribute = instance->GetCipAttribute(3);
             if (NULL != attribute) 
@@ -79,13 +79,13 @@ void CIPAssembly::ShutdownAssemblies(void)
     }
 }
 
-CIPClass* CIPAssembly::CreateAssemblyObject(CipUdint instance_id, EipByte* data, CipUint data_length)
+CIP_Class* CIPAssembly::CreateAssemblyObject(CipUdint instance_id, EipByte* data, CipUint data_length)
 {
-    CIPClass* assembly_class;
-    CIPClass* instance;
+    CIP_Class* assembly_class;
+    CIP_Class* instance;
     CipByteArray* assembly_byte_array;
 
-    if (NULL == (assembly_class = CIPClass::GetCipClassInstance(kCipAssemblyClassCode, instance_id)))
+    if (NULL == (assembly_class = CIP_Class::GetCipClassInstance(kCipAssemblyClassCode, instance_id)))
     {
         if (NULL == (assembly_class = CreateAssemblyClass())) 
         {
@@ -128,11 +128,11 @@ CipStatus CIPAssembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUi
     return AfterAssemblyDataReceived(this);
 }
 
-CipStatus CIPAssembly::SetAssemblyAttributeSingle(CIPClass* instance, CipMessageRouterRequest* message_router_request,
+CipStatus CIPAssembly::SetAssemblyAttributeSingle(CIP_Class* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
     CipUsint* router_request_data;
-    CipAttributeStruct* attribute;
+    CIP_Attribute* attribute;
     OPENER_TRACE_INFO(" setAttribute %d\n", message_router_request->request_path.attribute_number);
 
     router_request_data = message_router_request->data;
@@ -151,7 +151,7 @@ CipStatus CIPAssembly::SetAssemblyAttributeSingle(CIPClass* instance, CipMessage
             CipByteArray* data = (CipByteArray*)attribute->data;
 
             /* TODO: check for ATTRIBUTE_SET/GETABLE MASK */
-            if (true == ConnectionObject::IsConnectedOutputAssembly(CIPClass::GetCipInstanceNumber(instance)))
+            if (true == ConnectionObject::IsConnectedOutputAssembly(CIP_Class::GetCipInstanceNumber(instance)))
             {
                 OPENER_TRACE_WARN("Assembly AssemblyAttributeSingle: received data for connected output assembly\n\r");
                 message_router_response->general_status = kCipErrorAttributeNotSetable;

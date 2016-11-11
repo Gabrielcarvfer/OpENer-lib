@@ -8,8 +8,8 @@
 #include "cipconnectionmanager.h"
 
 
-#include "../enet_encap/eip_encap.h"
-#include "../enet_encap/eip_encap.h"
+#include "src/enet_encap/eip_encap.h"
+#include "src/enet_encap/eip_encap.h"
 #include "appcontype.h"
 #include "cipassembly.h"
 #include "cipclass3connection.h"
@@ -88,11 +88,12 @@ CipUdint ConnectionObject::GetConnectionId (void)
     return (g_incarnation_id | (connection_id & 0x0000FFFF));
 }
 
+
 CipStatus ConnectionObject::ConnectionManagerInit (CipUint unique_connection_id)
 {
     InitializeConnectionManagerData ();
 
-    CIPClass *connection_manager = new CIPClass (g_kCipConnectionManagerClassCode, /* class ID */
+    CIP_Class *connection_manager = new CIP_Class (g_kCipConnectionManagerClassCode, /* class ID */
                                                  0, /* # of class attributes */
                                                  0xC6, /* class getAttributeAll mask */
                                                  0, /* # of class services */
@@ -112,7 +113,7 @@ CipStatus ConnectionObject::ConnectionManagerInit (CipUint unique_connection_id)
     g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
 
     AddConnectableObject (kCipMessageRouterClassCode, EstablishClass3Connection);
-    AddConnectableObject (kCipAssemblyClassCode, EstablishIoConnction);
+    AddConnectableObject (kCipAssemblyClassCode,  EstablishIoConnction );
 
     return kCipStatusOk;
 }
@@ -177,7 +178,7 @@ ConnectionObject::HandleReceivedConnectedData (CipUsint *data, int data_length, 
  * 		@return >0 .. success, 0 .. no reply to send back
  *      	-1 .. error
  */
-CipStatus ConnectionObject::ForwardOpen (CIPClass *instance, CipMessageRouterRequest *message_router_request,
+CipStatus ConnectionObject::ForwardOpen (CIP_Class *instance, CipMessageRouterRequest *message_router_request,
                                          CipMessageRouterResponse *message_router_response)
 {
     CipUint connection_status = kConnectionManagerStatusCodeSuccess;
@@ -357,7 +358,7 @@ void ConnectionObject::GeneralConnectionConfiguration ()
     this->produced_connection_size = this->t_to_o_network_connection_parameter & 0x01FF;
 }
 
-CipStatus ConnectionObject::ForwardClose (CIPClass *instance, CipMessageRouterRequest *message_router_request,
+CipStatus ConnectionObject::ForwardClose (CIP_Class *instance, CipMessageRouterRequest *message_router_request,
                                           CipMessageRouterResponse *message_router_response)
 {
     /*Suppress compiler warning*/
@@ -404,7 +405,7 @@ CipStatus ConnectionObject::ForwardClose (CIPClass *instance, CipMessageRouterRe
 }
 
 /* TODO: Not implemented */
-CipStatus ConnectionObject::GetConnectionOwner (CIPClass *instance, CipMessageRouterRequest *message_router_request,
+CipStatus ConnectionObject::GetConnectionOwner (CIP_Class *instance, CipMessageRouterRequest *message_router_request,
                                                 CipMessageRouterResponse *message_router_response)
 {
     /* suppress compiler warnings */
@@ -802,7 +803,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
 {
     CipUsint *message = message_router_request->data;
     int remaining_path_size = connection_object->connection_path_size = *message++; /* length in words */
-    CIPClass *class_ptr = NULL;
+    CIP_Class *class_ptr = NULL;
 
     int originator_to_target_connection_type;
     int target_to_originator_connection_type;
@@ -878,7 +879,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
         if (EQLOGICALPATH(*message, 0x20))
         { /* classID */
             connection_object->connection_path.class_id = GetPaddedLogicalPath (&message);
-            class_ptr = CIPClass::GetCipClassInstance (connection_object->connection_path.class_id, 0);
+            class_ptr = CIP_Class::GetCipClassInstance (connection_object->connection_path.class_id, 0);
             if (0 == class_ptr)
             {
                 OPENER_TRACE_ERR("classid %"
@@ -910,7 +911,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
             OPENER_TRACE_INFO("Configuration instance id %"
                                       PRId32
                                       "\n", connection_object->connection_path.connection_point[2]);
-            if (NULL == CIPClass::GetCipClassInstance (class_ptr->class_id,
+            if (NULL == CIP_Class::GetCipClassInstance (class_ptr->class_id,
                                                        connection_object->connection_path.connection_point[2]))
             {
                 /*according to the test tool we should respond with this extended error code */
@@ -985,7 +986,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
                     OPENER_TRACE_INFO("connection point %"
                                               PRIu32
                                               "\n", connection_object->connection_path.connection_point[i]);
-                    if (0 == CIPClass::GetCipClassInstance (class_ptr->class_id,
+                    if (0 == CIP_Class::GetCipClassInstance (class_ptr->class_id,
                                                             connection_object->connection_path.connection_point[i]))
                     {
                         *extended_error = kConnectionManagerStatusCodeInconsistentApplicationPathCombo;

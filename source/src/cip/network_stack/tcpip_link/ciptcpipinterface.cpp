@@ -7,10 +7,10 @@
 
 #include "ciptcpipinterface.h"
 
-#include "cipcommon.h"
+#include "src/cip/connection_stack/cipcommon.h"
 #include "ciperror.h"
-#include "cipethernetlink.h"
-#include "cipmessagerouter.h"
+#include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
+#include "src/cip/connection_stack/cipmessagerouter.h"
 #include "endianconv.h"
 #include "opener_api.h"
 #include "opener_user_conf.h"
@@ -59,11 +59,11 @@ MulticastAddressConfiguration g_multicast_configuration = {
 
 /************** Functions ****************************************/
 CipStatus GetAttributeSingleTcpIpInterface(
-    CIPClass* instance, CipMessageRouterRequest* message_router_request,
+    CIP_Class* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response);
 
 CipStatus GetAttributeAllTcpIpInterface(
-    CIPClass* instance, CipMessageRouterRequest* message_router_request,
+    CIP_Class* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response);
 
 CipStatus ConfigureNetworkInterface(const char* ip_address,
@@ -124,10 +124,10 @@ void ConfigureHostName(const char* hostname)
 }
 
 CipStatus SetAttributeSingleTcp(
-    CIPClass* instance, CipMessageRouterRequest* message_router_request,
+    CIP_Class* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
-    CipAttributeStruct* attribute = GetCipAttribute(
+    CIP_Attribute* attribute = GetCipAttribute(
         instance, message_router_request->request_path.attribute_number);
     (void)instance; /*Suppress compiler warning */
 
@@ -150,7 +150,7 @@ CipStatus SetAttributeSingleTcp(
 
 CipStatus CipTcpIpInterfaceInit()
 {
-    CIPClass* tcp_ip_class = NULL;
+    CIP_Class* tcp_ip_class = NULL;
 
     if ((tcp_ip_class = CreateCIPClass(kCipTcpIpInterfaceClassCode, 0, /* # class attributes*/
              0xffffffff, /* class getAttributeAll mask*/
@@ -163,7 +163,7 @@ CipStatus CipTcpIpInterfaceInit()
         == 0) {
         return kCipStatusError;
     }
-    CIPClass* instance = GetCIPClass(tcp_ip_class, 1); /* bind attributes to the instance #1 that was created above*/
+    CIP_Class* instance = GetCIPClass(tcp_ip_class, 1); /* bind attributes to the instance #1 that was created above*/
 
     InsertAttribute(instance, 1, kCipDword, (void*)&tcp_status_,
         kGetableSingleAndAll);
@@ -211,7 +211,7 @@ void ShutdownTcpIpInterface(void)
 }
 
 CipStatus GetAttributeSingleTcpIpInterface(
-    CIPClass* instance, CipMessageRouterRequest* message_router_request,
+    CIP_Class* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
 
@@ -249,12 +249,12 @@ CipStatus GetAttributeSingleTcpIpInterface(
 }
 
 CipStatus GetAttributeAllTcpIpInterface(
-    CIPClass* instance, CipMessageRouterRequest* message_router_request,
+    CIP_Class* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
 
     CipUsint* response = message_router_response->data; /* pointer into the reply */
-    CipAttributeStruct* attribute = instance->attributes;
+    CIP_Attribute* attribute = instance->attributes;
 
     for (int j = 0; j < instance->cip_class->number_of_attributes; j++) /* for each instance attribute of this class */
     {

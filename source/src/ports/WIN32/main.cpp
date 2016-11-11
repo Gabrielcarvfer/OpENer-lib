@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cipcommon.h"
+#include "src/cip/connection_stack/cipcommon.h"
 #include "generic_networkhandler.h"
 #include "opener_api.h"
 #include "trace.h"

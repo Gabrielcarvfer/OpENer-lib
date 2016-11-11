@@ -8,19 +8,19 @@
 #include "cipcommon.h"
 
 #include "cpf.h"
-#include "../enet_encap/eip_encap.h"
+#include "src/enet_encap/eip_encap.h"
 #include "appcontype.h"
 #include "cipassembly.h"
 #include "cipconnectionmanager.h"
 #include "ciperror.h"
-#include "cipethernetlink.h"
+#include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
 #include "cipidentity.h"
 #include "cipmessagerouter.h"
-#include "ciptcpipinterface.h"
+#include "src/cip/network_stack/tcpip_link/ciptcpipinterface.h"
 #include "endianconv.h"
 #include "opener_api.h"
 #include "trace.h"
-#include "../typedefs.h"
+#include "src/typedefs.h"
 #include <map>
 
 void CIPCommon::CipStackInit (CipUint unique_connection_id)
@@ -60,12 +60,12 @@ void CIPCommon::ShutdownCipStack (void)
     CIPMessageRouter::DeleteAllClasses ();
 }
 
-CipStatus CIPCommon::NotifyClass (CIPClass *cip_class, CipMessageRouterRequest *message_router_request,
+CipStatus CIPCommon::NotifyClass (CIP_Class *cip_class, CipMessageRouterRequest *message_router_request,
                                   CipMessageRouterResponse *message_router_response)
 {
     int i;
-    CIPClass *instance;
-    std::map<CipUdint, CipServiceStruct *>service_set;
+    CIP_Class *instance;
+    std::map<CipUdint, CIP_Service *>service_set;
     unsigned instance_number; /* my instance number */
 
     /* find the instance: if instNr==0, the class is addressed, else find the instance */
@@ -74,14 +74,14 @@ CipStatus CIPCommon::NotifyClass (CIPClass *cip_class, CipMessageRouterRequest *
     instance_number = message_router_request->request_path.instance_number;
 
     // look up the instance (note that if inst==0 this will be the class itself)
-    instance = CIPClass::GetCipClassInstance (cip_class->class_id, instance_number);
+    instance = CIP_Class::GetCipClassInstance (cip_class->class_id, instance_number);
 
     if (instance) /* if instance is found */
     {
         OPENER_TRACE_INFO("notify: found instance %d%s\n", instance_number,
                           instance_number == 0 ? " (class object)" : "");
 
-        service_set = CIPClass::GetCipClass (instance->class_id)->services; /* get pointer to array of services */
+        service_set = CIP_Class::GetCipClass (instance->class_id)->services; /* get pointer to array of services */
         if (service_set.size()>0) /* if services are defined */
         {
             for (i = 0; i < service_set.size(); i++) /* seach the services list */

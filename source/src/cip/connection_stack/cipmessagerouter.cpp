@@ -4,7 +4,7 @@
  *
  ******************************************************************************/
 #include "cipmessagerouter.h"
-#include "cipcommon.h"
+#include "src/cip/connection_stack/cipcommon.h"
 #include "ciperror.h"
 #include "endianconv.h"
 #include "opener_api.h"
@@ -19,9 +19,9 @@ CipMessageRouterResponse g_message_router_response;
 
 CipStatus CIPMessageRouter::CipMessageRouterInit()
 {
-    CIPClass* message_router;
+    CIP_Class* message_router;
 
-    message_router = CIPClass(kCipMessageRouterClassCode, /* class ID*/
+    message_router = CIP_Class(kCipMessageRouterClassCode, /* class ID*/
                                                        0, /* # of class attributes */
                                               0xffffffff, /* class getAttributeAll mask*/
                                                        0, /* # of class services*/
@@ -45,7 +45,7 @@ CipStatus CIPMessageRouter::CipMessageRouterInit()
     return kCipStatusOk;
 }
 
-CIPClass* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
+CIP_Class* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
 {
     /* for each entry in list*/
     for(auto ptr : message_router_registered_classes) 
@@ -58,7 +58,7 @@ CIPClass* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
     return 0;  
 }
 
-CipStatus CIPMessageRouter::RegisterCIPClass(CIPClass* cip_class)
+CipStatus CIPMessageRouter::RegisterCIPClass(CIP_Class* cip_class)
 {
     std::pair<std::map<int>::iterator,bool> ret;
 
@@ -94,7 +94,7 @@ CipStatus CIPMessageRouter::NotifyMR(CipUsint* data, int data_length)
     else 
     {
         /* forward request to appropriate Object if it is registered*/
-        CIPClass* registered_object;
+        CIP_Class* registered_object;
 
         registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
         if (registered_object == 0) 
@@ -167,7 +167,7 @@ void CIPMessageRouter::DeleteAllClasses(void)
 {
     while (message_router_registered_classes.size() != 0) 
     {
-        for (auto class_instances_set : CIPClass::CIP_Object_set)
+        for (auto class_instances_set : CIP_Class::CIP_Object_set)
         {
             int class_id = *class_instances_set->class_id;
 
@@ -188,18 +188,18 @@ void CIPMessageRouter::DeleteAllClasses(void)
             }
 
             //Removing class
-            for (auto attribute : CIPClass::CIP_Class_set[class_id].attributes)
+            for (auto attribute : CIP_Class::CIP_Class_set[class_id].attributes)
             {
                 delete attribute;
             }
 
-            for (auto services : CIPClass::CIP_Class_set[class_id].attributes)
+            for (auto services : CIP_Class::CIP_Class_set[class_id].attributes)
             {
                 delete services;
             }
             
             //Remove main class and instances set
-            CIPClass::CIP_Class_set.erase(class_id);
+            CIP_Class::CIP_Class_set.erase(class_id);
             instances_classes_set.erase(class_id);
 
         }
