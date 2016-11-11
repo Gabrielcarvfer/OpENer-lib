@@ -270,13 +270,6 @@ typedef struct {
    request */
 } CipMessageRouterResponse;
 
-typedef struct {
-    CipUint attribute_number;
-    CipUsint type;
-    /*< 0 => getable_all, 1 => getable_single; 2 => setable_single; 3 => get and setable; all other values reserved */
-    CIPAttributeFlag attribute_flags;
-    void* data;
-} CipAttributeStruct;
 
 /* type definition of CIP service structure */
 
@@ -298,13 +291,6 @@ typedef struct {
 typedef CipStatus (*CipServiceFunction)(
     void* instance, CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response);
-
-/** @brief Service descriptor. These are stored in an array */
-typedef struct cip_service_struct {
-    CipUsint service_number; /**< service number*/
-    CipServiceFunction service_function; /**< pointer to a function call*/
-    std::string name; /**< name of the service */
-} CipServiceStruct;
 
 /**
  * @brief Struct for saving TCP/IP interface information

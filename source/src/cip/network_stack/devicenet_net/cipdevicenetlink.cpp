@@ -5,9 +5,9 @@
 
 #include "cipdevicenetlink.h"
 
-#include "cipcommon.h"
+#include "src/cip/connection_stack/cipcommon.h"
 #include "ciperror.h"
-#include "cipmessagerouter.h"
+#include "src/cip/connection_stack/cipmessagerouter.h"
 #include "endianconv.h"
 #include "opener_api.h"
 #include "typedefs.h"

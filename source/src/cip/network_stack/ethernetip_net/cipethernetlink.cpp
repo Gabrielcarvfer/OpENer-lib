@@ -7,9 +7,9 @@
 
 #include "cipethernetlink.h"
 
-#include "cipcommon.h"
+#include "src/cip/connection_stack/cipcommon.h"
 #include "ciperror.h"
-#include "cipmessagerouter.h"
+#include "src/cip/connection_stack/cipmessagerouter.h"
 #include "endianconv.h"
 #include "opener_api.h"
 
@@ -30,8 +30,8 @@ void ConfigureMacAddress(const CipUsint* mac_address)
 
 CipStatus CipEthernetLinkInit()
 {
-    CIPClass* ethernet_link_class;
-    CIPClass* ethernet_link_instance;
+    CIP_Class* ethernet_link_class;
+    CIP_Class* ethernet_link_instance;
 
     /* set attributes to initial values */
     g_ethernet_link.interface_speed = 100;

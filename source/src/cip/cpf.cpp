@@ -7,10 +7,10 @@
 
 #include "cpf.h"
 
-#include "cipcommon.h"
-#include "cipconnectionmanager.h"
+#include "src/cip/connection_stack/cipcommon.h"
+#include "src/cip/connection_stack/cipconnectionmanager.h"
 #include "ciperror.h"
-#include "cipmessagerouter.h"
+#include "src/cip/connection_stack/cipmessagerouter.h"
 #include "../enet_encap/eip_endianconv.h"
 #include "opener_api.h"
 #include "trace.h"

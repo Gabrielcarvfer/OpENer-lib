@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cipconnectionmanager.h"
+#include "src/cip/connection_stack/cipconnectionmanager.h"
 #include "endianconv.h"
 #include "networkhandler.h"
 #include "opener_api.h"

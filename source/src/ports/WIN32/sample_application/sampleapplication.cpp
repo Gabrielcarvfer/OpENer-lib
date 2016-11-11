@@ -78,12 +78,12 @@ void CheckIoConnectionEvent(unsigned int pa_unOutputAssembly,
     (void)pa_eIOConnectionEvent; /* suppress compiler warning */
 }
 
-CipStatus AfterAssemblyDataReceived(CIPClass* pa_pstInstance)
+CipStatus AfterAssemblyDataReceived(CIP_Class* pa_pstInstance)
 {
     CipStatus nRetVal = kCipStatusOk;
 
     /*handle the data received e.g., update outputs of the device */
-    switch (CIPClass::GetCipInstanceNumber(pa_pstInstance))
+    switch (CIP_Class::GetCipInstanceNumber(pa_pstInstance))
     {
     case DEMO_APP_OUTPUT_ASSEMBLY_NUM:
         /* Data for the output assembly has been received.
@@ -107,7 +107,7 @@ CipStatus AfterAssemblyDataReceived(CIPClass* pa_pstInstance)
     return nRetVal;
 }
 
-CipBool BeforeAssemblyDataSend(CIPClass* pa_pstInstance)
+CipBool BeforeAssemblyDataSend(CIP_Class* pa_pstInstance)
 {
     /*update data to be sent e.g., read inputs of the device */
     /*In this sample app we mirror the data from out to inputs on data receive
@@ -115,7 +115,7 @@ CipBool BeforeAssemblyDataSend(CIPClass* pa_pstInstance)
    * the data is new.
    */
 
-    if (CIPClass::GetCipInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM) {
+    if (CIP_Class::GetCipInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM) {
         /* do something interesting with the existing data
      * for the explicit get-data-attribute message */
     }

@@ -6,10 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cipcommon.h"
-#include "cipconnectionmanager.h"
+#include "src/cip/connection_stack/cipcommon.h"
+#include "src/cip/connection_stack/cipconnectionmanager.h"
 #include "cipidentity.h"
-#include "cipmessagerouter.h"
+#include "src/cip/connection_stack/cipmessagerouter.h"
 #include "cpf.h"
 #include "eip_encap.h"
 #include "eip_endianconv.h"

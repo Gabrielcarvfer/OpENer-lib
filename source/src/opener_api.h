@@ -8,10 +8,10 @@
 #include <cassert>
 #include "ciperror.h"
 #include "cip/ciptypes.h"
-#include "cip/cip_class.h"
+#include "src/cip/class_stack/CIP_Class.h"
 #include "opener_user_conf.h"
 #include "typedefs.h"
-#include "cip/cipconnectionmanager.h"
+#include "src/cip/connection_stack/cipconnectionmanager.h"
 
 /**  @defgroup CIP_API OpENer User interface
  * @brief This is the public interface of the OpENer. It provides all function

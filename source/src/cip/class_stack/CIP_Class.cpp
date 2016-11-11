@@ -1,11 +1,13 @@
-#include "cip_class.h"
+#include "CIP_Class.h"
 #include "trace.h"
-#include "cipcommon.h"
+#include "src/cip/connection_stack/cipcommon.h"
+#include "CIP_Service.h"
+#include "CIP_Attribute.h"
 #include <utility>
 
 
 
-CIPClass::CIPClass(
+CIP_Class::CIP_Class(
                     CipUdint class_id, 
                     int number_of_class_attributes,
                     CipUdint get_all_class_attributes_mask,
@@ -33,13 +35,8 @@ CIPClass::CIPClass(
     // indicate which attributes are included in instance getAttributeAll  
     this->get_attribute_all_mask = get_all_instance_attributes_mask;
 
-    // the class manages the behavior of the instances 
-    this->number_of_services = number_of_instance_services + ((0 == get_all_instance_attributes_mask) ? 1 : 2);
-
     /* initialize the class-specific fields of the metaClass struct */
     this->class_name = std::string(name);
-
-    highest_attribute_number = 0;
 
     //if ((RegisterCIPClass(class)) == kCipStatusError) { /* no memory to register class in Message Router */
     //    return 0; /*TODO handle return value and clean up if necessary*/
@@ -63,10 +60,10 @@ CIPClass::CIPClass(
         this->InsertAttribute(5, kCipUint, (void *) &kCipUintZero, kGetableAll);
 
         // max class attribute number
-        this->InsertAttribute(6, kCipUint, (void *) &this->highest_attribute_number, kGetableSingleAndAll);
+        //this->InsertAttribute(6, kCipUint, (void *) &this->highest_attribute_number, kGetableSingleAndAll);
 
         // max instance attribute number
-        this->InsertAttribute(7, kCipUint, (void *) &this->highest_attribute_number, kGetableSingleAndAll);
+        //this->InsertAttribute(7, kCipUint, (void *) &this->highest_attribute_number, kGetableSingleAndAll);
 
         /* create the standard instance services*/
         // only if the mask has values add the get_attribute_all service
@@ -84,7 +81,7 @@ CIPClass::CIPClass(
     }
 }
 
-CIPClass::~CIPClass()
+CIP_Class::~CIP_Class()
 {
     auto it = CIP_object_set[this->class_id].find(this);
     CIP_object_set[this->class_id].erase(it);
@@ -93,7 +90,7 @@ CIPClass::~CIPClass()
     delete this;
 }
 
-CIPClass * CIPClass::GetCipClassInstance(CipUdint class_id, CipUdint instance_number)
+CIP_Class * CIP_Class::GetCipClassInstance(CipUdint class_id, CipUdint instance_number)
 {
     if (CIP_object_set[class_id].size() >= instance_number)
         return CIP_object_set[class_id][instance_number];
@@ -101,7 +98,7 @@ CIPClass * CIPClass::GetCipClassInstance(CipUdint class_id, CipUdint instance_nu
         return NULL;
 }
 
-CIPClass * CIPClass::GetCipClass(CipUdint class_id)
+CIP_Class * CIP_Class::GetCipClass(CipUdint class_id)
 {
     if (CIP_object_set[class_id].size() > 0)
         return CIP_object_set[class_id][0];
@@ -109,25 +106,25 @@ CIPClass * CIPClass::GetCipClass(CipUdint class_id)
         return NULL;
 }
 
-CipUdint CIPClass::GetCipClassNumberInstances(CipUdint class_id)
+CipUdint CIP_Class::GetCipClassNumberInstances(CipUdint class_id)
 {
     return CIP_object_set[class_id].size();
 }
 
-CipUdint CIPClass::GetCipInstanceNumber(CIPClass * instance)
+CipUdint CIP_Class::GetCipInstanceNumber(CIP_Class * instance)
 {
     return std::distance(CIP_object_set[instance->class_id].begin(), CIP_object_set[instance->class_id].find(instance) );
 }
 
-bool CIPClass::AddCipClassInstance(CIPClass* instance, CipUdint position)
+bool CIP_Class::AddCipClassInstance(CIP_Class* instance, CipUdint position)
 {
-    std::pair<std::map<CipUdint, CIPClass *>::iterator,bool> ret;
+    std::pair<std::map<CipUdint, CIP_Class *>::iterator,bool> ret;
 
     ret = CIP_object_set[instance->class_id].emplace(position,instance);
 
     return ret.second;
 }
-void CIPClass::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipByte cip_flags)
+void CIP_Class::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CIPAttributeFlag cip_flags)
 {
     auto it = this->attributes.find(attribute_number);
 
@@ -138,15 +135,9 @@ void CIPClass::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void
     }
     else
     {
-        CipAttributeStruct* attribute = new CipAttributeStruct();
-
-        attribute->attribute_number = attribute_number;
-        attribute->type = cip_type;
-        attribute->attribute_flags = cip_flags;
-        attribute->data = data;
+        CIP_Attribute* attribute = new CIP_Attribute(attribute_number, cip_type, cip_flags, data);
 
         this->attributes.emplace(attribute_number, attribute);
-
         return;
         
     }
@@ -154,25 +145,18 @@ void CIPClass::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void
     /* trying to insert too many attributes*/
 }
 
-void CIPClass::InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name)
+void CIP_Class::InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name)
 {
-    auto it = this->attributes.find(attribute_number);
+    auto it = this->services.find(service_number);
 
-    /* cant add attribute that already exists */
-    if (it == std::end)
+    /* cant add service that already exists */
+    if (it == std::map::end())
     {
         OPENER_ASSERT(true);
     }
     else
     {
-        CipServiceStruct* p = new CipServiceStruct();
-        
-        /* fill in service number*/
-        p->service_number = service_number; 
-
-        /* fill in function address*/
-        p->service_function = service_function; 
-        p->name = service_name;
+        CIP_Service* p = new CIP_Service(service_number, service_function, service_name);
         this->services.emplace(service_number, p);
 
         return;
@@ -181,9 +165,9 @@ void CIPClass::InsertService(CipUsint service_number, CipServiceFunction service
     /* adding more services than were declared is a no-no*/
 }
 
-CipAttributeStruct* CIPClass::GetCipAttribute(CipUint attribute_number)
+CIP_Attribute* CIP_Class::GetCipAttribute(CipUint attribute_number)
 {
-    auto it = this.attributes[attribute_number]; /* init pointer to array of attributes*/
+    auto it = this->attributes[attribute_number]; /* init pointer to array of attributes*/
     //TODO: Check that again
     if (it == std::end)
     {
@@ -193,7 +177,7 @@ CipAttributeStruct* CIPClass::GetCipAttribute(CipUint attribute_number)
     }
     else
     {
-        return &it;
+        return it;
     }
 
     
@@ -206,12 +190,11 @@ CipStatus CIPSharedUtils::GetAttributeSingle(CipMessageRouterRequest* message_ro
     /* Mask for filtering get-ability */
     CipByte get_mask;
 
-    CipAttributeStruct* attribute = this.GetCipAttribute(message_router_request->request_path.attribute_number);
+    CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
     CipByte* message = message_router_response->data;
 
     message_router_response->data_length = 0;
-    message_router_response->reply_service = (0x80
-        | message_router_request->service);
+    message_router_response->reply_service = (0x80 | message_router_request->service);
     message_router_response->general_status = kCipErrorAttributeNotSupported;
     message_router_response->size_of_additional_status = 0;
 
@@ -223,26 +206,23 @@ CipStatus CIPSharedUtils::GetAttributeSingle(CipMessageRouterRequest* message_ro
         get_mask = kGetableSingle;
     }
 
-    if ((attribute != 0) && (attribute->data != 0)) {
-        if (attribute->attribute_flags & get_mask) {
+    if ((attribute != 0) && (attribute->getData() != 0)) {
+        if (attribute->getFlag() & get_mask) {
             OPENER_TRACE_INFO("getAttribute %d\n",
                 message_router_request->request_path.attribute_number); /* create a reply message containing the data*/
-
             /*TODO think if it is better to put this code in an own
        * getAssemblyAttributeSingle functions which will call get attribute
        * single.
        */
 
-            if (attribute->type == kCipByteArray
-                && CIPClass.CIP_class_set[class_id].class_id == kCipAssemblyClassCode) {
+            if (attribute->getType() == kCipByteArray
+                && CIPClass::CIP_class_set[class_id].class_id == kCipAssemblyClassCode) {
                 /* we are getting a byte array of a assembly object, kick out to the app callback */
                 OPENER_TRACE_INFO(" -> getAttributeSingle CIP_BYTE_ARRAY\r\n");
                 BeforeAssemblyDataSend(instance);
             }
 
-            message_router_response->data_length = EncodeData(attribute->type,
-                attribute->data,
-                &message);
+            message_router_response->data_length = EncodeData(attribute->getType(), attribute->getData(), &message);
             message_router_response->general_status = kCipErrorSuccess;
         }
     }
@@ -255,8 +235,8 @@ CipStatus CIPSharedUtils::GetAttributeAll(CipMessageRouterRequest* message_route
 {
     int i, j;
     CipUsint* reply;
-    CipAttributeStruct* attribute;
-    CipServiceStruct* service;
+    CIP_Attribute* attribute;
+    CIP_Service* service;
 
     reply = message_router_response->data; /* pointer into the reply */
     attribute = this.attributes; /* pointer to list of attributes*/
@@ -272,8 +252,7 @@ CipStatus CIPSharedUtils::GetAttributeAll(CipMessageRouterRequest* message_route
         {
             if (0 == instance->cip_class->number_of_attributes) {
                 message_router_response->data_length = 0; /*there are no attributes to be sent back*/
-                message_router_response->reply_service = (0x80
-                    | message_router_request->service);
+                message_router_response->reply_service = (0x80 | message_router_request->service);
                 message_router_response->general_status = kCipErrorServiceNotSupported;
                 message_router_response->size_of_additional_status = 0;
             } else {

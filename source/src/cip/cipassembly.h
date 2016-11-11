@@ -7,12 +7,12 @@
 
 #include "ciptypes.h"
 #include "typedefs.h"
-#include "cip_class.h"
+#include "src/cip/class_stack/CIP_Class.h"
 
 /** @brief Assembly Class Code */
 static const int kCipAssemblyClassCode = 0x04;
 
-class CIPAssembly : public CIPClass
+class CIPAssembly : public CIP_Class
 {
 	public:
 		/** @brief Setup the Assembly object
@@ -50,15 +50,15 @@ class CIPAssembly : public CIPClass
 		 *          Objects.
 		 *  Currently only supports Attribute 3 (CIP_BYTE_ARRAY) of an Assembly
 		 */
-    CipStatus SetAssemblyAttributeSingle( CIPClass* instance,
+    CipStatus SetAssemblyAttributeSingle( CIP_Class* instance,
                   CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
 
 
-		CIPClass* CreateAssemblyClass(void);
-	    CIPClass* CreateAssemblyInstance(CipUdint instance_id);
+		CIP_Class* CreateAssemblyClass(void);
+	    CIP_Class* CreateAssemblyInstance(CipUdint instance_id);
 
-		CIPClass* CreateAssemblyObject(CipUdint instance_id, EipByte* data, CipUint data_length);
+		CIP_Class* CreateAssemblyObject(CipUdint instance_id, EipByte* data, CipUint data_length);
 	private:
 		
 };

@@ -25,9 +25,9 @@
  */
 
 #include "cipidentity.h"
-#include "cipcommon.h"
+#include "src/cip/connection_stack/cipcommon.h"
 #include "ciperror.h"
-#include "cipmessagerouter.h"
+#include "src/cip/connection_stack/cipmessagerouter.h"
 #include "endianconv.h"
 #include "opener_api.h"
 #include "opener_user_conf.h"
@@ -68,7 +68,7 @@ void SetDeviceStatus(CipUint status)
  * @param message_router_response
  * @returns Currently always kEipOkSend is returned
  */
-static CipStatus Reset(CIPClass* instance, /* pointer to instance*/
+static CipStatus Reset(CIP_Class* instance, /* pointer to instance*/
     CipMessageRouterRequest* message_router_request, /* pointer to message router request*/
     CipMessageRouterResponse* message_router_response) /* pointer to message router response*/
 {
@@ -123,8 +123,8 @@ static CipStatus Reset(CIPClass* instance, /* pointer to instance*/
  */
 CipStatus CipIdentityInit()
 {
-    CIPClass* class;
-    CIPClass* instance;
+    CIP_Class* class;
+    CIP_Class* instance;
 
     class = CreateCIPClass(kIdentityClassCode, 0, /* # of non-default class attributes */
         MASK4(1, 2, 6, 7), /* class getAttributeAll mask		CIP spec 5-2.3.2 */
