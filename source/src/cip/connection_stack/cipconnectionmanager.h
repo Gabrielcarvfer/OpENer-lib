@@ -125,15 +125,13 @@ typedef struct {
     OpenConnectionFunction open_connection_function;
 } ConnectionManagementHandling;
 
-/** @brief Connection Manager class code */
-static const int g_kCipConnectionManagerClassCode = 0x06;
 CipStatus (*OpenConnectionPtr) (ConnectionObject* connection_object, CipUint* extended_error);
 
 class ConnectionObject : public CIP_Class
 {
 
 public:
-    static const int classCode = g_kCipConnectionManagerClassCode;
+    static const int classCode = kCipConnectionManagerClassCode;
     ConnectionObject(CipUint unique_connection_id);
     ConnectionObject() = delete ;
     ~ConnectionObject();

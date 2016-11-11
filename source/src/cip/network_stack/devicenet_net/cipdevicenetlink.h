@@ -7,7 +7,6 @@
 #include "ciptypes.h"
 #include "typedefs.h"
 
-#define CIP_DEVICENETLINK_CLASS_CODE 0x03
 
 /* public functions */
 /** @brief Initialize the Devicenet Link Objects data

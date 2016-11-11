@@ -9,9 +9,6 @@
 #include "typedefs.h"
 #include "src/cip/class_stack/CIP_Class.h"
 
-/** @brief Assembly Class Code */
-static const int kCipAssemblyClassCode = 0x04;
-
 class CIPAssembly : public CIP_Class
 {
 	public:

@@ -37,7 +37,7 @@ CipStatus CipEthernetLinkInit()
     g_ethernet_link.interface_speed = 100;
     g_ethernet_link.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
 
-    if ((ethernet_link_class = CreateCIPClass(CIP_ETHERNETLINK_CLASS_CODE, 0, /* # class attributes*/
+    if ((ethernet_link_class = CreateCIPClass(kCipEthernetLinkClassCode, 0, /* # class attributes*/
              0xffffffff, /* class getAttributeAll mask*/
              0, /* # class services*/
              3, /* # instance attributes*/

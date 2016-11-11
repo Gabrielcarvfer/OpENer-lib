@@ -11,8 +11,9 @@ class CIP_Class
 {
     public:
         CipUdint class_id;
-        CipUint number_of_instances;  //attribute 2 and 3
-        CipUint get_attribute_all_mask;
+        CipUdint number_of_instances;  //attribute 2 and 3
+        CipUdint get_all_class_attributes_mask;
+        CipUdint get_all_instance_attributes_mask;
         std::string class_name;
         CipUint revision;
 
@@ -48,14 +49,9 @@ class CIP_Class
         *      0 on error
         */
         CIP_Class(
-                 CipUdint class_id, 
-                 int number_of_class_attributes,
+                 CipUdint class_id,
                  CipUdint get_all_class_attributes_mask,
-                 int number_of_class_services,
-                 int number_of_instance_attributes,
                  CipUdint get_all_instance_attributes_mask,
-                 int number_of_instance_services,
-                 int number_of_instances, 
                  std::string name,
                  CipUint revision
                 );
@@ -90,7 +86,7 @@ class CIP_Class
      *  @param cip_data pointer to data of attribute.
      *  @param cip_flags flags to indicate set-ability and get-ability of attribute.
      */
-    void InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CIPAttributeFlag cip_flags);
+    void InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
 
 
     /** @ingroup CIP_API

@@ -143,7 +143,7 @@ typedef enum {
     kUnconnectedSend = 0x52,
     kGetConnectionOwner = 0x5A
     /* End CIP object-specific services */
-} CIPServiceCode;
+} CipServiceCode;
 
 /** @brief Definition of Get and Set Flags for CIP Attributes */
 typedef enum { /* TODO: Rework */
@@ -154,7 +154,7 @@ typedef enum { /* TODO: Rework */
     /* combined for convenience */
     kSetAndGetAble = 0x07, /**< both set and get-able */
     kGetableSingleAndAll = 0x03 /**< both single and all */
-} CIPAttributeFlag;
+} CipAttributeFlag;
 
 typedef enum {
     kIoConnectionEventOpened,
@@ -326,6 +326,17 @@ typedef struct {
     CipRoutePath route_path;
     void* data;
 } CipUnconnectedSendParameter;
+
+typedef enum {
+    kCipIdentityClassCode = 0x01,
+    kCipMessageRouterClassCode = 0x02,
+    kCipDeviceNetLinkClassCode = 0x03,
+    kCipAssemblyClassCode = 0x04,       //Assembly Class Code
+    kCipConnectionManagerClassCode = 0x06,
+    kCipTcpIpInterfaceClassCode = 0xF5, // TCP/IP Interface Object class code
+    kCipEthernetLinkClassCode = 0xF6,
+
+} CipClassCodes;
 
 /* these are used for creating the getAttributeAll masks
  TODO there might be a way simplifying this using __VARARGS__ in #define */

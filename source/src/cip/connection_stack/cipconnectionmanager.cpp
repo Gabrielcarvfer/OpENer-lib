@@ -93,7 +93,7 @@ CipStatus ConnectionObject::ConnectionManagerInit (CipUint unique_connection_id)
 {
     InitializeConnectionManagerData ();
 
-    CIP_Class *connection_manager = new CIP_Class (g_kCipConnectionManagerClassCode, /* class ID */
+    CIP_Class *connection_manager = new CIP_Class (kCipConnectionManagerClassCode, /* class ID */
                                                  0, /* # of class attributes */
                                                  0xC6, /* class getAttributeAll mask */
                                                  0, /* # of class services */

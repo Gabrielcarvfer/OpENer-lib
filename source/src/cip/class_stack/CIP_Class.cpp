@@ -8,21 +8,15 @@
 
 
 CIP_Class::CIP_Class(
-                    CipUdint class_id, 
-                    int number_of_class_attributes,
+                    CipUdint class_id,
                     CipUdint get_all_class_attributes_mask,
-                    int number_of_class_services,
-                    int number_of_instance_attributes,
                     CipUdint get_all_instance_attributes_mask,
-                    int number_of_instance_services,
-                    int number_of_instances, 
                     std::string name,
                     CipUint revision
                     ) 
 {
 
-    OPENER_TRACE_INFO("creating class instance '%s' with id: 0x%" PRIX32 "\n", name,
-        class_id);
+    OPENER_TRACE_INFO("creating class instance '%s' with id: 0x%" PRIX32 "\n", name,  class_id);
 
     /* initialize the class-specific fields of the Class struct*/
 
@@ -33,7 +27,8 @@ CIP_Class::CIP_Class(
     this->revision = revision;
 
     // indicate which attributes are included in instance getAttributeAll  
-    this->get_attribute_all_mask = get_all_instance_attributes_mask;
+    this->get_all_instance_attributes_mask = get_all_instance_attributes_mask;
+    this->get_all_class_attributes_mask = get_all_class_attributes_mask;
 
     /* initialize the class-specific fields of the metaClass struct */
     this->class_name = std::string(name);
@@ -118,13 +113,11 @@ CipUdint CIP_Class::GetCipInstanceNumber(CIP_Class * instance)
 
 bool CIP_Class::AddCipClassInstance(CIP_Class* instance, CipUdint position)
 {
-    std::pair<std::map<CipUdint, CIP_Class *>::iterator,bool> ret;
-
-    ret = CIP_object_set[instance->class_id].emplace(position,instance);
-
-    return ret.second;
+    CIP_object_set[instance->class_id].emplace(position,instance);
+    auto it = CIP_object_set[instance->class_id].find(position);
+    return (it != CIP_object_set[instance->class_id].end());
 }
-void CIP_Class::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CIPAttributeFlag cip_flags)
+void CIP_Class::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags)
 {
     auto it = this->attributes.find(attribute_number);
 
@@ -135,9 +128,9 @@ void CIP_Class::InsertAttribute(CipUint attribute_number, CipUsint cip_type, voi
     }
     else
     {
-        CIP_Attribute* attribute = new CIP_Attribute(attribute_number, cip_type, cip_flags, data);
+        CIP_Attribute* attribute_ptr = new CIP_Attribute(attribute_number, cip_type, cip_flags, data);
 
-        this->attributes.emplace(attribute_number, attribute);
+        this->attributes.emplace(attribute_number, attribute_ptr);
         return;
         
     }
@@ -184,10 +177,10 @@ CIP_Attribute* CIP_Class::GetCipAttribute(CipUint attribute_number)
 }
 
 /* TODO: this needs to check for buffer overflow*/
-CipStatus CIPSharedUtils::GetAttributeSingle(CipMessageRouterRequest* message_router_request,
+CipStatus CIP_Class::GetAttributeSingle(CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
-    /* Mask for filtering get-ability */
+    // Mask for filtering get-ability
     CipByte get_mask;
 
     CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
@@ -198,28 +191,33 @@ CipStatus CIPSharedUtils::GetAttributeSingle(CipMessageRouterRequest* message_ro
     message_router_response->general_status = kCipErrorAttributeNotSupported;
     message_router_response->size_of_additional_status = 0;
 
-    /* set filter according to service: get_attribute_all or get_attribute_single */
-    if (kGetAttributeAll == message_router_request->service) {
+    // set filter according to service: get_attribute_all or get_attribute_single
+    if (kGetAttributeAll == message_router_request->service)
+    {
         get_mask = kGetableAll;
         message_router_response->general_status = kCipErrorSuccess;
-    } else {
+    }
+    else
+    {
         get_mask = kGetableSingle;
     }
 
-    if ((attribute != 0) && (attribute->getData() != 0)) {
-        if (attribute->getFlag() & get_mask) {
+    if ((attribute != 0) && (attribute->getData() != 0))
+    {
+        if (attribute->getFlag() & get_mask)
+        {
             OPENER_TRACE_INFO("getAttribute %d\n",
                 message_router_request->request_path.attribute_number); /* create a reply message containing the data*/
             /*TODO think if it is better to put this code in an own
-       * getAssemblyAttributeSingle functions which will call get attribute
-       * single.
-       */
+               * getAssemblyAttributeSingle functions which will call get attribute
+               * single.
+               */
 
-            if (attribute->getType() == kCipByteArray
-                && CIPClass::CIP_class_set[class_id].class_id == kCipAssemblyClassCode) {
-                /* we are getting a byte array of a assembly object, kick out to the app callback */
+            if (attribute->getType() == kCipByteArray && this->class_id == kCipAssemblyClassCode)
+            {
+                // we are getting a byte array of a assembly object, kick out to the app callback
                 OPENER_TRACE_INFO(" -> getAttributeSingle CIP_BYTE_ARRAY\r\n");
-                BeforeAssemblyDataSend(instance);
+                BeforeAssemblyDataSend(this);
             }
 
             message_router_response->data_length = EncodeData(attribute->getType(), attribute->getData(), &message);
@@ -230,52 +228,56 @@ CipStatus CIPSharedUtils::GetAttributeSingle(CipMessageRouterRequest* message_ro
     return kCipStatusOkSend;
 }
 
-CipStatus CIPSharedUtils::GetAttributeAll(CipMessageRouterRequest* message_router_request,
+CipStatus CIP_Class::GetAttributeAll(CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
     int i, j;
     CipUsint* reply;
-    CIP_Attribute* attribute;
-    CIP_Service* service;
+    CIP_Class * class_ptr = GetCipClass(this->class_id);
 
-    reply = message_router_response->data; /* pointer into the reply */
-    attribute = this.attributes; /* pointer to list of attributes*/
-    service = this.services; /* pointer to list of services*/
+    // pointer into the reply
+    reply = message_router_response->data;
 
-    if (this->instance_number == 2) {
+    if (GetCipInstanceNumber(this) == 2) {
         OPENER_TRACE_INFO("GetAttributeAll: instance number 2\n");
     }
 
-    for (i = 0; i < instance->cip_class->number_of_services; i++) /* hunt for the GET_ATTRIBUTE_SINGLE service*/
+    CIP_Service * service;
+    CIP_Attribute* attribute;
+    for (i = 0; i < this->services.size(); i++) /* hunt for the GET_ATTRIBUTE_SINGLE service*/
     {
-        if (service->service_number == kGetAttributeSingle) /* found the service */
+        // found the service
+        if (this->services[i]->getNumber () == kGetAttributeSingle)
         {
-            if (0 == instance->cip_class->number_of_attributes) {
-                message_router_response->data_length = 0; /*there are no attributes to be sent back*/
+            service = this->services[i];
+            if (0 == this->attributes.size())
+            {
+                //there are no attributes to be sent back
+                message_router_response->data_length = 0;
                 message_router_response->reply_service = (0x80 | message_router_request->service);
                 message_router_response->general_status = kCipErrorServiceNotSupported;
                 message_router_response->size_of_additional_status = 0;
-            } else {
-                for (j = 0; j < instance->cip_class->number_of_attributes; j++) /* for each instance attribute of this class */
+            }
+            else
+            {
+                for (j = 0; j < class_ptr->attributes.size(); j++) /* for each instance attribute of this class */
                 {
-                    int attrNum = attribute->attribute_number;
-                    if (attrNum < 32
-                        && (instance->cip_class->get_attribute_all_mask & 1 << attrNum)) /* only return attributes that are flagged as being part of GetAttributeALl */
+                    attribute = attributes[j];
+                    int attrNum = attribute->getNumber();
+
+                    // only return attributes that are flagged as being part of GetAttributeALl
+                    if (attrNum < 32 && (class_ptr->get_all_class_attributes_mask & 1 << attrNum))
                     {
                         message_router_request->request_path.attribute_number = attrNum;
-                        if (kCipStatusOkSend
-                            != service->service_function(instance, message_router_request,
-                                   message_router_response)) {
+                        if (kCipStatusOkSend != service->getService()(this, message_router_request, message_router_response))
+                        {
                             message_router_response->data = reply;
                             return kCipStatusError;
                         }
-                        message_router_response->data += message_router_response
-                                                             ->data_length;
+                        message_router_response->data += message_router_response->data_length;
                     }
-                    attribute++;
                 }
-                message_router_response->data_length = message_router_response->data
-                    - reply;
+                message_router_response->data_length = message_router_response->data - reply;
                 message_router_response->data = reply;
             }
             return kCipStatusOkSend;

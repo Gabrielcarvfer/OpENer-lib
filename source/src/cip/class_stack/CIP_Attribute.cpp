@@ -4,7 +4,7 @@
 
 #include "CIP_Attribute.h"
 
-CIP_Attribute::CIP_Attribute(CipUint attribute_number, CipUsint type, CIPAttributeFlag attributeFlag, void * data)
+CIP_Attribute::CIP_Attribute(CipUint attribute_number, CipUsint type, CipAttributeFlag attributeFlag, void * data)
 {
     // fill in attribute number
     this->attribute_number = attribute_number;
@@ -33,7 +33,7 @@ CipUsint CIP_Attribute::getType()
     return this->type;
 }
 
-CIPAttributeFlag CIP_Attribute::getFlag()
+CipAttributeFlag CIP_Attribute::getFlag()
 {
     return this->attribute_flags;
 }

@@ -123,10 +123,10 @@ static CipStatus Reset(CIP_Class* instance, /* pointer to instance*/
  */
 CipStatus CipIdentityInit()
 {
-    CIP_Class* class;
+    CIP_Class* class_ptr;
     CIP_Class* instance;
 
-    class = CreateCIPClass(kIdentityClassCode, 0, /* # of non-default class attributes */
+    class_ptr = CreateCIPClass(kCipIdentityClassCode, 0, /* # of non-default class attributes */
         MASK4(1, 2, 6, 7), /* class getAttributeAll mask		CIP spec 5-2.3.2 */
         0, /* # of class services*/
         7, /* # of instance attributes*/
@@ -136,10 +136,10 @@ CipStatus CipIdentityInit()
         "identity", /* class name (for debug)*/
         1); /* class revision*/
 
-    if (class == 0)
+    if (class_ptr == 0)
         return kCipStatusError;
 
-    instance = GetCIPClass(class, 1);
+    instance = GetCIPClass(class_ptr, 1);
 
     InsertAttribute(instance, 1, kCipUint, &vendor_id_, kGetableSingleAndAll);
     InsertAttribute(instance, 2, kCipUint, &device_type_, kGetableSingleAndAll);

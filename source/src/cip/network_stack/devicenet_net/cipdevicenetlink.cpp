@@ -58,7 +58,7 @@ CipStatus CipDevicenetLinkInit()
     g_devicenet_link.quick_connect = false;
     g_devicenet_link.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
 
-    if ((devicenet_link_class = CreateCIPClass(CIP_DEVICENETLINK_CLASS_CODE, 1, /* # class attributes*/
+    if ((devicenet_link_class = CreateCIPClass(kCipDeviceNetLinkClassCode, 1, /* # class attributes*/
              0xffffffff, /* class getAttributeAll mask*/
              1, /* # class services*/
              9, /* # instance attributes*/
