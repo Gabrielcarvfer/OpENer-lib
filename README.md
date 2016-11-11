@@ -5,7 +5,9 @@ OpENer Version whatever
 *ITS NOT WORKING YET*
 ---------------------
 
-The current objectives are to port OpENer to C++, reduce code coupling and add support to DeviceNET (using Linux's SocketCAN)
+The current objectives are to port OpENer to C++, reduce code coupling and add support to DeviceNET (using Linux's SocketCAN).
+
+Please don't be mad if I removed the original header of some files or their spin-off while working on the code. After it's ready I'm going to fix everything.
 
 
 
