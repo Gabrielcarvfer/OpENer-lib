@@ -9,7 +9,7 @@
 #include "cipioconnection.h"
 
 #include "appcontype.h"
-#include "../cipassembly.h"
+#include "src/cip/CIP_Assembly.h"
 #include "cipcommon.h"
 #include "cipconnectionmanager.h"
 #include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
@@ -25,30 +25,30 @@ const int kOpenerEipIoUdpPort = 0x08AE;
  * application connection types.
  */
 CipStatus OpenProducingMulticastConnection(
-    ConnectionObject* connection_object,
+    CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data);
 
 CipStatus OpenMulticastConnection(
-    UdpCommuncationDirection direction, ConnectionObject* connection_object,
+    UdpCommuncationDirection direction, CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data);
 
 CipStatus OpenConsumingPointToPointConnection(
-    ConnectionObject* connection_object,
+    CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data);
 
 CipStatus OpenProducingPointToPointConnection(
-    ConnectionObject* connection_object,
+    CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data);
 
-CipUint HandleConfigData(CIP_Class* assembly_class,
-    ConnectionObject* connection_object);
+CipUint HandleConfigData(CIP_ClassInstance* assembly_class,
+    CIP_Connection* connection_object);
 
 /* Regularly close the IO connection. If it is an exclusive owner or input only
  * connection and in charge of the connection a new owner will be searched
  */
-void CloseIoConnection(ConnectionObject* connection_object);
+void CloseIoConnection(CIP_Connection* connection_object);
 
-void HandleIoConnectionTimeOut(ConnectionObject* connection_object);
+void HandleIoConnectionTimeOut(CIP_Connection* connection_object);
 
 /** @brief  Send the data from the produced CIP Object of the connection via the socket of the connection object
  *   on UDP.
@@ -56,9 +56,9 @@ void HandleIoConnectionTimeOut(ConnectionObject* connection_object);
  *      @return status  EIP_OK .. success
  *                     EIP_ERROR .. error
  */
-CipStatus SendConnectedData(ConnectionObject* connection_object);
+CipStatus SendConnectedData(CIP_Connection* connection_object);
 
-CipStatus HandleReceivedIoConnectionData(ConnectionObject* connection_object,
+CipStatus HandleReceivedIoConnectionData(CIP_Connection* connection_object,
     CipUsint* data, CipUint data_length);
 
 /**** Global variables ****/
@@ -68,7 +68,7 @@ unsigned int g_config_data_length = 0;
 CipUdint g_run_idle_state; /**< buffer for holding the run idle information. */
 
 /**** Implementation ****/
-CipStatus EstablishIoConnction(ConnectionObject* connection_object,
+CipStatus EstablishIoConnction(CIP_Connection* connection_object,
     CipUint* extended_error)
 {
     int originator_to_target_connection_type,
@@ -76,10 +76,10 @@ CipStatus EstablishIoConnction(ConnectionObject* connection_object,
     CipStatus eip_status = kCipStatusOk;
     CIP_Attribute* attribute;
     /* currently we allow I/O connections only to assembly objects */
-    CIP_Class* assembly_class = GetCIPClass(kCipAssemblyClassCode); /* we don't need to check for zero as this is handled in the connection path parsing */
-    CIP_Class* instance = NULL;
+    CIP_ClassInstance* assembly_class = GetCIPClass(kCipAssemblyClassCode); /* we don't need to check for zero as this is handled in the connection path parsing */
+    CIP_ClassInstance* instance = NULL;
 
-    ConnectionObject* io_connection_object = GetIoConnectionForConnectionData(
+    CIP_Connection* io_connection_object = GetIoConnectionForConnectionData(
         connection_object, extended_error);
 
     if (NULL == io_connection_object) {
@@ -257,7 +257,7 @@ CipStatus EstablishIoConnction(ConnectionObject* connection_object,
  *              -1 .. error
  */
 CipStatus OpenConsumingPointToPointConnection(
-    ConnectionObject* connection_object,
+    CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data)
 {
     /*static EIP_UINT16 nUDPPort = 2222; TODO think on improving the udp port assigment for point to point connections */
@@ -301,7 +301,7 @@ CipStatus OpenConsumingPointToPointConnection(
 }
 
 CipStatus OpenProducingPointToPointConnection(
-    ConnectionObject* connection_object,
+    CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data)
 {
     int socket;
@@ -335,10 +335,10 @@ CipStatus OpenProducingPointToPointConnection(
 }
 
 CipStatus OpenProducingMulticastConnection(
-    ConnectionObject* connection_object,
+    CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data)
 {
-    ConnectionObject* existing_connection_object = GetExistingProducerMulticastConnection(
+    CIP_Connection* existing_connection_object = GetExistingProducerMulticastConnection(
         connection_object->connection_path.connection_point[1]);
     int j;
 
@@ -399,7 +399,7 @@ CipStatus OpenProducingMulticastConnection(
  *              -1 .. error
  */
 CipStatus OpenMulticastConnection(
-    UdpCommuncationDirection direction, ConnectionObject* connection_object,
+    UdpCommuncationDirection direction, CIP_Connection* connection_object,
     CipCommonPacketFormatData* common_packet_format_data)
 {
     int j = 0;
@@ -467,11 +467,11 @@ CipStatus OpenMulticastConnection(
     return kCipStatusOk;
 }
 
-CipUint HandleConfigData(CIP_Class* assembly_class,
-    ConnectionObject* connection_object)
+CipUint HandleConfigData(CIP_ClassInstance* assembly_class,
+    CIP_Connection* connection_object)
 {
     CipUint connection_manager_status = 0;
-    CIP_Class* config_instance = GetCIPClass(
+    CIP_ClassInstance* config_instance = GetCIPClass(
         assembly_class, connection_object->connection_path.connection_point[2]);
 
     if (0 != g_config_data_length) {
@@ -503,7 +503,7 @@ CipUint HandleConfigData(CIP_Class* assembly_class,
     return connection_manager_status;
 }
 
-void CloseIoConnection(ConnectionObject* connection_object)
+void CloseIoConnection(CIP_Connection* connection_object)
 {
 
     CheckIoConnectionEvent(connection_object->connection_path.connection_point[0],
@@ -517,7 +517,7 @@ void CloseIoConnection(ConnectionObject* connection_object)
                        & kRoutingTypeMulticastConnection))
             && (kEipInvalidSocket
                    != connection_object->socket[kUdpCommuncationDirectionProducing])) {
-            ConnectionObject* next_non_control_master_connection = GetNextNonControlMasterConnection(
+            CIP_Connection* next_non_control_master_connection = GetNextNonControlMasterConnection(
                 connection_object->connection_path.connection_point[1]);
             if (NULL != next_non_control_master_connection) {
                 next_non_control_master_connection->socket[kUdpCommuncationDirectionProducing] = connection_object->socket[kUdpCommuncationDirectionProducing];
@@ -540,9 +540,9 @@ void CloseIoConnection(ConnectionObject* connection_object)
         connection_object);
 }
 
-void HandleIoConnectionTimeOut(ConnectionObject* connection_object)
+void HandleIoConnectionTimeOut(CIP_Connection* connection_object)
 {
-    ConnectionObject* next_non_control_master_connection;
+    CIP_Connection* next_non_control_master_connection;
     CheckIoConnectionEvent(connection_object->connection_path.connection_point[0],
         connection_object->connection_path.connection_point[1],
         kIoConnectionEventTimedOut);
@@ -584,7 +584,7 @@ void HandleIoConnectionTimeOut(ConnectionObject* connection_object)
     connection_object->connection_close_function(connection_object);
 }
 
-CipStatus SendConnectedData(ConnectionObject* connection_object)
+CipStatus SendConnectedData(CIP_Connection* connection_object)
 {
     CipCommonPacketFormatData* common_packet_format_data;
     CipUint reply_length;
@@ -592,7 +592,7 @@ CipStatus SendConnectedData(ConnectionObject* connection_object)
 
     /* TODO think of adding an own send buffer to each connection object in order to preset up the whole message on connection opening and just change the variable data items e.g., sequence number */
 
-    common_packet_format_data = &g_common_packet_format_data_item; /* TODO think on adding a CPF data item to the S_CIP_ConnectionObject in order to remove the code here or even better allocate memory in the connection object for storing the message to send and just change the application data*/
+    common_packet_format_data = &g_common_packet_format_data_item; /* TODO think on adding a CPF data item to the S_CIP_CIP_Connection in order to remove the code here or even better allocate memory in the connection object for storing the message to send and just change the application data*/
 
     connection_object->eip_level_sequence_count_producing++;
 
@@ -659,7 +659,7 @@ CipStatus SendConnectedData(ConnectionObject* connection_object)
         &g_message_data_reply_buffer[0], reply_length);
 }
 
-CipStatus HandleReceivedIoConnectionData(ConnectionObject* connection_object,
+CipStatus HandleReceivedIoConnectionData(CIP_Connection* connection_object,
     CipUsint* data, CipUint data_length)
 {
 
@@ -694,7 +694,7 @@ CipStatus HandleReceivedIoConnectionData(ConnectionObject* connection_object,
     return kCipStatusOk;
 }
 
-CipStatus OpenCommunicationChannels(ConnectionObject* connection_object)
+CipStatus OpenCommunicationChannels(CIP_Connection* connection_object)
 {
 
     CipStatus eip_status = kCipStatusOk;
@@ -753,7 +753,7 @@ CipStatus OpenCommunicationChannels(ConnectionObject* connection_object)
 }
 
 void CloseCommunicationChannelsAndRemoveFromActiveConnectionsList(
-    ConnectionObject* connection_object)
+    CIP_Connection* connection_object)
 {
     IApp_CloseSocket_udp(
         connection_object->socket[kUdpCommuncationDirectionConsuming]);

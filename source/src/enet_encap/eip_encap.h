@@ -53,7 +53,7 @@ typedef struct encapsulation_interface_information {
     CipUint length;
     CipUint encapsulation_protocol_version;
     CipUint capability_flags;
-    EipInt8 name_of_service[16];
+    CipSint name_of_service[16];
 } EncapsulationInterfaceInformation;
 
 /*** global variables (public) ***/

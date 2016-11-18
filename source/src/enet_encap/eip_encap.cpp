@@ -71,10 +71,10 @@ typedef enum {
 
 /** @brief Delayed Encapsulation Message structure */
 typedef struct {
-    EipInt32 time_out; /**< time out in milli seconds */
+    CipDint time_out; /**< time out in milli seconds */
     int socket; /**< associated socket */
     struct sockaddr_in receiver;
-    EipByte message[ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE];
+    CipByte message[ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE];
     unsigned int message_size;
 } DelayedEncapsulationMessage;
 
@@ -108,7 +108,7 @@ CipStatus HandleReceivedSendRequestResponseDataCommand(
 
 int GetFreeSessionIndex(void);
 
-EipInt16 CreateEncapsulationStructure(CipUsint* receive_buffer,
+CipInt CreateEncapsulationStructure(CipUsint* receive_buffer,
     int receive_buffer_length,
     EncapsulationData* encapsulation_data);
 
@@ -116,10 +116,10 @@ SessionStatus CheckRegisteredSessions(EncapsulationData* receive_data);
 
 int EncapsulateData(const EncapsulationData* const send_data);
 
-void DetermineDelayTime(EipByte* buffer_start,
+void DetermineDelayTime(CipByte* buffer_start,
     DelayedEncapsulationMessage* delayed_message_buffer);
 
-int EncapsulateListIdentyResponseMessage(EipByte* const communication_buffer);
+int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer);
 
 /*   @brief Initializes session list and interface information. */
 void EncapsulationInit(void)
@@ -212,7 +212,7 @@ int HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
             }
             /* if nRetVal is greater than 0 data has to be sent */
             if (kCipStatusOk < return_value) {
-                return_value = EncapsulateData(&encapsulation_data);
+                return_value = (CipStatus)EncapsulateData(&encapsulation_data);
             }
         }
     }
@@ -272,7 +272,7 @@ int HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
             }
             /* if nRetVal is greater than 0 data has to be sent */
             if (0 < status) {
-                status = EncapsulateData(&encapsulation_data);
+                status = (CipStatus)EncapsulateData(&encapsulation_data);
             }
         }
     }
@@ -364,14 +364,14 @@ void HandleReceivedListIdentityCommandUdp(int socket,
     }
 }
 
-int EncapsulateListIdentyResponseMessage(EipByte* const communication_buffer)
+int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer)
 {
     CipUsint* communication_buffer_runner = communication_buffer;
 
     AddIntToMessage(1, &(communication_buffer_runner)); /* Item count: one item */
     AddIntToMessage(kCipItemIdListIdentityResponse, &communication_buffer_runner);
 
-    EipByte* id_length_buffer = communication_buffer_runner;
+    CipByte* id_length_buffer = communication_buffer_runner;
     communication_buffer_runner += 2; /*at this place the real length will be inserted below*/
 
     AddIntToMessage(kSupportedProtocolVersion, &communication_buffer_runner);
@@ -402,7 +402,7 @@ int EncapsulateListIdentyResponseMessage(EipByte* const communication_buffer)
     return communication_buffer_runner - communication_buffer;
 }
 
-void DetermineDelayTime(EipByte* buffer_start,
+void DetermineDelayTime(CipByte* buffer_start,
     DelayedEncapsulationMessage* delayed_message_buffer)
 {
 
@@ -497,7 +497,7 @@ CipStatus HandleReceivedUnregisterSessionCommand(
  */
 CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
 {
-    EipInt16 send_size;
+    CipInt send_size;
     CipStatus return_value = kCipStatusOkSend;
 
     if (receive_data->data_length >= 6) {
@@ -534,7 +534,7 @@ CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
 CipStatus HandleReceivedSendRequestResponseDataCommand(
     EncapsulationData* receive_data)
 {
-    EipInt16 send_size;
+    CipInt send_size;
     CipStatus return_value = kCipStatusOkSend;
 
     if (receive_data->data_length >= 6) {
@@ -586,7 +586,7 @@ int GetFreeSessionIndex(void)
  * 			>0 .. more than one packet received
  * 			<0 .. only fragment of data portion received
  */
-EipInt16 CreateEncapsulationStructure(CipUsint* receive_buffer,
+CipInt CreateEncapsulationStructure(CipUsint* receive_buffer,
     int receive_buffer_length,
     EncapsulationData* encapsulation_data)
 {

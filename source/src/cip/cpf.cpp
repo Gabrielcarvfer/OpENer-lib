@@ -72,7 +72,7 @@ int NotifyConnectedCommonPacketFormat(EncapsulationData* received_data,
         if (g_common_packet_format_data_item.address_item.type_id
             == kCipItemIdConnectionAddress) /* check if ConnectedAddressItem received, otherwise it is no connected message and should not be here*/
         { /* ConnectedAddressItem item */
-            ConnectionObject* connection_object = GetConnectedObject(
+            CIP_Connection* connection_object = GetConnectedObject(
                 g_common_packet_format_data_item.address_item.data
                     .connection_identifier);
             if (NULL != connection_object) {

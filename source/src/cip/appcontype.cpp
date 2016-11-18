@@ -12,21 +12,21 @@ typedef struct {
     unsigned int output_assembly; /**< the O-to-T point for the connection */
     unsigned int input_assembly; /**< the T-to-O point for the connection */
     unsigned int config_assembly; /**< the config point for the connection */
-    ConnectionObject connection_data; /**< the connection data, only one connection is allowed per O-to-T point*/
+    CIP_Connection *connection_data; /**< the connection data, only one connection is allowed per O-to-T point*/
 } ExclusiveOwnerConnection;
 
 typedef struct {
     unsigned int output_assembly; /**< the O-to-T point for the connection */
     unsigned int input_assembly; /**< the T-to-O point for the connection */
     unsigned int config_assembly; /**< the config point for the connection */
-    ConnectionObject connection_data[OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH]; /*< the connection data */
+    CIP_Connection *connection_data[OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH]; /*< the connection data */
 } InputOnlyConnection;
 
 typedef struct {
     unsigned int output_assembly; /**< the O-to-T point for the connection */
     unsigned int input_assembly; /**< the T-to-O point for the connection */
     unsigned int config_assembly; /**< the config point for the connection */
-    ConnectionObject connection_data[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]; /**< the connection data */
+    CIP_Connection *connection_data[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]; /**< the connection data */
 } ListenOnlyConnection;
 
 ExclusiveOwnerConnection g_exlusive_owner_connections[OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS];
@@ -35,13 +35,13 @@ InputOnlyConnection g_input_only_connections[OPENER_CIP_NUM_INPUT_ONLY_CONNS];
 
 ListenOnlyConnection g_listen_only_connections[OPENER_CIP_NUM_LISTEN_ONLY_CONNS];
 
-ConnectionObject* GetExclusiveOwnerConnection(
-    ConnectionObject* connection_object, CipUint* extended_error);
+CIP_Connection* GetExclusiveOwnerConnection(
+    CIP_Connection* connection_object, CipUint* extended_error);
 
-ConnectionObject* GetInputOnlyConnection(ConnectionObject* connection_object,
+CIP_Connection* GetInputOnlyConnection(CIP_Connection* connection_object,
     CipUint* extended_error);
 
-ConnectionObject* GetListenOnlyConnection(ConnectionObject* connection_object,
+CIP_Connection* GetListenOnlyConnection(CIP_Connection* connection_object,
     CipUint* extended_error);
 
 void ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number,
@@ -80,10 +80,10 @@ void ConfigureListenOnlyConnectionPoint(unsigned int connection_number,
     }
 }
 
-ConnectionObject* GetIoConnectionForConnectionData(
-    ConnectionObject* connection_object, CipUint* extended_error)
+CIP_Connection* GetIoConnectionForConnectionData(
+    CIP_Connection* connection_object, CipUint* extended_error)
 {
-    ConnectionObject* io_connection = NULL;
+    CIP_Connection* io_connection = NULL;
     *extended_error = 0;
 
     io_connection = GetExclusiveOwnerConnection(connection_object,
@@ -114,16 +114,16 @@ ConnectionObject* GetIoConnectionForConnectionData(
     }
 
     if (NULL != io_connection) {
-        ConnectionObject::CopyConnectionData(io_connection, connection_object);
+        CIP_Connection::CopyConnectionData(io_connection, connection_object);
     }
 
     return io_connection;
 }
 
-ConnectionObject* GetExclusiveOwnerConnection(
-    ConnectionObject* connection_object, CipUint* extended_error)
+CIP_Connection* GetExclusiveOwnerConnection(
+    CIP_Connection* connection_object, CipUint* extended_error)
 {
-    ConnectionObject* exclusive_owner_connection = NULL;
+    CIP_Connection* exclusive_owner_connection = NULL;
     int i;
 
     for (i = 0; i < OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS; i++) {
@@ -136,12 +136,12 @@ ConnectionObject* GetExclusiveOwnerConnection(
 
             /* check if on other connection point with the same output assembly is currently connected */
             if (NULL
-                != ConnectionObject::GetConnectedOutputAssembly(
+                != CIP_Connection::GetConnectedOutputAssembly(
                        connection_object->connection_path.connection_point[0])) {
                 *extended_error = kConnectionManagerStatusCodeErrorOwnershipConflict;
                 break;
             }
-            exclusive_owner_connection = &(g_exlusive_owner_connections[i]
+            exclusive_owner_connection = (g_exlusive_owner_connections[i]
                                                .connection_data);
             break;
         }
@@ -149,10 +149,10 @@ ConnectionObject* GetExclusiveOwnerConnection(
     return exclusive_owner_connection;
 }
 
-ConnectionObject* GetInputOnlyConnection(ConnectionObject* connection_object,
+CIP_Connection* GetInputOnlyConnection(CIP_Connection* connection_object,
     CipUint* extended_error)
 {
-    ConnectionObject* input_only_connection = NULL;
+    CIP_Connection* input_only_connection = NULL;
     int i, j;
 
     for (i = 0; i < OPENER_CIP_NUM_INPUT_ONLY_CONNS; i++) {
@@ -171,8 +171,8 @@ ConnectionObject* GetInputOnlyConnection(ConnectionObject* connection_object,
 
             for (j = 0; j < OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH; j++) {
                 if (kConnectionStateNonExistent
-                    == g_input_only_connections[i].connection_data[j].state) {
-                    return &(g_input_only_connections[i].connection_data[j]);
+                    == g_input_only_connections[i].connection_data[j]->state) {
+                    return (g_input_only_connections[i].connection_data[j]);
                 }
             }
             *extended_error = kConnectionManagerStatusCodeTargetObjectOutOfConnections;
@@ -182,10 +182,10 @@ ConnectionObject* GetInputOnlyConnection(ConnectionObject* connection_object,
     return input_only_connection;
 }
 
-ConnectionObject* GetListenOnlyConnection(ConnectionObject* connection_object,
+CIP_Connection* GetListenOnlyConnection(CIP_Connection* connection_object,
     CipUint* extended_error)
 {
-    ConnectionObject* listen_only_connection = NULL;
+    CIP_Connection* listen_only_connection = NULL;
     int i, j;
 
     if (kRoutingTypeMulticastConnection
@@ -219,8 +219,8 @@ ConnectionObject* GetListenOnlyConnection(ConnectionObject* connection_object,
 
             for (j = 0; j < OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH; j++) {
                 if (kConnectionStateNonExistent
-                    == g_listen_only_connections[i].connection_data[j].state) {
-                    return &(g_listen_only_connections[i].connection_data[j]);
+                    == g_listen_only_connections[i].connection_data[j]->state) {
+                    return g_listen_only_connections[i].connection_data[j];
                 }
             }
             *extended_error = kConnectionManagerStatusCodeTargetObjectOutOfConnections;
@@ -230,13 +230,13 @@ ConnectionObject* GetListenOnlyConnection(ConnectionObject* connection_object,
     return listen_only_connection;
 }
 
-ConnectionObject* GetExistingProducerMulticastConnection(CipUdint input_point)
+CIP_Connection* GetExistingProducerMulticastConnection(CipUdint input_point)
 {
-    ConnectionObject* producer_multicast_connection;
+    CIP_Connection* producer_multicast_connection;
 
-    for(int i = 0; i < ConnectionObject::active_connections_set.size(); i++)
+    for(int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
-        producer_multicast_connection = ConnectionObject::active_connections_set[i];
+        producer_multicast_connection = CIP_Connection::active_connections_set[i];
 
         if ((kConnectionTypeIoExclusiveOwner == producer_multicast_connection->instance_type)
             || (kConnectionTypeIoInputOnly   == producer_multicast_connection->instance_type)) 
@@ -255,13 +255,13 @@ ConnectionObject* GetExistingProducerMulticastConnection(CipUdint input_point)
     return producer_multicast_connection;
 }
 
-ConnectionObject* GetNextNonControlMasterConnection(CipUdint input_point)
+CIP_Connection* GetNextNonControlMasterConnection(CipUdint input_point)
 {
-    ConnectionObject* next_non_control_master_connection;
+    CIP_Connection* next_non_control_master_connection;
 
-     for(int i = 0; i < ConnectionObject::active_connections_set.size(); i++)
+     for(int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
-        next_non_control_master_connection = ConnectionObject::active_connections_set[i];
+        next_non_control_master_connection = CIP_Connection::active_connections_set[i];
 
         if ((kConnectionTypeIoExclusiveOwner
                 == next_non_control_master_connection->instance_type)
@@ -289,12 +289,12 @@ ConnectionObject* GetNextNonControlMasterConnection(CipUdint input_point)
 void CloseAllConnectionsForInputWithSameType(CipUdint input_point,
     ConnectionType instance_type)
 {
-    ConnectionObject* connection;
-    ConnectionObject* connection_to_delete;
+    CIP_Connection* connection;
+    CIP_Connection* connection_to_delete;
 
-    for(int i = 0; i < ConnectionObject::active_connections_set.size(); i++)
+    for(int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
-        connection = ConnectionObject::active_connections_set[i];
+        connection = CIP_Connection::active_connections_set[i];
 
         if ((instance_type == connection->instance_type)
             && (input_point == connection->connection_path.connection_point[1])) 
@@ -307,21 +307,21 @@ void CloseAllConnectionsForInputWithSameType(CipUdint input_point,
 
             /* FIXME check if this is ok */
             //connection_to_delete->connection_close_function(connection_to_delete);
-            ConnectionObject::CloseConnection(connection); /*will remove the connection from the active connection list */
+            CIP_Connection::CloseConnection(connection); /*will remove the connection from the active connection list */
 
-            ConnectionObject::active_connections_set.erase(i);
+            CIP_Connection::active_connections_set.erase(i);
         } 
     }
 }
 
 void CloseAllConnections(void)
 {
-    ConnectionObject* connection;
-    for(int i = 0; i < ConnectionObject::active_connections_set.size(); i++)
+    CIP_Connection* connection;
+    for(int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
-        connection = ConnectionObject::active_connections_set[i];
+        connection = CIP_Connection::active_connections_set[i];
         /*FIXME check if m_pfCloseFunc would be suitable*/
-        ConnectionObject::CloseConnection(connection);
+        CIP_Connection::CloseConnection(connection);
         /* Close connection will remove the connection from the list therefore we
      * need to get again the start until there is no connection left
      */
@@ -330,10 +330,10 @@ void CloseAllConnections(void)
 
 CipBool ConnectionWithSameConfigPointExists(CipUdint config_point)
 {
-    ConnectionObject* connection;
-    for(int i = 0; i < ConnectionObject::active_connections_set.size(); i++)
+    CIP_Connection* connection;
+    for(int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
-        connection = ConnectionObject::active_connections_set[i];
+        connection = CIP_Connection::active_connections_set[i];
 
         if (config_point == connection->connection_path.connection_point[2]) {
             break;

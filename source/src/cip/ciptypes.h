@@ -167,7 +167,7 @@ typedef enum {
  */
 typedef struct {
     CipUint length; /**< Length of the Byte Array */
-    EipByte* data; /**< Pointer to the data */
+    CipByte* data; /**< Pointer to the data */
 } CipByteArray;
 
 /** @brief CIP Short String
@@ -175,7 +175,7 @@ typedef struct {
  */
 typedef struct {
     CipUsint length; /**< Length of the String (8 bit value) */
-    EipByte* string; /**< Pointer to the string data */
+    CipByte* string; /**< Pointer to the string data */
 } CipShortString;
 
 /** @brief CIP String
@@ -183,7 +183,7 @@ typedef struct {
  */
 typedef struct {
     CipUint length; /**< Length of the String (16 bit value) */
-    EipByte* string; /**< Pointer to the string data */
+    CipByte* string; /**< Pointer to the string data */
 } CipString;
 
 /** @brief Struct for padded EPATHs
@@ -245,7 +245,7 @@ typedef struct {
 typedef struct {
     CipUsint service;
     CipEpath request_path;
-    EipInt16 data_length;
+    CipInt data_length;
     CipOctet* data;
 } CipMessageRouterRequest;
 
@@ -265,7 +265,7 @@ typedef struct {
     CipUint additional_status[MAX_SIZE_OF_ADD_STATUS]; /**< Array of 16 bit words; Additional status;
    If SizeOfAdditionalStatus is 0. there is no
    Additional Status */
-    EipInt16 data_length; /* TODO: Check if this is correct */
+    CipInt data_length; /* TODO: Check if this is correct */
     CipOctet* data; /**< Array of octet; Response data per object definition from
    request */
 } CipMessageRouterResponse;
@@ -317,7 +317,7 @@ typedef struct {
 } CipRoutePath;
 
 typedef struct {
-    EipByte priority;
+    CipByte priority;
     CipUsint timeout_ticks;
     CipUint message_request_size;
     CipMessageRouterRequest message_request;

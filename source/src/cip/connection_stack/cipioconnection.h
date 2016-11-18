@@ -13,7 +13,7 @@
  * I/O Connection Object State Transition Diagram
  * ----------------------------------------------
  * @dot
- *   digraph IOConnectionObjectStateTransition {
+ *   digraph IOCIP_ConnectionStateTransition {
  *     A[label="Any State"]
  *     N[label="Non-existent"]
  *     C[label="Configuring"]
@@ -52,7 +52,7 @@
  *    - EIP_OK ... on success
  *    - On an error the general status code to be put into the response
  */
-CipStatus EstablishIoConnction(ConnectionObject* connection_object,
+CipStatus EstablishIoConnction(CIP_Connection* connection_object,
     CipUint* extended_error);
 
 /** @brief Take the data given in the connection object structure and open the necessary communication channels
@@ -63,7 +63,7 @@ CipStatus EstablishIoConnction(ConnectionObject* connection_object,
  *    - EIP_OK ... on success
  *    - On an error the general status code to be put into the response
  */
-CipStatus OpenCommunicationChannels(ConnectionObject* connection_object);
+CipStatus OpenCommunicationChannels(CIP_Connection* connection_object);
 
 /** @brief close the communication channels of the given connection and remove it
  * from the active connections list.
@@ -71,7 +71,7 @@ CipStatus OpenCommunicationChannels(ConnectionObject* connection_object);
  * @param connection_object pointer to the connection object data
  */
 void CloseCommunicationChannelsAndRemoveFromActiveConnectionsList(
-    ConnectionObject* connection_object);
+    CIP_Connection* connection_object);
 
 extern CipUsint* g_config_data_buffer;
 extern unsigned int g_config_data_length;

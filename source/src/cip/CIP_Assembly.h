@@ -7,11 +7,11 @@
 
 #include "ciptypes.h"
 #include "typedefs.h"
-#include "src/cip/class_stack/CIP_Class.h"
+#include "src/cip/class_stack/CIP_ClassInstance.h"
 
-class CIPAssembly : public CIP_Class
+class CIP_Assembly : public CIP_ClassInstance
 {
-	public:
+    public:
 		/** @brief Setup the Assembly object
 		 * 
 		 * Creates the Assembly Class with zero instances and sets up all services.
@@ -47,16 +47,15 @@ class CIPAssembly : public CIP_Class
 		 *          Objects.
 		 *  Currently only supports Attribute 3 (CIP_BYTE_ARRAY) of an Assembly
 		 */
-    CipStatus SetAssemblyAttributeSingle( CIP_Class* instance,
+        CipStatus SetAssemblyAttributeSingle( CIP_ClassInstance* instance,
                   CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
 
 
-		CIP_Class* CreateAssemblyClass(void);
-	    CIP_Class* CreateAssemblyInstance(CipUdint instance_id);
-
-		CIP_Class* CreateAssemblyObject(CipUdint instance_id, EipByte* data, CipUint data_length);
+		CIP_ClassInstance* CreateAssemblyClass(void);
+	    CIP_ClassInstance* CreateAssemblyInstance(CipUdint instance_id);
+		CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length);
 	private:
-		
+		static std::map<CipUdint, CIP_Assembly> Cip_Assembly_Set;
 };
 

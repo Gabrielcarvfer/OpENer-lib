@@ -8,10 +8,10 @@
 #include <cassert>
 #include "ciperror.h"
 #include "cip/ciptypes.h"
-#include "src/cip/class_stack/CIP_Class.h"
+#include "src/cip/class_stack/CIP_ClassInstance.h"
 #include "opener_user_conf.h"
 #include "typedefs.h"
-#include "src/cip/connection_stack/cipconnectionmanager.h"
+#include "cip/connection_stack/cipconnectionmanager.h"
 
 /**  @defgroup CIP_API OpENer User interface
  * @brief This is the public interface of the OpENer. It provides all function
@@ -131,58 +131,53 @@ int DecodeData(CipUsint cip_data_type, void* cip_data, CipUsint** cip_message);
  * The notification on received configuration data is handled with the
  * IApp_after_receive function.
  */
-CIPClass* CreateAssemblyObject(CipUdint instance_number, EipByte* data, CipUint data_length);
+CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_number, CipByte* data, CipUint data_length);
 
 /** @ingroup CIP_API
  * @brief Function prototype for handling the opening of connections
  *
- * @param ConnectionObject The connection object which is opening the
+ * @param CIP_Connection The connection object which is opening the
  * connection
  * @param extended_error_code The returned error code of the connection object
  *
  * @return CIP error code
  */
-typedef CipStatus (*OpenConnectionFunction)(
-    ConnectionObject* connection, CipUint* extended_error_code);
+//TODO:typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
 
 /** @ingroup CIP_API
  * @brief Function prototype for handling the closing of connections
  *
- * @param ConnectionObject The connection object which is closing the
+ * @param CIP_Connection The connection object which is closing the
  * connection
  */
-typedef void (*ConnectionCloseFunction)(
-    ConnectionObject* connection);
+//TODO:typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
 
 /** @ingroup CIP_API
  * @brief Function prototype for handling the timeout of connections
  *
- * @param ConnectionObject The connection object which connection timed out
+ * @param CIP_Connection The connection object which connection timed out
  */
-typedef void (*ConnectionTimeoutFunction)(
-    ConnectionObject* connection);
+//TODO:typedef void (*ConnectionTimeoutFunction)(CIP_Connection* connection);
 
 /** @ingroup CIP_API
  * @brief Function prototype for sending data via a connection
  *
- * @param ConnectionObject The connection object which connection timed out
+ * @param CIP_Connection The connection object which connection timed out
  *
  * @return EIP stack status
  */
-typedef CipStatus (*ConnectionSendDataFunction)(
-    ConnectionObject* onnection);
+//TODO:typedef CipStatus (*ConnectionSendDataFunction)(CIP_Connection* connection);
 
 /** @ingroup CIP_API
  * @brief Function prototype for receiving data via a connection
  *
- * @param ConnectionObject The connection object which connection timed out
+ * @param CIP_Connection The connection object which connection timed out
  * @param data The payload of the CIP message
  * @param data_length Length of the payload
  *
  * @return Stack status
  */
-typedef CipStatus (*ConnectionReceiveDataFunction)(
-    ConnectionObject* connection, CipUsint* data, CipUint data_length);
+//TODO:typedef CipStatus (*ConnectionReceiveDataFunction)(CIP_Connection* connection, CipUsint* data, CipUint data_length);
 
 /** @ingroup CIP_API
  * @brief register open functions for an specific object.
@@ -194,7 +189,7 @@ typedef CipStatus (*ConnectionReceiveDataFunction)(
  * process
  * @return EIP_OK on success
  */
-CipStatus AddConnectableObject(CipUdint class_id, OpenConnectionFunction open_connection_function);
+//TODO:CipStatus AddConnectableObject(CipUdint class_id, OpenConnectionFunction open_connection_function);
 
 /** @ingroup CIP_API
  * @brief Configures the connection point for an exclusive owner connection.
@@ -396,7 +391,7 @@ void CheckIoConnectionEvent(unsigned int output_assembly_id, unsigned int input_
  * The length of the data is already checked within the stack. Therefore the
  * user only has to check if the data is valid.
  */
-CipStatus AfterAssemblyDataReceived(CIPClass* instance);
+CipStatus AfterAssemblyDataReceived(CIP_ClassInstance* instance);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief Inform the application that the data of an assembly
@@ -410,7 +405,7 @@ CipStatus AfterAssemblyDataReceived(CIPClass* instance);
  *          - true assembly data has changed
  *          - false assembly data has not changed
  */
-CipBool BeforeAssemblyDataSend(CIPClass* instance);
+CipBool BeforeAssemblyDataSend(CIP_ClassInstance* instance);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief Emulate as close a possible a power cycle of the device
@@ -659,7 +654,7 @@ void CloseSocket(int socket);
  * number_of_instances, char *class_name, EIP_UINT16 revision);
  *   - S_CIP_Instance *AddCIPInstances(S_CIP_Class *cip_object, int
  * number_of_instances);
- *   - S_CIP_Instance *AddCIPInstance(S_CIP_Class * cip_class, EIP_UINT32
+ *   - S_CIP_Instance *AddCIPInstance(S_CIP_Class * CIP_ClassInstance, EIP_UINT32
  * instance_id);
  *   - void InsertAttribute(S_CIP_Instance *instance, EIP_UINT16
  * attribute_number, EIP_UINT8 cip_type, void* data);

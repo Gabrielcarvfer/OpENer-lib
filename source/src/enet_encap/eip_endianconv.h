@@ -17,6 +17,6 @@
  * @param communcation_buffer The message buffer for sending the message
  */
 int EncapsulateIpAddress(CipUint port, CipUdint address,
-    EipByte** communication_buffer);
+    CipByte** communication_buffer);
 
 #endif /* OPENER_ENDIANCONV_H_ */

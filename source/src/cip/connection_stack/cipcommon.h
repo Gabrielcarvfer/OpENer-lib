@@ -10,7 +10,7 @@
  */
 #include "ciptypes.h"
 #include "typedefs.h"
-#include "src/cip/class_stack/CIP_Class.h"
+#include "src/cip/class_stack/CIP_ClassInstance.h"
 #include "opener_user_conf.h"
 #include <array>
 
@@ -39,7 +39,7 @@ class CIPCommon
 		 *     - EIP_OK  ... no reply to send back
 		 *     - EIP_ERROR ... error
 		 */
-		static CipStatus NotifyClass(CIP_Class * cipClass, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+		static CipStatus NotifyClass(CIP_ClassInstance * cipClass, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
 
 		/** @brief Decodes padded EPath

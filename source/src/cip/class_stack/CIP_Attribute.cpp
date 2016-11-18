@@ -4,7 +4,7 @@
 
 #include "CIP_Attribute.h"
 
-CIP_Attribute::CIP_Attribute(CipUint attribute_number, CipUsint type, CipAttributeFlag attributeFlag, void * data)
+CIP_Attribute::CIP_Attribute(CipUint attribute_number, CipUsint type, void * data, CipAttributeFlag attributeFlag)
 {
     // fill in attribute number
     this->attribute_number = attribute_number;
@@ -20,7 +20,7 @@ CIP_Attribute::CIP_Attribute(CipUint attribute_number, CipUsint type, CipAttribu
 }
 void CIP_Attribute::~CIP_Attribute ()
 {
-
+    delete[] this->data;
 }
 
 CipUint CIP_Attribute::getNumber()
@@ -41,5 +41,5 @@ CipAttributeFlag CIP_Attribute::getFlag()
 //TODO: fix permissions of flags
 void * CIP_Attribute::getData()
 {
-
+    return this->data;
 }

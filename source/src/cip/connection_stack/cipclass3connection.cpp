@@ -11,21 +11,21 @@
 
 
 /**** Implementation ****/
-CipStatus EstablishClass3Connection(ConnectionObject* connection_object, CipUint* extended_error)
+CipStatus EstablishClass3Connection(CIP_Connection* connection_object, CipUint* extended_error)
 {
     CipStatus eip_status = kCipStatusOk;
     CipUdint produced_connection_id_buffer;
 
     /*TODO add check for transport type trigger */
-    /* if (0x03 == (g_stDummyConnectionObject.TransportTypeClassTrigger & 0x03)) */
+    /* if (0x03 == (g_stDummyCIP_Connection.TransportTypeClassTrigger & 0x03)) */
 
-    ConnectionObject* explicit_connection = GetFreeExplicitConnection();
+    CIP_Connection* explicit_connection = GetFreeExplicitConnection();
 
     if (NULL == explicit_connection) {
         eip_status = (CipStatus)kCipErrorConnectionFailure;
         *extended_error = kConnectionManagerStatusCodeErrorNoMoreConnectionsAvailable;
     } else {
-        ConnectionObject::CopyConnectionData(explicit_connection, connection_object);
+        CIP_Connection::CopyConnectionData(explicit_connection, connection_object);
 
         produced_connection_id_buffer = explicit_connection->produced_connection_id;
         explicit_connection->GeneralConnectionConfiguration();
@@ -33,16 +33,16 @@ CipStatus EstablishClass3Connection(ConnectionObject* connection_object, CipUint
         explicit_connection->instance_type = kConnectionTypeExplicit;
         explicit_connection->socket[0] = explicit_connection->socket[1] = kEipInvalidSocket;
         /* set the connection call backs */
-        explicit_connection->connection_close_function = ConnectionObject::RemoveFromActiveConnections;
+        //explicit_connection->connection_close_function = CIP_CIP_Connection::RemoveFromActiveConnections;
         /* explicit connection have to be closed on time out*/
-        explicit_connection->connection_timeout_function = ConnectionObject::RemoveFromActiveConnections;
+        //explicit_connection->connection_timeout_function = CIP_CIP_Connection::RemoveFromActiveConnections;
 
-        ConnectionObject::AddNewActiveConnection(explicit_connection);
+        CIP_Connection::AddNewActiveConnection(explicit_connection);
     }
     return eip_status;
 }
 
-ConnectionObject* GetFreeExplicitConnection(void)
+CIP_Connection* GetFreeExplicitConnection(void)
 {
     int i;
     for (i = 0; i < OPENER_CIP_NUM_EXPLICIT_CONNS; i++) {
@@ -55,5 +55,5 @@ ConnectionObject* GetFreeExplicitConnection(void)
 void InitializeClass3ConnectionData(void)
 {
     memset(g_explicit_connections, 0,
-        OPENER_CIP_NUM_EXPLICIT_CONNS * sizeof(ConnectionObject));
+        OPENER_CIP_NUM_EXPLICIT_CONNS * sizeof(CIP_Connection));
 }

@@ -10,7 +10,7 @@ class CIP_Attribute
 {
     public:
         //Constructor and deconstructor
-        CIP_Attribute(CipUint attribute_number, CipUsint type, CipAttributeFlag attributeFlag, void * data);
+        CIP_Attribute(CipUint attribute_number, CipUsint type, void * data, CipAttributeFlag attributeFlag);
         ~CIP_Attribute ();
 
         //Functions avaiable

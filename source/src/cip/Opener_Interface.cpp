@@ -43,11 +43,13 @@ bool Opener_Interface::Opener_Initialize(CipUdint serialNumber)
 
 bool Opener_Interface::Opener_Shutdown()
 {
+    //TODO: clean up all Explicit and IO connections
+
     //TODO: if cipstatusok, finish handler
-    /* clean up network state */
+    // clean up network state
     NetworkHandlerFinish ();
 
-    /* close remaining sessions and connections, cleanup used data */
+    // close remaining sessions and connections, cleanup used data
     ShutdownCipStack();
 }
 

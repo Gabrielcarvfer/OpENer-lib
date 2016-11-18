@@ -9,7 +9,7 @@
 #include "opener_api.h"
 #include "opener_user_conf.h"
 #include "typedefs.h"
-#include "src/cip/class_stack/CIP_Class.h"
+#include "src/cip/class_stack/CIP_ClassInstance.h"
 #include "cpf.h"
 #include <map>
 
@@ -120,21 +120,23 @@ typedef struct {
 } LinkObject;
 
 
+class CIP_Connection; //trick compiler
+
+typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
+typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
+
 typedef struct {
     CipUdint class_id;
     OpenConnectionFunction open_connection_function;
 } ConnectionManagementHandling;
 
-CipStatus (*OpenConnectionPtr) (ConnectionObject* connection_object, CipUint* extended_error);
-
-class ConnectionObject : public CIP_Class
+class CIP_Connection : public CIP_ClassInstance
 {
 
 public:
     static const int classCode = kCipConnectionManagerClassCode;
-    ConnectionObject(CipUint unique_connection_id);
-    ConnectionObject() = delete ;
-    ~ConnectionObject();
+    CIP_Connection(CipUint unique_connection_id);
+    ~CIP_Connection();
 
     /** @brief Initialize the data of the connection manager object
      */
@@ -146,7 +148,7 @@ public:
      *   @return pointer to connected Object
      *           0 .. connection not present in device
      */
-    ConnectionObject* GetConnectedObject(CipUdint connection_id);
+    CIP_Connection* GetConnectedObject(CipUdint connection_id);
 
     /**  Get a connection object for a given output assembly.
      *
@@ -155,10 +157,10 @@ public:
      *   @return pointer to connected Object
      *           0 .. connection not present in device
      */
-    static ConnectionObject* GetConnectedOutputAssembly(CipUdint output_assembly_id);
+    static CIP_Connection* GetConnectedOutputAssembly(CipUdint output_assembly_id);
 
     // Copy the given connection data from pa_pstSrc to pa_pstDst
-    static void CopyConnectionData(ConnectionObject* destination, ConnectionObject* source);
+    static void CopyConnectionData(CIP_Connection* destination, CIP_Connection* source);
 
     /** @brief Close the given connection
      *
@@ -167,7 +169,7 @@ public:
      * @param connection_object pointer to the connection object structure to be
      *closed
      */
-    static void CloseConnection(ConnectionObject* connection_object);
+    static void CloseConnection(CIP_Connection* connection_object);
 
     /* TODO: Missing documentation */
     static CipBool IsConnectedOutputAssembly(CipUdint instance_number);
@@ -189,13 +191,13 @@ public:
      *
      * @param connection_object pointer to the connection object to be added.
      */
-   static void AddNewActiveConnection(ConnectionObject* connection_object);
+   static void AddNewActiveConnection(CIP_Connection* connection_object);
 
     /* TODO: Missing documentation */
-    static void RemoveFromActiveConnections(ConnectionObject* connection_object);
+    static void RemoveFromActiveConnections(CIP_Connection* connection_object);
 
 
-    static std::map<CipUdint, ConnectionObject *> active_connections_set;
+    static std::map<CipUdint, CIP_Connection *> active_connections_set;
 
     /** List holding information on the object classes and open/close function
      * pointers to which connections may be established.
@@ -203,7 +205,7 @@ public:
     static ConnectionManagementHandling g_astConnMgmList[2 + OPENER_CIP_NUM_APPLICATION_SPECIFIC_CONNECTABLE_OBJECTS];
 
     /** buffer connection object needed for forward open */
-    static ConnectionObject g_dummy_connection_object;
+    static CIP_Connection g_dummy_connection_object;
 
     /** @brief Holds the connection ID's "incarnation ID" in the upper 16 bits */
     static CipUdint g_incarnation_id;
@@ -255,10 +257,10 @@ public:
     CipConnectionPath connection_path; // padded EPATH
     LinkObject link_object;
 
-    CIP_Class* consuming_instance;
+    CIP_ClassInstance* consuming_instance;
     /*S_CIP_CM_Object *p_stConsumingCMObject; */
 
-    CIP_Class* producing_instance;
+    CIP_ClassInstance* producing_instance;
     /*S_CIP_CM_Object *p_stProducingCMObject; */
 
     /* the EIP level sequence Count for Class 0/1 Producing Connections may have a different
@@ -296,31 +298,25 @@ public:
     struct sockaddr_in originator_address;
     int socket[2]; /* socket handles, indexed by kConsuming or kProducing */
 
-    /* pointers to connection handling functions */
-    ConnectionCloseFunction connection_close_function;
-    ConnectionTimeoutFunction connection_timeout_function;
-    ConnectionSendDataFunction connection_send_data_function;
-    ConnectionReceiveDataFunction connection_receive_data_function;
-
     CipUint correct_originator_to_target_size;
     CipUint correct_target_to_originator_size;
 
 
     /* private functions */
-    CipStatus ForwardOpen(CIP_Class* instance,
+    CipStatus ForwardOpen(CIP_ClassInstance* instance,
                           CipMessageRouterRequest* message_router_request,
                           CipMessageRouterResponse* message_router_response);
 
-    CipStatus ForwardClose(CIP_Class* instance,
+    CipStatus ForwardClose(CIP_ClassInstance* instance,
                            CipMessageRouterRequest* message_router_request,
                            CipMessageRouterResponse* message_router_response);
 
-    CipStatus GetConnectionOwner(CIP_Class* instance,
+    CipStatus GetConnectionOwner(CIP_ClassInstance* instance,
                                  CipMessageRouterRequest* message_router_request,
                                  CipMessageRouterResponse* message_router_response);
 
     CipStatus AssembleForwardOpenResponse(
-            ConnectionObject* connection_object,
+            CIP_Connection* connection_object,
             CipMessageRouterResponse* message_router_response, CipUsint general_status,
             CipUint extended_status);
 
@@ -340,7 +336,7 @@ public:
      *    - NULL if no equal established connection exists
      *    - pointer to the equal connection object
      */
-    ConnectionObject* CheckForExistingConnection(ConnectionObject* connection_object);
+    CIP_Connection* CheckForExistingConnection(CIP_Connection* connection_object);
 
     /** @brief Compare the electronic key received with a forward open request with the device's data.
      *
@@ -364,7 +360,7 @@ public:
      *    - EIP_OK ... on success
      *    - On an error the general status code to be put into the response
      */
-    CipUsint ParseConnectionPath(ConnectionObject* connection_object, CipMessageRouterRequest* message_router_request, CipUint* extended_error);
+    CipUsint ParseConnectionPath(CIP_Connection* connection_object, CipMessageRouterRequest* message_router_request, CipUint* extended_error);
 
     ConnectionManagementHandling* GetConnMgmEntry(CipUdint class_id);
 
@@ -381,5 +377,9 @@ public:
 
 
     /* End of instance info */
+    private:
+        static std::map<CipUdint, CIP_Connection*> object_Set;
 
 };
+
+CipStatus (*OpenConnectionPtr) (CIP_Connection* connection_object, CipUint* extended_error);

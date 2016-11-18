@@ -43,7 +43,7 @@ CipRevision revision_ = { OPENER_DEVICE_MAJOR_REVISION,
 CipUint status_ = 0; /**< Attribute 5: Status */
 CipUdint serial_number_ = 0; /**< Attribute 6: Serial Number, has to be set prior to OpENer initialization */
 CipShortString product_name_ = { sizeof(OPENER_DEVICE_NAME) - 1,
-    (EipByte*)OPENER_DEVICE_NAME }; /**< Attribute 7: Product Name */
+    (CipByte*)OPENER_DEVICE_NAME }; /**< Attribute 7: Product Name */
 
 /** Private functions, sets the devices serial number
  * @param serial_number The serial number of the device
@@ -68,7 +68,7 @@ void SetDeviceStatus(CipUint status)
  * @param message_router_response
  * @returns Currently always kEipOkSend is returned
  */
-static CipStatus Reset(CIP_Class* instance, /* pointer to instance*/
+static CipStatus Reset(CIP_ClassInstance* instance, /* pointer to instance*/
     CipMessageRouterRequest* message_router_request, /* pointer to message router request*/
     CipMessageRouterResponse* message_router_response) /* pointer to message router response*/
 {
@@ -123,8 +123,8 @@ static CipStatus Reset(CIP_Class* instance, /* pointer to instance*/
  */
 CipStatus CipIdentityInit()
 {
-    CIP_Class* class_ptr;
-    CIP_Class* instance;
+    CIP_ClassInstance* class_ptr;
+    CIP_ClassInstance* instance;
 
     class_ptr = CreateCIPClass(kCipIdentityClassCode, 0, /* # of non-default class attributes */
         MASK4(1, 2, 6, 7), /* class getAttributeAll mask		CIP spec 5-2.3.2 */

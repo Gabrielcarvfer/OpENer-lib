@@ -20,19 +20,6 @@
  for data buffers can occasionally blow up in your face rather nastily.
  */
 
-/** @brief EIP Data type definitions
- */
-typedef uint8_t  EipByte;   /**< 8-bit bit string */
-typedef int8_t   EipInt8;   /**< 8-bit signed number */
-typedef int16_t  EipInt16;  /**< 16-bit signed number */
-typedef int32_t  EipInt32;  /**< 32-bit signed number */
-typedef uint8_t  CipUsint;  /**< 8-bit unsigned number */
-typedef uint16_t CipUint;   /**< 16-bit unsigned number */
-typedef uint32_t CipUdint;  /**< 32-bit unsigned number */
-typedef float    EipFloat;  /**< IEEE 754 32-bit floating point number */
-typedef double   EipDfloat; /**< IEEE 754 64-bit floating point number */
-typedef uint8_t  CipBool;   /**< bool data types */
-
 /** @brief Data types as defined in the CIP Specification Vol 1 Appendix C
  */
 typedef uint8_t  CipOctet; /**< 8 bit value that indicates particular data type */
@@ -48,6 +35,7 @@ typedef int16_t  CipInt;   /**< 16-bit signed integer */
 typedef int32_t  CipDint;  /**< 32-bit signed integer */
 typedef float    CipReal;  /**< 32-bit IEEE 754 floating point */
 typedef double   CipLreal; /**< 64-bit IEEE 754 floating point */
+
 
 #ifdef OPENER_SUPPORT_64BIT_DATATYPES
 typedef int64_t  EipInt64; /**< 64-bit signed number */

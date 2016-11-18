@@ -20,11 +20,11 @@
 extern OpenerEndianess g_opener_platform_endianess;
 
 int EncapsulateIpAddress(CipUint port, CipUdint address,
-    EipByte** communication_buffer)
+    CipByte** communication_buffer)
 {
     int size = 0;
     if (kOpENerEndianessLittle == g_opener_platform_endianess) {
-        size += AddIntToMessage(htons(AF_INET), communication_buffer);
+        size += AddIntToMessage(htons(AF_INET), (CipUsint**)communication_buffer);
         size += AddIntToMessage(port, communication_buffer);
         size += AddDintToMessage(address, communication_buffer);
 

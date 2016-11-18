@@ -10,17 +10,18 @@
 #include "cpf.h"
 #include "src/enet_encap/eip_encap.h"
 #include "appcontype.h"
-#include "cipassembly.h"
+#include "CIP_Assembly.h"
 #include "cipconnectionmanager.h"
 #include "ciperror.h"
 #include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
 #include "cipidentity.h"
 #include "cipmessagerouter.h"
-#include "src/cip/network_stack/tcpip_link/ciptcpipinterface.h"
+#include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "endianconv.h"
 #include "opener_api.h"
 #include "trace.h"
 #include "src/typedefs.h"
+#include "class_stack/CIP_Service.h"
 #include <map>
 
 void CIPCommon::CipStackInit (CipUint unique_connection_id)
@@ -36,7 +37,7 @@ void CIPCommon::CipStackInit (CipUint unique_connection_id)
     OPENER_ASSERT(kCipStatusOk == eip_status);
     eip_status = CipEthernetLinkInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
-    eip_status = ConnectionObject::ConnectionManagerInit (unique_connection_id);
+    eip_status = CIP_Connection::ConnectionManagerInit (unique_connection_id);
     OPENER_ASSERT(kCipStatusOk == eip_status);
     eip_status = CIPAssembly::CipAssemblyInitialize ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
@@ -60,11 +61,11 @@ void CIPCommon::ShutdownCipStack (void)
     CIPMessageRouter::DeleteAllClasses ();
 }
 
-CipStatus CIPCommon::NotifyClass (CIP_Class *cip_class, CipMessageRouterRequest *message_router_request,
+CipStatus CIPCommon::NotifyClass (CIP_ClassInstance *CIP_ClassInstance, CipMessageRouterRequest *message_router_request,
                                   CipMessageRouterResponse *message_router_response)
 {
     int i;
-    CIP_Class *instance;
+    CIP_ClassInstance *instance;
     std::map<CipUdint, CIP_Service *>service_set;
     unsigned instance_number; /* my instance number */
 
@@ -74,24 +75,24 @@ CipStatus CIPCommon::NotifyClass (CIP_Class *cip_class, CipMessageRouterRequest 
     instance_number = message_router_request->request_path.instance_number;
 
     // look up the instance (note that if inst==0 this will be the class itself)
-    instance = CIP_Class::GetCipClassInstance (cip_class->class_id, instance_number);
+    instance = CIP_ClassInstance::GetCipClassInstance (CIP_ClassInstance->class_id, instance_number);
 
     if (instance) /* if instance is found */
     {
         OPENER_TRACE_INFO("notify: found instance %d%s\n", instance_number,
                           instance_number == 0 ? " (class object)" : "");
 
-        service_set = CIP_Class::GetCipClass (instance->class_id)->services; /* get pointer to array of services */
+        service_set = CIP_ClassInstance::GetCipClass (instance->class_id)->services; /* get pointer to array of services */
         if (service_set.size()>0) /* if services are defined */
         {
             for (i = 0; i < service_set.size(); i++) /* seach the services list */
             {
-                if (service_set.find(message_router_request->service) != std::map::end()) /* if match is found */
+                if (service_set.find(message_router_request->service) != service_set.end()) /* if match is found */
                 {
                     /* call the service, and return what it returns */
                     OPENER_TRACE_INFO("notify: calling %s service\n", service->name);
-                    OPENER_ASSERT(NULL != service_set[i]->service_function);
-                    return service_set[i]->service_function (instance, message_router_request, message_router_response);
+                    //OPENER_ASSERT(NULL != service_set[i]->service_function);
+                    return service_set[i]->getService ()(instance, message_router_request, message_router_response);
                 }
             }
         }

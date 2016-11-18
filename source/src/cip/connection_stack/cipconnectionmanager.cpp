@@ -11,7 +11,7 @@
 #include "src/enet_encap/eip_encap.h"
 #include "src/enet_encap/eip_encap.h"
 #include "appcontype.h"
-#include "cipassembly.h"
+#include "CIP_Assembly.h"
 #include "cipclass3connection.h"
 #include "cipcommon.h"
 #include "ciperror.h"
@@ -40,13 +40,13 @@ const int g_kForwardOpenHeaderLength = 36; /**< the length in bytes of the forwa
 static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_SPECIFIC_CONNECTABLE_OBJECTS;
 
 
-ConnectionObject::ConnectionObject (CipUint unique_connection_id)
+CIP_Connection::CIP_CIP_Connection (CipUint unique_connection_id)
 {
 
 
 }
 
-ConnectionObject::~ConnectionObject ()
+CIP_Connection::~CIP_CIP_Connection ()
 {
     delete (this);
 }
@@ -55,7 +55,7 @@ ConnectionObject::~ConnectionObject ()
  * @param logical_path_segment TheLogical Path Segment
  *
  */
-unsigned int ConnectionObject::GetPaddedLogicalPath (unsigned char **logical_path_segment)
+unsigned int CIP_Connection::GetPaddedLogicalPath (unsigned char **logical_path_segment)
 {
     unsigned int padded_logical_path = *(*logical_path_segment)++;
 
@@ -81,7 +81,7 @@ unsigned int ConnectionObject::GetPaddedLogicalPath (unsigned char **logical_pat
  * and the per-new-connection-incremented connection number/counter.
  * @return new connection id
  */
-CipUdint ConnectionObject::GetConnectionId (void)
+CipUdint CIP_Connection::GetConnectionId (void)
 {
     static CipUdint connection_id = 18;
     connection_id++;
@@ -89,18 +89,13 @@ CipUdint ConnectionObject::GetConnectionId (void)
 }
 
 
-CipStatus ConnectionObject::ConnectionManagerInit (CipUint unique_connection_id)
+CipStatus CIP_Connection::ConnectionManagerInit (CipUint unique_connection_id)
 {
     InitializeConnectionManagerData ();
 
-    CIP_Class *connection_manager = new CIP_Class (kCipConnectionManagerClassCode, /* class ID */
-                                                 0, /* # of class attributes */
+    CIP_ClassInstance *connection_manager = new CIP_ClassInstance (kCipConnectionManagerClassCode, /* class ID */
                                                  0xC6, /* class getAttributeAll mask */
-                                                 0, /* # of class services */
-                                                 0, /* # of instance attributes */
                                                  0xffffffff, /* instance getAttributeAll mask */
-                                                 3, /* # of instance services */
-                                                 1, /* # of instances */
                                                  "connection manager", /* class name */
                                                  1); /* revision */
     if (connection_manager == NULL)
@@ -119,7 +114,7 @@ CipStatus ConnectionObject::ConnectionManagerInit (CipUint unique_connection_id)
 }
 
 CipStatus
-ConnectionObject::HandleReceivedConnectedData (CipUsint *data, int data_length, struct sockaddr_in *from_address)
+CIP_Connection::HandleReceivedConnectedData (CipUsint *data, int data_length, struct sockaddr_in *from_address)
 {
 
     if ((CreateCommonPacketFormatStructure (data, data_length, &g_common_packet_format_data_item)) == kCipStatusError)
@@ -134,7 +129,7 @@ ConnectionObject::HandleReceivedConnectedData (CipUsint *data, int data_length, 
             if (g_common_packet_format_data_item.data_item.type_id == kCipItemIdConnectedDataItem)
             { /* connected data item received */
 
-                ConnectionObject *connection_object = GetConnectedObject (
+                CIP_Connection *connection_object = GetConnectedObject (
                         g_common_packet_format_data_item.address_item.data.connection_identifier);
                 if (connection_object == NULL)
                     return kCipStatusError;
@@ -147,19 +142,16 @@ ConnectionObject::HandleReceivedConnectedData (CipUsint *data, int data_length, 
                                  connection_object->eip_level_sequence_count_consuming))
                     {
                         /* reset the watchdog timer */
-                        connection_object->inactivity_watchdog_timer =
-                                (connection_object->o_to_t_requested_packet_interval / 1000)
-                                        << (2 + connection_object->connection_timeout_multiplier);
+                        connection_object->inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000) << (2 + connection_object->connection_timeout_multiplier);
 
                         /* only inform assembly object if the sequence counter is greater or equal */
                         connection_object->eip_level_sequence_count_consuming = g_common_packet_format_data_item.address_item.data.sequence_number;
 
-                        if (NULL != connection_object->connection_receive_data_function)
-                        {
-                            return connection_object->connection_receive_data_function (connection_object,
+                            //TODO: fix handles per IO Type
+                            return HandleReceivedIoConnectionData (connection_object,
                                                                                         g_common_packet_format_data_item.data_item.data,
                                                                                         g_common_packet_format_data_item.data_item.length);
-                        }
+
                     }
                 } else
                 {
@@ -178,7 +170,7 @@ ConnectionObject::HandleReceivedConnectedData (CipUsint *data, int data_length, 
  * 		@return >0 .. success, 0 .. no reply to send back
  *      	-1 .. error
  */
-CipStatus ConnectionObject::ForwardOpen (CIP_Class *instance, CipMessageRouterRequest *message_router_request,
+CipStatus CIP_Connection::ForwardOpen (CIP_ClassInstance *instance, CipMessageRouterRequest *message_router_request,
                                          CipMessageRouterResponse *message_router_response)
 {
     CipUint connection_status = kConnectionManagerStatusCodeSuccess;
@@ -275,7 +267,7 @@ CipStatus ConnectionObject::ForwardOpen (CIP_Class *instance, CipMessageRouterRe
     temp = ParseConnectionPath (&g_dummy_connection_object, message_router_request, &connection_status);
     if (kCipStatusOk != temp)
     {
-        return AssembleForwardOpenResponse (&g_dummy_connection_object, message_router_response, temp,
+        return AssembleForwardOpenResponse (&g_dummy_connection_object, message_router_response, (CipUsint)temp,
                                             connection_status);
     }
 
@@ -304,7 +296,7 @@ CipStatus ConnectionObject::ForwardOpen (CIP_Class *instance, CipMessageRouterRe
     }
 }
 
-void ConnectionObject::GeneralConnectionConfiguration ()
+void CIP_Connection::GeneralConnectionConfiguration ()
 {
     if (kRoutingTypePointToPointConnection ==
         (this->o_to_t_network_connection_parameter & kRoutingTypePointToPointConnection))
@@ -358,7 +350,7 @@ void ConnectionObject::GeneralConnectionConfiguration ()
     this->produced_connection_size = this->t_to_o_network_connection_parameter & 0x01FF;
 }
 
-CipStatus ConnectionObject::ForwardClose (CIP_Class *instance, CipMessageRouterRequest *message_router_request,
+CipStatus CIP_Connection::ForwardClose (CIP_ClassInstance *instance, CipMessageRouterRequest *message_router_request,
                                           CipMessageRouterResponse *message_router_response)
 {
     /*Suppress compiler warning*/
@@ -366,7 +358,7 @@ CipStatus ConnectionObject::ForwardClose (CIP_Class *instance, CipMessageRouterR
 
     /* check connection_serial_number && originator_vendor_id && originator_serial_number if connection is established */
     ConnectionManagerStatusCode connection_status = kConnectionManagerStatusCodeErrorConnectionNotFoundAtTargetApplication;
-    ConnectionObject *connection_object;
+    CIP_Connection *connection_object;
 
     /* set AddressInfo Items to invalid TypeID to prevent assembleLinearMsg to read them */
     g_common_packet_format_data_item.address_info_item[0].type_id = 0;
@@ -392,8 +384,8 @@ CipStatus ConnectionObject::ForwardClose (CIP_Class *instance, CipMessageRouterR
                 (connection_object->originator_serial_number == originator_serial_number))
             {
                 /* found the corresponding connection object -> close it */
-                OPENER_ASSERT(NULL != connection_object->connection_close_function);
-                connection_object->connection_close_function (connection_object);
+                //OPENER_ASSERT(NULL != connection_object->connection_close_function);
+                CIP_Connection::CloseConnection (connection_object);
                 connection_status = kConnectionManagerStatusCodeSuccess;
                 break;
             }
@@ -405,7 +397,7 @@ CipStatus ConnectionObject::ForwardClose (CIP_Class *instance, CipMessageRouterR
 }
 
 /* TODO: Not implemented */
-CipStatus ConnectionObject::GetConnectionOwner (CIP_Class *instance, CipMessageRouterRequest *message_router_request,
+CipStatus CIP_Connection::GetConnectionOwner (CIP_ClassInstance *instance, CipMessageRouterRequest *message_router_request,
                                                 CipMessageRouterResponse *message_router_response)
 {
     /* suppress compiler warnings */
@@ -416,10 +408,10 @@ CipStatus ConnectionObject::GetConnectionOwner (CIP_Class *instance, CipMessageR
     return kCipStatusOk;
 }
 
-CipStatus ConnectionObject::ManageConnections (MilliSeconds elapsed_time)
+CipStatus CIP_Connection::ManageConnections (MilliSeconds elapsed_time)
 {
     CipStatus eip_status;
-    ConnectionObject *connection_object;
+    CIP_Connection *connection_object;
 
     /*Inform application that it can execute */
     HandleApplication ();
@@ -441,8 +433,8 @@ CipStatus ConnectionObject::ManageConnections (MilliSeconds elapsed_time)
                 {
                     /* we have a timed out connection perform watchdog time out action*/
                     OPENER_TRACE_INFO(">>>>>>>>>>Connection timed out\n");
-                    OPENER_ASSERT(NULL != connection_object->connection_timeout_function);
-                    connection_object->connection_timeout_function(connection_object);
+                    //OPENER_ASSERT(NULL != connection_object->connection_timeout_function);
+                    CIP_Connection::RemoveFromActiveConnections (connection_object);
                 }
             }
             /* only if the connection has not timed out check if data is to be send */
@@ -464,8 +456,8 @@ CipStatus ConnectionObject::ManageConnections (MilliSeconds elapsed_time)
                     connection_object->transmission_trigger_timer -= elapsed_time;
                     if (connection_object->transmission_trigger_timer <= 0)
                     { /* need to send package */
-                        OPENER_ASSERT(NULL != connection_object->connection_send_data_function);
-                        eip_status = connection_object->connection_send_data_function (connection_object);
+                        //OPENER_ASSERT(NULL != connection_object->connection_send_data_function);
+                        eip_status = SendConnectedData (connection_object);
                         if (eip_status == kCipStatusError)
                         {
                             OPENER_TRACE_ERR("sending of UDP data in manage Connection failed\n");
@@ -486,7 +478,7 @@ CipStatus ConnectionObject::ManageConnections (MilliSeconds elapsed_time)
     return kCipStatusOk;
 }
 
-/* TODO: Update Documentation  INT8 assembleFWDOpenResponse(S_CIP_ConnectionObject *pa_pstConnObj, S_CIP_MR_Response * pa_MRResponse, EIP_UINT8 pa_nGeneralStatus, EIP_UINT16 pa_nExtendedStatus,
+/* TODO: Update Documentation  INT8 assembleFWDOpenResponse(S_CIP_CIP_Connection *pa_pstConnObj, S_CIP_MR_Response * pa_MRResponse, EIP_UINT8 pa_nGeneralStatus, EIP_UINT16 pa_nExtendedStatus,
  void * deleteMeSomeday, EIP_UINT8 * pa_msg)
  *   create FWDOpen response dependent on status.
  *      pa_pstConnObj pointer to connection Object
@@ -500,13 +492,13 @@ CipStatus ConnectionObject::ManageConnections (MilliSeconds elapsed_time)
  * 			1 .. need to send reply
  * 		  -1 .. error
  */
-CipStatus ConnectionObject::AssembleForwardOpenResponse (ConnectionObject *connection_object,
+CipStatus CIP_Connection::AssembleForwardOpenResponse (CIP_Connection *connection_object,
                                                          CipMessageRouterResponse *message_router_response,
                                                          CipUsint general_status, CipUint extended_status)
 {
     /* write reply information in CPF struct dependent of pa_status */
     CipCommonPacketFormatData *cip_common_packet_format_data = &g_common_packet_format_data_item;
-    EipByte *message = message_router_response->data;
+    CipByte *message = message_router_response->data;
     cip_common_packet_format_data->item_count = 2;
     cip_common_packet_format_data->data_item.type_id = kCipItemIdUnconnectedDataItem;
 
@@ -603,7 +595,7 @@ CipStatus ConnectionObject::AssembleForwardOpenResponse (ConnectionObject *conne
  * Adds a Null Address Item to the common data packet format data
  * @param common_data_packet_format_data The CPF data packet where the Null Address Item shall be added
  */
-void ConnectionObject::AddNullAddressItem (CipCommonPacketFormatData *common_data_packet_format_data)
+void CIP_Connection::AddNullAddressItem (CipCommonPacketFormatData *common_data_packet_format_data)
 {
     /* Precondition: Null Address Item only valid in unconnected messages */
     assert(common_data_packet_format_data->data_item.type_id == kCipItemIdUnconnectedDataItem);
@@ -628,7 +620,7 @@ void ConnectionObject::AddNullAddressItem (CipCommonPacketFormatData *common_dat
  * 		       -1 .. error
  */
 CipStatus
-ConnectionObject::AssembleForwardCloseResponse (CipUint connection_serial_number, CipUint originatior_vendor_id,
+CIP_Connection::AssembleForwardCloseResponse (CipUint connection_serial_number, CipUint originatior_vendor_id,
                                                 CipUdint originator_serial_number,
                                                 CipMessageRouterRequest *message_router_request,
                                                 CipMessageRouterResponse *message_router_response,
@@ -636,7 +628,7 @@ ConnectionObject::AssembleForwardCloseResponse (CipUint connection_serial_number
 {
     /* write reply information in CPF struct dependent of pa_status */
     CipCommonPacketFormatData *common_data_packet_format_data = &g_common_packet_format_data_item;
-    EipByte *message = message_router_response->data;
+    CipByte *message = message_router_response->data;
     common_data_packet_format_data->item_count = 2;
     common_data_packet_format_data->data_item.type_id = kCipItemIdUnconnectedDataItem;
 
@@ -669,11 +661,11 @@ ConnectionObject::AssembleForwardCloseResponse (CipUint connection_serial_number
     return kCipStatusOkSend;
 }
 
-ConnectionObject *ConnectionObject::GetConnectedObject (CipUdint connection_id)
+CIP_Connection *CIP_Connection::GetConnectedObject (CipUdint connection_id)
 {
-    ConnectionObject *active_connection_object_list_item;;
+    CIP_Connection *active_connection_object_list_item;;
 
-    for (int i = 0; i < ConnectionObject::active_connections_set.size (); i++)
+    for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
         active_connection_object_list_item = active_connections_set[i];
 
@@ -686,11 +678,11 @@ ConnectionObject *ConnectionObject::GetConnectedObject (CipUdint connection_id)
     return NULL;
 }
 
-ConnectionObject *ConnectionObject::GetConnectedOutputAssembly (CipUdint output_assembly_id)
+CIP_Connection *CIP_Connection::GetConnectedOutputAssembly (CipUdint output_assembly_id)
 {
-    ConnectionObject *active_connection_object_list_item;
+    CIP_Connection *active_connection_object_list_item;
 
-    for (int i = 0; i < ConnectionObject::active_connections_set.size (); i++)
+    for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
         active_connection_object_list_item = active_connections_set[i];
 
@@ -703,10 +695,10 @@ ConnectionObject *ConnectionObject::GetConnectedOutputAssembly (CipUdint output_
     return NULL;
 }
 
-ConnectionObject *ConnectionObject::CheckForExistingConnection (ConnectionObject *connection_object)
+CIP_Connection *CIP_Connection::CheckForExistingConnection (CIP_Connection *connection_object)
 {
-    ConnectionObject *active_connection_object_list_item;
-    for (int i = 0; i < ConnectionObject::active_connections_set.size (); i++)
+    CIP_Connection *active_connection_object_list_item;
+    for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
         active_connection_object_list_item = active_connections_set[i];
 
@@ -725,7 +717,7 @@ ConnectionObject *ConnectionObject::CheckForExistingConnection (ConnectionObject
     return NULL;
 }
 
-CipStatus ConnectionObject::CheckElectronicKeyData (CipUsint key_format, CipKeyData *key_data, CipUint *extended_status)
+CipStatus CIP_Connection::CheckElectronicKeyData (CipUsint key_format, CipKeyData *key_data, CipUint *extended_status)
 {
     CipByte compatiblity_mode = (CipByte) (key_data->major_revision & 0x80);
 
@@ -797,13 +789,13 @@ CipStatus ConnectionObject::CheckElectronicKeyData (CipUsint key_format, CipKeyD
     return (*extended_status == kConnectionManagerStatusCodeSuccess) ? kCipStatusOk : kCipStatusError;
 }
 
-CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_object,
+CipUsint CIP_Connection::ParseConnectionPath (CIP_Connection *connection_object,
                                                 CipMessageRouterRequest *message_router_request,
                                                 CipUint *extended_error)
 {
     CipUsint *message = message_router_request->data;
     int remaining_path_size = connection_object->connection_path_size = *message++; /* length in words */
-    CIP_Class *class_ptr = NULL;
+    CIP_ClassInstance *class_ptr = NULL;
 
     int originator_to_target_connection_type;
     int target_to_originator_connection_type;
@@ -879,7 +871,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
         if (EQLOGICALPATH(*message, 0x20))
         { /* classID */
             connection_object->connection_path.class_id = GetPaddedLogicalPath (&message);
-            class_ptr = CIP_Class::GetCipClassInstance (connection_object->connection_path.class_id, 0);
+            class_ptr = CIP_ClassInstance::GetCipClassInstance (connection_object->connection_path.class_id, 0);
             if (0 == class_ptr)
             {
                 OPENER_TRACE_ERR("classid %"
@@ -911,7 +903,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
             OPENER_TRACE_INFO("Configuration instance id %"
                                       PRId32
                                       "\n", connection_object->connection_path.connection_point[2]);
-            if (NULL == CIP_Class::GetCipClassInstance (class_ptr->class_id,
+            if (NULL == CIP_ClassInstance::GetCipClassInstance (class_ptr->class_id,
                                                        connection_object->connection_path.connection_point[2]))
             {
                 /*according to the test tool we should respond with this extended error code */
@@ -986,7 +978,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
                     OPENER_TRACE_INFO("connection point %"
                                               PRIu32
                                               "\n", connection_object->connection_path.connection_point[i]);
-                    if (0 == CIP_Class::GetCipClassInstance (class_ptr->class_id,
+                    if (0 == CIP_ClassInstance::GetCipClassInstance (class_ptr->class_id,
                                                             connection_object->connection_path.connection_point[i]))
                     {
                         *extended_error = kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
@@ -1050,7 +1042,7 @@ CipUsint ConnectionObject::ParseConnectionPath (ConnectionObject *connection_obj
     return kCipStatusOk;
 }
 
-void ConnectionObject::CloseConnection (ConnectionObject *pa_pstConnObj)
+void CIP_Connection::CloseConnection (CIP_Connection *pa_pstConnObj)
 {
     pa_pstConnObj->state = kConnectionStateNonExistent;
     if (0x03 != (pa_pstConnObj->transport_type_class_trigger & 0x03))
@@ -1064,28 +1056,28 @@ void ConnectionObject::CloseConnection (ConnectionObject *pa_pstConnObj)
     RemoveFromActiveConnections (pa_pstConnObj);
 }
 
-void ConnectionObject::CopyConnectionData (ConnectionObject *pa_pstDst, ConnectionObject *pa_pstSrc)
+void CIP_Connection::CopyConnectionData (CIP_Connection *pa_pstDst, CIP_Connection *pa_pstSrc)
 {
-    memcpy (pa_pstDst, pa_pstSrc, sizeof (ConnectionObject));
+    memcpy (pa_pstDst, pa_pstSrc, sizeof (CIP_Connection));
 }
 
-void ConnectionObject::AddNewActiveConnection (ConnectionObject *pa_pstConn)
+void CIP_Connection::AddNewActiveConnection (CIP_Connection *pa_pstConn)
 {
     pa_pstConn->state = kConnectionStateEstablished;
 }
 
-void ConnectionObject::RemoveFromActiveConnections (ConnectionObject *pa_pstConn)
+void CIP_Connection::RemoveFromActiveConnections (CIP_Connection *pa_pstConn)
 {
     pa_pstConn->state = kConnectionStateNonExistent;
     auto it = active_connections_set.find (pa_pstConn);
     active_connections_set.erase (it);
 }
 
-CipBool ConnectionObject::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)
+CipBool CIP_Connection::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)
 {
     CipBool bRetVal = (CipBool)false;
 
-    ConnectionObject *pstRunner;
+    CIP_Connection *pstRunner;
 
     for (int i = 0; i < active_connections_set.size (); i++)
     {
@@ -1099,7 +1091,7 @@ CipBool ConnectionObject::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)
     return bRetVal;
 }
 
-CipStatus ConnectionObject::AddConnectableObject (CipUdint pa_nClassId, OpenConnectionFunction pa_pfOpenFunc)
+CipStatus CIP_Connection::AddConnectableObject (CipUdint pa_nClassId, OpenConnectionFunction pa_pfOpenFunc)
 {
     int i;
     CipStatus nRetVal;
@@ -1120,7 +1112,7 @@ CipStatus ConnectionObject::AddConnectableObject (CipUdint pa_nClassId, OpenConn
     return nRetVal;
 }
 
-ConnectionManagementHandling *ConnectionObject::GetConnMgmEntry (CipUdint class_id)
+ConnectionManagementHandling *CIP_Connection::GetConnMgmEntry (CipUdint class_id)
 {
     int i;
     ConnectionManagementHandling *pstRetVal;
@@ -1138,11 +1130,11 @@ ConnectionManagementHandling *ConnectionObject::GetConnMgmEntry (CipUdint class_
     return pstRetVal;
 }
 
-CipStatus ConnectionObject::TriggerConnections (CipUdint pa_unOutputAssembly, CipUdint pa_unInputAssembly)
+CipStatus CIP_Connection::TriggerConnections (CipUdint pa_unOutputAssembly, CipUdint pa_unInputAssembly)
 {
     CipStatus nRetVal = kCipStatusError;
 
-    ConnectionObject *pstRunner;
+    CIP_Connection *pstRunner;
 
     for (int i = 0; i < active_connections_set.size (); i++)
     {
@@ -1164,7 +1156,7 @@ CipStatus ConnectionObject::TriggerConnections (CipUdint pa_unOutputAssembly, Ci
     return nRetVal;
 }
 
-void ConnectionObject::InitializeConnectionManagerData ()
+void CIP_Connection::InitializeConnectionManagerData ()
 {
     memset (g_astConnMgmList, 0, g_kNumberOfConnectableObjects * sizeof (ConnectionManagementHandling));
     InitializeClass3ConnectionData ();

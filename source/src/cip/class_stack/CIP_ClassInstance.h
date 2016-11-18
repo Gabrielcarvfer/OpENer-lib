@@ -7,21 +7,18 @@
 #include "CIP_Attribute.h"
 #include "CIP_Service.h"
 
-class CIP_Class
+class CIP_ClassInstance
 {
     public:
-        CipUdint class_id;
-        CipUdint number_of_instances;  //attribute 2 and 3
-        CipUdint get_all_class_attributes_mask;
-        CipUdint get_all_instance_attributes_mask;
-        std::string class_name;
-        CipUint revision;
+        static CipUdint class_id;
+        static CipUdint get_all_class_attributes_mask;
+        static CipUdint get_all_instance_attributes_mask;
+        static std::string class_name;
+        static CipUint revision;
 
         std::map< CipUdint, CIP_Attribute * > attributes;
         std::map< CipUdint, CIP_Service * > services;
 
-        static std::map< CipUdint, std::map<CipUdint, CIP_Class *> > CIP_object_set;
-         CIP_Class() = delete ;
 
         /** @ingroup CIP_API
         * @brief Allocate memory for new CIP Class and attributes
@@ -30,50 +27,44 @@ class CIP_Class
         *  for receiving explicit messages.
         *
         *  @param class_id class ID of the new class
-        *  @param number_of_class_attributes number of class attributes
         *  @param get_attribute_all_mask mask of which attributes are included in the
         *  class getAttributeAll.
         *  If the mask is 0 the getAttributeAll service will not be added as class
         *  service
-        *  @param number_of_class_services number of class services
-        *  @param number_of_instance_attributes number of attributes of each instance
         *  @param instance_attributes_get_attributes_all_mask  mask of which attributes
         *  are included in the instance getAttributeAll
         *  If the mask is 0 the getAttributeAll service will not be added as class
         *  service
-        *  @param number_of_instance_services number of instance services
-        *  @param number_of_instances number of initial instances to create
         *  @param class_name  class name (for debugging class structure)
         *  @param class_revision class revision
         *  @return pointer to new class object
         *      0 on error
         */
-        CIP_Class(
+        /*CIP_ClassInstance(
                  CipUdint class_id,
                  CipUdint get_all_class_attributes_mask,
                  CipUdint get_all_instance_attributes_mask,
-                 std::string name,
-                 CipUint revision
+                 CipUdint position
                 );
+*/
+        ~CIP_ClassInstance();
 
-        ~CIP_Class();
+/** @ingroup CIP_API
+               * @brief Get a pointer to an instance
+               *
+               * @param cip_object pointer to the object the instance belongs to
+               * @param instance_number number of the instance to retrieve
+               * @return pointer to CIP Instance
+               *          0 if instance is not in the object
+               */
+    static CIP_ClassInstance * GetCipClassInstance(CipUdint class_id, CipUdint instance_number);
+    static CIP_ClassInstance * GetCipClass(CipUdint class_id);
+    static CipUdint   GetCipClassNumberInstances(CipUdint class_id);
+    static CipUdint   GetCipInstanceNumber(CIP_ClassInstance * instance);
 
-        /** @ingroup CIP_API
-        * @brief Get a pointer to an instance
-        *
-        * @param cip_object pointer to the object the instance belongs to
-        * @param instance_number number of the instance to retrieve
-        * @return pointer to CIP Instance
-        *          0 if instance is not in the object
-        */
-        static CIP_Class * GetCipClassInstance(CipUdint class_id, CipUdint instance_number);
-        static CIP_Class * GetCipClass(CipUdint class_id);
-        static CipUdint   GetCipClassNumberInstances(CipUdint class_id);
-        static CipUdint   GetCipInstanceNumber(CIP_Class * instance);
+    static bool AddCipClassInstance(CIP_ClassInstance* instance, CipUdint position);
 
-        static bool AddCipClassInstance(CIP_Class* instance, CipUdint position);
-
-        /** @ingroup CIP_API
+    /** @ingroup CIP_API
      * @brief Insert an attribute in an instance of a CIP class
      *
      *  Note that attributes are stored in an array pointer in the instance
@@ -141,4 +132,5 @@ class CIP_Class
      *          -1 .. requested attribute not available
      */
     CipStatus GetAttributeSingle(CipMessageRouterRequest* message_router_request,CipMessageRouterResponse* message_router_response);
+
 };

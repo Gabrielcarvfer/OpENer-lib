@@ -17,7 +17,7 @@
 #include "trace.h"
 #include "typedefs.h"
 
-#include "src/cip/network_stack/tcpip_link/ciptcpipinterface.h"
+#include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "eip_encap.h"
 
 /** @brief handle any connection request coming in the TCP server socket.
@@ -474,7 +474,7 @@ CipStatus HandleDataOnTcpSocket(int socket)
         /* Currently we will drop the whole packet */
 
         do {
-            number_of_read_bytes = recv(socket, &g_ethernet_communication_buffer[0],
+            number_of_read_bytes = recv(socket, (char*)&g_ethernet_communication_buffer[0],
                 data_sent, 0);
 
             if (number_of_read_bytes == 0) /* got error or connection closed by client */
@@ -496,7 +496,7 @@ CipStatus HandleDataOnTcpSocket(int socket)
         return kCipStatusOk;
     }
 
-    number_of_read_bytes = recv(socket, &g_ethernet_communication_buffer[4],
+    number_of_read_bytes = recv(socket, (char*) &g_ethernet_communication_buffer[4],
         data_size, 0);
 
     if (number_of_read_bytes == 0) /* got error or connection closed by client */
@@ -601,7 +601,7 @@ int CreateUdpSocket(UdpCommuncationDirection communication_direction,
             == g_multicast_configuration.starting_multicast_address) {
             if (1 != g_time_to_live_value) { /* we need to set a TTL value for the socket */
                 if (setsockopt(new_socket, IPPROTO_IP, IP_MULTICAST_TTL,
-                        &g_time_to_live_value,
+                               (char*)&g_time_to_live_value,
                         sizeof(g_time_to_live_value))
                     < 0) {
                     OPENER_TRACE_ERR(
@@ -640,15 +640,15 @@ void CheckAndHandleConsumingUdpSockets(void)
     struct sockaddr_in from_address;
     socklen_t from_address_length;
 
-    ConnectionObject* connection_object_iterator;
-    ConnectionObject* current_connection_object = NULL;
+    CIP_Connection* connection_object_iterator;
+    CIP_Connection* current_connection_object = NULL;
 
     /* see a message on one of the registered UDP sockets has been received     */
-    for (int i = 0; i < ConnectionObject::active_connections_set.size(); i++)
+    for (int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
 
         /* do this at the beginning as the close function may can make the entry invalid */
-        connection_object_iterator = ConnectionObject::active_connections_set[i];
+        connection_object_iterator = CIP_Connection::active_connections_set[i];
 
         if ((-1 != current_connection_object->socket[kUdpCommuncationDirectionConsuming])
             && (true== CheckSocketSet( current_connection_object->socket[kUdpCommuncationDirectionConsuming]))) 
@@ -656,13 +656,12 @@ void CheckAndHandleConsumingUdpSockets(void)
             from_address_length = sizeof(from_address);
             int received_size = recvfrom(
                 current_connection_object->socket[kUdpCommuncationDirectionConsuming],
-                g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0,
+                (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0,
                 (struct sockaddr*)&from_address, &from_address_length);
             if (0 == received_size) 
             {
                 OPENER_TRACE_STATE("connection closed by client\n");
-                current_connection_object->connection_close_function(
-                    current_connection_object);
+                current_connection_object->CloseConnection (current_connection_object);
                 continue;
             }
 
@@ -670,8 +669,7 @@ void CheckAndHandleConsumingUdpSockets(void)
             {
                 OPENER_TRACE_ERR("networkhandler: error on recv: %s\n",
                     strerror(errno));
-                current_connection_object->connection_close_function(
-                    current_connection_object);
+                current_connection_object->CloseConnection (current_connection_object);
                 continue;
             }
 

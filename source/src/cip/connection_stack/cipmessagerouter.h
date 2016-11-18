@@ -9,7 +9,7 @@
 
 #include "ciptypes.h"
 #include "typedefs.h"
-#include "src/cip/class_stack/CIP_Class.h"
+#include "src/cip/class_stack/CIP_ClassInstance.h"
 #include <map>
 
 
@@ -22,7 +22,7 @@ extern CipMessageRouterResponse g_message_router_response;
 
 
 
-class CIPMessageRouter : public CIP_Class
+class CIPMessageRouter : public CIP_ClassInstance
 {
     public:
 
@@ -39,7 +39,7 @@ class CIPMessageRouter : public CIP_Class
          * array with a given max size for removing the need for having to dynamically allocate 
          * memory. The size of the array could be a parameter in the platform config file.
          */
-        static std::map<CipUdint, CIP_Class const *> message_router_registered_classes;
+        static std::map<CipUdint, CIP_ClassInstance const *> message_router_registered_classes;
 
 
         /*! Register a class at the message router.
@@ -51,11 +51,11 @@ class CIPMessageRouter : public CIP_Class
          *  @return EIP_OK on success
          */
         /** @brief Register an Class to the message router
-         *  @param cip_class Pointer to a class object to be registered.
+         *  @param CIP_ClassInstance Pointer to a class object to be registered.
          *  @return status      0 .. success
          *                     -1 .. error no memory available to register more objects
          */
-        static CipStatus RegisterCIPClass(CIP_Class* cip_class);
+        static CipStatus RegisterCIPClass(CIP_ClassInstance* CIP_ClassInstance);
 
 
         /** @brief Get the registered MessageRouter object corresponding to ClassID.
@@ -65,7 +65,7 @@ class CIPMessageRouter : public CIP_Class
          *  @return Pointer to registered message router object
          *      0 .. Class not registered
          */
-        static CIP_Class* GetRegisteredObject(CipUdint class_id);
+        static CIP_ClassInstance* GetRegisteredObject(CipUdint class_id);
 
 
         /** @brief Create Message Router Request structure out of the received data.

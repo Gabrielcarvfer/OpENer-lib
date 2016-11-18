@@ -30,31 +30,29 @@ void ConfigureMacAddress(const CipUsint* mac_address)
 
 CipStatus CipEthernetLinkInit()
 {
-    CIP_Class* ethernet_link_class;
-    CIP_Class* ethernet_link_instance;
+    CIP_ClassInstance* ethernet_link_class;
+    CIP_ClassInstance* ethernet_link_instance;
 
     /* set attributes to initial values */
     g_ethernet_link.interface_speed = 100;
     g_ethernet_link.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
 
-    if ((ethernet_link_class = CreateCIPClass(kCipEthernetLinkClassCode, 0, /* # class attributes*/
-             0xffffffff, /* class getAttributeAll mask*/
-             0, /* # class services*/
-             3, /* # instance attributes*/
-             0xffffffff, /* instance getAttributeAll mask*/
-             0, /* # instance services*/
-             1, /* # instances*/
-             "Ethernet Link", 1))
-        != 0) {
+    if ((ethernet_link_class = new CIP_ClassInstance(kCipEthernetLinkClassCode,
+                                                             0xffffffff, /* class getAttributeAll mask*/
+                                                             0xffffffff, /* instance getAttributeAll mask*/
+                                                             "Ethernet Link", 1))
+                                                        != 0)
+    {
 
-        ethernet_link_instance = GetCIPClass(ethernet_link_class, 1);
-        InsertAttribute(ethernet_link_instance, 1, kCipUdint,
-            &g_ethernet_link.interface_speed, kGetableSingleAndAll); /* bind attributes to the instance*/
-        InsertAttribute(ethernet_link_instance, 2, kCipDword,
-            &g_ethernet_link.interface_flags, kGetableSingleAndAll);
-        InsertAttribute(ethernet_link_instance, 3, kCip6Usint,
-            &g_ethernet_link.physical_address, kGetableSingleAndAll);
-    } else {
+        ethernet_link_instance = new CIP_ClassInstance(kCipEthernetLinkClassCode,0,0,std::string(""),1);
+
+        // bind attributes to the instance
+        ethernet_link_instance->InsertAttribute(1, kCipUdint,  &g_ethernet_link.interface_speed,  kGetableSingleAndAll);
+        ethernet_link_instance->InsertAttribute(2, kCipDword,  &g_ethernet_link.interface_flags,  kGetableSingleAndAll);
+        ethernet_link_instance->InsertAttribute(3, kCip6Usint, &g_ethernet_link.physical_address, kGetableSingleAndAll);
+    }
+    else
+    {
         return kCipStatusError;
     }
 

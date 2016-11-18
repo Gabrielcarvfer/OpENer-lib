@@ -19,9 +19,9 @@ CipMessageRouterResponse g_message_router_response;
 
 CipStatus CIPMessageRouter::CipMessageRouterInit()
 {
-    CIP_Class* message_router;
+    CIP_ClassInstance* message_router;
 
-    message_router = CIP_Class(kCipMessageRouterClassCode, /* class ID*/
+    message_router = CIP_ClassInstance(kCipMessageRouterClassCode, /* class ID*/
                                                        0, /* # of class attributes */
                                               0xffffffff, /* class getAttributeAll mask*/
                                                        0, /* # of class services*/
@@ -45,7 +45,7 @@ CipStatus CIPMessageRouter::CipMessageRouterInit()
     return kCipStatusOk;
 }
 
-CIP_Class* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
+CIP_ClassInstance* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
 {
     /* for each entry in list*/
     for(auto ptr : message_router_registered_classes) 
@@ -58,11 +58,11 @@ CIP_Class* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
     return 0;  
 }
 
-CipStatus CIPMessageRouter::RegisterCIPClass(CIP_Class* cip_class)
+CipStatus CIPMessageRouter::RegisterCIPClass(CIP_ClassInstance* CIP_ClassInstance)
 {
     std::pair<std::map<int>::iterator,bool> ret;
 
-    ret = message_router_registered_classes.insert(message_router_registered_classes.count(), cip_class);
+    ret = message_router_registered_classes.insert(message_router_registered_classes.count(), CIP_ClassInstance);
 
     if (ret::second)
         return kCipStatusOk;
@@ -94,7 +94,7 @@ CipStatus CIPMessageRouter::NotifyMR(CipUsint* data, int data_length)
     else 
     {
         /* forward request to appropriate Object if it is registered*/
-        CIP_Class* registered_object;
+        CIP_ClassInstance* registered_object;
 
         registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
         if (registered_object == 0) 
@@ -114,24 +114,24 @@ CipStatus CIPMessageRouter::NotifyMR(CipUsint* data, int data_length)
             /* call notify function from Object with ClassID (gMRRequest.RequestPath.ClassID)
             object will or will not make an reply into gMRResponse*/
             g_message_router_response.reserved = 0;
-            OPENER_ASSERT(NULL != registered_object->cip_class);
+            OPENER_ASSERT(NULL != registered_object->CIP_ClassInstance);
 
             OPENER_TRACE_INFO("notifyMR: calling notify function of class '%s'\n",
-                registered_object->cip_class->class_name);
+                registered_object->CIP_ClassInstance->class_name);
 
-            cip_status = NotifyClass(registered_object->cip_class, &g_message_router_request, &g_message_router_response);
+            cip_status = NotifyClass(registered_object->CIP_ClassInstance, &g_message_router_request, &g_message_router_response);
 
 #ifdef OPENER_TRACE_ENABLED
             switch(cip_status)
             {
                 case (kCipStatusError):
-                    OPENER_TRACE_ERR("notifyMR: notify function of class '%s' returned an error\n", registered_object->cip_class->class_name);
+                    OPENER_TRACE_ERR("notifyMR: notify function of class '%s' returned an error\n", registered_object->CIP_ClassInstance->class_name);
                     break;
                 case (kCipStatusOK):
-                    OPENER_TRACE_INFO("notifyMR: notify function of class '%s' returned no reply\n", registered_object->cip_class->class_name);
+                    OPENER_TRACE_INFO("notifyMR: notify function of class '%s' returned no reply\n", registered_object->CIP_ClassInstance->class_name);
                     break;
                 default:
-                    OPENER_TRACE_INFO("notifyMR: notify function of class '%s' returned a reply\n", registered_object->cip_class->class_name);
+                    OPENER_TRACE_INFO("notifyMR: notify function of class '%s' returned a reply\n", registered_object->CIP_ClassInstance->class_name);
             }
 #endif
         }
@@ -167,7 +167,7 @@ void CIPMessageRouter::DeleteAllClasses(void)
 {
     while (message_router_registered_classes.size() != 0) 
     {
-        for (auto class_instances_set : CIP_Class::CIP_Object_set)
+        for (auto class_instances_set : CIP_ClassInstance::CIP_Object_set)
         {
             int class_id = *class_instances_set->class_id;
 
@@ -188,18 +188,18 @@ void CIPMessageRouter::DeleteAllClasses(void)
             }
 
             //Removing class
-            for (auto attribute : CIP_Class::CIP_Class_set[class_id].attributes)
+            for (auto attribute : CIP_ClassInstance::CIP_Class_set[class_id].attributes)
             {
                 delete attribute;
             }
 
-            for (auto services : CIP_Class::CIP_Class_set[class_id].attributes)
+            for (auto services : CIP_ClassInstance::CIP_Class_set[class_id].attributes)
             {
                 delete services;
             }
             
             //Remove main class and instances set
-            CIP_Class::CIP_Class_set.erase(class_id);
+            CIP_ClassInstance::CIP_Class_set.erase(class_id);
             instances_classes_set.erase(class_id);
 
         }
