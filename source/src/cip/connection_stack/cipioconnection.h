@@ -40,7 +40,7 @@
 #ifndef OPENER_CIPIOCONNECTION_H_
 #define OPENER_CIPIOCONNECTION_H_
 
-#include "src/cip/connection_stack/cipconnectionmanager.h"
+#include "src/cip/connection_stack/CIP_Connection.h"
 #include "opener_api.h"
 
 /** @brief Setup all data in order to establish an IO connection

@@ -4,7 +4,7 @@
  *
  ******************************************************************************/
 #include "appcontype.h"
-#include "src/cip/connection_stack/cipconnectionmanager.h"
+#include "src/cip/connection_stack/CIP_Connection.h"
 #include "opener_api.h"
 #include <string.h>
 

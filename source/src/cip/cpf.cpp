@@ -8,7 +8,7 @@
 #include "cpf.h"
 
 #include "src/cip/connection_stack/cipcommon.h"
-#include "src/cip/connection_stack/cipconnectionmanager.h"
+#include "src/cip/connection_stack/CIP_Connection.h"
 #include "ciperror.h"
 #include "src/cip/connection_stack/cipmessagerouter.h"
 #include "../enet_encap/eip_endianconv.h"

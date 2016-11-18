@@ -240,35 +240,3 @@ CipStatus CIP_ClassInstance::GetAttributeAll(CipMessageRouterRequest* message_ro
     return kCipStatusOk; /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
 }
 
-CIP_ClassInstance * CIP_ClassInstance::GetCipClassInstance(CipUdint class_id, CipUdint instance_number)
-{
-    if (CIP_object_set[class_id].size() >= instance_number)
-        return CIP_object_set[class_id][instance_number];
-    else
-        return NULL;
-}
-
-CIP_ClassInstance * CIP_ClassInstance::GetCipClass(CipUdint class_id)
-{
-    if (CIP_object_set[class_id].size() > 0)
-        return CIP_object_set[class_id][0];
-    else
-        return NULL;
-}
-
-CipUdint CIP_ClassInstance::GetCipClassNumberInstances(CipUdint class_id)
-{
-    return CIP_object_set[class_id].size();
-}
-
-CipUdint CIP_ClassInstance::GetCipInstanceNumber(CIP_ClassInstance * instance)
-{
-    return std::distance(CIP_object_set[instance->class_id].begin(), CIP_object_set[instance->class_id].find(instance) );
-}
-
-bool CIP_ClassInstance::AddCipClassInstance(CIP_ClassInstance* instance, CipUdint position)
-{
-    CIP_object_set[instance->class_id].emplace(position,instance);
-    auto it = CIP_object_set[instance->class_id].find(position);
-    return (it != CIP_object_set[instance->class_id].end());
-}

@@ -8,7 +8,7 @@
 
 #include "CIP_Assembly.h"
 #include "src/cip/connection_stack/cipcommon.h"
-#include "src/cip/connection_stack/cipconnectionmanager.h"
+#include "src/cip/connection_stack/CIP_Connection.h"
 #include "opener_api.h"
 #include "trace.h"
 

@@ -11,7 +11,7 @@
 #include "src/enet_encap/eip_encap.h"
 #include "appcontype.h"
 #include "CIP_Assembly.h"
-#include "cipconnectionmanager.h"
+#include "CIP_Connection.h"
 #include "ciperror.h"
 #include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
 #include "cipidentity.h"

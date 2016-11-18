@@ -15,6 +15,8 @@ class CIP_ClassInstance
         static CipUdint get_all_instance_attributes_mask;
         static std::string class_name;
         static CipUint revision;
+        static std::map< CipUdint, CIP_Attribute * > class_attributes;
+        static std::map< CipUdint, CIP_Service * > class_services;
 
         std::map< CipUdint, CIP_Attribute * > attributes;
         std::map< CipUdint, CIP_Service * > services;
@@ -57,10 +59,6 @@ class CIP_ClassInstance
                * @return pointer to CIP Instance
                *          0 if instance is not in the object
                */
-    static CIP_ClassInstance * GetCipClassInstance(CipUdint class_id, CipUdint instance_number);
-    static CIP_ClassInstance * GetCipClass(CipUdint class_id);
-    static CipUdint   GetCipClassNumberInstances(CipUdint class_id);
-    static CipUdint   GetCipInstanceNumber(CIP_ClassInstance * instance);
 
     static bool AddCipClassInstance(CIP_ClassInstance* instance, CipUdint position);
 
@@ -78,6 +76,7 @@ class CIP_ClassInstance
      *  @param cip_flags flags to indicate set-ability and get-ability of attribute.
      */
     void InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
+    static void InsertClassAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
 
 
     /** @ingroup CIP_API
@@ -94,6 +93,7 @@ class CIP_ClassInstance
     * @param service_name name of the service
     */
     void InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name);
+    static void InsertClassService(CipUsint service_number, CipServiceFunction service_function, std::string service_name);
 
 
     /** @ingroup CIP_API

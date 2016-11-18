@@ -8,8 +8,9 @@
 #include "ciptypes.h"
 #include "typedefs.h"
 #include "src/cip/class_stack/CIP_ClassInstance.h"
+class CIP_Assembly;
 
-class CIP_Assembly : public CIP_ClassInstance
+class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
 {
     public:
 		/** @brief Setup the Assembly object
@@ -55,7 +56,5 @@ class CIP_Assembly : public CIP_ClassInstance
 		CIP_ClassInstance* CreateAssemblyClass(void);
 	    CIP_ClassInstance* CreateAssemblyInstance(CipUdint instance_id);
 		CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length);
-	private:
-		static std::map<CipUdint, CIP_Assembly> Cip_Assembly_Set;
 };
 

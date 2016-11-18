@@ -5,7 +5,7 @@
  ******************************************************************************/
 #pragma once
 
-#include "src/cip/connection_stack/cipconnectionmanager.h"
+#include "src/cip/connection_stack/CIP_Connection.h"
 #include "ciptypes.h"
 
 void InitializeIoConnectionData(void);

@@ -11,7 +11,7 @@
 #include "appcontype.h"
 #include "src/cip/CIP_Assembly.h"
 #include "cipcommon.h"
-#include "cipconnectionmanager.h"
+#include "CIP_Connection.h"
 #include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "cpf.h"
 #include "endianconv.h"
@@ -124,10 +124,12 @@ CipStatus EstablishIoConnction(CIP_Connection* connection_object,
                                                & 0x6000)
         >> 13;
 
-    if ((originator_to_target_connection_type == 0)
-        && (target_to_originator_connection_type == 0)) { /* this indicates an re-configuration of the connection currently not supported and we should not come here as this is handled in the forwardopen function*/
+    if ((originator_to_target_connection_type == 0) && (target_to_originator_connection_type == 0))
+    { /* this indicates an re-configuration of the connection currently not supported and we should not come here as this is handled in the forwardopen function*/
 
-    } else {
+    }
+    else
+    {
         int producing_index = 0;
         int data_size;
         int diff_size;

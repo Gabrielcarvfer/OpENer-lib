@@ -7,6 +7,7 @@
 #include "../../../opener_api.h"
 #include <stdlib.h>
 #include <string.h>
+#include <src/cip/CIP_Assembly.h>
 
 #define DEMO_APP_INPUT_ASSEMBLY_NUM 100 //0x064
 #define DEMO_APP_OUTPUT_ASSEMBLY_NUM 150 //0x096
@@ -78,12 +79,12 @@ void CheckIoConnectionEvent(unsigned int pa_unOutputAssembly,
     (void)pa_eIOConnectionEvent; /* suppress compiler warning */
 }
 
-CipStatus AfterAssemblyDataReceived(CIP_ClassInstance* pa_pstInstance)
+CipStatus AfterAssemblyDataReceived(CIP_Assembly* pa_pstInstance)
 {
     CipStatus nRetVal = kCipStatusOk;
 
     /*handle the data received e.g., update outputs of the device */
-    switch (CIP_ClassInstance::GetCipInstanceNumber(pa_pstInstance))
+    switch (CIP_Assembly::GetCipInstanceNumber(pa_pstInstance))
     {
     case DEMO_APP_OUTPUT_ASSEMBLY_NUM:
         /* Data for the output assembly has been received.
@@ -107,14 +108,14 @@ CipStatus AfterAssemblyDataReceived(CIP_ClassInstance* pa_pstInstance)
     return nRetVal;
 }
 
-CipBool BeforeAssemblyDataSend(CIP_ClassInstance* pa_pstInstance)
+CipBool BeforeAssemblyDataSend(CIP_Assembly* pa_pstInstance)
 {
     /*update data to be sent e.g., read inputs of the device */
     /*In this sample app we mirror the data from out to inputs on data receive
    * therefore we need nothing to do here. Just return true to inform that
    * the data is new.
    */
-    if (CIP_Connection::GetCipInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM) {
+    if (CIP_Assembly::GetCipInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM) {
         /* do something interesting with the existing data
      * for the explicit get-data-attribute message */
     }

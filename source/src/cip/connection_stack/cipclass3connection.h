@@ -11,7 +11,7 @@
  *  @brief CIP Class 3 connection
  */
 
-#include "cipconnectionmanager.h"
+#include "CIP_Connection.h"
 #include "opener_api.h"
 
 

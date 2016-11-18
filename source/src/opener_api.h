@@ -11,7 +11,7 @@
 #include "src/cip/class_stack/CIP_ClassInstance.h"
 #include "opener_user_conf.h"
 #include "typedefs.h"
-#include "cip/connection_stack/cipconnectionmanager.h"
+#include "cip/connection_stack/CIP_Connection.h"
 
 /**  @defgroup CIP_API OpENer User interface
  * @brief This is the public interface of the OpENer. It provides all function
@@ -391,7 +391,7 @@ void CheckIoConnectionEvent(unsigned int output_assembly_id, unsigned int input_
  * The length of the data is already checked within the stack. Therefore the
  * user only has to check if the data is valid.
  */
-CipStatus AfterAssemblyDataReceived(CIP_ClassInstance* instance);
+//CipStatus AfterAssemblyDataReceived(CIP_ClassInstance* instance);
 
 /** @ingroup CIP_CALLBACK_API
  * @brief Inform the application that the data of an assembly
