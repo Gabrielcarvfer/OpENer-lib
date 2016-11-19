@@ -7,7 +7,9 @@
 
 #include "ciptypes.h"
 #include "typedefs.h"
-#include "src/cip/class_stack/CIP_ClassInstance.h"
+#include "class_stack/CIP_ClassInstance.h"
+#include "class_stack/CIP_Template.h"
+
 class CIP_Assembly;
 
 class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>

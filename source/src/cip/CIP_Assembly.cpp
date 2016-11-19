@@ -12,21 +12,8 @@
 #include "opener_api.h"
 #include "trace.h"
 
-/*CIP_ClassInstance* CIPAssembly::CreateAssemblyInstance(CipUdint instance_id)
-{
-    CIP_ClassInstance* assembly_class;
-    // create the CIP Assembly object with zero instances
-    assembly_class = new CIP_ClassInstance(kCipAssemblyClassCode,
-                                  0, // 0 as the assembly object should not have a get_attribute_all service*                                  0, // 0 as the assembly object should not have a get_attribute_all service
-                "assembly instance", // name
-                                  0  // Revision, according to the CIP spec currently this has to be 2
-    );
-
-    return assembly_class;
-}*/
-
 // create the CIP Assembly object with zero instances
-CipStatus CIPAssembly::CipAssemblyInitialize(void)
+CipStatus CIP_Assembly::CipAssemblyInitialize(void)
 {
     class_id = kCipAssemblyClassCode;
     name = "Assembly";
@@ -38,7 +25,7 @@ CipStatus CIPAssembly::CipAssemblyInitialize(void)
     return kCipStatusOk;
 }
 
-void CIPAssembly::ShutdownAssemblies(void)
+void CIP_Assembly::ShutdownAssemblies(void)
 {
     if (CIP_ClassInstance::GetCipClass(kCipAssemblyClassCode) != NULL)
     {
@@ -58,7 +45,7 @@ void CIPAssembly::ShutdownAssemblies(void)
     }
 }
 
-CIP_ClassInstance* CIPAssembly::CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length)
+CIP_ClassInstance* CIP_Assembly::CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length)
 {
     CIP_ClassInstance* assembly_class;
     CIP_ClassInstance* instance;
@@ -88,7 +75,7 @@ CIP_ClassInstance* CIPAssembly::CreateAssemblyObject(CipUdint instance_id, CipBy
     return instance;
 }
 
-CipStatus CIPAssembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUint data_length)
+CipStatus CIP_Assembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUint data_length)
 {
     CipByteArray* assembly_byte_array;
 
@@ -107,7 +94,7 @@ CipStatus CIPAssembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUi
 return AfterAssemblyDataReceived(this);
 }
 
-CipStatus CIPAssembly::SetAssemblyAttributeSingle(CIP_ClassInstance* instance, CipMessageRouterRequest* message_router_request,
+CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CIP_ClassInstance* instance, CipMessageRouterRequest* message_router_request,
                                                   CipMessageRouterResponse* message_router_response)
 {
     CipUsint* router_request_data;

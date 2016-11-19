@@ -15,7 +15,7 @@
 #include "cipclass3connection.h"
 #include "cipcommon.h"
 #include "ciperror.h"
-#include "cipidentity.h"
+#include "CIP_Identity.h"
 #include "cipioconnection.h"
 #include "cipmessagerouter.h"
 #include "endianconv.h"

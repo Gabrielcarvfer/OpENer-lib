@@ -12,7 +12,7 @@
 #include "class_stack/CIP_ClassInstance.h"
 #include "cpf.h"
 #include <map>
-#include "../CIP_Template.h"
+#include "src/cip/class_stack/CIP_Template.h"
 
 class CIP_Connection; //trick compiler
 
@@ -26,7 +26,8 @@ typedef struct {
 
 class CIP_Connection :  public CIP_ClassInstance, public CIP_Template<CIP_Connection>
 {
-private:
+
+public:
     /**
  * @brief Sets the routing type of a connection, either
  * - Point-to-point connections (unicast)
@@ -132,7 +133,7 @@ private:
         LinkConsumer consumer;
         LinkProducer producer;
     } LinkObject;
-public:
+
     static const int classCode = kCipConnectionManagerClassCode;
     CIP_Connection(CipUint unique_connection_id);
     ~CIP_Connection();

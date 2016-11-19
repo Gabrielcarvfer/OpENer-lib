@@ -35,21 +35,17 @@ InputOnlyConnection g_input_only_connections[OPENER_CIP_NUM_INPUT_ONLY_CONNS];
 
 ListenOnlyConnection g_listen_only_connections[OPENER_CIP_NUM_LISTEN_ONLY_CONNS];
 
-CIP_Connection* GetExclusiveOwnerConnection(
-    CIP_Connection* connection_object, CipUint* extended_error);
+CIP_Connection* GetExclusiveOwnerConnection(CIP_Connection* connection_object, CipUint* extended_error);
 
-CIP_Connection* GetInputOnlyConnection(CIP_Connection* connection_object,
-    CipUint* extended_error);
+CIP_Connection* GetInputOnlyConnection(CIP_Connection* connection_object, CipUint* extended_error);
 
-CIP_Connection* GetListenOnlyConnection(CIP_Connection* connection_object,
-    CipUint* extended_error);
+CIP_Connection* GetListenOnlyConnection(CIP_Connection* connection_object, CipUint* extended_error);
 
 void ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number,
-    unsigned int output_assembly,
-    unsigned int input_assembly,
-    unsigned int config_assembly)
+    unsigned int output_assembly, unsigned int input_assembly, unsigned int config_assembly)
 {
-    if (OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS > connection_number) {
+    if (OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS > connection_number)
+    {
         g_exlusive_owner_connections[connection_number].output_assembly = output_assembly;
         g_exlusive_owner_connections[connection_number].input_assembly = input_assembly;
         g_exlusive_owner_connections[connection_number].config_assembly = config_assembly;
@@ -57,11 +53,10 @@ void ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number,
 }
 
 void ConfigureInputOnlyConnectionPoint(unsigned int connection_number,
-    unsigned int output_assembly,
-    unsigned int input_assembly,
-    unsigned int config_assembly)
+    unsigned int output_assembly, unsigned int input_assembly, unsigned int config_assembly)
 {
-    if (OPENER_CIP_NUM_INPUT_ONLY_CONNS > connection_number) {
+    if (OPENER_CIP_NUM_INPUT_ONLY_CONNS > connection_number)
+    {
         g_input_only_connections[connection_number].output_assembly = output_assembly;
         g_input_only_connections[connection_number].input_assembly = input_assembly;
         g_input_only_connections[connection_number].config_assembly = config_assembly;
@@ -73,55 +68,64 @@ void ConfigureListenOnlyConnectionPoint(unsigned int connection_number,
     unsigned int input_assembly,
     unsigned int config_assembly)
 {
-    if (OPENER_CIP_NUM_LISTEN_ONLY_CONNS > connection_number) {
+    if (OPENER_CIP_NUM_LISTEN_ONLY_CONNS > connection_number)
+    {
         g_listen_only_connections[connection_number].output_assembly = output_assembly;
         g_listen_only_connections[connection_number].input_assembly = input_assembly;
         g_listen_only_connections[connection_number].config_assembly = config_assembly;
     }
 }
 
-CIP_Connection* GetIoConnectionForConnectionData(
-    CIP_Connection* connection_object, CipUint* extended_error)
+CIP_Connection* GetIoConnectionForConnectionData( CIP_Connection* connection_object, CipUint* extended_error)
 {
     CIP_Connection* io_connection = NULL;
     *extended_error = 0;
 
-    io_connection = GetExclusiveOwnerConnection(connection_object,
-        extended_error);
-    if (NULL == io_connection) {
-        if (0 == *extended_error) {
+    io_connection = GetExclusiveOwnerConnection(connection_object, extended_error);
+    if (NULL == io_connection)
+    {
+        if (0 == *extended_error)
+        {
             /* we found no connection and don't have an error so try input only next */
             io_connection = GetInputOnlyConnection(connection_object, extended_error);
-            if (NULL == io_connection) {
-                if (0 == *extended_error) {
+            if (NULL == io_connection)
+            {
+                if (0 == *extended_error)
+                {
                     /* we found no connection and don't have an error so try listen only next */
-                    io_connection = GetListenOnlyConnection(connection_object,
-                        extended_error);
-                    if ((NULL == io_connection) && (0 == *extended_error)) {
+                    io_connection = GetListenOnlyConnection(connection_object, extended_error);
+                    if ((NULL == io_connection) && (0 == *extended_error))
+                    {
                         /* no application connection type was found that suits the given data */
                         /* TODO check error code VS */
                         *extended_error = kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
-                    } else {
+                    }
+                    else
+                    {
                         connection_object->instance_type = kConnectionTypeIoListenOnly;
                     }
                 }
-            } else {
+            }
+            else
+            {
                 connection_object->instance_type = kConnectionTypeIoInputOnly;
             }
         }
-    } else {
+    }
+    else
+    {
         connection_object->instance_type = kConnectionTypeIoExclusiveOwner;
     }
 
-    if (NULL != io_connection) {
+    if (NULL != io_connection)
+    {
         CIP_Connection::CopyConnectionData(io_connection, connection_object);
     }
 
     return io_connection;
 }
 
-CIP_Connection* GetExclusiveOwnerConnection(
-    CIP_Connection* connection_object, CipUint* extended_error)
+CIP_Connection* GetExclusiveOwnerConnection(CIP_Connection* connection_object, CipUint* extended_error)
 {
     CIP_Connection* exclusive_owner_connection = NULL;
     int i;

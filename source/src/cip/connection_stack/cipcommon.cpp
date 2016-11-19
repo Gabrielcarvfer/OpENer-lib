@@ -14,7 +14,7 @@
 #include "CIP_Connection.h"
 #include "ciperror.h"
 #include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
-#include "cipidentity.h"
+#include "CIP_Identity.h"
 #include "cipmessagerouter.h"
 #include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "endianconv.h"

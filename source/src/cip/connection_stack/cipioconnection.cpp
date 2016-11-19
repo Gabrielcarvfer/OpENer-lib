@@ -115,14 +115,8 @@ CipStatus EstablishIoConnction(CIP_Connection* connection_object,
 
     GeneralConnectionConfiguration(io_connection_object);
 
-    originator_to_target_connection_type = (io_connection_object
-                                                   ->o_to_t_network_connection_parameter
-                                               & 0x6000)
-        >> 13;
-    target_to_originator_connection_type = (io_connection_object
-                                                   ->t_to_o_network_connection_parameter
-                                               & 0x6000)
-        >> 13;
+    originator_to_target_connection_type = (io_connection_object->o_to_t_network_connection_parameter & 0x6000) >> 13;
+    target_to_originator_connection_type = (io_connection_object->t_to_o_network_connection_parameter & 0x6000) >> 13;
 
     if ((originator_to_target_connection_type == 0) && (target_to_originator_connection_type == 0))
     { /* this indicates an re-configuration of the connection currently not supported and we should not come here as this is handled in the forwardopen function*/

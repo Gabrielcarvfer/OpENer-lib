@@ -1,6 +1,9 @@
 #######################################
 # CIP library                         #
 #######################################
+add_subdirectory( class_stack )
+add_subdirectory( connection_stack )
+add_subdirectory( network_stack )
 
 #######################################
 # Add common includes                 #
@@ -12,6 +15,6 @@ opener_common_includes()
 #######################################
 opener_platform_support("INCLUDES")
 
-set( CIP_SRC appcontype.cpp CIP_Assembly.cpp connection_stack/cipclass3connection.cpp connection_stack/cipcommon.cpp connection_stack/CIP_Connection.cpp ciperror.h network_stack/ethernetip_net/cipethernetlink.cpp cipidentity.cpp connection_stack/cipioconnection.cpp connection_stack/cipmessagerouter.cpp class_stack/CIP_ClassInstance.cpp network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.cpp ciptypes.h cpf.cpp class_stack/CIP_Attribute.cpp class_stack/CIP_Attribute.h class_stack/CIP_Service.cpp class_stack/CIP_Service.h network_stack/CIP_Network.cpp network_stack/CIP_Network.h Opener_Interface.cpp Opener_Interface.h Opener_ExplicitConnection.cpp Opener_ExplicitConnection.h Opener_IOConnection.cpp Opener_IOConnection.h class_stack/CIP_InternalAttribute.cpp class_stack/CIP_InternalAttribute.h CIP_Protocol.cpp CIP_Protocol.h CIP_Template.cpp CIP_Template.h)
+set( CIP_SRC appcontype.cpp CIP_Assembly.cpp ciperror.h CIP_Identity.cpp ciptypes.h cpf.cpp ../Opener_Interface.cpp ../Opener_Interface.h ../Opener_ExplicitConnection.cpp ../Opener_ExplicitConnection.h ../Opener_IOConnection.cpp ../Opener_IOConnection.h)
 
-add_library( CIP ${CIP_SRC} ${UTILS_SRC})
+add_library( CIP ${CIP_SRC} ${UTILS_SRC} ${CIP_NET_SRC} ${CIP_CLASS_SRC})

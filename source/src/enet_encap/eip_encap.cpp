@@ -8,7 +8,7 @@
 
 #include "src/cip/connection_stack/cipcommon.h"
 #include "src/cip/connection_stack/CIP_Connection.h"
-#include "cipidentity.h"
+#include "CIP_Identity.h"
 #include "src/cip/connection_stack/cipmessagerouter.h"
 #include "cpf.h"
 #include "eip_encap.h"

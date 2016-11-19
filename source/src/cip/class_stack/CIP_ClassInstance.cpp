@@ -7,59 +7,6 @@
 #include "../CIP_Protocol.h"
 
 
-/*CIP_ClassInstance::CIP_ClassInstance(CipUdint class_id, CipUdint get_all_class_attributes_mask, CipUdint get_all_instance_attributes_mask,
-                     CipUdint position, CipUint revision)
-{
-
-    OPENER_TRACE_INFO("creating class instance '%s' with id: 0x%" PRIX32 "\n", name,  class_id);
-
-    // initialize the class-specific fields of the Class struct
-
-    // the class remembers the class ID 
-    this->class_id = class_id;
-
-    // the class remembers the class ID 
-    this->revision = revision;
-
-    // indicate which attributes are included in instance getAttributeAll  
-    this->get_all_instance_attributes_mask = get_all_instance_attributes_mask;
-    this->get_all_class_attributes_mask = get_all_class_attributes_mask;
-
-    // create the standard class attributes
-    if (CIP_Protocol::GetCipClass(class_id) == NULL)
-    {
-        // revision
-        this->InsertAttribute(1, kCipUint, (void *) &this->revision, kGetableSingleAndAll);
-
-        //  largest instance number
-        this->InsertAttribute(2, kCipUint, NULL, kGetableSingleAndAll);
-
-        // number of instances currently existing
-        this->InsertAttribute(3, kCipUint, NULL, kGetableSingleAndAll);
-
-        // optional attribute list - default = 0
-        this->InsertAttribute(4, kCipUint, (void *) &kCipUintZero, kGetableAll);
-
-        // optional service list - default = 0
-        this->InsertAttribute(5, kCipUint, (void *) &kCipUintZero, kGetableAll);
-
-        // max class attribute number
-        this->InsertAttribute(6, kCipUint, NULL, kGetableSingleAndAll);
-
-        // max instance attribute number
-        this->InsertAttribute(7, kCipUint, NULL, kGetableSingleAndAll);
-
-        // create the standard instance services
-        // only if the mask has values add the get_attribute_all service
-        if (0 != get_all_instance_attributes_mask) {
-            // bind instance services to the class
-            this->InsertService(kGetAttributeAll, &this->GetAttributeAll, "GetAttributeAll");
-        }
-        this->InsertService(kGetAttributeSingle, &this->GetAttributeSingle, "GetAttributeSingle");
-        CIP_Protocol::AddCipClassInstance(this, 0);
-    }
-}*/
-
 CIP_ClassInstance::CIP_ClassInstance()
 {
 

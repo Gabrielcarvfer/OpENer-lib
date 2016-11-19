@@ -15,6 +15,7 @@ class CIP_ClassInstance
         static CipUdint get_all_instance_attributes_mask;
         static std::string class_name;
         static CipUint revision;
+
         static std::map< CipUdint, CIP_Attribute * > class_attributes;
         static std::map< CipUdint, CIP_Service * > class_services;
 
@@ -60,7 +61,6 @@ class CIP_ClassInstance
                *          0 if instance is not in the object
                */
 
-    static bool AddCipClassInstance(CIP_ClassInstance* instance, CipUdint position);
 
     /** @ingroup CIP_API
      * @brief Insert an attribute in an instance of a CIP class
