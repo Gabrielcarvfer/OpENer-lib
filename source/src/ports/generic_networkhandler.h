@@ -22,7 +22,7 @@
 #include "src/cip/connection_stack/CIP_Connection.h"
 #include "endianconv.h"
 #include "networkhandler.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include "typedefs.h"
 
 #define MAX_NO_OF_TCP_SOCKETS 10

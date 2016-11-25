@@ -18,7 +18,7 @@
 #include "CIP_MessageRouter.h"
 #include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "endianconv.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include "trace.h"
 #include "src/typedefs.h"
 #include "class_stack/CIP_Service.h"

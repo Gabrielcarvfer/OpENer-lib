@@ -5,7 +5,7 @@
  ******************************************************************************/
 #pragma once
 
-#include <opener_user_conf.h>
+//#include <opener_user_conf.h>
 
 /** @file trace.h
  * @brief Tracing infrastructure for OpENer

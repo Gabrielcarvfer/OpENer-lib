@@ -12,7 +12,7 @@
  */
 
 #include "CIP_Connection.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 
 
 /**** Global variables ****/

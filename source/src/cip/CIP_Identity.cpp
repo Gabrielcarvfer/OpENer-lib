@@ -29,7 +29,7 @@
 #include "ciperror.h"
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "endianconv.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include <string.h>
 
 #ifdef WIN32

@@ -13,7 +13,7 @@
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "src/utils/endianconv.h"
 #include "../enet_encap/eip_endianconv.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include "trace.h"
 
 

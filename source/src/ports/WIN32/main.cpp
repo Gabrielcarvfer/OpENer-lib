@@ -4,12 +4,13 @@
  *
  ******************************************************************************/
 #include <signal.h>
-#include <stdio.h>
+#include <cstdio>
+#include <cstdlib>
 #include <stdlib.h>
 
 #include "src/cip/connection_stack/CIP_Common.h"
 #include "generic_networkhandler.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include "trace.h"
 
 extern int newfd;
@@ -46,12 +47,14 @@ int main(int argc, char* arg[])
         ConfigureDomainName(arg[4]);
         ConfigureHostName(arg[5]);
 
-        acMyMACAddress[0] = (CipUsint)strtoul(arg[6], NULL, 16);
-        acMyMACAddress[1] = (CipUsint)strtoul(arg[7], NULL, 16);
-        acMyMACAddress[2] = (CipUsint)strtoul(arg[8], NULL, 16);
-        acMyMACAddress[3] = (CipUsint)strtoul(arg[9], NULL, 16);
-        acMyMACAddress[4] = (CipUsint)strtoul(arg[10], NULL, 16);
-        acMyMACAddress[5] = (CipUsint)strtoul(arg[11], NULL, 16);
+        /*acMyMACAddress[0] = (CipUsint)std::strtoul(arg[6], NULL, 16);
+        acMyMACAddress[1] = (CipUsint)std::strtoul(arg[7], NULL, 16);
+        acMyMACAddress[2] = (CipUsint)std::strtoul(arg[8], NULL, 16);
+        acMyMACAddress[3] = (CipUsint)std::strtoul(arg[9], NULL, 16);
+        acMyMACAddress[4] = (CipUsint)std::strtoul(arg[10], NULL, 16);
+        acMyMACAddress[5] = (CipUsint)std::strtoul(arg[11], NULL, 16);
+         */
+
         ConfigureMacAddress(acMyMACAddress);
     }
 
@@ -61,7 +64,7 @@ int main(int argc, char* arg[])
     /* nUniqueConnectionID should be sufficiently random or incremented and stored
    *  in non-volatile memory each time the device boots.
    */
-    nUniqueConnectionID = rand();
+    nUniqueConnectionID = 12398798123;//rand();
 
     /* Setup the CIP Layer */
     CipStackInit(nUniqueConnectionID);

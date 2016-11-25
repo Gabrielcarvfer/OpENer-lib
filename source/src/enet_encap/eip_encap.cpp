@@ -15,7 +15,7 @@
 #include "eip_endianconv.h"
 #include "endianconv.h"
 #include "generic_networkhandler.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 
 /*Identity data from cipidentity.c*/
 extern CipUint vendor_id_;

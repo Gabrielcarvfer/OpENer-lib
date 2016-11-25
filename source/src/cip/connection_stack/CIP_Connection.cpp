@@ -20,7 +20,7 @@
 #include "CIP_MessageRouter.h"
 #include "endianconv.h"
 #include "generic_networkhandler.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include "opener_user_conf.h"
 #include "trace.h"
 

@@ -6,13 +6,15 @@
 #pragma once
 
 #include "ciptypes.h"
-#include "opener_api.h"
-#include "opener_user_conf.h"
+#include "Opener_Interface.h"
+//#include "opener_user_conf.h"
 #include "typedefs.h"
 #include "class_stack/CIP_ClassInstance.h"
 #include "../CIP_CommonPacket.h"
 #include <map>
 #include "src/cip/class_stack/CIP_Template.h"
+
+
 
 class CIP_Connection; //trick compiler
 
@@ -202,7 +204,7 @@ public:
     /** List holding information on the object classes and open/close function
      * pointers to which connections may be established.
      */
-    static ConnectionManagementHandling g_astConnMgmList[2 + OPENER_CIP_NUM_APPLICATION_SPECIFIC_CONNECTABLE_OBJECTS];
+    static std::map<CipUdint, ConnectionManagementHandling> g_astConnMgmList;
 
     /** buffer connection object needed for forward open */
     static CIP_Connection g_dummy_connection_object;

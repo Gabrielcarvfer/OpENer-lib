@@ -9,7 +9,7 @@
 #include "CIP_Assembly.h"
 #include "src/cip/connection_stack/CIP_Common.h"
 #include "src/cip/connection_stack/CIP_Connection.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include "trace.h"
 
 // create the CIP Assembly object with zero instances

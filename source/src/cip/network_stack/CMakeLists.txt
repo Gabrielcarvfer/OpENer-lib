@@ -1,16 +1,7 @@
-#######################################
-# CIP library                         #
-#######################################
 
-#######################################
-# Add common includes                 #
-#######################################
+add_subdirectory(ethernetip_net)
+#add_subdirectory(devicenet_net)
+
 opener_common_includes()
 
-#######################################
-# Add platform-specific includes      #
-#######################################
-opener_platform_support("INCLUDES")
-
-set( CIP_NET_SRC ethernetip_net/cipethernetlink.cpp network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.cpp ciptypes.h network_stack/CIP_Network.cpp network_stack/CIP_Network.h)
-
+set( CIP_NET_SRC ${CIP_NET_ETHIP_SRC} CIP_Network.cpp) #{CIP_NET_DEVNT_SRC}

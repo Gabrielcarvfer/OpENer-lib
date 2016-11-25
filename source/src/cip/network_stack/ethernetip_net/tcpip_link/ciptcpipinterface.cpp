@@ -12,7 +12,7 @@
 #include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "endianconv.h"
-#include "opener_api.h"
+#include "Opener_Interface.h"
 #include "opener_user_conf.h"
 
 CipDword tcp_status_ = 0x1; /**< #1  TCP status with 1 we indicate that we got a valid configuration from DHCP or BOOTP */

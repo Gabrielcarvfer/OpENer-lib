@@ -48,7 +48,8 @@ CipStatus HandleDataOnTcpSocket(int socket);
 CipStatus NetworkHandlerInitialize(void)
 {
 
-    if (kCipStatusOk != NetworkHandlerInitializePlatform()) {
+    if (kCipStatusOk != NetworkHandlerInitializePlatform())
+    {
         return kCipStatusError;
     }
 
@@ -57,8 +58,8 @@ CipStatus NetworkHandlerInitialize(void)
     FD_ZERO(&read_socket);
 
     /* create a new TCP socket */
-    if ((g_network_status.tcp_listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP))
-        == -1) {
+    if ((g_network_status.tcp_listener = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1)
+    {
         OPENER_TRACE_ERR("error allocating socket stream listener, %d\n", errno);
         return kCipStatusError;
     }
@@ -66,11 +67,9 @@ CipStatus NetworkHandlerInitialize(void)
     int set_socket_option_value = 1; //Represents true for used set socket options
     /* Activates address reuse */
     if (setsockopt(g_network_status.tcp_listener, SOL_SOCKET, SO_REUSEADDR,
-            (char*)&set_socket_option_value,
-            sizeof(set_socket_option_value))
-        == -1) {
-        OPENER_TRACE_ERR(
-            "error setting socket option SO_REUSEADDR on tcp_listener\n");
+                   (char*)&set_socket_option_value, sizeof(set_socket_option_value)) == -1)
+    {
+        OPENER_TRACE_ERR("error setting socket option SO_REUSEADDR on tcp_listener\n");
         return kCipStatusError;
     }
 
