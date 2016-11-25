@@ -4,7 +4,7 @@
  *
  ******************************************************************************/
 #include "CIP_MessageRouter.h"
-#include "src/cip/connection_stack/cipcommon.h"
+#include "src/cip/connection_stack/CIP_Common.h"
 #include "ciperror.h"
 #include "endianconv.h"
 #include "opener_api.h"

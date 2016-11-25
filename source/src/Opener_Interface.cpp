@@ -5,32 +5,33 @@
 #include "Opener_Interface.h"
 #include <stdlib.h>
 
-
+/*
 bool Opener_Interface::Opener_Initialize(CipUdint serialNumber)
 {
     CipUint unique_connection_id;
 
-    /*for a real device the serial number should be unique per device */
-    SetDeviceSerialNumber(123456789);
+    //for a real device the serial number should be unique per device
+    //SetDeviceSerialNumber(123456789);
 
-    /* nUniqueConnectionID should be sufficiently random or incremented and stored
-    *  in non-volatile memory each time the device boots.
-    */
-    unique_connection_id = rand();
+    // nUniqueConnectionID should be sufficiently random or incremented and stored
+    //  in non-volatile memory each time the device boots.
 
-    /* Setup the CIP Layer */
-    CipStackInit(unique_connection_id);
+    //unique_connection_id = rand();
 
-    /* Setup Network Handles */
+    // Setup the CIP Layer
+    //CipStackInit(unique_connection_id);
+
+    // Setup Network Handles
+
     if (kCipStatusOk == NetworkHandlerInitialize ())
     {
         g_end_stack = 0;
 #ifndef WIN32
-        /* register for closing signals so that we can trigger the stack to end */
+        // register for closing signals so that we can trigger the stack to end
                 signal(SIGHUP, LeaveStack);
 #endif
 
-        /* The event loop. Put other processing you need done continually in here */
+        // The event loop. Put other processing you need done continually in here
         while (1 != g_end_stack)
         {
             if (kCipStatusOk != NetworkHandlerProcessOnce ())
@@ -47,10 +48,10 @@ bool Opener_Interface::Opener_Shutdown()
 
     //TODO: if cipstatusok, finish handler
     // clean up network state
-    NetworkHandlerFinish ();
+    //NetworkHandlerFinish ();
 
     // close remaining sessions and connections, cleanup used data
-    ShutdownCipStack();
+    //ShutdownCipStack();
 }
 
 //Open a new Explicit connection
@@ -109,4 +110,4 @@ Opener_ExplicitConnection * Opener_Interface::GetOpenerExplicitConnection(CipUdi
         return Explicit_Connection_set[handle];
     else
         return NULL;
-}
+}*/

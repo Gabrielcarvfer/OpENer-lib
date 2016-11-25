@@ -10,7 +10,7 @@
 #include "opener_user_conf.h"
 #include "typedefs.h"
 #include "class_stack/CIP_ClassInstance.h"
-#include "CIP_CommonPacket.h"
+#include "../CIP_CommonPacket.h"
 #include <map>
 #include "src/cip/class_stack/CIP_Template.h"
 
@@ -148,7 +148,7 @@ public:
      *   @return pointer to connected Object
      *           0 .. connection not present in device
      */
-    CIP_Connection* GetConnectedObject(CipUdint connection_id);
+    static CIP_Connection* GetConnectedObject(CipUdint connection_id);
 
     /**  Get a connection object for a given output assembly.
      *
@@ -366,7 +366,7 @@ public:
 
     void InitializeConnectionManagerData(void);
 
-    void AddNullAddressItem(CipCommonPacketFormatData* common_data_packet_format_data);
+    void AddNullAddressItem(CIP_CommonPacket::CipCommonPacketFormatData* common_data_packet_format_data);
 
     CipStatus TriggerConnections(CipUdint pa_unOutputAssembly, CipUdint pa_unInputAssembly);
     static CipStatus AddConnectableObject(CipUdint pa_nClassId, OpenConnectionFunction pa_pfOpenFunc);

@@ -13,7 +13,7 @@
 #include "appcontype.h"
 #include "CIP_Assembly.h"
 #include "cipclass3connection.h"
-#include "cipcommon.h"
+#include "CIP_Common.h"
 #include "ciperror.h"
 #include "CIP_Identity.h"
 #include "cipioconnection.h"

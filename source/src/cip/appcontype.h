@@ -50,7 +50,7 @@ CIP_Connection* GetNextNonControlMasterConnection(CipUdint input_point);
  * @param input_point  the input point
  * @param instance_type the connection application type
  */
-void CloseAllConnectionsForInputWithSameType(CipUdint input_point, ConnectionType instance_type);
+void CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_Connection::ConnectionType instance_type);
 
 /**@ brief close all open connections.
  *

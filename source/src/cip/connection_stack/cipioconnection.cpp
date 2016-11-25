@@ -10,7 +10,7 @@
 
 #include "appcontype.h"
 #include "src/cip/CIP_Assembly.h"
-#include "cipcommon.h"
+#include "CIP_Common.h"
 #include "CIP_Connection.h"
 #include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "CIP_CommonPacket.h"

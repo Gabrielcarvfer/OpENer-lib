@@ -7,8 +7,8 @@
 
 #include "CIP_CommonPacket.h"
 
-#include "src/cip/connection_stack/cipcommon.h"
-#include "src/cip/connection_stack/CIP_Connection.h"
+#include "connection_stack/CIP_Common.h"
+#include "connection_stack/CIP_Connection.h"
 #include "ciperror.h"
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "src/utils/endianconv.h"
@@ -75,7 +75,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
         if (g_common_packet_format_data_item.address_item.type_id == kCipItemIdConnectionAddress) /* check if ConnectedAddressItem received, otherwise it is no connected message and should not be here*/
         {
             // ConnectedAddressItem item
-            CIP_Connection* connection_object = GetConnectedObject(g_common_packet_format_data_item.address_item.data.connection_identifier);
+            CIP_Connection* connection_object = CIP_Connection::GetConnectedObject(g_common_packet_format_data_item.address_item.data.connection_identifier);
             if (NULL != connection_object)
             {
                 // reset the watchdog timer
@@ -447,7 +447,8 @@ int CIP_CommonPacket::AssembleLinearMessage(
 
     // process Data Item
     if ((common_packet_format_data_item->data_item.type_id == kCipItemIdUnconnectedDataItem)
-        || (common_packet_format_data_item->data_item.type_id == kCipItemIdConnectedDataItem)) {
+        || (common_packet_format_data_item->data_item.type_id == kCipItemIdConnectedDataItem))
+    {
 
         if (message_router_response)
         {
@@ -456,11 +457,8 @@ int CIP_CommonPacket::AssembleLinearMessage(
             if (common_packet_format_data_item->data_item.type_id == kCipItemIdConnectedDataItem)
             {
                 //Connected Item
-                message_size = EncodeConnectedDataItemLength(message_router_response,
-                    &message, message_size);
-                message_size = EncodeSequenceNumber(message_size,
-                    &g_common_packet_format_data_item,
-                    &message);
+                message_size = EncodeConnectedDataItemLength(message_router_response, &message, message_size);
+                message_size = EncodeSequenceNumber(message_size, &g_common_packet_format_data_item, &message);
 
             }
             else
@@ -489,18 +487,15 @@ int CIP_CommonPacket::AssembleLinearMessage(
    * EtherNet/IP specification doesn't demand it, but there are EIP
    * devices which depend on CPF items to appear in the order of their
    * ID number */
-    for (int type = kCipItemIdSocketAddressInfoOriginatorToTarget;
-         type <= kCipItemIdSocketAddressInfoTargetToOriginator; type++)
+    for (int type = kCipItemIdSocketAddressInfoOriginatorToTarget; type <= kCipItemIdSocketAddressInfoTargetToOriginator; type++)
     {
         for (int j = 0; j < 2; j++)
         {
             if (common_packet_format_data_item->address_info_item[j].type_id == type)
             {
-                message_size = EncodeSockaddrInfoItemTypeId(message_size, j,
-                    common_packet_format_data_item, &message);
+                message_size = EncodeSockaddrInfoItemTypeId(message_size, j, common_packet_format_data_item, &message);
 
-                message_size = EncodeSockaddrInfoLength(message_size, j,
-                    common_packet_format_data_item, &message);
+                message_size = EncodeSockaddrInfoLength(message_size, j, common_packet_format_data_item, &message);
 
                 message_size += EncapsulateIpAddress(
                     common_packet_format_data_item->address_info_item[j].sin_port,
@@ -515,8 +510,7 @@ int CIP_CommonPacket::AssembleLinearMessage(
     return message_size;
 }
 
-int CIP_CommonPacket::AssembleIOMessage(CipCommonPacketFormatData* common_packet_format_data_item,
-    CipUsint* message)
+int CIP_CommonPacket::AssembleIOMessage(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint* message)
 {
-    return AssembleLinearMessage(0, common_packet_format_data_item, &g_message_data_reply_buffer[0]);
+    return AssembleLinearMessage(0, common_packet_format_data_item, &CIP_Common::message_data_reply_buffer[0]);
 }

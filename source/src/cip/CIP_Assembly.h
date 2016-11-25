@@ -50,8 +50,7 @@ class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
 		 *          Objects.
 		 *  Currently only supports Attribute 3 (CIP_BYTE_ARRAY) of an Assembly
 		 */
-        CipStatus SetAssemblyAttributeSingle( CIP_ClassInstance* instance,
-                  CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+        CipStatus SetAssemblyAttributeSingle(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
 
 

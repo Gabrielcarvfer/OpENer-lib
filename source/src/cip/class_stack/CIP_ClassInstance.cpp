@@ -1,6 +1,6 @@
 #include "CIP_ClassInstance.h"
 #include "trace.h"
-#include "src/cip/connection_stack/cipcommon.h"
+#include "src/cip/connection_stack/CIP_Common.h"
 #include "CIP_Service.h"
 #include "CIP_Attribute.h"
 #include <utility>

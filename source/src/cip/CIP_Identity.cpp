@@ -25,7 +25,7 @@
  */
 
 #include "CIP_Identity.h"
-#include "src/cip/connection_stack/cipcommon.h"
+#include "src/cip/connection_stack/CIP_Common.h"
 #include "ciperror.h"
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "endianconv.h"
@@ -64,7 +64,7 @@ void CIP_Identity::SetDeviceStatus(CipUint status)
  * @returns Currently always kEipOkSend is returned
  */
  //                         pointer to instance   -      pointer to message router request         -      pointer to message router response
-static CipStatus CIP_Identity::Reset(CIP_ClassInstance* instance, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_Identity::Reset(CIP_Identity* instance, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     CipStatus eip_status;
     (void)instance;
@@ -150,7 +150,7 @@ CipStatus CIP_Identity::CipIdentityInit()
     instance->InsertAttribute(6, kCipUdint,       &serial_number_, kGetableSingleAndAll);
     instance->InsertAttribute(7, kCipShortString, &product_name_,  kGetableSingleAndAll);
 
-    InsertClassService (kReset, &Reset, "Reset");
+    //instance->InsertService (kReset, &Reset, std::string("Reset"));
 
     return kCipStatusOk;
 }

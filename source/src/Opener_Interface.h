@@ -30,6 +30,8 @@ class Opener_Interface
         //Get pointers to use
         static Opener_IOConnection * GetOpenerIOConnection(CipUdint handle);
         static Opener_ExplicitConnection * GetOpenerExplicitConnection(CipUdint handle);
+
+        static CipStatus AfterDataReceived(void *);
     private:
         static std::map<CipUdint, Opener_IOConnection*> IO_Connection_set;
         static std::map<CipUdint, Opener_ExplicitConnection*> Explicit_Connection_set;
