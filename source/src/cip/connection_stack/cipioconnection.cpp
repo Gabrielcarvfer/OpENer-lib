@@ -13,7 +13,7 @@
 #include "cipcommon.h"
 #include "CIP_Connection.h"
 #include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
-#include "cpf.h"
+#include "CIP_CommonPacket.h"
 #include "endianconv.h"
 #include "generic_networkhandler.h"
 #include "trace.h"

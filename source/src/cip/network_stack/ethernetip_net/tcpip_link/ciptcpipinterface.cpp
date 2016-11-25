@@ -10,7 +10,7 @@
 #include "src/cip/connection_stack/cipcommon.h"
 #include "ciperror.h"
 #include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
-#include "src/cip/connection_stack/cipmessagerouter.h"
+#include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "endianconv.h"
 #include "opener_api.h"
 #include "opener_user_conf.h"

@@ -19,17 +19,20 @@
 
 extern OpenerEndianess g_opener_platform_endianess;
 
-int EncapsulateIpAddress(CipUint port, CipUdint address,
-    CipByte** communication_buffer)
+int EncapsulateIpAddress(CipUint port, CipUdint address, CipByte** communication_buffer)
 {
     int size = 0;
-    if (kOpENerEndianessLittle == g_opener_platform_endianess) {
+    if (kOpENerEndianessLittle == g_opener_platform_endianess)
+    {
         size += AddIntToMessage(htons(AF_INET), (CipUsint**)communication_buffer);
         size += AddIntToMessage(port, communication_buffer);
         size += AddDintToMessage(address, communication_buffer);
 
-    } else {
-        if (kOpENerEndianessBig == g_opener_platform_endianess) {
+    }
+    else
+    {
+        if (kOpENerEndianessBig == g_opener_platform_endianess)
+        {
             (*communication_buffer)[0] = (unsigned char)(AF_INET >> 8);
             (*communication_buffer)[1] = (unsigned char)AF_INET;
             *communication_buffer += 2;
@@ -46,9 +49,11 @@ int EncapsulateIpAddress(CipUint port, CipUdint address,
             (*communication_buffer)[0] = (unsigned char)(address >> 24);
             *communication_buffer += 4;
             size += 4;
-        } else {
+        }
+        else
+        {
             fprintf(stderr, "No endianess detected! Probably the DetermineEndianess function was not executed!");
-            exit(EXIT_FAILURE);
+            //exit(EXIT_FAILURE);
         }
     }
     return size;

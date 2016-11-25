@@ -192,38 +192,39 @@ CIP_Connection* GetListenOnlyConnection(CIP_Connection* connection_object,
     CIP_Connection* listen_only_connection = NULL;
     int i, j;
 
-    if (kRoutingTypeMulticastConnection
-        != (connection_object->t_to_o_network_connection_parameter
-               & kRoutingTypeMulticastConnection)) {
+    if (kRoutingTypeMulticastConnection != (connection_object->t_to_o_network_connection_parameter & kRoutingTypeMulticastConnection))
+    {
         /* a listen only connection has to be a multicast connection. */
         *extended_error = kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened; /* maybe not the best error message however there is no suitable definition in the cip spec */
         return NULL;
     }
 
-    for (i = 0; i < OPENER_CIP_NUM_LISTEN_ONLY_CONNS; i++) {
-        if (g_listen_only_connections[i].output_assembly
-            == connection_object->connection_path.connection_point[0]) { /* we have the same output assembly */
-            if (g_listen_only_connections[i].input_assembly
-                != connection_object->connection_path.connection_point[1]) {
+    for (i = 0; i < OPENER_CIP_NUM_LISTEN_ONLY_CONNS; i++)
+    {
+        if (g_listen_only_connections[i].output_assembly == connection_object->connection_path.connection_point[0])
+        { /* we have the same output assembly */
+            if (g_listen_only_connections[i].input_assembly != connection_object->connection_path.connection_point[1])
+            {
                 *extended_error = kConnectionManagerStatusCodeInvalidProducingApplicationPath;
                 break;
             }
-            if (g_listen_only_connections[i].config_assembly
-                != connection_object->connection_path.connection_point[2]) {
+            if (g_listen_only_connections[i].config_assembly != connection_object->connection_path.connection_point[2])
+            {
                 *extended_error = kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
                 break;
             }
 
-            if (NULL
-                == GetExistingProducerMulticastConnection(
-                       connection_object->connection_path.connection_point[1])) {
+            if (NULL == GetExistingProducerMulticastConnection(connection_object->connection_path.connection_point[1]))
+            {
                 *extended_error = kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened;
                 break;
             }
 
-            for (j = 0; j < OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH; j++) {
+            for (j = 0; j < OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH; j++)
+            {
                 if (kConnectionStateNonExistent
-                    == g_listen_only_connections[i].connection_data[j]->state) {
+                    == g_listen_only_connections[i].connection_data[j]->state)
+                {
                     return g_listen_only_connections[i].connection_data[j];
                 }
             }
@@ -267,19 +268,13 @@ CIP_Connection* GetNextNonControlMasterConnection(CipUdint input_point)
     {
         next_non_control_master_connection = CIP_Connection::active_connections_set[i];
 
-        if ((kConnectionTypeIoExclusiveOwner
-                == next_non_control_master_connection->instance_type)
-            || (kConnectionTypeIoInputOnly
-                   == next_non_control_master_connection->instance_type)) {
-            if ((input_point
-                    == next_non_control_master_connection->connection_path
-                           .connection_point[1])
-                && (kRoutingTypeMulticastConnection
-                       == (next_non_control_master_connection
-                                  ->t_to_o_network_connection_parameter
+        if ((kConnectionTypeIoExclusiveOwner == next_non_control_master_connection->instance_type)
+            || (kConnectionTypeIoInputOnly == next_non_control_master_connection->instance_type))
+        {
+            if ((input_point == next_non_control_master_connection->connection_path.connection_point[1])
+                && (kRoutingTypeMulticastConnection == (next_non_control_master_connection->t_to_o_network_connection_parameter
                               & kRoutingTypeMulticastConnection))
-                && (kEipInvalidSocket
-                       == next_non_control_master_connection->socket[kUdpCommuncationDirectionProducing])) {
+                && (kEipInvalidSocket == next_non_control_master_connection->socket[kUdpCommuncationDirectionProducing])) {
                 /* we have a connection that produces the same input assembly,
          * is a multicast producer and does not manages the connection.
          */
@@ -300,8 +295,7 @@ void CloseAllConnectionsForInputWithSameType(CipUdint input_point,
     {
         connection = CIP_Connection::active_connections_set[i];
 
-        if ((instance_type == connection->instance_type)
-            && (input_point == connection->connection_path.connection_point[1])) 
+        if ((instance_type == connection->instance_type) && (input_point == connection->connection_path.connection_point[1]))
         {
 
             CheckIoConnectionEvent(
@@ -348,10 +342,7 @@ CipBool ConnectionWithSameConfigPointExists(CipUdint config_point)
 
 void InitializeIoConnectionData(void)
 {
-    memset(g_exlusive_owner_connections, 0,
-        OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS * sizeof(ExclusiveOwnerConnection));
-    memset(g_input_only_connections, 0,
-        OPENER_CIP_NUM_INPUT_ONLY_CONNS * sizeof(InputOnlyConnection));
-    memset(g_listen_only_connections, 0,
-        OPENER_CIP_NUM_LISTEN_ONLY_CONNS * sizeof(ListenOnlyConnection));
+    memset(g_exlusive_owner_connections, 0, OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS * sizeof(ExclusiveOwnerConnection));
+    memset(g_input_only_connections, 0, OPENER_CIP_NUM_INPUT_ONLY_CONNS * sizeof(InputOnlyConnection));
+    memset(g_listen_only_connections, 0,  OPENER_CIP_NUM_LISTEN_ONLY_CONNS * sizeof(ListenOnlyConnection));
 }

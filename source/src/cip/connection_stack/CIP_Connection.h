@@ -10,7 +10,7 @@
 #include "opener_user_conf.h"
 #include "typedefs.h"
 #include "class_stack/CIP_ClassInstance.h"
-#include "cpf.h"
+#include "CIP_CommonPacket.h"
 #include <map>
 #include "src/cip/class_stack/CIP_Template.h"
 

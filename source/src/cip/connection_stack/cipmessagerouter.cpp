@@ -3,7 +3,7 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#include "cipmessagerouter.h"
+#include "CIP_MessageRouter.h"
 #include "src/cip/connection_stack/cipcommon.h"
 #include "ciperror.h"
 #include "endianconv.h"
@@ -17,7 +17,7 @@ CipMessageRouterResponse g_message_router_response;
 
 
 
-CipStatus CIPMessageRouter::CipMessageRouterInit()
+CipStatus CIP_MessageRouter::CipMessageRouterInit()
 {
     CIP_ClassInstance* message_router;
 
@@ -45,7 +45,7 @@ CipStatus CIPMessageRouter::CipMessageRouterInit()
     return kCipStatusOk;
 }
 
-CIP_ClassInstance* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
+CIP_ClassInstance* CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
 {
     /* for each entry in list*/
     for(auto ptr : message_router_registered_classes) 
@@ -58,7 +58,7 @@ CIP_ClassInstance* CIPMessageRouter::GetRegisteredObject(CipUdint class_id)
     return 0;  
 }
 
-CipStatus CIPMessageRouter::RegisterCIPClass(CIP_ClassInstance* CIP_ClassInstance)
+CipStatus CIP_MessageRouter::RegisterCIPClass(CIP_ClassInstance* CIP_ClassInstance)
 {
     std::pair<std::map<int>::iterator,bool> ret;
 
@@ -70,7 +70,7 @@ CipStatus CIPMessageRouter::RegisterCIPClass(CIP_ClassInstance* CIP_ClassInstanc
         return kCipStatusError;
 }
 
-CipStatus CIPMessageRouter::NotifyMR(CipUsint* data, int data_length)
+CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
 {
     CipStatus cip_status = kCipStatusOkSend;
     CipByte nStatus;
@@ -139,7 +139,7 @@ CipStatus CIPMessageRouter::NotifyMR(CipUsint* data, int data_length)
     return cip_status;
 }
 
-CipError CIPMessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request)
+CipError CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request)
 {
     int number_of_decoded_bytes;
 
@@ -163,7 +163,7 @@ CipError CIPMessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, C
         return kCipErrorSuccess;
 }
 
-void CIPMessageRouter::DeleteAllClasses(void)
+void CIP_MessageRouter::DeleteAllClasses(void)
 {
     while (message_router_registered_classes.size() != 0) 
     {

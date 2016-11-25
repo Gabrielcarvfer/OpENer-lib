@@ -7,7 +7,7 @@
 
 #include "cipcommon.h"
 
-#include "cpf.h"
+#include "CIP_CommonPacket.h"
 #include "src/enet_encap/eip_encap.h"
 #include "appcontype.h"
 #include "CIP_Assembly.h"
@@ -15,7 +15,7 @@
 #include "ciperror.h"
 #include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
 #include "CIP_Identity.h"
-#include "cipmessagerouter.h"
+#include "CIP_MessageRouter.h"
 #include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "endianconv.h"
 #include "opener_api.h"
@@ -29,7 +29,7 @@ void CIPCommon::CipStackInit (CipUint unique_connection_id)
     CipStatus eip_status;
     EncapsulationInit ();
     /* The message router is the first CIP object be initialized!!! */
-    eip_status = CIPMessageRouter::CipMessageRouterInit ();
+    eip_status = CIP_MessageRouter::CipMessageRouterInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
     eip_status = CipIdentityInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
@@ -58,7 +58,7 @@ void CIPCommon::ShutdownCipStack (void)
     ShutdownTcpIpInterface ();
 
     /*no clear all the instances and classes */
-    CIPMessageRouter::DeleteAllClasses ();
+    CIP_MessageRouter::DeleteAllClasses ();
 }
 
 CipStatus CIPCommon::NotifyClass (CIP_ClassInstance *CIP_ClassInstance, CipMessageRouterRequest *message_router_request,
