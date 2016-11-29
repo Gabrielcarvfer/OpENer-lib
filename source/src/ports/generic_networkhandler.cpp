@@ -18,7 +18,7 @@
 #include "typedefs.h"
 
 #include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
-#include "eip_encap.h"
+#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 
 /** @brief handle any connection request coming in the TCP server socket.
  *

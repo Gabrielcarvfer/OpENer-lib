@@ -13,7 +13,7 @@
 
 #include "networkhandler.h"
 
-#include "../enet_encap/eip_encap.h"
+#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 #include "generic_networkhandler.h"
 
 MicroSeconds getMicroSeconds()

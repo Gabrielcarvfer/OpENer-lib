@@ -12,7 +12,7 @@
 #include "ciperror.h"
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "src/utils/endianconv.h"
-#include "../enet_encap/eip_endianconv.h"
+#include "src/cip/network_stack/ethernetip_net/eip_endianconv.h"
 #include "Opener_Interface.h"
 #include "trace.h"
 

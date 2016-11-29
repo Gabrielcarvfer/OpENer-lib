@@ -1,11 +1,4 @@
-#include <fcntl.h>
-#include <linux/can.h>
-#include <net/if.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/ioctl.h>
 
-#include <linux/can/raw.h>
 
 enum dnet_object_error_codes {
     //When Allocate_master/Slave_conn_set is received

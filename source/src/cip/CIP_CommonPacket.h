@@ -7,7 +7,7 @@
 #define OPENER_CPF_H_
 
 #include "ciptypes.h"
-#include "../enet_encap/eip_encap.h"
+#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 #include "typedefs.h"
 
 

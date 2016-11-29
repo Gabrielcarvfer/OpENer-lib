@@ -9,7 +9,7 @@
 
 #include "networkhandler.h"
 
-#include "eip_encap.h"
+#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 
 MicroSeconds GetMicroSeconds(void)
 {

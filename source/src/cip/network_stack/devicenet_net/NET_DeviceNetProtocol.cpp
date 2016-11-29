@@ -1,6 +1,6 @@
 
 
-#include "dnet_prot.h"
+#include "NET_DeviceNetProtocol.h"
 /*
 *	Get datagram group from CAN identifier
 */

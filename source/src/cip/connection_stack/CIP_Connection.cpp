@@ -8,8 +8,8 @@
 #include "CIP_Connection.h"
 
 
-#include "src/enet_encap/eip_encap.h"
-#include "src/enet_encap/eip_encap.h"
+#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
+#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 #include "appcontype.h"
 #include "CIP_Assembly.h"
 #include "cipclass3connection.h"

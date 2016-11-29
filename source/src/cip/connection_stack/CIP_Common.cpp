@@ -8,7 +8,7 @@
 #include "CIP_Common.h"
 
 #include "CIP_CommonPacket.h"
-#include "src/enet_encap/eip_encap.h"
+#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 #include "appcontype.h"
 #include "CIP_Assembly.h"
 #include "CIP_Connection.h"
