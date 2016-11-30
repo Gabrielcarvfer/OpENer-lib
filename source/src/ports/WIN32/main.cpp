@@ -59,12 +59,12 @@ int main(int argc, char* arg[])
     }
 
     /*for a real device the serial number should be unique per device */
-    SetDeviceSerialNumber(123456789);
+    SetDeviceSerialNumber(56789);
 
     /* nUniqueConnectionID should be sufficiently random or incremented and stored
    *  in non-volatile memory each time the device boots.
    */
-    nUniqueConnectionID = 12398798123;//rand();
+    nUniqueConnectionID = 56789;//rand();
 
     /* Setup the CIP Layer */
     CipStackInit(nUniqueConnectionID);

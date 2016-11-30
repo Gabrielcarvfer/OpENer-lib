@@ -183,15 +183,6 @@ CipStatus NetworkHandlerInitialize(void)
     return kCipStatusOk;
 }
 
-void IApp_CloseSocket_udp(int socket_handle)
-{
-    CloseSocket(socket_handle);
-}
-
-void IApp_CloseSocket_tcp(int socket_handle)
-{
-    CloseSocket(socket_handle);
-}
 
 CipBool CheckSocketSet(int socket)
 {
@@ -278,8 +269,9 @@ CipStatus NetworkHandlerProcessOnce(void)
                 /* if it is still checked it is a TCP receive */
                 if (kCipStatusError == HandleDataOnTcpSocket(socket)) /* if error */
                 {
-                    CloseSocket(socket);
-                    CloseSession(socket); /* clean up session and close the socket */
+                    //todo: move to CIP_Connection
+                    // CloseSocket(socket);
+                    //CloseSession(socket); /* clean up session and close the socket */
                 }
             }
         }
@@ -301,13 +293,23 @@ CipStatus NetworkHandlerProcessOnce(void)
     return kCipStatusOk;
 }
 
+//todo:move to CIP_Connection
+/*void IApp_CloseSocket_udp(int socket_handle)
+{
+    CloseSocket(socket_handle);
+}
+
+void IApp_CloseSocket_tcp(int socket_handle)
+{
+    CloseSocket(socket_handle);
+}
 CipStatus NetworkHandlerFinish(void)
 {
     CloseSocket(g_network_status.tcp_listener);
     CloseSocket(g_network_status.udp_unicast_listener);
     CloseSocket(g_network_status.udp_global_broadcast_listener);
     return kCipStatusOk;
-}
+}*/
 
 void CheckAndHandleUdpGlobalBroadcastSocket(void)
 {
@@ -656,12 +658,12 @@ void CheckAndHandleConsumingUdpSockets(void)
         /* do this at the beginning as the close function may can make the entry invalid */
         connection_object_iterator = CIP_Connection::active_connections_set[i];
 
-        if ((-1 != current_connection_object->socket[kUdpCommuncationDirectionConsuming])
-            && (true== CheckSocketSet( current_connection_object->socket[kUdpCommuncationDirectionConsuming]))) 
+        if ((-1 != current_connection_object->conn->GetSocket (kUdpCommuncationDirectionConsuming)
+            && (true== CheckSocketSet( current_connection_object->conn->GetSocket (kUdpCommuncationDirectionConsuming)))))
         {
             from_address_length = sizeof(from_address);
             int received_size = recvfrom(
-                current_connection_object->socket[kUdpCommuncationDirectionConsuming],
+                current_connection_object->conn->GetSocket(kUdpCommuncationDirectionConsuming),
                 (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0,
                 (struct sockaddr*)&from_address, &from_address_length);
             if (0 == received_size) 
@@ -690,7 +692,8 @@ void CloseSocket(int socket_handle)
     OPENER_TRACE_INFO("networkhandler: closing socket %d\n", socket_handle);
     if (kEipInvalidSocket != socket_handle) {
         FD_CLR(socket_handle, &master_socket);
-        CloseSocketPlatform(socket_handle);
+        //todo: move to CIP_Connection
+        //CloseSocketPlatform(socket_handle);
     }
 }
 

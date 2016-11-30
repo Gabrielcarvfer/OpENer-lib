@@ -10,7 +10,7 @@
 
 CipStatus NetworkHandlerInitializePlatform(void);
 
-void CloseSocketPlatform(CipUdint socket_handle);
+
 
 /** @brief This function shall return the current time in microseconds relative to epoch, and shall be implemented in a port specific networkhandler
  *

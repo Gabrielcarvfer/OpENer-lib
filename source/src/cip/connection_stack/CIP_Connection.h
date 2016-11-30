@@ -30,7 +30,8 @@ class CIP_Connection :  public CIP_ClassInstance, public CIP_Template<CIP_Connec
 {
 
 public:
-    NET_Connection *conn;
+    NET_Connection * conn;
+
     /**
  * @brief Sets the routing type of a connection, either
  * - Point-to-point connections (unicast)

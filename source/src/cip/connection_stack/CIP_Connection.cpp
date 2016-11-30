@@ -43,14 +43,15 @@ static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_
 
 
 
-CIP_Connection::CIP_Connection (CipUint unique_connection_id)
+CIP_Connection::CIP_Connection (struct sockaddr_in originator_address, struct sockaddr_in remote_address)
 {
-
+    conn = new NET_Connection(originator_address, remote_address);
 
 }
 
 CIP_Connection::~CIP_Connection ()
 {
+    delete (conn);
     delete (this);
 }
 

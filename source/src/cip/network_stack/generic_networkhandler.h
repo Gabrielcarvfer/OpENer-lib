@@ -61,11 +61,11 @@ NetworkStatus g_network_status; /**< Global variable holding the current network
  *  @return Returns the OpENer status after the initialization routine
  */
 CipStatus NetworkHandlerInitialize(void);
-
+/*
 void IApp_CloseSocket_udp(int socket_handle);
 
 void IApp_CloseSocket_tcp(int socket_handle);
-
+*/
 /** @brief Initializes the network handler, shall be implemented by a port-specific networkhandler
  *
  *  @return CipStatus, if initialization failed EipError is returned

@@ -5,6 +5,12 @@
 #ifndef OPENER_NET_CONNECTION_H
 #define OPENER_NET_CONNECTION_H
 
+#ifdef WIN32
+#include <winsock.h>
+#else
+#include <sys/sock.h>
+#endif
+
 /**
  * @brief NET_Connection abstracts sockets (EthernetIP/TCPIP and DeviceNet/CAN) from CIP Connection
  */
@@ -13,7 +19,8 @@ class NET_Connection
     public:
         NET_Connection(struct sockaddr_in originator_address, struct sockaddr_in remote_address);
         ~NET_Connection ();
-        
+        int GetSocket(int socket_handle_pos);
+        void CloseSocketPlatform(CipUdint socket_handle);
 
     private:
         // socket address for produce

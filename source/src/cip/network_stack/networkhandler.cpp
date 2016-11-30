@@ -52,10 +52,4 @@ CipStatus NetworkHandlerInitializePlatform(void)
     return kCipStatusOk;
 }
 
-void CloseSocketPlatform(int socket_handle)
-{
-#ifndef WIN32
-    shutdown(socket_handle, SHUT_RDWR);
-#endif
-    closesocket(socket_handle);
-}
+
