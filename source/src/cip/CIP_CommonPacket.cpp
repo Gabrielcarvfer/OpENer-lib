@@ -14,6 +14,7 @@
 #include "src/utils/endianconv.h"
 #include "src/cip/network_stack/ethernetip_net/eip_endianconv.h"
 #include "Opener_Interface.h"
+#include "opener_user_conf.h"
 #include "trace.h"
 
 
@@ -512,5 +513,5 @@ int CIP_CommonPacket::AssembleLinearMessage(
 
 int CIP_CommonPacket::AssembleIOMessage(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint* message)
 {
-    return AssembleLinearMessage(0, common_packet_format_data_item, &CIP_Common::message_data_reply_buffer[0]);
+    return AssembleLinearMessage(0, common_packet_format_data_item, (CipUsint*)CIP_Common::message_data_reply_buffer[0]);
 }

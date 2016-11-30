@@ -19,7 +19,7 @@
 #include "cipioconnection.h"
 #include "CIP_MessageRouter.h"
 #include "endianconv.h"
-#include "generic_networkhandler.h"
+#include "src/cip/network_stack/generic_networkhandler.h"
 #include "Opener_Interface.h"
 #include "opener_user_conf.h"
 #include "trace.h"

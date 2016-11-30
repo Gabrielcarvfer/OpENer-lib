@@ -1,6 +1,6 @@
 add_subdirectory(sample_application)
 
-set( PLATFORM_SPEC_SRC networkhandler.cpp)
+set( PLATFORM_SPEC_SRC ../../cip/network_stack/networkhandler.cpp)
 
 #######################################
 # Add common includes                 #

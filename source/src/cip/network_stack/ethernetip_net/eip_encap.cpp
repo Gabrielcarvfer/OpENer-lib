@@ -14,7 +14,7 @@
 #include "eip_encap.h"
 #include "eip_endianconv.h"
 #include "endianconv.h"
-#include "generic_networkhandler.h"
+#include "src/cip/network_stack/generic_networkhandler.h"
 #include "Opener_Interface.h"
 
 /*Identity data from cipidentity.c*/

@@ -3,17 +3,14 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_NETWORKHANDLER_H_
-#define OPENER_NETWORKHANDLER_H_
-
-#include <string.h>
-#include <sys/socket.h>
+#ifndef NETWORKHANDLER_H_
+#define NETWORKHANDLER_H_
 
 #include "typedefs.h"
 
 CipStatus NetworkHandlerInitializePlatform(void);
 
-void CloseSocketPlatform(int socket_handle);
+void CloseSocketPlatform(CipUdint socket_handle);
 
 /** @brief This function shall return the current time in microseconds relative to epoch, and shall be implemented in a port specific networkhandler
  *
@@ -27,4 +24,4 @@ MicroSeconds GetMicroSeconds(void);
  */
 MilliSeconds GetMilliSeconds(void);
 
-#endif /* OPENER_NETWORKHANDLER_H_ */
+#endif /*NETWORKHANDLER_H_*/

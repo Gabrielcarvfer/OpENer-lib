@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include "src/cip/connection_stack/CIP_Common.h"
-#include "generic_networkhandler.h"
+#include "src/cip/network_stack/generic_networkhandler.h"
 #include "Opener_Interface.h"
 #include "trace.h"
 

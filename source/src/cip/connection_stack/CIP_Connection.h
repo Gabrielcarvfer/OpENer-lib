@@ -7,12 +7,12 @@
 
 #include "ciptypes.h"
 #include "Opener_Interface.h"
-//#include "opener_user_conf.h"
 #include "typedefs.h"
 #include "class_stack/CIP_ClassInstance.h"
 #include "../CIP_CommonPacket.h"
 #include <map>
 #include "src/cip/class_stack/CIP_Template.h"
+#include "../network_stack/NET_Connection.h"
 
 
 
@@ -30,6 +30,7 @@ class CIP_Connection :  public CIP_ClassInstance, public CIP_Template<CIP_Connec
 {
 
 public:
+    NET_Connection *conn;
     /**
  * @brief Sets the routing type of a connection, either
  * - Point-to-point connections (unicast)
@@ -292,13 +293,7 @@ public:
    */
     CipDint production_inhibit_timer;
 
-    // socket address for produce
-    struct sockaddr_in remote_address;
 
-    // the address of the originator that established the connection. needed for
-    // scanning if the right packet is arriving
-    struct sockaddr_in originator_address;
-    int socket[2]; /* socket handles, indexed by kConsuming or kProducing */
 
     CipUint correct_originator_to_target_size;
     CipUint correct_target_to_originator_size;

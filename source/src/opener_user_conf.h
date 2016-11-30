@@ -21,8 +21,15 @@
  *    - ntohl
  *    - inet_addr
  */
+#ifdef WIN32
 #include <windows.h>
 typedef unsigned short in_port_t;
+#else
+#include <arpa/inet.h>
+#include <netinet/in.h>
+#include <sys/select.h>
+#include <sys/socket.h>
+#endif
 
 /*! Identity configuration of the device */
 #define OPENER_DEVICE_VENDOR_ID 1
