@@ -62,7 +62,7 @@ void read_port()
 {
     struct can_frame frame_rd;
     int recvbytes = 0;
-    read_can_port = 1;
+    int read_can_port = 1;
     while(read_can_port)
     {
         struct timeval timeout = {1, 0};

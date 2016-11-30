@@ -7,6 +7,7 @@
 #include "src/cip/connection_stack/CIP_Connection.h"
 #include "Opener_Interface.h"
 #include <string.h>
+#include <src/opener_user_conf.h>
 
 typedef struct {
     unsigned int output_assembly; /**< the O-to-T point for the connection */

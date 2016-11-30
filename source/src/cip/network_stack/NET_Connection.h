@@ -21,15 +21,23 @@ class NET_Connection
         ~NET_Connection ();
         int GetSocket(int socket_handle_pos);
         void CloseSocketPlatform(CipUdint socket_handle);
+        int SetSocketOpt(int socket_handle_pos, CipUdint type, CipUdint reuse, CipUdint val);
+
+        enum { receiver = 0, sender = 1 }socketBehaviour;
 
     private:
         // socket address for produce
-        struct sockaddr_in remote_address;
+        struct sockaddr_in *remote_address;
 
         // the address of the originator that established the connection. needed for
         // scanning if the right packet is arriving
-        struct sockaddr_in originator_address;
-        int socket[2]; /* socket handles, indexed by kConsuming or kProducing */
+        struct sockaddr_in *originator_address;
+
+        // socket handles, indexed by kConsuming or kProducing
+        int socket[2];
+        CipUdint type[2];
+        CipUdint reuse[2];
+        CipUdint val[2];
 };
 
 
