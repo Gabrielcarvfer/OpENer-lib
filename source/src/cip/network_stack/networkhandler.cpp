@@ -30,8 +30,7 @@ MicroSeconds GetMicroSeconds()
     QueryPerformanceCounter(&performance_counter);
     QueryPerformanceFrequency(&performance_frequency);
 
-    return (MicroSeconds)(performance_counter.QuadPart * 1000000LL
-        / performance_frequency.QuadPart);
+    return (MicroSeconds)(performance_counter.QuadPart * 1000000LL / performance_frequency.QuadPart);
 }
 
 MilliSeconds GetMilliSeconds(void)

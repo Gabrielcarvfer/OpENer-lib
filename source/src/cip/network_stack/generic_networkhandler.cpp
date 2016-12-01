@@ -106,7 +106,7 @@ CipStatus NetworkHandlerInitialize(void)
         return kCipStatusError;
     }
 
-    /* Activates address reuse */
+    // Activates address reuse
     retVal = setsockopt(g_network_status.udp_unicast_listener, SOL_SOCKET, SO_REUSEADDR, (char*)&set_socket_option_value, sizeof(set_socket_option_value));
     if ( retVal == -1)
     {
@@ -119,7 +119,7 @@ CipStatus NetworkHandlerInitialize(void)
     my_address.sin_port = htons(kOpenerEthernetPort);
     my_address.sin_addr.s_addr = interface_configuration_.ip_address;
 
-    /* bind the new socket to port 0xAF12 (CIP) */
+    // bind the new socket to port 0xAF12 (CIP)
     retVal = (bind(g_network_status.tcp_listener, (struct sockaddr*)&my_address, sizeof(struct sockaddr)));
     if (retVal == -1)
     {
@@ -139,7 +139,7 @@ CipStatus NetworkHandlerInitialize(void)
     global_broadcast_address.sin_port = htons(kOpenerEthernetPort);
     global_broadcast_address.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    /* enable the UDP socket to receive broadcast messages */
+    // enable the UDP socket to receive broadcast messages
     int res = 0;
     res = setsockopt(g_network_status.udp_global_broadcast_listener, SOL_SOCKET, SO_BROADCAST, (char*)&set_socket_option_value, sizeof(int));
     if ( res < 0)
@@ -155,22 +155,22 @@ CipStatus NetworkHandlerInitialize(void)
         return kCipStatusError;
     }
 
-    /* switch socket in listen mode */
+    // switch socket in listen mode
     if ((listen(g_network_status.tcp_listener, MAX_NO_OF_TCP_SOCKETS)) == -1)
     {
         OPENER_TRACE_ERR("networkhandler: error with listen: %s\n", strerror(errno));
         return kCipStatusError;
     }
 
-    /* add the listener socket to the master set */
+    // add the listener socket to the master set
     FD_SET(g_network_status.tcp_listener, &master_socket);
     FD_SET(g_network_status.udp_unicast_listener, &master_socket);
     FD_SET(g_network_status.udp_global_broadcast_listener, &master_socket);
 
-    /* keep track of the biggest file descriptor */
+    // keep track of the biggest file descriptor
     highest_socket_handle = GetMaxSocket(g_network_status.tcp_listener, g_network_status.udp_global_broadcast_listener, 0, g_network_status.udp_unicast_listener);
 
-    g_last_time = GetMilliSeconds(); /* initialize time keeping */
+    g_last_time = GetMilliSeconds(); // initialize time keeping
     g_network_status.elapsed_time = 0;
 
     return kCipStatusOk;
@@ -191,7 +191,7 @@ CipBool CheckSocketSet(int socket)
             OPENER_TRACE_INFO("socket: %d closed with pending message\n", socket);
         }
         FD_CLR(socket, &read_socket);
-        /* remove it from the read set so that later checks will not find it */
+        // remove it from the read set so that later checks will not find it
     }
     return return_value;
 }
@@ -199,7 +199,7 @@ CipBool CheckSocketSet(int socket)
 void CheckAndHandleTcpListenerSocket(void)
 {
     int new_socket;
-    /* see if this is a connection request to the TCP listener*/
+    // see if this is a connection request to the TCP listener
     if (true == CheckSocketSet(g_network_status.tcp_listener))
     {
         OPENER_TRACE_INFO("networkhandler: new TCP connection\n");
@@ -213,7 +213,7 @@ void CheckAndHandleTcpListenerSocket(void)
         }
 
         FD_SET(new_socket, &master_socket);
-        /* add newfd to master set */
+        // add newfd to master set
         if (new_socket > highest_socket_handle)
         {
             highest_socket_handle = new_socket;
@@ -229,8 +229,7 @@ CipStatus NetworkHandlerProcessOnce(void)
     read_socket = master_socket;
 
     g_time_value.tv_sec = 0;
-    g_time_value.tv_usec = (g_network_status.elapsed_time < kOpenerTimerTickInMilliSeconds ? kOpenerTimerTickInMilliSeconds - g_network_status.elapsed_time : 0)
-        * 1000; /* 10 ms */
+    g_time_value.tv_usec = (g_network_status.elapsed_time < kOpenerTimerTickInMilliSeconds ? kOpenerTimerTickInMilliSeconds - g_network_status.elapsed_time : 0) * 1000; /* 10 ms */
 
     int ready_socket = select(highest_socket_handle + 1, &read_socket, 0, 0, &g_time_value);
 
@@ -259,12 +258,12 @@ CipStatus NetworkHandlerProcessOnce(void)
         {
             if (true == CheckSocketSet(socket))
             {
-                /* if it is still checked it is a TCP receive */
-                if (kCipStatusError == HandleDataOnTcpSocket(socket)) /* if error */
+                // if it is still checked it is a TCP receive
+                if (kCipStatusError == HandleDataOnTcpSocket(socket)) // if error
                 {
                     //todo: move to CIP_Connection
                     // CloseSocket(socket);
-                    //CloseSession(socket); /* clean up session and close the socket */
+                    // CloseSession(socket); // clean up session and close the socket
                 }
             }
         }
@@ -274,9 +273,8 @@ CipStatus NetworkHandlerProcessOnce(void)
     g_network_status.elapsed_time += g_actual_time - g_last_time;
     g_last_time = g_actual_time;
 
-    /* check if we had been not able to update the connection manager for several OPENER_TIMER_TICK.
-   * This should compensate the jitter of the windows timer
-   */
+    // check if we had been not able to update the connection manager for several OPENER_TIMER_TICK.
+    // This should compensate the jitter of the windows timer
     if (g_network_status.elapsed_time >= kOpenerTimerTickInMilliSeconds)
     {
         /* call manage_connections() in connection manager every OPENER_TIMER_TICK ms */

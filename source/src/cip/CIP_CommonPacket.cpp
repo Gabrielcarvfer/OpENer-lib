@@ -135,71 +135,83 @@ CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
     int length_count = 0;
     common_packet_format_data->item_count = GetIntFromMessage(&data);
     length_count += 2;
-    if (common_packet_format_data->item_count >= 1) {
+    if (common_packet_format_data->item_count >= 1)
+    {
         common_packet_format_data->address_item.type_id = GetIntFromMessage(&data);
         common_packet_format_data->address_item.length = GetIntFromMessage(&data);
         length_count += 4;
-        if (common_packet_format_data->address_item.length >= 4) {
+        if (common_packet_format_data->address_item.length >= 4)
+        {
             common_packet_format_data->address_item.data.connection_identifier = GetDintFromMessage(&data);
             length_count += 4;
         }
-        if (common_packet_format_data->address_item.length == 8) {
+        if (common_packet_format_data->address_item.length == 8)
+        {
             common_packet_format_data->address_item.data.sequence_number = GetDintFromMessage(&data);
             length_count += 4;
         }
     }
-    if (common_packet_format_data->item_count >= 2) {
+    if (common_packet_format_data->item_count >= 2)
+    {
         common_packet_format_data->data_item.type_id = GetIntFromMessage(&data);
         common_packet_format_data->data_item.length = GetIntFromMessage(&data);
         common_packet_format_data->data_item.data = data;
         data += common_packet_format_data->data_item.length;
         length_count += (4 + common_packet_format_data->data_item.length);
     }
-    for (int j = 0; j < (common_packet_format_data->item_count - 2); j++) /* TODO there needs to be a limit check here???*/
+    for (int j = 0; j < (common_packet_format_data->item_count - 2); j++) // TODO there needs to be a limit check here???
     {
-        common_packet_format_data->address_info_item[j].type_id = GetIntFromMessage(
-            &data);
+        common_packet_format_data->address_info_item[j].type_id = GetIntFromMessage(&data);
         length_count += 2;
-        if ((common_packet_format_data->address_info_item[j].type_id
-                == kCipItemIdSocketAddressInfoOriginatorToTarget)
-            || (common_packet_format_data->address_info_item[j].type_id
-                   == kCipItemIdSocketAddressInfoTargetToOriginator)) {
+        if ((common_packet_format_data->address_info_item[j].type_id == kCipItemIdSocketAddressInfoOriginatorToTarget) || (common_packet_format_data->address_info_item[j].type_id == kCipItemIdSocketAddressInfoTargetToOriginator))
+        {
             common_packet_format_data->address_info_item[j].length = GetIntFromMessage(&data);
             common_packet_format_data->address_info_item[j].sin_family = GetIntFromMessage(&data);
             common_packet_format_data->address_info_item[j].sin_port = GetIntFromMessage(&data);
             common_packet_format_data->address_info_item[j].sin_addr = GetDintFromMessage(&data);
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 8; i++)
+            {
                 common_packet_format_data->address_info_item[j].nasin_zero[i] = *data;
                 data++;
             }
             length_count += 18;
-        } else { /* no sockaddr item found */
-            common_packet_format_data->address_info_item[j].type_id = 0; /* mark as not set */
+        }
+        else
+        {
+            // no sockaddr item found
+            common_packet_format_data->address_info_item[j].type_id = 0; // mark as not set
             data -= 2;
         }
     }
-    /* set the addressInfoItems to not set if they were not received */
+    // set the addressInfoItems to not set if they were not received
     if (common_packet_format_data->item_count < 4) {
         common_packet_format_data->address_info_item[1].type_id = 0;
         if (common_packet_format_data->item_count < 3) {
             common_packet_format_data->address_info_item[0].type_id = 0;
         }
     }
-    if (length_count == data_length) { /* length of data is equal to length of Addr and length of Data */
+    if (length_count == data_length)
+    {
+        // length of data is equal to length of Addr and length of Data
         return kCipStatusOk;
-    } else {
-        OPENER_TRACE_WARN(
-            "something is wrong with the length in Message Router @ CreateCommonPacketFormatStructure\n");
-        if (common_packet_format_data->item_count > 2) {
-            /* there is an optional packet in data stream which is not sockaddr item */
+    }
+    else
+    {
+        OPENER_TRACE_WARN("something is wrong with the length in Message Router @ CreateCommonPacketFormatStructure\n");
+        if (common_packet_format_data->item_count > 2)
+        {
+            // there is an optional packet in data stream which is not sockaddr item
             return kCipStatusOk;
-        } else { /* something with the length was wrong */
+        }
+        else
+        {
+            // something with the length was wrong
             return kCipStatusError;
         }
     }
 }
 
-/* null address item -> address length set to 0 */
+// null address item -> address length set to 0
 /**
  * Encodes a Null Address Item into the message frame
  * @param message The message frame
@@ -209,13 +221,13 @@ CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
  */
 int CIP_CommonPacket::EncodeNullAddressItem(CipUsint** message, int size)
 {
-    /* null address item -> address length set to 0 */
+    // null address item -> address length set to 0
     size += AddIntToMessage(kCipItemIdNullAddress, message);
     size += AddIntToMessage(0, message);
     return size;
 }
 
-/* connected data item -> address length set to 4 and copy ConnectionIdentifier */
+// connected data item -> address length set to 4 and copy ConnectionIdentifier
 /**
  * Encodes a Connected Address Item into the message frame
  * @param message The message frame
@@ -226,27 +238,23 @@ int CIP_CommonPacket::EncodeNullAddressItem(CipUsint** message, int size)
  */
 int CIP_CommonPacket::EncodeConnectedAddressItem(CipUsint** message, CipCommonPacketFormatData* common_packet_format_data_item, int size)
 {
-    /* connected data item -> address length set to 4 and copy ConnectionIdentifier */
+    // connected data item -> address length set to 4 and copy ConnectionIdentifier
     size += AddIntToMessage(kCipItemIdConnectionAddress, message);
     size += AddIntToMessage(4, message);
     size += AddDintToMessage(common_packet_format_data_item->address_item.data.connection_identifier, message);
     return size;
 }
 
-/* TODO: Add doxygen documentation */
-/* sequenced address item -> address length set to 8 and copy ConnectionIdentifier and SequenceNumber */
-/* sequence number????? */
+// TODO: Add doxygen documentation
+// sequenced address item -> address length set to 8 and copy ConnectionIdentifier and SequenceNumber
+// sequence number?????
 int CIP_CommonPacket::EncodeSequencedAddressItem(CipUsint** message, CipCommonPacketFormatData* common_packet_format_data_item, int size)
 {
-    /* sequenced address item -> address length set to 8 and copy ConnectionIdentifier and SequenceNumber */
+    // sequenced address item -> address length set to 8 and copy ConnectionIdentifier and SequenceNumber
     size += AddIntToMessage(kCipItemIdSequencedAddressItem, message);
     size += AddIntToMessage(8, message);
-    size += AddDintToMessage(
-        common_packet_format_data_item->address_item.data.connection_identifier,
-        message);
-    size += AddDintToMessage(
-        common_packet_format_data_item->address_item.data.sequence_number,
-        message);
+    size += AddDintToMessage(common_packet_format_data_item->address_item.data.connection_identifier, message);
+    size += AddDintToMessage(common_packet_format_data_item->address_item.data.sequence_number, message);
     return size;
 }
 
@@ -261,7 +269,7 @@ int CIP_CommonPacket::EncodeSequencedAddressItem(CipUsint** message, CipCommonPa
  */
 int CIP_CommonPacket::EncodeItemCount(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
 {
-    size += AddIntToMessage(common_packet_format_data_item->item_count, message); /* item count */
+    size += AddIntToMessage(common_packet_format_data_item->item_count, message); // item count
     return size;
 }
 
@@ -276,8 +284,7 @@ int CIP_CommonPacket::EncodeItemCount(CipCommonPacketFormatData* common_packet_f
  */
 int CIP_CommonPacket::EncodeDataItemType(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
 {
-    size += AddIntToMessage(common_packet_format_data_item->data_item.type_id,
-        message);
+    size += AddIntToMessage(common_packet_format_data_item->data_item.type_id, message);
     return size;
 }
 
@@ -292,8 +299,7 @@ int CIP_CommonPacket::EncodeDataItemType(CipCommonPacketFormatData* common_packe
  */
 int CIP_CommonPacket::EncodeDataItemLength(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
 {
-    size += AddIntToMessage(common_packet_format_data_item->data_item.length,
-        message);
+    size += AddIntToMessage(common_packet_format_data_item->data_item.length, message);
     return size;
 }
 
@@ -308,27 +314,22 @@ int CIP_CommonPacket::EncodeDataItemLength(CipCommonPacketFormatData* common_pac
  */
 int CIP_CommonPacket::EncodeDataItemData(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
 {
-    for (int i = 0; i < common_packet_format_data_item->data_item.length; i++) {
-        size += AddSintToMessage(
-            *(common_packet_format_data_item->data_item.data + i), message);
+    for (int i = 0; i < common_packet_format_data_item->data_item.length; i++)
+    {
+        size += AddSintToMessage(*(common_packet_format_data_item->data_item.data + i), message);
     }
     return size;
 }
 
-int CIP_CommonPacket::EncodeConnectedDataItemLength(
-    CipMessageRouterResponse* message_router_response, CipUsint** message,
-    int size)
+int CIP_CommonPacket::EncodeConnectedDataItemLength(CipMessageRouterResponse* message_router_response, CipUsint** message, int size)
 {
-    size += AddIntToMessage(
-        (CipUint)(message_router_response->data_length + 4 + 2
-            + (2 * message_router_response->size_of_additional_status)),
-        message);
+    size += AddIntToMessage((CipUint)(message_router_response->data_length + 4 + 2 + (2 * message_router_response->size_of_additional_status)), message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeSequenceNumber(int size, const CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message)
 {
-    /* 2 bytes*/
+    // 2 bytes
     size += AddIntToMessage((CipUint)common_packet_format_data_item->address_item.data.sequence_number, message);
     return size;
 }
@@ -375,7 +376,7 @@ int CIP_CommonPacket::EncodeExtendedStatus(int size, CipUsint** message, CipMess
 
 int CIP_CommonPacket::EncodeUnconnectedDataItemLength(int size, CipMessageRouterResponse* message_router_response, CipUsint** message)
 {
-    /* Unconnected Item */
+    // Unconnected Item
     size += AddIntToMessage((CipUint)(message_router_response->data_length + 4 + (2 * message_router_response->size_of_additional_status)), message);
     return size;
 }
@@ -399,7 +400,7 @@ int CIP_CommonPacket::EncodeSockaddrInfoItemTypeId(int size, int item_type, CipC
 
 int CIP_CommonPacket::EncodeSockaddrInfoLength(int size, int j, CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message)
 {
-    size += AddIntToMessage( common_packet_format_data_item->address_info_item[j].length, message);
+    size += AddIntToMessage(common_packet_format_data_item->address_info_item[j].length, message);
     return size;
 }
 
@@ -412,10 +413,7 @@ int CIP_CommonPacket::EncodeSockaddrInfoLength(int size, int j, CipCommonPacketF
  *  @return length of reply in message in bytes
  * 			-1 .. error
  */
-int CIP_CommonPacket::AssembleLinearMessage(
-    CipMessageRouterResponse* message_router_response,
-    CipCommonPacketFormatData* common_packet_format_data_item,
-    CipUsint* message)
+int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_router_response, CipCommonPacketFormatData* common_packet_format_data_item, CipUsint* message)
 {
 
     int message_size = 0;
@@ -447,8 +445,7 @@ int CIP_CommonPacket::AssembleLinearMessage(
     }
 
     // process Data Item
-    if ((common_packet_format_data_item->data_item.type_id == kCipItemIdUnconnectedDataItem)
-        || (common_packet_format_data_item->data_item.type_id == kCipItemIdConnectedDataItem))
+    if ((common_packet_format_data_item->data_item.type_id == kCipItemIdUnconnectedDataItem) || (common_packet_format_data_item->data_item.type_id == kCipItemIdConnectedDataItem))
     {
 
         if (message_router_response)
@@ -468,7 +465,7 @@ int CIP_CommonPacket::AssembleLinearMessage(
                 message_size = EncodeUnconnectedDataItemLength(message_size, message_router_response, &message);
             }
 
-            /* write message router response into linear memory */
+            // write message router response into linear memory
             message_size = EncodeReplyService(message_size, &message, message_router_response);
             message_size = EncodeReservedFieldOfLengthByte(message_size, &message, message_router_response);
             message_size = EncodeGeneralStatus(message_size, &message, message_router_response);
@@ -476,18 +473,19 @@ int CIP_CommonPacket::AssembleLinearMessage(
             message_size = EncodeMessageRouterResponseData(message_size,message_router_response, &message);
         }
         else
-        { /* connected IO Message to send */
+        {
+            // connected IO Message to send
             message_size = EncodeDataItemType(common_packet_format_data_item, &message, message_size);
             message_size = EncodeDataItemLength(common_packet_format_data_item, &message, message_size);
             message_size = EncodeDataItemData(common_packet_format_data_item, &message, message_size);
         }
     }
 
-    /* process SockAddr Info Items */
-    /* make sure first the O->T and then T->O appears on the wire.
-   * EtherNet/IP specification doesn't demand it, but there are EIP
-   * devices which depend on CPF items to appear in the order of their
-   * ID number */
+    // process SockAddr Info Items
+    // make sure first the O->T and then T->O appears on the wire.
+    // EtherNet/IP specification doesn't demand it, but there are EIP
+    // devices which depend on CPF items to appear in the order of their
+    // ID number
     for (int type = kCipItemIdSocketAddressInfoOriginatorToTarget; type <= kCipItemIdSocketAddressInfoTargetToOriginator; type++)
     {
         for (int j = 0; j < 2; j++)
@@ -498,10 +496,7 @@ int CIP_CommonPacket::AssembleLinearMessage(
 
                 message_size = EncodeSockaddrInfoLength(message_size, j, common_packet_format_data_item, &message);
 
-                message_size += EncapsulateIpAddress(
-                    common_packet_format_data_item->address_info_item[j].sin_port,
-                    common_packet_format_data_item->address_info_item[j].sin_addr,
-                    &message);
+                message_size += EncapsulateIpAddress(common_packet_format_data_item->address_info_item[j].sin_port, common_packet_format_data_item->address_info_item[j].sin_addr, &message);
 
                 message_size += FillNextNMessageOctetsWithValueAndMoveToNextPosition(0, 8, &message);
                 break;
