@@ -18,11 +18,16 @@
 class NET_Connection
 {
     public:
+
+        enum { receiver = 0, sender = 1 } socketsBehaviour;
+        NET_Connection();
         NET_Connection(struct sockaddr_in originator_address, struct sockaddr_in remote_address);
         ~NET_Connection ();
 
         int InitSocket(int socket_handle_pos, CipUdint family, CipUdint type, CipUdint protocol);
         int SetSocketOpt(int socket_handle_pos, CipUdint type, CipUdint reuse, CipUdint val);
+        int BindSocket(int socket_handle_pos, struct sockaddr_in * address);
+
         void CloseSocketPlatform(CipUdint socket_handle);
 
         int GetSocketHandle(int socket_handle_pos);
@@ -44,6 +49,9 @@ class NET_Connection
         CipUdint type[2];
         CipUdint reuse[2];
         CipUdint val[2];
+
+        //private functions
+        int NET_Connection::CheckHandle(int handle);
 };
 
 

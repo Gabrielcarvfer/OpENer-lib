@@ -15,7 +15,7 @@
 #include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "CIP_CommonPacket.h"
 #include "endianconv.h"
-#include "src/cip/network_stack/generic_networkhandler.h"
+#include "src/cip/network_stack/NET_NetworkHandler.h"
 #include "trace.h"
 
 /*The port to be used per default for I/O messages on UDP.*/
