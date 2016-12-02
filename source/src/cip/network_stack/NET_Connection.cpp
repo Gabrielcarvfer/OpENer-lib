@@ -77,14 +77,19 @@ int NET_Connection::Listen(int max_num_connections)
     return list(socket[receiver], max_num_connections);
 }
 
-int NET_Connection::CloseSocketPlatform(int socket_handle_pos)
+int NET_Connection::CloseSocket(int socket_handle_pos)
 {
     if (CheckHandle(socket_handle_pos))
     {
+        OPENER_TRACE_INFO("networkhandler: closing socket %d\n", socket[socket_handle_pos]);
+        if (kCipInvalidSocket != socket[socket_handle_pos])
+        {
+            FD_CLR(socket[socket_handle_pos], &master_socket);
 #ifndef WIN32
-        shutdown(socket[socket_handle_pos], SHUT_RDWR);
+            shutdown(socket[socket_handle_pos], SHUT_RDWR);
 #endif
-        closesocket(socket[socket_handle_pos]);
+            closesocket (socket[socket_handle_pos]);
+        }
     }
     return INVALID_SOCKET_HANDLE;
 }
@@ -93,7 +98,16 @@ int NET_Connection::GetSocketHandle(int socket_handle_pos)
 {
     if (CheckHandle(socket_handle_pos))
     {
-        return socket[pos];
+        return socket[socket_handle_pos];
+    }
+    return INVALID_SOCKET_HANDLE;
+}
+
+int NET_Connection::SetSocketHandle(int socket_handle_pos, int socket_handle)
+{
+    if (CheckHandle(socket_handle_pos))
+    {
+        return socket[socket_handle_pos] = socket_handle;
     }
     return INVALID_SOCKET_HANDLE;
 }

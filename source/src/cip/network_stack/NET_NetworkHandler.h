@@ -53,7 +53,7 @@ class NET_NetworkHandler
             MilliSeconds elapsed_time;
         } NetworkStatus;
      */
-    enum {tcp_listener, udp_unicast_listener, udp_global_bcast_listener} kNetworkStatus;
+    enum {tcp_listener, udp_ucast_listener, udp_global_bcast_listener} kNetworkStatus;
     static NET_Connection *netStats[3];
 
 
@@ -106,7 +106,6 @@ class NET_NetworkHandler
         static MilliSeconds GetMilliSeconds(void);
 private:
     static void CheckAndHandleConsumingUdpSockets(void);
-    static void CloseSocket(int socket_handle);
     static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr* socket_data);
     static CipStatus HandleDataOnTcpSocket(int socket);
     static CipStatus SendUdpData(struct sockaddr* address, int socket, CipUsint* data, CipUint data_length);

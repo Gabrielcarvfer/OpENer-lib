@@ -6,11 +6,15 @@
 #define OPENER_NET_CONNECTION_H
 
 #ifdef WIN32
-#include <winsock2.h>
-#include <windows.h>
+    #include <winsock.h>
+    #include <windows.h>
 #else
-#include <sys/sock.h>
+    #include <sys/sock.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
+    #include <sys/select.h>
 #endif
+
 
 #define INVALID_SOCKET_HANDLE -1
 /**
@@ -30,9 +34,10 @@ class NET_Connection
         int BindSocket(int socket_handle_pos, struct sockaddr * address);
         int Listen(int max_num_connections);
 
-        void CloseSocketPlatform(CipUdint socket_handle);
+        void CloseSocket(CipUdint socket_handle);
 
         int GetSocketHandle(int socket_handle_pos);
+        int SetSocketHandle(int socket_handle_pos, int socket_handle);
 
         int SendData(void * data_ptr, CipUdint size);
         int RecvData (void *data_ptr, CipUdint size);
