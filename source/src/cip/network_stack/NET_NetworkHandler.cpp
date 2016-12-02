@@ -14,16 +14,10 @@
 #include <src/opener_user_conf.h>
 
 #ifdef WIN32
-    #include <ws2tcpip.h>
-    #include <errno.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <string.h>
-    #include <windows.h>
     #include <winsock2.h>
+    #include <windows.h>
 #else
     typedef unsigned long socklen_t;
-    #include <string.h>
     #include <sys/socket.h>
 #endif
 
@@ -162,22 +156,26 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
 //TODO: finish fixing newer stuff
 //TODO:-------------------------------
     // switch socket in listen mode
-    if ((listen(g_network_status.tcp_listener, MAX_NO_OF_TCP_SOCKETS)) == -1)
+    if (netStats[tcp_listener]->Listen(MAX_NO_OF_TCP_SOCKETS) == -1)
     {
         OPENER_TRACE_ERR("networkhandler: error with listen: %s\n", strerror(errno));
         return kCipStatusError;
     }
 
     // add the listener socket to the master set
-    FD_SET(g_network_status.tcp_listener, &master_socket);
-    FD_SET(g_network_status.udp_unicast_listener, &master_socket);
-    FD_SET(g_network_status.udp_global_broadcast_listener, &master_socket);
+    FD_SET(netStats[tcp_listener]->GetSocketHandle(NET_Connection::receiver), &master_socket);
+    FD_SET(netStats[udp_unicast_listener]->GetSocketHandle(NET_Connection::receiver), &master_socket);
+    FD_SET(netStats[udp_global_bcast_listener]->GetSocketHandle(NET_Connection::receiver), &master_socket);
 
     // keep track of the biggest file descriptor
-    highest_socket_handle = GetMaxSocket(g_network_status.tcp_listener, g_network_status.udp_global_broadcast_listener, 0, g_network_status.udp_unicast_listener);
+    highest_socket_handle = GetMaxSocket(
+            netStats[tcp_listener]->GetSocketHandle(NET_Connection::receiver),
+            netStats[udp_unicast_listener]->GetSocketHandle(NET_Connection::receiver),
+            netStats[udp_global_bcast_listener]->GetSocketHandle(NET_Connection::receiver),
+            0);
 
     g_last_time = GetMilliSeconds(); // initialize time keeping
-    g_network_status.elapsed_time = 0;
+    g_elapsed_time = 0;
 
     return kCipStatusOk;
 }
@@ -206,15 +204,14 @@ void NET_NetworkHandler::CheckAndHandleTcpListenerSocket(void)
 {
     int new_socket;
     // see if this is a connection request to the TCP listener
-    if (true == CheckSocketSet(g_network_status.tcp_listener))
+    if (CheckSocketSet(netStats[tcp_listener]->GetSocketHandle(NET_Connection::receiver)))
     {
         OPENER_TRACE_INFO("networkhandler: new TCP connection\n");
 
         new_socket = accept(g_network_status.tcp_listener, NULL, NULL);
         if (new_socket == -1)
         {
-            OPENER_TRACE_ERR("networkhandler: error on accept: %s\n",
-                strerror(errno));
+            OPENER_TRACE_ERR("networkhandler: error on accept: %s\n", strerror(errno));
             return;
         }
 
@@ -235,13 +232,13 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
     read_socket = master_socket;
 
     g_time_value.tv_sec = 0;
-    g_time_value.tv_usec = (g_network_status.elapsed_time < kOpenerTimerTickInMilliSeconds ? kOpenerTimerTickInMilliSeconds - g_network_status.elapsed_time : 0) * 1000; /* 10 ms */
+    g_time_value.tv_usec = (g_elapsed_time < kOpenerTimerTickInMilliSeconds ? kOpenerTimerTickInMilliSeconds - g_elapsed_time : 0) * 1000; // 10 ms
 
     int ready_socket = select(highest_socket_handle + 1, &read_socket, 0, 0, &g_time_value);
 
     if (ready_socket == kEipInvalidSocket)
     {
-        if (EINTR == errno) /* we have somehow been interrupted. The default behavior is to go back into the select loop. */
+        if (EINTR == errno) // we have somehow been interrupted. The default behavior is to go back into the select loop.
         {
             return kCipStatusOk;
         }
@@ -276,16 +273,16 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
     }
 
     g_actual_time = GetMilliSeconds();
-    g_network_status.elapsed_time += g_actual_time - g_last_time;
+    g_elapsed_time += g_actual_time - g_last_time;
     g_last_time = g_actual_time;
 
     // check if we had been not able to update the connection manager for several OPENER_TIMER_TICK.
     // This should compensate the jitter of the windows timer
-    if (g_network_status.elapsed_time >= kOpenerTimerTickInMilliSeconds)
+    if (g_elapsed_time >= kOpenerTimerTickInMilliSeconds)
     {
         /* call manage_connections() in connection manager every OPENER_TIMER_TICK ms */
-        ManageConnections(g_network_status.elapsed_time);
-        g_network_status.elapsed_time = 0;
+        ManageConnections(g_elapsed_time);
+        g_elapsed_time = 0;
     }
     return kCipStatusOk;
 }
@@ -314,20 +311,21 @@ void NET_NetworkHandler::CheckAndHandleUdpGlobalBroadcastSocket(void)
     struct sockaddr_in from_address;
     socklen_t from_address_length;
 
-    /* see if this is an unsolicited inbound UDP message */
-    if (true == CheckSocketSet(g_network_status.udp_global_broadcast_listener))
+    // see if this is an unsolicited inbound UDP message
+    if (CheckSocketSet(netStats[udp_global_bcast_listener]->GetSocketHandle(NET_Connection::receiver)))
     {
 
         from_address_length = sizeof(from_address);
 
         OPENER_TRACE_STATE("networkhandler: unsolicited UDP message on EIP global broadcast socket\n");
 
-        /* Handle UDP broadcast messages */
+        // Handle UDP broadcast messages
         int received_size = recvfrom(g_network_status.udp_global_broadcast_listener, (char*)g_ethernet_communication_buffer,
             PC_OPENER_ETHERNET_BUFFER_SIZE, 0, (struct sockaddr*)&from_address,&from_address_length);
 
         if (received_size <= 0)
-        { /* got error */
+        {
+            // got error
             OPENER_TRACE_ERR("networkhandler: error on recvfrom UDP global broadcast port: %s\n", strerror(errno));
             return;
         }

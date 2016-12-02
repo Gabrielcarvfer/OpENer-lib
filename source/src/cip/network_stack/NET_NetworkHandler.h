@@ -14,16 +14,13 @@
 #ifndef GENERIC_NETWORKHANDLER_H_
 #define GENERIC_NETWORKHANDLER_H_
 
-#include <errno.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "src/cip/connection_stack/CIP_Connection.h"
 #include "endianconv.h"
 #include "Opener_Interface.h"
 #include "typedefs.h"
+
 #define MAX_NO_OF_TCP_SOCKETS 10
+
 class NET_NetworkHandler
 {
     private:
@@ -44,6 +41,7 @@ class NET_NetworkHandler
         static struct timeval g_time_value;
         static MilliSeconds g_actual_time;
         static MilliSeconds g_last_time;
+        static MilliSeconds g_elapsed_time;
 
     /** @brief Struct representing the current network status
      *typedef struct

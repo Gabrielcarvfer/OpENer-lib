@@ -71,6 +71,11 @@ int NET_Connection::BindSocket(int socket_handle_pos, struct sockaddr_in * addre
     return INVALID_SOCKET_HANDLE;
 }
 
+int NET_Connection::Listen(int max_num_connections)
+{
+    return list(socket[receiver], max_num_connections);
+}
+
 int NET_Connection::CloseSocketPlatform(int socket_handle_pos)
 {
     if (CheckHandle(socket_handle_pos))

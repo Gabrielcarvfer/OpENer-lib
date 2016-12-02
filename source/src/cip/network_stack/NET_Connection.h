@@ -6,7 +6,7 @@
 #define OPENER_NET_CONNECTION_H
 
 #ifdef WIN32
-#include <winsock.h>
+#include <winsock2.h>
 #else
 #include <sys/sock.h>
 #endif
@@ -27,6 +27,7 @@ class NET_Connection
         int InitSocket(int socket_handle_pos, CipUdint family, CipUdint type, CipUdint protocol);
         int SetSocketOpt(int socket_handle_pos, CipUdint type, CipUdint reuse, CipUdint val);
         int BindSocket(int socket_handle_pos, struct sockaddr_in * address);
+        int Listen(int max_num_connections);
 
         void CloseSocketPlatform(CipUdint socket_handle);
 
@@ -51,7 +52,7 @@ class NET_Connection
         CipUdint val[2];
 
         //private functions
-        int NET_Connection::CheckHandle(int handle);
+        int CheckHandle(int handle);
 };
 
 
