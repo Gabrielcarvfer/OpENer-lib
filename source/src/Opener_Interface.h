@@ -291,7 +291,7 @@ int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buff
  * over after we're done here
  * @return length of reply that need to be sent back
  */
-int HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address, CipUsint* buffer,
+int HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer,
                                  unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
 
 /** @ingroup CIP_API

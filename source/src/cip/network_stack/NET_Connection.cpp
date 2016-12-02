@@ -9,7 +9,7 @@ NET_Connection::NET_Connection()
     socket[0] = INVALID_SOCKET_HANDLE;
     socket[1] = INVALID_SOCKET_HANDLE;
 }
-NET_Connection::NET_Connection(struct sockaddr_in *originator_address, struct sockaddr_in *remote_address)
+NET_Connection::NET_Connection(struct sockaddr *originator_address, struct sockaddr *remote_address)
 {
     originator_address = originator_address;
     remote_address = remote_address;
@@ -48,6 +48,7 @@ int NET_Connection::SetSocketOpt(int socket_handle_pos, CipUdint type, CipUdint 
     {
         type[socket_handle_pos] = type;
         reuse[socket_handle_pos] = type;
+        val[socket_handle_pos] = val;
         return setsockopt (socket[socked_handle_pos], type, reuse, (char *) &val, sizeof (CipUdint));
     }
     return INVALID_SOCKET_HANDLE;
@@ -99,12 +100,22 @@ int NET_Connection::GetSocketHandle(int socket_handle_pos)
 
 int NET_Connection::SendData(void * data_ptr, CipUdint size)
 {
-    return write(socket[sender], data_ptr, size);
+    return send(socket[sender], data_ptr, size);
 }
 
-int NET_Connection::ReceiveData(void * data_ptr, CipUdint size)
+int NET_Connection::RecvData (void *data_ptr, CipUdint size)
 {
-    return read(socket[receiver], data_ptr, size);
+    return recv(socket[receiver], data_ptr, size, 0);
+}
+
+int NET_Connection::SendDataTo(void * data_ptr, CipUdint size, struct sockaddr * destination)
+{
+    return sendto(socket[sender], data_ptr, size, 0, destination, sizeof(sockaddr*));
+}
+
+int NET_Connection::RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr *source)
+{
+    return recvfrom(socket[receiver], data_ptr, size, 0, source, sizeof(sockaddr*));
 }
 
 int NET_Connection::CheckHandle(int handle)

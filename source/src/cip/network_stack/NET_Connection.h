@@ -7,6 +7,7 @@
 
 #ifdef WIN32
 #include <winsock2.h>
+#include <windows.h>
 #else
 #include <sys/sock.h>
 #endif
@@ -21,12 +22,12 @@ class NET_Connection
 
         enum { receiver = 0, sender = 1 } socketsBehaviour;
         NET_Connection();
-        NET_Connection(struct sockaddr_in originator_address, struct sockaddr_in remote_address);
+        NET_Connection(struct sockaddr originator_address, struct sockaddr remote_address);
         ~NET_Connection ();
 
         int InitSocket(int socket_handle_pos, CipUdint family, CipUdint type, CipUdint protocol);
         int SetSocketOpt(int socket_handle_pos, CipUdint type, CipUdint reuse, CipUdint val);
-        int BindSocket(int socket_handle_pos, struct sockaddr_in * address);
+        int BindSocket(int socket_handle_pos, struct sockaddr * address);
         int Listen(int max_num_connections);
 
         void CloseSocketPlatform(CipUdint socket_handle);
@@ -34,16 +35,18 @@ class NET_Connection
         int GetSocketHandle(int socket_handle_pos);
 
         int SendData(void * data_ptr, CipUdint size);
-        int ReceiveData(void * data_ptr, CipUdint size);
+        int RecvData (void *data_ptr, CipUdint size);
+        int SendDataTo(void * data_ptr, CipUdint size, struct sockaddr * destination);
+        int RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr *source);
 
 
     private:
         // socket address for produce
-        struct sockaddr_in *remote_address;
+        struct sockaddr *remote_address;
 
         // the address of the originator that established the connection. needed for
         // scanning if the right packet is arriving
-        struct sockaddr_in *originator_address;
+        struct sockaddr *originator_address;
 
         // socket handles, indexed by kConsuming or kProducing
         int socket[2];

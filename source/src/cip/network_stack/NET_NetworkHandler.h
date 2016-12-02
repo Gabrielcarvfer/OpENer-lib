@@ -14,10 +14,11 @@
 #ifndef GENERIC_NETWORKHANDLER_H_
 #define GENERIC_NETWORKHANDLER_H_
 
-#include "src/cip/connection_stack/CIP_Connection.h"
-#include "endianconv.h"
-#include "Opener_Interface.h"
+
+#include <src/opener_user_conf.h>
 #include "typedefs.h"
+#include "../connection_stack/CIP_Connection.h"
+#include "NET_Connection.h"
 
 #define MAX_NO_OF_TCP_SOCKETS 10
 
@@ -80,7 +81,7 @@ class NET_NetworkHandler
      * @param socket The socket to check
      * @return true if socket is set
      */
-        static CipBool CheckSocketSet (int socket);
+        static int CheckSocketSet (int socket);
 
     /** @brief Returns the socket with the highest id
      * @param socket1 First socket
@@ -106,9 +107,9 @@ class NET_NetworkHandler
 private:
     static void CheckAndHandleConsumingUdpSockets(void);
     static void CloseSocket(int socket_handle);
-    static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr_in* socket_data);
+    static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr* socket_data);
     static CipStatus HandleDataOnTcpSocket(int socket);
-    static CipStatus SendUdpData(struct sockaddr_in* address, int socket, CipUsint* data, CipUint data_length);
+    static CipStatus SendUdpData(struct sockaddr* address, int socket, CipUsint* data, CipUint data_length);
     static void CheckAndHandleUdpUnicastSocket(void);
     static void CheckAndHandleUdpGlobalBroadcastSocket(void);
     static void CheckAndHandleTcpListenerSocket(void);
