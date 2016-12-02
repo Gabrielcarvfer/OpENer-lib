@@ -4,6 +4,13 @@
 
 #include "NET_Connection.h"
 
+void NET_Connection::NET_Connection()
+{
+    // clear the master an temp sets
+    FD_ZERO(&master_socket);
+    FD_ZERO(&read_socket);
+}
+
 NET_Connection::NET_Connection()
 {
     socket[0] = INVALID_SOCKET_HANDLE;
@@ -33,11 +40,14 @@ int NET_Connection::InitSocket(int socket_handle_pos, CipUdint family, CipUdint 
 {
     if (CheckHandle(socket_handle_pos))
     {
+        int socket;
         //Examples of parameters
         // family: AF_INET,PF_CAN
         // type: SOCK_STREAM,SOCK_RAW
         // protocol: IPPROTO_TCP,CAN_RAW
-        return socket[socket_handle_pos] = socket(family, type, protocol);
+        socket[socket_handle_pos] = socket(family, type, protocol);
+        socket_to_conn_map.emplace (socket[socket_handle_pos], this);
+        return socket[socket_handle_pos];
     }
     return INVALID_SOCKET_HANDLE;
 }
@@ -84,12 +94,22 @@ int NET_Connection::CloseSocket(int socket_handle_pos)
         OPENER_TRACE_INFO("networkhandler: closing socket %d\n", socket[socket_handle_pos]);
         if (kCipInvalidSocket != socket[socket_handle_pos])
         {
-            FD_CLR(socket[socket_handle_pos], &master_socket);
+            //Check if socket is still registered
+            if (socket_to_conn_map.find(socket[socket_handle_pos]) != socket_to_conn_map::end())
+            {
+                FD_CLR(socket[socket_handle_pos], &master_socket);
 #ifndef WIN32
-            shutdown(socket[socket_handle_pos], SHUT_RDWR);
+                shutdown(socket[socket_handle_pos], SHUT_RDWR);
 #endif
-            closesocket (socket[socket_handle_pos]);
+                closesocket (socket[socket_handle_pos]);
+
+
+                socket_to_conn_map.erase (socket[socket_handle_pos]);
+            }
+            //Set socket val to -1
+            socket[socket_handle_pos] = -1;
         }
+        return 0;
     }
     return INVALID_SOCKET_HANDLE;
 }

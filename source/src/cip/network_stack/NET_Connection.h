@@ -23,7 +23,10 @@
 class NET_Connection
 {
     public:
+        //Class stuff
+        static void InitSelects();
 
+        //Instance stuff
         enum { receiver = 0, sender = 1 } socketsBehaviour;
         NET_Connection();
         NET_Connection(struct sockaddr originator_address, struct sockaddr remote_address);
@@ -46,6 +49,10 @@ class NET_Connection
 
 
     private:
+        static fd_set master_socket;
+        static fd_set read_socket;
+        static std::map <int, NET_Connection*> socket_to_conn_map;
+
         // socket address for produce
         struct sockaddr *remote_address;
 

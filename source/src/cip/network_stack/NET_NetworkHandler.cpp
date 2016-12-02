@@ -56,9 +56,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
         WSAStartup(wVersionRequested, &wsaData);
     #endif
 
-    // clear the master an temp sets
-    FD_ZERO(&master_socket);
-    FD_ZERO(&read_socket);
+    NET_Connection::InitSelects();
 
     // create a new TCP socket
     netStats[tcp_listener] = new NET_Connection();
@@ -139,7 +137,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
         return kCipStatusError;
     }
 
-    if (netStats[udp_global_bcast_listener]->BindSocket (NET_Connection::receiver, (sockaddr*)global_broadcast_address) == -1)
+    if (netStats[udp_global_bcast_listener]->BindSocket (NET_Connection::receiver, (struct sockaddr*)global_broadcast_address) == -1)
     {
         OPENER_TRACE_ERR("error with global broadcast UDP bind: %s\n", strerror(errno));
         return kCipStatusError;

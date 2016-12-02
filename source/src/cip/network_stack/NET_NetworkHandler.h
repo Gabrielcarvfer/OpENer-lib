@@ -28,9 +28,6 @@ class NET_NetworkHandler
 
         static CipUsint g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE]; /**< communication buffer */
 
-        static fd_set master_socket;
-        static fd_set read_socket;
-
         static int highest_socket_handle; /**< temporary file descriptor for select() */
 
     /** @brief This variable holds the TCP socket the received to last explicit message.
