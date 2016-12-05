@@ -55,12 +55,12 @@ class NET_NetworkHandler
 
 
     //   static NetworkStatus g_network_status; /**< Global variable holding the current network status */
-
+    public:
     /** @brief The platform independent part of network handler initialization routine
      *
      *  @return Returns the OpENer status after the initialization routine
      */
-        static CipStatus NetworkHandlerInitialize (void);
+        static CipStatus NetworkHandlerInitialize ();
     /*
     void IApp_CloseSocket_udp(int socket_handle);
 
@@ -102,12 +102,28 @@ class NET_NetworkHandler
      */
         static MilliSeconds GetMilliSeconds(void);
 private:
+    /** @brief check if on one of the UDP consuming sockets data has been received and if yes handle it correctly
+    */
     static void CheckAndHandleConsumingUdpSockets(void);
+
     static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr* socket_data);
+
+    /** @brief TODO: FILL IN!
+    */
     static CipStatus HandleDataOnTcpSocket(int socket);
+
     static CipStatus SendUdpData(struct sockaddr* address, int socket, CipUsint* data, CipUint data_length);
+
+    /** @brief Checks and processes request received via the UDP unicast socket, currently the implementation is port-specific
+    */
     static void CheckAndHandleUdpUnicastSocket(void);
+
+    /** @brief TODO: FILL IN!
+    */
     static void CheckAndHandleUdpGlobalBroadcastSocket(void);
+
+    /** @brief handle any connection request coming in the TCP server socket.
+    */
     static void CheckAndHandleTcpListenerSocket(void);
 };
 #endif /* GENERIC_NETWORKHANDLER_H_ */

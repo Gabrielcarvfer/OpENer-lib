@@ -21,33 +21,8 @@
     typedef unsigned long socklen_t;
 #endif
 
-/** @brief handle any connection request coming in the TCP server socket.
- *
- */
-//Todo: void NET_NetworkHandler::CheckAndHandleTcpListenerSocket(void)
 
-
-/** @brief Checks and processes request received via the UDP unicast socket, currently the implementation is port-specific
- *
- */
-//Todo:void NET_NetworkHandler::CheckAndHandleUdpUnicastSocket(void);
-
-/** @brief TODO: FILL IN!
- *
- */
-//Todo:void NET_NetworkHandler::CheckAndHandleUdpGlobalBroadcastSocket(void);
-
-/** @brief check if on one of the UDP consuming sockets data has been received and if yes handle it correctly
- *
- */
-//Todo:void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void);
-
-/** @brief TODO: FILL IN!
- *
- */
-//Todo:CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket);
-
-CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
+CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
 {
     #ifdef WIN32
         WORD wVersionRequested;
@@ -60,7 +35,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
 
     // create a new TCP socket
     netStats[tcp_listener] = new NET_Connection();
-    if (netStats[tcp_listener]->InitSocket(NET_Connection::receiver, AF_INET, SOCK_STREAM, IPPROTO_TCP) == -1)
+    if (netStats[tcp_listener]->InitSocket(AF_INET, SOCK_STREAM, IPPROTO_TCP) == -1)
     {
         OPENER_TRACE_ERR("error allocating socket stream listener, %d\n", errno);
         return kCipStatusError;
@@ -69,7 +44,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
     CipUdint set_socket_option = 1;
 
     // Activates address reuse
-    if (netStats[tcp_listener]->SetSocketOpt(NET_Connection::receiver, SOL_SOCKET, SO_REUSEADDR, set_socket_option) == -1)
+    if (netStats[tcp_listener]->SetSocketOpt(SOL_SOCKET, SO_REUSEADDR, set_socket_option) == -1)
     {
         OPENER_TRACE_ERR("error setting socket option SO_REUSEADDR on tcp_listener\n");
         return kCipStatusError;
@@ -77,7 +52,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
 
     // create a new UDP socket for broadcast
     netStats[udp_global_bcast_listener] = new NET_Connection();
-    if (netStats[udp_global_bcast_listener]->InitSocket(NET_Connection::receiver, AF_INET, SOCK_DGRAM, IPPROTO_UDP) == -1)
+    if (netStats[udp_global_bcast_listener]->InitSocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP) == -1)
     {
         OPENER_TRACE_ERR("error allocating UDP global broadcast listener socket, %d\n", errno);
         return kCipStatusError;
@@ -85,21 +60,21 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
 
     // create a new UDP socket for unicast
     netStats[udp_ucast_listener] = new NET_Connection();
-    if (netStats[udp_ucast_listener]->InitSocket(NET_Connection::receiver, AF_INET, SOCK_DGRAM, IPPROTO_UDP) == -1)
+    if (netStats[udp_ucast_listener]->InitSocket(AF_INET, SOCK_DGRAM, IPPROTO_UDP) == -1)
     {
         OPENER_TRACE_ERR("error allocating UDP unicast listener socket, %d\n", errno);
         return kCipStatusError;
     }
 
     // Activates address reuse
-    if (netStats[udp_global_bcast_listener]->SetSocketOpt(NET_Connection::receiver, SOL_SOCKET, SO_REUSEADDR, set_socket_option) == -1)
+    if (netStats[udp_global_bcast_listener]->SetSocketOpt(SOL_SOCKET, SO_REUSEADDR, set_socket_option) == -1)
     {
         OPENER_TRACE_ERR("error setting socket option SO_REUSEADDR on udp_broadcast_listener\n");
         return kCipStatusError;
     }
 
     // Activates address reuse
-    if ( netStats[udp_ucast_listener]->SetSocketOpt(NET_Connection::receiver, SOL_SOCKET, SO_REUSEADDR, set_socket_option) == -1)
+    if ( netStats[udp_ucast_listener]->SetSocketOpt(SOL_SOCKET, SO_REUSEADDR, set_socket_option) == -1)
     {
         OPENER_TRACE_ERR("error setting socket option SO_REUSEADDR on udp_ucast_listener\n");
         return kCipStatusError;
@@ -112,13 +87,13 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
     my_address->sin_addr.s_addr = interface_configuration_.ip_address;
 
     // bind the new socket to port 0xAF12 (CIP)
-    if (netStats[tcp_listener]->BindSocket(NET_Connection::receiver, (struct sockaddr *) my_address) == -1)
+    if (netStats[tcp_listener]->BindSocket((struct sockaddr *) my_address) == -1)
     {
         OPENER_TRACE_ERR("error with TCP bind: %s\n", strerror(errno));
         return kCipStatusError;
     }
 
-    if (netStats[udp_ucast_listener]->BindSocket(NET_Connection::receiver, (struct sockaddr *) my_address) == -1)
+    if (netStats[udp_ucast_listener]->BindSocket((struct sockaddr *) my_address) == -1)
     {
         OPENER_TRACE_ERR("error with UDP unicast bind: %s\n", strerror(errno));
         return kCipStatusError;
@@ -131,13 +106,13 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
     global_broadcast_address->sin_addr.s_addr = htonl(INADDR_ANY);
 
     // enable the UDP socket to receive broadcast messages
-    if ( netStats[udp_global_bcast_listener]->SetSocketOpt (NET_Connection::receiver, SOL_SOCKET, SO_BROADCAST, set_socket_option) < 0)
+    if ( netStats[udp_global_bcast_listener]->SetSocketOpt (SOL_SOCKET, SO_BROADCAST, set_socket_option) < 0)
     {
         OPENER_TRACE_ERR("error with setting broadcast receive for UDP socket: %s\n", strerror(errno));
         return kCipStatusError;
     }
 
-    if (netStats[udp_global_bcast_listener]->BindSocket (NET_Connection::receiver, (struct sockaddr*)global_broadcast_address) == -1)
+    if (netStats[udp_global_bcast_listener]->BindSocket ((struct sockaddr*)global_broadcast_address) == -1)
     {
         OPENER_TRACE_ERR("error with global broadcast UDP bind: %s\n", strerror(errno));
         return kCipStatusError;
@@ -154,15 +129,15 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
     }
 
     // add the listener socket to the master set
-    FD_SET(netStats[tcp_listener]->GetSocketHandle(NET_Connection::receiver), &master_socket);
-    FD_SET(netStats[udp_ucast_listener]->GetSocketHandle(NET_Connection::receiver), &master_socket);
-    FD_SET(netStats[udp_global_bcast_listener]->GetSocketHandle(NET_Connection::receiver), &master_socket);
+    NET_Connection::SelectSet(netStats[tcp_listener]->GetSocketHandle(), NET_Connection::kMasterSet);
+    NET_Connection::SelectSet(netStats[udp_ucast_listener]->GetSocketHandle(), NET_Connection::kMasterSet);
+    NET_Connection::SelectSet(netStats[udp_global_bcast_listener]->GetSocketHandle(), NET_Connection::kMasterSet);
 
     // keep track of the biggest file descriptor
     highest_socket_handle = GetMaxSocket(
-            netStats[tcp_listener]->GetSocketHandle(NET_Connection::receiver),
-            netStats[udp_ucast_listener]->GetSocketHandle(NET_Connection::receiver),
-            netStats[udp_global_bcast_listener]->GetSocketHandle(NET_Connection::receiver),
+            netStats[tcp_listener]->GetSocketHandle(),
+            netStats[udp_ucast_listener]->GetSocketHandle(),
+            netStats[udp_global_bcast_listener]->GetSocketHandle(),
             0);
 
     g_last_time = GetMilliSeconds(); // initialize time keeping
@@ -174,9 +149,9 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize(void)
 
 int NET_NetworkHandler::CheckSocketSet(int socket)
 {
-    if (FD_ISSET(socket, &read_socket))
+    if (NET_Connection::SelectIsSet(socket, NET_Connection::kReadSet) != -1)
     {
-        if (FD_ISSET(socket, &master_socket))
+        if (NET_Connection::SelectIsSet(socket, NET_Connection::kMasterSet) != -1)
         {
             return 1;
         }
@@ -184,7 +159,7 @@ int NET_NetworkHandler::CheckSocketSet(int socket)
         {
             OPENER_TRACE_INFO("socket: %d closed with pending message\n", socket);
         }
-        FD_CLR(socket, &read_socket);
+        NET_Connection::SelectRemove (socket, NET_Connection::kReadSet);
         // remove it from the read set so that later checks will not find it
     }
     return 0;
@@ -192,20 +167,21 @@ int NET_NetworkHandler::CheckSocketSet(int socket)
 
 void NET_NetworkHandler::CheckAndHandleTcpListenerSocket(void)
 {
+    //TODO: create new connection
     int new_socket;
     // see if this is a connection request to the TCP listener
-    if (CheckSocketSet(netStats[tcp_listener]->GetSocketHandle(NET_Connection::receiver)))
+    if (CheckSocketSet(netStats[tcp_listener]->GetSocketHandle()))
     {
         OPENER_TRACE_INFO("networkhandler: new TCP connection\n");
 
-        new_socket = accept(netStats[tcp_listener]->GetSocketHandle(NET_Connection::receiver), NULL, NULL);
+        new_socket = accept(netStats[tcp_listener]->GetSocketHandle(), NULL, NULL);
         if (new_socket == -1)
         {
             OPENER_TRACE_ERR("networkhandler: error on accept: %s\n", strerror(errno));
             return;
         }
 
-        FD_SET(new_socket, &master_socket);
+        NET_Connection::SelectSet(new_socket, NET_Connection::kMasterSet);
         // add newfd to master set
         if (new_socket > highest_socket_handle)
         {
@@ -218,13 +194,12 @@ void NET_NetworkHandler::CheckAndHandleTcpListenerSocket(void)
 
 CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
 {
-
-    read_socket = master_socket;
+    NET_Connection::SelectCopy();
 
     g_time_value.tv_sec = 0;
     g_time_value.tv_usec = (g_elapsed_time < kOpenerTimerTickInMilliSeconds ? kOpenerTimerTickInMilliSeconds - g_elapsed_time : 0) * 1000; // 10 ms
 
-    int ready_socket = select(highest_socket_handle + 1, &read_socket, 0, 0, &g_time_value);
+    int ready_socket = NET_Connection::SelectSelect(highest_socket_handle + 1, NET_Connection::kReadSet, &g_time_value);
 
     if (ready_socket == kEipInvalidSocket)
     {
@@ -289,9 +264,9 @@ void NET_NetworkHandler::IApp_CloseSocket_tcp(int socket_handle)
 }*/
 CipStatus NET_NetworkHandler::NetworkHandlerFinish(void)
 {
-    netStats[tcp_listener]->CloseSocket (NET_Connection::receiver);
-    netStats[udp_ucast_listener]->CloseSocket (NET_Connection::receiver);
-    netStats[udp_global_bcast_listener]->CloseSocket (NET_Connection::receiver);
+    netStats[tcp_listener]->CloseSocket ();
+    netStats[udp_ucast_listener]->CloseSocket ();
+    netStats[udp_global_bcast_listener]->CloseSocket ();
     return kCipStatusOk;
 }
 
@@ -302,7 +277,7 @@ void NET_NetworkHandler::CheckAndHandleUdpGlobalBroadcastSocket(void)
     socklen_t from_address_length;
 
     // see if this is an unsolicited inbound UDP message
-    if (CheckSocketSet(netStats[udp_global_bcast_listener]->GetSocketHandle(NET_Connection::receiver)))
+    if (CheckSocketSet(netStats[udp_global_bcast_listener]->GetSocketHandle()))
     {
 
         from_address_length = sizeof(from_address);
@@ -326,7 +301,7 @@ void NET_NetworkHandler::CheckAndHandleUdpGlobalBroadcastSocket(void)
         int remaining_bytes = 0;
         do
         {
-            int reply_length = HandleReceivedExplictUdpData(netStats[udp_global_bcast_listener]->GetSocketHandle(NET_Connection::receiver),
+            int reply_length = HandleReceivedExplictUdpData(netStats[udp_global_bcast_listener]->GetSocketHandle(),
                                                             (struct sockaddr*)&from_address, receive_buffer, received_size, &remaining_bytes, false);
 
             receive_buffer += received_size - remaining_bytes;
@@ -353,7 +328,7 @@ void NET_NetworkHandler::CheckAndHandleUdpUnicastSocket(void)
     socklen_t from_address_length;
 
     /* see if this is an unsolicited inbound UDP message */
-    if (CheckSocketSet(netStats[udp_ucast_listener]->GetSocketHandle (NET_Connection::receiver)))
+    if (CheckSocketSet(netStats[udp_ucast_listener]->GetSocketHandle ()))
     {
 
         from_address_length = sizeof(from_address);
@@ -377,7 +352,7 @@ void NET_NetworkHandler::CheckAndHandleUdpUnicastSocket(void)
         int remaining_bytes = 0;
         do
         {
-            int reply_length = HandleReceivedExplictUdpData(netStats[udp_ucast_listener]->GetSocketHandle (NET_Connection::receiver), (struct sockaddr*)&from_address, receive_buffer, recv_size, &remaining_bytes, true);
+            int reply_length = HandleReceivedExplictUdpData(netStats[udp_ucast_listener]->GetSocketHandle (), (struct sockaddr*)&from_address, receive_buffer, recv_size, &remaining_bytes, true);
 
             receive_buffer += recv_size - remaining_bytes;
             recv_size = remaining_bytes;
@@ -605,7 +580,7 @@ int NET_NetworkHandler::CreateUdpSocket(UdpCommuncationDirection communication_d
     }
 
     // add new socket to the master list
-    FD_SET(new_socket, &master_socket);
+    NET_Connection::SelectSet(new_socket, NET_Connection::kMasterSet);
     if (new_socket > highest_socket_handle)
     {
         highest_socket_handle = new_socket;
@@ -628,10 +603,10 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
         // do this at the beginning as the close function may can make the entry invalid
         connection_object_iterator = CIP_Connection::active_connections_set[i];
 
-        if ((-1 != current_connection_object->conn->GetSocketHandle(kUdpCommuncationDirectionConsuming) && (CheckSocketSet( current_connection_object->conn->GetSocketHandle (kUdpCommuncationDirectionConsuming)))))
+        if ((-1 != current_connection_object->conn->GetSocketHandle(/*todo:kUdpCommuncationDirectionConsuming*/) && (CheckSocketSet( current_connection_object->conn->GetSocketHandle (/*todo:kUdpCommuncationDirectionConsuming*/)))))
         {
             from_address_length = sizeof(from_address);
-            int received_size = recvfrom(current_connection_object->conn->GetSocketHandle(kUdpCommuncationDirectionConsuming), (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0, (struct sockaddr*)&from_address, (int*)&from_address_length);
+            int received_size = recvfrom(current_connection_object->conn->GetSocketHandle(/*kUdpCommuncationDirectionConsuming*/), (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0, (struct sockaddr*)&from_address, (int*)&from_address_length);
             if (0 == received_size) 
             {
                 OPENER_TRACE_STATE("connection closed by client\n");

@@ -17,6 +17,7 @@
 
 
 #define INVALID_SOCKET_HANDLE -1
+#define INVALID_INPUTS -1
 /**
  * @brief NET_Connection abstracts sockets (EthernetIP/TCPIP and DeviceNet/CAN) from CIP Connection
  */
@@ -24,23 +25,29 @@ class NET_Connection
 {
     public:
         //Class stuff
+        enum { kMasterSet, kReadSet } SelectSets;
         static void InitSelects();
+        static void SelectCopy();
+        static int SelectSet    (int socket_handle, int select_set_option);
+        static int SelectIsSet  (int socket_handle, int select_set_option);
+        static int SelectSelect (int socket_handle, int select_set_option, struct timeval * time);
+        static int SelectRemove (int socket_handle, int select_set_option);
 
         //Instance stuff
-        enum { receiver = 0, sender = 1 } socketsBehaviour;
+        enum { kOriginatorAddress, kRemoteAddress} AddressOptions;
         NET_Connection();
         NET_Connection(struct sockaddr originator_address, struct sockaddr remote_address);
         ~NET_Connection ();
 
-        int InitSocket(int socket_handle_pos, CipUdint family, CipUdint type, CipUdint protocol);
-        int SetSocketOpt(int socket_handle_pos, CipUdint type, CipUdint reuse, CipUdint val);
-        int BindSocket(int socket_handle_pos, struct sockaddr * address);
+        int InitSocket(CipUdint family, CipUdint type, CipUdint protocol);
+        int SetSocketOpt(CipUdint type, CipUdint reuse, CipUdint val);
+        int BindSocket(struct sockaddr * address);
         int Listen(int max_num_connections);
 
-        void CloseSocket(CipUdint socket_handle);
+        void CloseSocket();
 
-        int GetSocketHandle(int socket_handle_pos);
-        int SetSocketHandle(int socket_handle_pos, int socket_handle);
+        int GetSocketHandle();
+        int SetSocketHandle(int socket_handle);
 
         int SendData(void * data_ptr, CipUdint size);
         int RecvData (void *data_ptr, CipUdint size);
@@ -49,8 +56,7 @@ class NET_Connection
 
 
     private:
-        static fd_set master_socket;
-        static fd_set read_socket;
+        static fd_set select_set[2]; //0-master_socket 1-read_socket
         static std::map <int, NET_Connection*> socket_to_conn_map;
 
         // socket address for produce
@@ -61,10 +67,10 @@ class NET_Connection
         struct sockaddr *originator_address;
 
         // socket handles, indexed by kConsuming or kProducing
-        int socket[2];
-        CipUdint type[2];
-        CipUdint reuse[2];
-        CipUdint val[2];
+        int socket;
+        CipUdint type;
+        CipUdint reuse;
+        CipUdint val;
 
         //private functions
         int CheckHandle(int handle);

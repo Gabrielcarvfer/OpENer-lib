@@ -14,9 +14,6 @@
 //#include "opener_user_conf.h"
 #include <array>
 
-
-
-
 class CIP_Common
 {
 

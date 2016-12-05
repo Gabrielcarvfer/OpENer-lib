@@ -31,16 +31,22 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
     /* The message router is the first CIP object be initialized!!! */
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
+
     eip_status = CipIdentityInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
+
     eip_status = CipTcpIpInterfaceInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
+
     eip_status = CipEthernetLinkInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
+
     eip_status = CIP_Connection::ConnectionManagerInit (unique_connection_id);
     OPENER_ASSERT(kCipStatusOk == eip_status);
+
     eip_status = CIPAssembly::CipAssemblyInitialize ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
+
     /* the application has to be initialized at last */
     eip_status = ApplicationInitialization ();
     OPENER_ASSERT(kCipStatusOk == eip_status);

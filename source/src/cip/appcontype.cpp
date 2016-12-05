@@ -249,7 +249,7 @@ CIP_Connection* GetExistingProducerMulticastConnection(CipUdint input_point)
         {
             if ((input_point == producer_multicast_connection->connection_path.connection_point[1])
                 && (CIP_Connection::kRoutingTypeMulticastConnection == (producer_multicast_connection->t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection))
-                && (kEipInvalidSocket!= producer_multicast_connection->conn->GetSocketHandle(kUdpCommuncationDirectionProducing)))
+                && (kEipInvalidSocket!= producer_multicast_connection->conn->GetSocketHandle()));//todo:kUdpCommuncationDirectionProducing)))
             {
                 /* we have a connection that produces the same input assembly,
          * is a multicast producer and manages the connection.
@@ -275,7 +275,7 @@ CIP_Connection* GetNextNonControlMasterConnection(CipUdint input_point)
             if ((input_point == next_non_control_master_connection->connection_path.connection_point[1])
                 && (CIP_Connection::kRoutingTypeMulticastConnection == (next_non_control_master_connection->t_to_o_network_connection_parameter
                               & CIP_Connection::kRoutingTypeMulticastConnection))
-                && (kEipInvalidSocket == next_non_control_master_connection->conn->GetSocketHandle(kUdpCommuncationDirectionProducing)))
+                && (kEipInvalidSocket == next_non_control_master_connection->conn->GetSocketHandle()))//todo:kUdpCommuncationDirectionProducing)))
             {
                 /* we have a connection that produces the same input assembly,
          * is a multicast producer and does not manages the connection.

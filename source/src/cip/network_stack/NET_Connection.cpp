@@ -4,12 +4,54 @@
 
 #include "NET_Connection.h"
 
-void NET_Connection::NET_Connection()
+void NET_Connection::InitSelects()
 {
     // clear the master an temp sets
     FD_ZERO(&master_socket);
     FD_ZERO(&read_socket);
 }
+void NET_Connection::SelectCopy()
+{
+    read_socket = master_socket;
+}
+int NET_Connection::SelectSet(int socket_handle, int select_set_option)
+{
+    if(CheckSelectSet(select_set_option) & CheckSocketHandle(socket_handle))
+    {
+        FD_SET(socket_handle, select_set[select_set_option]);
+        return 1;
+    }
+    return INVALID_INPUTS;
+}
+
+int NET_Connection::SelectIsSet(int socket_handle, int select_set_option)
+{
+    if(CheckSelectSet(select_set_option) & CheckSocketHandle(socket_handle))
+    {
+        return FD_ISSET(socket_handle, select_set[select_set_option]);
+    }
+    return INVALID_INPUTS;
+}
+
+int NET_Connection::SelectSelect(int socket_handle, int select_set_option, struct timeval * time)
+{
+    if(CheckSelectSet(select_set_option) & CheckSocketHandle(socket_handle))
+    {
+        return select(socket_handle, select_set[select_set_option], 0, 0, time);
+    }
+    return INVALID_INPUTS;
+}
+
+int NET_Connection::SelectRemove(int socket_handle, int select_set_option)
+{
+    if(CheckSelectSet(select_set_option))
+    {
+        FD_CLR(socket_handle, select_set[select_set_option]);
+        return 0;
+    }
+    return INVALID_INPUTS;
+}
+
 
 NET_Connection::NET_Connection()
 {
@@ -21,65 +63,53 @@ NET_Connection::NET_Connection(struct sockaddr *originator_address, struct socka
     originator_address = originator_address;
     remote_address = remote_address;
 
-    socket[0] = INVALID_SOCKET_HANDLE;
-    socket[1] = INVALID_SOCKET_HANDLE;
+    socket = INVALID_SOCKET_HANDLE;
 }
 
 NET_Connection::~NET_Connection ()
 {
-    if (socket[0] != INVALID_SOCKET_HANDLE)
-        CloseSocketPlatform (socket[0]);
-    if (socket[1] != INVALID_SOCKET_HANDLE)
-        CloseSocketPlatform (socket[1]);
+    if (socket != INVALID_SOCKET_HANDLE)
+        CloseSocketPlatform (socket);
 
     delete remote_address;
     delete originator_address;
 }
 
-int NET_Connection::InitSocket(int socket_handle_pos, CipUdint family, CipUdint type, CipUdint protocol)
+int NET_Connection::InitSocket(CipUdint family, CipUdint type, CipUdint protocol)
 {
-    if (CheckHandle(socket_handle_pos))
-    {
+
         int socket;
         //Examples of parameters
         // family: AF_INET,PF_CAN
         // type: SOCK_STREAM,SOCK_RAW
         // protocol: IPPROTO_TCP,CAN_RAW
-        socket[socket_handle_pos] = socket(family, type, protocol);
-        socket_to_conn_map.emplace (socket[socket_handle_pos], this);
-        return socket[socket_handle_pos];
-    }
-    return INVALID_SOCKET_HANDLE;
+        socket= socket(family, type, protocol);
+        socket_to_conn_map.emplace (socket, this);
+        return socket;
 }
 
-int NET_Connection::SetSocketOpt(int socket_handle_pos, CipUdint type, CipUdint reuse, CipUdint val)
+int NET_Connection::SetSocketOpt(CipUdint type, CipUdint reuse, CipUdint val)
 {
-    if (CheckHandle(socket_handle_pos))
-    {
-        type[socket_handle_pos] = type;
-        reuse[socket_handle_pos] = type;
-        val[socket_handle_pos] = val;
-        return setsockopt (socket[socked_handle_pos], type, reuse, (char *) &val, sizeof (CipUdint));
-    }
-    return INVALID_SOCKET_HANDLE;
+        type = type;
+        reuse = reuse;
+        val = val;
+        return setsockopt (socket, type, reuse, (char *) &val, sizeof (CipUdint));
 }
 
-int NET_Connection::BindSocket(int socket_handle_pos, struct sockaddr_in * address)
+int NET_Connection::BindSocket(int address_option, struct sockaddr_in * address)
 {
-    if (CheckHandle (socket_handle_pos))
+    switch(address_option)
     {
-        //todo: check if the receiver is the originator address or remote_address
-        if (socket_handle_pos == receiver)
-        {
+        case kOriginatorAddress:
             originator_address = address;
-        }
-        else
-        {
+            break;
+        case kRemoteAddress:
             remote_address = address;
-        }
-        return bind(socket[socket_handle_pos], address, sizeof(struct sockaddr));
+            break;
+        default:
+            return INVALID_INPUTS;
     }
-    return INVALID_SOCKET_HANDLE;
+    return bind(socket[socket_handle_pos], address, sizeof(struct sockaddr));
 }
 
 int NET_Connection::Listen(int max_num_connections)
@@ -87,75 +117,55 @@ int NET_Connection::Listen(int max_num_connections)
     return list(socket[receiver], max_num_connections);
 }
 
-int NET_Connection::CloseSocket(int socket_handle_pos)
+int NET_Connection::CloseSocket()
 {
-    if (CheckHandle(socket_handle_pos))
-    {
         OPENER_TRACE_INFO("networkhandler: closing socket %d\n", socket[socket_handle_pos]);
-        if (kCipInvalidSocket != socket[socket_handle_pos])
+        if (kCipInvalidSocket != socket)
         {
             //Check if socket is still registered
-            if (socket_to_conn_map.find(socket[socket_handle_pos]) != socket_to_conn_map::end())
+            if (socket_to_conn_map.find(socket) != socket_to_conn_map::end())
             {
-                FD_CLR(socket[socket_handle_pos], &master_socket);
+                FD_CLR(socket, &master_socket);
 #ifndef WIN32
-                shutdown(socket[socket_handle_pos], SHUT_RDWR);
+                shutdown(socket, SHUT_RDWR);
 #endif
-                closesocket (socket[socket_handle_pos]);
+                closesocket (socket);
 
 
-                socket_to_conn_map.erase (socket[socket_handle_pos]);
+                socket_to_conn_map.erase (socket);
             }
             //Set socket val to -1
-            socket[socket_handle_pos] = -1;
+            socket = -1;
         }
         return 0;
-    }
-    return INVALID_SOCKET_HANDLE;
 }
 
 int NET_Connection::GetSocketHandle(int socket_handle_pos)
 {
-    if (CheckHandle(socket_handle_pos))
-    {
-        return socket[socket_handle_pos];
-    }
-    return INVALID_SOCKET_HANDLE;
+    return socket;
 }
 
-int NET_Connection::SetSocketHandle(int socket_handle_pos, int socket_handle)
+int NET_Connection::SetSocketHandle(int socket_handle)
 {
-    if (CheckHandle(socket_handle_pos))
-    {
-        return socket[socket_handle_pos] = socket_handle;
-    }
-    return INVALID_SOCKET_HANDLE;
+    return socket = socket_handle;
 }
 
 int NET_Connection::SendData(void * data_ptr, CipUdint size)
 {
-    return send(socket[sender], data_ptr, size);
+    return send(socket, data_ptr, size);
 }
 
 int NET_Connection::RecvData (void *data_ptr, CipUdint size)
 {
-    return recv(socket[receiver], data_ptr, size, 0);
+    return recv(socket, data_ptr, size, 0);
 }
 
 int NET_Connection::SendDataTo(void * data_ptr, CipUdint size, struct sockaddr * destination)
 {
-    return sendto(socket[sender], data_ptr, size, 0, destination, sizeof(sockaddr*));
+    return sendto(socket, data_ptr, size, 0, destination, sizeof(sockaddr*));
 }
 
 int NET_Connection::RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr *source)
 {
-    return recvfrom(socket[receiver], data_ptr, size, 0, source, sizeof(sockaddr*));
-}
-
-int NET_Connection::CheckHandle(int handle)
-{
-    if (handle > -1 & handle < 2)
-        return 1;
-    else
-        return 0;
+    return recvfrom(socket, data_ptr, size, 0, source, sizeof(sockaddr*));
 }

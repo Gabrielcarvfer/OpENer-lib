@@ -18,13 +18,7 @@
 
 class CIP_Connection; //trick compiler
 
-typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
-typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
 
-typedef struct {
-    CipUdint class_id;
-    OpenConnectionFunction open_connection_function;
-} ConnectionManagementHandling;
 
 class CIP_Connection :  public CIP_ClassInstance, public CIP_Template<CIP_Connection>
 {
@@ -32,6 +26,13 @@ class CIP_Connection :  public CIP_ClassInstance, public CIP_Template<CIP_Connec
 public:
     NET_Connection * conn;
 
+    typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
+    typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
+
+    typedef struct {
+        CipUdint class_id;
+        OpenConnectionFunction open_connection_function;
+    } ConnectionManagementHandling;
     /**
  * @brief Sets the routing type of a connection, either
  * - Point-to-point connections (unicast)
