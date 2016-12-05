@@ -45,9 +45,9 @@ int main(int argc, char* arg[])
     else
     {
         /* fetch Internet address info from the platform */
-        ConfigureNetworkInterface(arg[1], arg[2], arg[3]);
-        ConfigureDomainName(arg[4]);
-        ConfigureHostName(arg[5]);
+        Opener_Interface::ConfigureNetworkInterface(arg[1], arg[2], arg[3]);
+        Opener_Interface::ConfigureDomainName(arg[4]);
+        Opener_Interface::ConfigureHostName(arg[5]);
 
         /*acMyMACAddress[0] = (CipUsint)std::strtoul(arg[6], NULL, 16);
         acMyMACAddress[1] = (CipUsint)std::strtoul(arg[7], NULL, 16);
@@ -57,11 +57,11 @@ int main(int argc, char* arg[])
         acMyMACAddress[5] = (CipUsint)std::strtoul(arg[11], NULL, 16);
          */
 
-        ConfigureMacAddress(acMyMACAddress);
+        Opener_Interface::ConfigureMacAddress(acMyMACAddress);
     }
 
     /*for a real device the serial number should be unique per device */
-    SetDeviceSerialNumber(56789);
+    Opener_Interface::SetDeviceSerialNumber(56789);
 
     /* nUniqueConnectionID should be sufficiently random or incremented and stored
    *  in non-volatile memory each time the device boots.
@@ -69,7 +69,7 @@ int main(int argc, char* arg[])
     nUniqueConnectionID = 56789;//rand();
 
     /* Setup the CIP Layer */
-    CipStackInit(nUniqueConnectionID);
+    Opener_Interface::CipStackInit(nUniqueConnectionID);
 
     /* Setup Network Handles */
     if (kCipStatusOk == NET_NetworkHandler::NetworkHandlerInitialize ()) {
@@ -90,7 +90,7 @@ int main(int argc, char* arg[])
         NET_NetworkHandler::NetworkHandlerFinish();
     }
     /* close remaining sessions and connections, cleanup used data */
-    ShutdownCipStack();
+    Opener_Interface::ShutdownCipStack();
 
     return -1;
 }

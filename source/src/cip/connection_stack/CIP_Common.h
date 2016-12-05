@@ -51,7 +51,30 @@ class CIP_Common
 	private:
 		static const CipUint kCipUintZero = 0;
 		static int EncodeEPath(CipEpath* epath, CipUsint** message);
+
+		/** @brief Produce the data according to CIP encoding onto the message buffer.
+		 *
+		 * This function may be used in own services for sending data back to the
+		 * requester (e.g., getAttributeSingle for special structs).
+		 *  @param cip_data_type the cip type to encode
+		 *  @param cip_data pointer to data value.
+		 *  @param cip_message pointer to memory where response should be written
+		 *  @return length of attribute in bytes
+		 *          -1 .. error
+		 */
 		static int EncodeData(CipUsint cip_type, void* data, CipUsint** message);
+
+		/** @brief Retrieve the given data according to CIP encoding from the message
+		 * buffer.
+		 *
+		 * This function may be used in in own services for handling data from the
+		 * requester (e.g., setAttributeSingle).
+		 *  @param cip_data_type the CIP type to decode
+		 *  @param cip_data pointer to data value to written.
+		 *  @param cip_message pointer to memory where the data should be taken from
+		 *  @return length of taken bytes
+		 *          -1 .. error
+		 */
 		static int DecodeData(CipUsint cip_type, void* data, CipUsint** message);
 
 };

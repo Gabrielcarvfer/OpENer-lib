@@ -4,8 +4,9 @@
 
 #include "Opener_Interface.h"
 #include <stdlib.h>
+#include <src/cip/network_stack/NET_NetworkHandler.h>
 
-/*
+
 bool Opener_Interface::Opener_Initialize(CipUdint serialNumber)
 {
     CipUint unique_connection_id;
@@ -23,18 +24,18 @@ bool Opener_Interface::Opener_Initialize(CipUdint serialNumber)
 
     // Setup Network Handles
 
-    if (kCipStatusOk == NetworkHandlerInitialize ())
+    if (kCipStatusOk == NET_NetworkHandler::NetworkHandlerInitialize ())
     {
         g_end_stack = 0;
 #ifndef WIN32
         // register for closing signals so that we can trigger the stack to end
-                signal(SIGHUP, LeaveStack);
+        signal(SIGHUP, LeaveStack);
 #endif
 
         // The event loop. Put other processing you need done continually in here
         while (1 != g_end_stack)
         {
-            if (kCipStatusOk != NetworkHandlerProcessOnce ())
+            if (kCipStatusOk != NET_NetworkHandler::NetworkHandlerProcessOnce ())
             {
                 break;
             }
@@ -58,7 +59,7 @@ bool Opener_Interface::Opener_Shutdown()
 CipUdint Opener_Interface::Opener_CreateExplicitConnection()
 {
     CipUdint handle = Explicit_Connection_set.size();
-    Explicit_Connection_set.emplace(handle, new Opener_ExplicitConnection());
+    //Explicit_Connection_set.emplace(handle, new Opener_ExplicitConnection());
     return handle;
 }
 
@@ -68,7 +69,7 @@ void Opener_Interface::Opener_RemoveExplicitConnection(CipUdint handle)
     auto it = Explicit_Connection_set.find(handle);
     if (it != Explicit_Connection_set.end())
     {
-        delete Explicit_Connection_set[it];
+        //delete Explicit_Connection_set[it];
         Explicit_Connection_set.erase (it);
     }
     return;
@@ -78,7 +79,7 @@ void Opener_Interface::Opener_RemoveExplicitConnection(CipUdint handle)
 CipUdint Opener_Interface::Opener_CreateIOConnection()
 {
     CipUdint handle = IO_Connection_set.size();
-    IO_Connection_set.emplace(handle, new Opener_IOConnection());
+    //IO_Connection_set.emplace(handle, new Opener_IOConnection());
     return handle;
 }
 
@@ -88,7 +89,7 @@ void Opener_Interface::Opener_RemoveIOConnection(CipUdint handle)
     auto it = IO_Connection_set.find(handle);
     if (it != IO_Connection_set.end())
     {
-        delete IO_Connection_set[it];
+        //delete IO_Connection_set[it];
         IO_Connection_set.erase (it);
     }
     return;
@@ -110,4 +111,4 @@ Opener_ExplicitConnection * Opener_Interface::GetOpenerExplicitConnection(CipUdi
         return Explicit_Connection_set[handle];
     else
         return NULL;
-}*/
+}
