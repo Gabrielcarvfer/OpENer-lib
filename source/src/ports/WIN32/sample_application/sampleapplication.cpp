@@ -5,9 +5,9 @@
  ******************************************************************************/
 
 #include "../../../Opener_Interface.h"
-#include <stdlib.h>
-#include <string.h>
 #include <src/cip/CIP_Assembly.h>
+#include <malloc.h>
+#include <src/cip/appcontype.h>
 
 #define DEMO_APP_INPUT_ASSEMBLY_NUM 100 //0x064
 #define DEMO_APP_OUTPUT_ASSEMBLY_NUM 150 //0x096
@@ -25,40 +25,29 @@ CipUsint g_assembly_data09A[32]; /* Explicit */
 
 CipStatus ApplicationInitialization(void)
 {
-    /* create 3 assembly object instances*/
-    /*INPUT*/
-    CreateAssemblyObject(DEMO_APP_INPUT_ASSEMBLY_NUM, &g_assembly_data064[0],
-        sizeof(g_assembly_data064));
+    // create 3 assembly object instances
+    //INPUT
+    CIP_Assembly::CreateAssemblyObject(DEMO_APP_INPUT_ASSEMBLY_NUM, &g_assembly_data064[0], sizeof(g_assembly_data064));
 
-    /*OUTPUT*/
-    CreateAssemblyObject(DEMO_APP_OUTPUT_ASSEMBLY_NUM, &g_assembly_data096[0],
-        sizeof(g_assembly_data096));
+    //OUTPUT
+    CIP_Assembly::CreateAssemblyObject(DEMO_APP_OUTPUT_ASSEMBLY_NUM, &g_assembly_data096[0], sizeof(g_assembly_data096));
 
-    /*CONFIG*/
-    CreateAssemblyObject(DEMO_APP_CONFIG_ASSEMBLY_NUM, &g_assembly_data097[0],
-        sizeof(g_assembly_data097));
+    //CONFIG
+    CIP_Assembly::CreateAssemblyObject(DEMO_APP_CONFIG_ASSEMBLY_NUM, &g_assembly_data097[0], sizeof(g_assembly_data097));
 
-    /*Heart-beat output assembly for Input only connections */
-    CreateAssemblyObject(DEMO_APP_HEARBEAT_INPUT_ONLY_ASSEMBLY_NUM, 0, 0);
+    //Heart-beat output assembly for Input only connections
+    CIP_Assembly::CreateAssemblyObject(DEMO_APP_HEARBEAT_INPUT_ONLY_ASSEMBLY_NUM, 0, 0);
 
-    /*Heart-beat output assembly for Listen only connections */
-    CreateAssemblyObject(DEMO_APP_HEARBEAT_LISTEN_ONLY_ASSEMBLY_NUM, 0, 0);
+    //Heart-beat output assembly for Listen only connections
+    CIP_Assembly::CreateAssemblyObject(DEMO_APP_HEARBEAT_LISTEN_ONLY_ASSEMBLY_NUM, 0, 0);
 
-    /* assembly for explicit messaging */
-    CreateAssemblyObject(DEMO_APP_EXPLICT_ASSEMBLY_NUM, &g_assembly_data09A[0],
-        sizeof(g_assembly_data09A));
+    // assembly for explicit messaging
+    CIP_Assembly::CreateAssemblyObject(DEMO_APP_EXPLICT_ASSEMBLY_NUM, &g_assembly_data09A[0], sizeof(g_assembly_data09A));
 
-    ConfigureExclusiveOwnerConnectionPoint(0, DEMO_APP_OUTPUT_ASSEMBLY_NUM,
-        DEMO_APP_INPUT_ASSEMBLY_NUM,
-        DEMO_APP_CONFIG_ASSEMBLY_NUM);
-    ConfigureInputOnlyConnectionPoint(0,
-        DEMO_APP_HEARBEAT_INPUT_ONLY_ASSEMBLY_NUM,
-        DEMO_APP_INPUT_ASSEMBLY_NUM,
-        DEMO_APP_CONFIG_ASSEMBLY_NUM);
-    ConfigureListenOnlyConnectionPoint(0,
-        DEMO_APP_HEARBEAT_LISTEN_ONLY_ASSEMBLY_NUM,
-        DEMO_APP_INPUT_ASSEMBLY_NUM,
-        DEMO_APP_CONFIG_ASSEMBLY_NUM);
+    //Configure objects
+    ConfigureExclusiveOwnerConnectionPoint(0, DEMO_APP_OUTPUT_ASSEMBLY_NUM, DEMO_APP_INPUT_ASSEMBLY_NUM, DEMO_APP_CONFIG_ASSEMBLY_NUM);
+    ConfigureInputOnlyConnectionPoint(0, DEMO_APP_HEARBEAT_INPUT_ONLY_ASSEMBLY_NUM, DEMO_APP_INPUT_ASSEMBLY_NUM, DEMO_APP_CONFIG_ASSEMBLY_NUM);
+    ConfigureListenOnlyConnectionPoint(0, DEMO_APP_HEARBEAT_LISTEN_ONLY_ASSEMBLY_NUM, DEMO_APP_INPUT_ASSEMBLY_NUM, DEMO_APP_CONFIG_ASSEMBLY_NUM);
 
     return kCipStatusOk;
 }
@@ -68,9 +57,7 @@ void HandleApplication(void)
     /* check if application needs to trigger an connection */
 }
 
-void CheckIoConnectionEvent(unsigned int pa_unOutputAssembly,
-    unsigned int pa_unInputAssembly,
-    IoConnectionEvent pa_eIOConnectionEvent)
+void CheckIoConnectionEvent(unsigned int pa_unOutputAssembly, unsigned int pa_unInputAssembly, IoConnectionEvent pa_eIOConnectionEvent)
 {
     /* maintain a correct output state according to the connection state*/
 
@@ -89,8 +76,7 @@ CipStatus AfterAssemblyDataReceived(CIP_Assembly* pa_pstInstance)
     case DEMO_APP_OUTPUT_ASSEMBLY_NUM:
         /* Data for the output assembly has been received.
        * Mirror it to the inputs */
-        memcpy(&g_assembly_data064[0], &g_assembly_data096[0],
-            sizeof(g_assembly_data064));
+        memcpy(&g_assembly_data064[0], &g_assembly_data096[0], sizeof(g_assembly_data064));
         break;
     case DEMO_APP_EXPLICT_ASSEMBLY_NUM:
         /* do something interesting with the new data from
@@ -115,24 +101,25 @@ CipBool BeforeAssemblyDataSend(CIP_Assembly* pa_pstInstance)
    * therefore we need nothing to do here. Just return true to inform that
    * the data is new.
    */
-    if (CIP_Assembly::GetCipInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM) {
-        /* do something interesting with the existing data
-     * for the explicit get-data-attribute message */
+    if (CIP_Assembly::GetCipInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM)
+    {
+        // do something interesting with the existing data
+        // for the explicit get-data-attribute message
     }
     return true;
 }
 
 CipStatus ResetDevice(void)
 {
-    /* add reset code here*/
+    // add reset code here
     return kCipStatusOk;
 }
 
 CipStatus ResetDeviceToInitialConfiguration(void)
 {
-    /*rest the parameters */
+    //reset the parameters
 
-    /*than perform device reset*/
+    //than perform device reset
     ResetDevice();
     return kCipStatusOk;
 }

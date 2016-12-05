@@ -80,14 +80,14 @@ CipStatus CIP_Identity::Reset(CIP_Identity* instance, CipMessageRouterRequest* m
         switch (message_router_request->data[0])
         {
         case 0: /* Reset type 0 -> emulate device reset / Power cycle */
-            if (kCipStatusError == ResetDevice())
+            if (kCipStatusError == Opener_Interface::ResetDevice())
             {
                 message_router_response->general_status = kCipErrorInvalidParameter;
             }
             break;
 
         case 1: /* Reset type 1 -> reset to device settings */
-            if (kCipStatusError == ResetDeviceToInitialConfiguration())
+            if (kCipStatusError == Opener_Interface::ResetDeviceToInitialConfiguration())
             {
                 message_router_response->general_status = kCipErrorInvalidParameter;
             }
@@ -105,7 +105,7 @@ CipStatus CIP_Identity::Reset(CIP_Identity* instance, CipMessageRouterRequest* m
         /* The same behavior as if the data value given would be 0
      emulate device reset */
 
-        if (kCipStatusError == ResetDevice())
+        if (kCipStatusError == Opener_Interface::ResetDevice())
         {
             message_router_response->general_status = kCipErrorInvalidParameter;
         }

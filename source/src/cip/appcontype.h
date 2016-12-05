@@ -66,3 +66,46 @@ void CloseAllConnections(void);
  * @return true if connection was found, otherwise false
  */
 CipBool ConnectionWithSameConfigPointExists(CipUdint config_point);
+
+/* @brief Configures the connection point for an exclusive owner connection.
+*
+* @param connection_number The number of the exclusive owner connection. The
+        *        enumeration starts with 0. Has to be smaller than
+        *        OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS.
+* @param output_assembly_id ID of the O-to-T point to be used for this
+* connection
+* @param input_assembly_id ID of the T-to-O point to be used for this
+* connection
+* @param configuration_assembly_id ID of the configuration point to be used for
+* this connection
+*/
+void ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number, unsigned int output_assembly_id, unsigned int input_assembly_id, unsigned int configuration_assembly_id);
+
+
+/* @brief Configures the connection point for an input only connection.
+ *
+ * @param connection_number The number of the input only connection. The
+ *        enumeration starts with 0. Has to be smaller than
+ *        OPENER_CIP_NUM_INPUT_ONLY_CONNS.
+ * @param output_assembly_id ID of the O-to-T point to be used for this
+ * connection
+ * @param input_assembly_id ID of the T-to-O point to be used for this
+ * connection
+ * @param configuration_assembly_id ID of the configuration point to be used for
+ *this connection
+ */
+void ConfigureInputOnlyConnectionPoint(unsigned int connection_number, unsigned int output_assembly_id, unsigned int input_assembly_id, unsigned int configuration_assembly_id);
+
+/* @brief Configures the connection point for a listen only connection.
+ *
+ * @param connection_number The number of the input only connection. The
+ *        enumeration starts with 0. Has to be smaller than
+ *        OPENER_CIP_NUM_LISTEN_ONLY_CONNS.
+ * @param output_assembly_id ID of the O-to-T point to be used for this
+ * connection
+ * @param input_assembly_id ID of the T-to-O point to be used for this
+ * connection
+ * @param configuration_assembly_id ID of the configuration point to be used for
+ * this connection
+ */
+void ConfigureListenOnlyConnectionPoint(unsigned int connection_number, unsigned int output_assembly_id, unsigned int input_assembly_id, unsigned int configuration_assembly_id);

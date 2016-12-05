@@ -5,6 +5,8 @@
  ******************************************************************************/
 
 #include <cstring> /*needed for memcpy */
+#include <stdlib.h>
+#include <malloc.h>
 
 #include "CIP_Assembly.h"
 #include "src/cip/connection_stack/CIP_Common.h"
@@ -20,7 +22,7 @@ CipStatus CIP_Assembly::CipAssemblyInitialize(void)
     get_all_class_attributes_mask = 0;
     get_all_instance_attributes_mask = 0;
     revision = 0;
-    //assembly_class->InsertService(kSetAttributeSingle, &SetAssemblyAttributeSingle, std::string("SetAssemblyAttributeSingle"));
+    InsertClassService(kSetAttributeSingle, &SetAssemblyAttributeSingle, std::string("SetAssemblyAttributeSingle"));
 
     return kCipStatusOk;
 }
@@ -39,7 +41,8 @@ void CIP_Assembly::ShutdownAssemblies(void)
             attribute = instance->GetCipAttribute(3);
             if (NULL != attribute) 
             {
-                CipFree(attribute->getData());
+                //delete[] (attribute->getData());
+                free(attribute->getData ());
             }
         }
     }
@@ -61,7 +64,7 @@ CIP_ClassInstance* CIP_Assembly::CreateAssemblyObject(CipUdint instance_id, CipB
     /* add instances (always succeeds (or asserts))*/
     instance = CreateAssemblyInstance(instance_id);
 
-    if ((assembly_byte_array = (CipByteArray*)CipCalloc(1, sizeof(CipByteArray))) == NULL) 
+    if ((assembly_byte_array = new CipByteArray()) == NULL)
     {
         return NULL; /*TODO remove assembly instance in case of error*/
     }
@@ -69,6 +72,7 @@ CIP_ClassInstance* CIP_Assembly::CreateAssemblyObject(CipUdint instance_id, CipB
     assembly_byte_array->length = data_length;
     assembly_byte_array->data = data;
     instance->InsertAttribute(3, kCipByteArray, assembly_byte_array, kSetAndGetAble);
+
     /* Attribute 4 Number of bytes in Attribute 3 */
     instance->InsertAttribute(4, kCipUint, &(assembly_byte_array->length), kGetableSingle);
 

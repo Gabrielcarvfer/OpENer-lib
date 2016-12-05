@@ -54,8 +54,8 @@ class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
 
 
 
-		CIP_ClassInstance* CreateAssemblyClass(void);
-	    CIP_ClassInstance* CreateAssemblyInstance(CipUdint instance_id);
-		CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length);
+		static CIP_ClassInstance* CreateAssemblyClass(void);
+	    static CIP_ClassInstance* CreateAssemblyInstance(CipUdint instance_id);
+		static CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length);
 };
 

@@ -300,7 +300,7 @@ void CloseAllConnectionsForInputWithSameType(CipUdint input_point,
         if ((instance_type == connection->instance_type) && (input_point == connection->connection_path.connection_point[1]))
         {
 
-            CheckIoConnectionEvent(connection->connection_path.connection_point[0], connection->connection_path.connection_point[1], kIoConnectionEventClosed);
+            //TODO:CheckIoConnectionEvent(connection->connection_path.connection_point[0], connection->connection_path.connection_point[1], kIoConnectionEventClosed);
 
             /* FIXME check if this is ok */
             //connection_to_delete->connection_close_function(connection_to_delete);

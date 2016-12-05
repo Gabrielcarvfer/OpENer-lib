@@ -3,12 +3,13 @@
 //
 
 #include "Opener_Interface.h"
-#include <stdlib.h>
 #include <src/cip/network_stack/NET_NetworkHandler.h>
+
 
 
 bool Opener_Interface::Opener_Initialize(CipUdint serialNumber)
 {
+    g_end_stack = 0;
     CipUint unique_connection_id;
 
     //for a real device the serial number should be unique per device
