@@ -367,12 +367,57 @@ public:
 
     void AddNullAddressItem(CIP_CommonPacket::CipCommonPacketFormatData* common_data_packet_format_data);
 
-    CipStatus TriggerConnections(CipUdint pa_unOutputAssembly, CipUdint pa_unInputAssembly);
     static CipStatus AddConnectableObject(CipUdint pa_nClassId, OpenConnectionFunction pa_pfOpenFunc);
     static unsigned int GetPaddedLogicalPath(unsigned char** logical_path_segment);
+
+    /** @ingroup CIP_API
+      * @brief Trigger the production of an application triggered connection.
+      *
+      * This will issue the production of the specified connection at the next
+      * possible occasion. Depending on the values for the RPI and the production
+      * inhibit timer. The application is informed via the
+      * EIP_BOOL8 BeforeAssemblyDataSend(S_CIP_Instance *pa_pstInstance)
+      * callback function when the production will happen. This function should only
+      * be invoked from void HandleApplication(void).
+      *
+      * The connection can only be triggered if the application is established and it
+      * is of application application triggered type.
+      *
+      * @param output_assembly_id the output assembly connection point of the
+      * connection
+      * @param input_assembly_id the input assembly connection point of the
+      * connection
+      * @return EIP_OK on success
+      */
+    CipStatus TriggerConnections(CipUdint pa_unOutputAssembly, CipUdint pa_unInputAssembly);
+
+    /** @ingroup CIP_API
+     * @brief Check if any of the connection timers (TransmissionTrigger or
+     * WatchdogTimeout) have timed out.
+     *
+     * If the a timeout occurs the function performs the necessary action. This
+     * function should be called periodically once every OPENER_TIMER_TICK
+     * milliseconds.
+     *
+     * @return EIP_OK on success
+     */
     static CipStatus ManageConnections (MilliSeconds elapsed_time);
+
     CipUdint GetConnectionId (void);
-    CipStatus HandleReceivedConnectedData (CipUsint *data, int data_length, struct sockaddr_in *from_address);
+
+    /** @ingroup CIP_API
+ *  @brief Notify the connection manager that data for a connection has been
+ *  received.
+ *
+ *  This function should be invoked by the network layer.
+ *  @param received_data pointer to the buffer of data that has been received
+ *  @param received_data_length number of bytes in the data buffer
+ *  @param from_address address from which the data has been received. Only
+ *           data from the connections originator may be accepted. Avoids
+ *           connection hijacking
+ *  @return EIP_OK on success
+ */
+    CipStatus HandleReceivedConnectedData(CipUsint* received_data, int data_length, struct sockaddr_in* from_address);
 
 
     /* End of instance info */

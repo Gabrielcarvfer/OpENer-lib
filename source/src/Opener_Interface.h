@@ -321,7 +321,7 @@ class Opener_Interface
      * The notification on received configuration data is handled with the
      * IApp_after_receive function.
      */
-    CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_number, CipByte* data, CipUint data_length);
+    static CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_number, CipByte* data, CipUint data_length);
 
     /** @ingroup CIP_API
      * @brief Function prototype for handling the opening of connections
@@ -381,135 +381,9 @@ class Opener_Interface
      */
     //TODO:CipStatus AddConnectableObject(CipUdint class_id, OpenConnectionFunction open_connection_function);
 
-    /** @ingroup CIP_API
-     * @brief Configures the connection point for an exclusive owner connection.
-     *
-     * @param connection_number The number of the exclusive owner connection. The
-     *        enumeration starts with 0. Has to be smaller than
-     *        OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS.
-     * @param output_assembly_id ID of the O-to-T point to be used for this
-     * connection
-     * @param input_assembly_id ID of the T-to-O point to be used for this
-     * connection
-     * @param configuration_assembly_id ID of the configuration point to be used for
-     * this connection
-     */
-    void ConfigureExclusiveOwnerConnectionPoint(
-            unsigned int connection_number, unsigned int output_assembly_id,
-            unsigned int input_assembly_id, unsigned int configuration_assembly_id);
 
-    /** @ingroup CIP_API
-     * @brief Configures the connection point for an input only connection.
-     *
-     * @param connection_number The number of the input only connection. The
-     *        enumeration starts with 0. Has to be smaller than
-     *        OPENER_CIP_NUM_INPUT_ONLY_CONNS.
-     * @param output_assembly_id ID of the O-to-T point to be used for this
-     * connection
-     * @param input_assembly_id ID of the T-to-O point to be used for this
-     * connection
-     * @param configuration_assembly_id ID of the configuration point to be used for
-     *this connection
-     */
-    void ConfigureInputOnlyConnectionPoint(unsigned int connection_number,
-                                           unsigned int output_assembly_id,
-                                           unsigned int input_assembly_id,
-                                           unsigned int configuration_assembly_id);
 
-    /** \ingroup CIP_API
-     * \brief Configures the connection point for a listen only connection.
-     *
-     * @param connection_number The number of the input only connection. The
-     *        enumeration starts with 0. Has to be smaller than
-     *        OPENER_CIP_NUM_LISTEN_ONLY_CONNS.
-     * @param output_assembly_id ID of the O-to-T point to be used for this
-     * connection
-     * @param input_assembly_id ID of the T-to-O point to be used for this
-     * connection
-     * @param configuration_assembly_id ID of the configuration point to be used for
-     * this connection
-     */
-    void ConfigureListenOnlyConnectionPoint(unsigned int connection_number,
-                                            unsigned int output_assembly_id,
-                                            unsigned int input_assembly_id,
-                                            unsigned int configuration_assembly_id);
 
-    /** @ingroup CIP_API
-     * @brief Notify the encapsulation layer that an explicit message has been
-     * received via TCP.
-     *
-     * @param socket_handle socket handle from which data is received.
-     * @param buffer buffer that contains the received data. This buffer will also
-     * contain the response if one is to be sent.
-     * @param buffer length of the data in buffer.
-     * @param number_of_remaining_bytes return how many bytes of the input are left
-     * over after we're done here
-     * @return length of reply that need to be sent back
-     */
-    int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes);
-
-    /** @ingroup CIP_API
-     * @brief Notify the encapsulation layer that an explicit message has been
-     * received via UDP.
-     *
-     * @param socket_handle socket handle from which data is received.
-     * @param from_address remote address from which the data is received.
-     * @param buffer buffer that contains the received data. This buffer will also
-     * contain the response if one is to be sent.
-     * @param buffer_length length of the data in buffer.
-     * @param number_of_remaining_bytes return how many bytes of the input are left
-     * over after we're done here
-     * @return length of reply that need to be sent back
-     */
-    int HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer,
-                                     unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
-
-    /** @ingroup CIP_API
-     *  @brief Notify the connection manager that data for a connection has been
-     *  received.
-     *
-     *  This function should be invoked by the network layer.
-     *  @param received_data pointer to the buffer of data that has been received
-     *  @param received_data_length number of bytes in the data buffer
-     *  @param from_address address from which the data has been received. Only
-     *           data from the connections originator may be accepted. Avoids
-     *           connection hijacking
-     *  @return EIP_OK on success
-     */
-    CipStatus HandleReceivedConnectedData(CipUsint* received_data, int received_data_length, struct sockaddr_in* from_address);
-
-    /** @ingroup CIP_API
-     * @brief Check if any of the connection timers (TransmissionTrigger or
-     * WatchdogTimeout) have timed out.
-     *
-     * If the a timeout occurs the function performs the necessary action. This
-     * function should be called periodically once every OPENER_TIMER_TICK
-     * milliseconds.
-     *
-     * @return EIP_OK on success
-     */
-    CipStatus ManageConnections(MilliSeconds elapsed_time);
-
-    /** @ingroup CIP_API
-     * @brief Trigger the production of an application triggered connection.
-     *
-     * This will issue the production of the specified connection at the next
-     * possible occasion. Depending on the values for the RPI and the production
-     * inhibit timer. The application is informed via the
-     * EIP_BOOL8 BeforeAssemblyDataSend(S_CIP_Instance *pa_pstInstance)
-     * callback function when the production will happen. This function should only
-     * be invoked from void HandleApplication(void).
-     *
-     * The connection can only be triggered if the application is established and it
-     * is of application application triggered type.
-     *
-     * @param output_assembly_id the output assembly connection point of the
-     * connection
-     * @param input_assembly_id the input assembly connection point of the
-     * connection
-     * @return EIP_OK on success
-     */
-    CipStatus TriggerConnections(unsigned int output_assembly_id, unsigned int input_assembly_id);
 
     /** @ingroup CIP_API
      * @brief Inform the encapsulation layer that the remote host has closed the
@@ -519,7 +393,7 @@ class Opener_Interface
      * the encapsulation layer.
      * @param socket_handle the handler to the socket of the closed connection
      */
-    void CloseSession(int socket);
+    static void CloseSession(int socket);
 
     /**  @defgroup CIP_CALLBACK_API Callback Functions Demanded by OpENer
      * @ingroup CIP_API
@@ -541,7 +415,7 @@ class Opener_Interface
      *  return status EIP_ERROR .. error
      *                EIP_OK ... successful finish
      */
-    CipStatus ApplicationInitialization(void);
+    static CipStatus ApplicationInitialization(void);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Allow the device specific application to perform its execution
@@ -551,7 +425,7 @@ class Opener_Interface
      * device specific application functions. Execution within this function should
      * be short.
      */
-    void HandleApplication(void);
+    static void HandleApplication(void);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Inform the application on changes occurred for a connection
@@ -562,7 +436,7 @@ class Opener_Interface
      * connection
      * @param io_connection_event information on the change occurred
      */
-    void CheckIoConnectionEvent(unsigned int output_assembly_id, unsigned int input_assembly_id, IoConnectionEvent io_connection_event);
+    static void CheckIoConnectionEvent(unsigned int output_assembly_id, unsigned int input_assembly_id, IoConnectionEvent io_connection_event);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Call back function to inform application on received data for an
@@ -594,7 +468,7 @@ class Opener_Interface
      *          - true assembly data has changed
      *          - false assembly data has not changed
      */
-    CipBool BeforeAssemblyDataSend(CIP_ClassInstance* instance);
+    static CipBool BeforeAssemblyDataSend(CIP_ClassInstance* instance);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Emulate as close a possible a power cycle of the device
@@ -681,6 +555,9 @@ class Opener_Interface
     private:
         static std::map<CipUdint, Opener_IOConnection*> IO_Connection_set;
         static std::map<CipUdint, Opener_ExplicitConnection*> Explicit_Connection_set;
+
+        /*! \brief Flag indicating if the stack should end its execution
+        */
         static int g_end_stack;
 };
 

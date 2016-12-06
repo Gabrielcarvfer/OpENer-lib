@@ -80,4 +80,34 @@ void EncapsulationShutDown(void);
  */
 void ManageEncapsulationMessages(MilliSeconds elapsed_time);
 
+/** @ingroup CIP_API
+     * @brief Notify the encapsulation layer that an explicit message has been
+     * received via TCP.
+     *
+     * @param socket_handle socket handle from which data is received.
+     * @param buffer buffer that contains the received data. This buffer will also
+     * contain the response if one is to be sent.
+     * @param buffer length of the data in buffer.
+     * @param number_of_remaining_bytes return how many bytes of the input are left
+     * over after we're done here
+     * @return length of reply that need to be sent back
+     */
+static int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes);
+
+/** @ingroup CIP_API
+ * @brief Notify the encapsulation layer that an explicit message has been
+ * received via UDP.
+ *
+ * @param socket_handle socket handle from which data is received.
+ * @param from_address remote address from which the data is received.
+ * @param buffer buffer that contains the received data. This buffer will also
+ * contain the response if one is to be sent.
+ * @param buffer_length length of the data in buffer.
+ * @param number_of_remaining_bytes return how many bytes of the input are left
+ * over after we're done here
+ * @return length of reply that need to be sent back
+ */
+static int HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
+
+
 #endif /* OPENER_ENCAP_H_ */
