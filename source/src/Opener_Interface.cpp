@@ -4,24 +4,24 @@
 
 #include "Opener_Interface.h"
 #include <src/cip/network_stack/NET_NetworkHandler.h>
+#include <stdlib.h>
 
 
-
-bool Opener_Interface::Opener_Initialize(CipUdint serialNumber)
+bool Opener_Interface::Opener_Initialize()
 {
     g_end_stack = 0;
     CipUint unique_connection_id;
 
     //for a real device the serial number should be unique per device
-    //SetDeviceSerialNumber(123456789);
+    SetDeviceSerialNumber(123456789);
 
     // nUniqueConnectionID should be sufficiently random or incremented and stored
     //  in non-volatile memory each time the device boots.
 
-    //unique_connection_id = rand();
+    unique_connection_id = 12321;//rand();
 
     // Setup the CIP Layer
-    //CipStackInit(unique_connection_id);
+    CipStackInit(unique_connection_id);
 
     // Setup Network Handles
 
@@ -30,7 +30,7 @@ bool Opener_Interface::Opener_Initialize(CipUdint serialNumber)
         g_end_stack = 0;
 #ifndef WIN32
         // register for closing signals so that we can trigger the stack to end
-        signal(SIGHUP, LeaveStack);
+        signal(SIGHUP, Opener_Shutdown);
 #endif
 
         // The event loop. Put other processing you need done continually in here
@@ -112,4 +112,59 @@ Opener_ExplicitConnection * Opener_Interface::GetOpenerExplicitConnection(CipUdi
         return Explicit_Connection_set[handle];
     else
         return NULL;
+}
+
+CipStatus Opener_Interface::ResetDevice()
+{
+
+}
+
+CipStatus Opener_Interface::ResetDeviceToInitialConfiguration()
+{
+
+}
+
+CipStatus Opener_Interface::AfterDataReceived(void *)
+{
+
+}
+
+CipStatus Opener_Interface::ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask, const char* gateway_address)
+{
+
+}
+
+void Opener_Interface::ConfigureMacAddress(const CipUsint* mac_address)
+{
+
+}
+
+void Opener_Interface::ConfigureDomainName(const char* domain_name)
+{
+
+}
+
+void Opener_Interface::ConfigureHostName(const char* host_name)
+{
+
+}
+
+void Opener_Interface::SetDeviceSerialNumber(CipUdint serial_number)
+{
+
+}
+
+void Opener_Interface::SetDeviceStatus(CipUint device_status)
+{
+
+}
+
+void Opener_Interface::CipStackInit(CipUint unique_connection_id)
+{
+
+}
+
+void Opener_Interface::ShutdownCipStack(void)
+{
+
 }

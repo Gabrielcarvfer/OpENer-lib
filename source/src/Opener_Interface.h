@@ -201,7 +201,13 @@ class Opener_Interface
 
     public:
         //Initialize or shutdown Opener CIP stack
-        static bool Opener_Initialize(CipUdint serialNumber);
+        static bool Opener_Initialize();
+
+        /******************************************************************************/
+        /*!\brief Signal handler function for ending stack execution
+         *
+         * @param pa_nSig the signal we received
+         */
         static bool Opener_Shutdown();
 
         //Services provided
@@ -476,7 +482,7 @@ class Opener_Interface
      * @return if the service is supported the function will not return.
      *     EIP_ERROR if this service is not supported
      */
-    virtual CipStatus ResetDevice(void);
+    static CipStatus ResetDevice(void);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Reset the device to the initial configuration and emulate as close as
@@ -485,7 +491,7 @@ class Opener_Interface
      * @return if the service is supported the function will not return.
      *     EIP_ERROR if this service is not supported
      */
-    virtual CipStatus ResetDeviceToInitialConfiguration(void);
+    static CipStatus ResetDeviceToInitialConfiguration(void);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Allocate memory for the CIP stack
@@ -552,13 +558,16 @@ class Opener_Interface
      * @param socket_handle socket descriptor to close
      */
     void CloseSocket(int socket);
+
+    /*! \brief Flag indicating if the stack should end its execution
+       */
+    static int g_end_stack;
+
     private:
         static std::map<CipUdint, Opener_IOConnection*> IO_Connection_set;
         static std::map<CipUdint, Opener_ExplicitConnection*> Explicit_Connection_set;
 
-        /*! \brief Flag indicating if the stack should end its execution
-        */
-        static int g_end_stack;
+
 };
 
 

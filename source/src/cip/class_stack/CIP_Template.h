@@ -9,11 +9,13 @@ template <typename T>
 class CIP_Template
 {
     public:
-        static T * GetCipClassInstance(CipUdint class_id, CipUdint instance_number);
-        static T * GetCipClass(CipUdint class_id);
-        static CipUdint GetCipClassNumberInstances(CipUdint class_id);
-        static CipUdint GetCipInstanceNumber(T * instance);
-        static bool AddCipClassInstance(T* instance, CipUdint position);
+        static T * GetInstance(CipUdint instance_number);
+        static T * GetClass();
+        static CipUdint GetNumberOfInstances();
+        static CipUdint GetInstanceNumber(T * instance);
+        static bool AddClassInstance(T* instance, CipUdint position);
+        static bool RemoveClassInstance(T* instance);
+        static bool RemoveClassInstance(CipUdint position);
     private:
         static std::map<CipUdint, T*> object_Set;
 };

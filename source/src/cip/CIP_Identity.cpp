@@ -63,11 +63,10 @@ void CIP_Identity::SetDeviceStatus(CipUint status)
  * @param message_router_response
  * @returns Currently always kEipOkSend is returned
  */
- //                         pointer to instance   -      pointer to message router request         -      pointer to message router response
-CipStatus CIP_Identity::Reset(CIP_Identity* instance, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+ //                           pointer to message router request         -      pointer to message router response
+CipStatus CIP_Identity::Reset( CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     CipStatus eip_status;
-    (void)instance;
 
     eip_status = kCipStatusOkSend;
 
@@ -140,7 +139,7 @@ CipStatus CIP_Identity::CipIdentityInit()
     revision = 1;
 
     CIP_Identity * instance = new CIP_Identity();
-    AddCipClassInstance (instance, 1);
+    AddClassInstance (instance, 0);
 
     instance->InsertAttribute(1, kCipUint,        &vendor_id_,     kGetableSingleAndAll);
     instance->InsertAttribute(2, kCipUint,        &device_type_,   kGetableSingleAndAll);
@@ -150,7 +149,7 @@ CipStatus CIP_Identity::CipIdentityInit()
     instance->InsertAttribute(6, kCipUdint,       &serial_number_, kGetableSingleAndAll);
     instance->InsertAttribute(7, kCipShortString, &product_name_,  kGetableSingleAndAll);
 
-    //instance->InsertService (kReset, &Reset, std::string("Reset"));
+    instance->InsertService (kReset, &this->Reset, std::string("Reset"));
 
     return kCipStatusOk;
 }

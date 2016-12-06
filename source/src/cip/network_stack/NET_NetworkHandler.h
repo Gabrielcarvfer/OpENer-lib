@@ -70,9 +70,9 @@ class NET_NetworkHandler
      *
      *  @return CipStatus, if initialization failed EipError is returned
      */
-        static CipStatus NetworkHandlerProcessOnce (void);
+        static CipStatus NetworkHandlerProcessOnce ();
 
-        static CipStatus NetworkHandlerFinish (void);
+        static CipStatus NetworkHandlerFinish ();
 
     /** @brief check if the given socket is set in the read set
      * @param socket The socket to check
@@ -94,17 +94,17 @@ class NET_NetworkHandler
      *
      *  @return Current time relative to epoch as MicroSeconds
      */
-        static MicroSeconds GetMicroSeconds(void);
+        static MicroSeconds GetMicroSeconds();
 
     /** @brief This function shall return the current time in milliseconds relative to epoch, and shall be implemented in a port specific networkhandler
      *
      *  @return Current time relative to epoch as MilliSeconds
      */
-        static MilliSeconds GetMilliSeconds(void);
+        static MilliSeconds GetMilliSeconds();
 private:
     /** @brief check if on one of the UDP consuming sockets data has been received and if yes handle it correctly
     */
-    static void CheckAndHandleConsumingUdpSockets(void);
+    static void CheckAndHandleConsumingUdpSockets();
 
     static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr* socket_data);
 
@@ -116,14 +116,14 @@ private:
 
     /** @brief Checks and processes request received via the UDP unicast socket, currently the implementation is port-specific
     */
-    static void CheckAndHandleUdpUnicastSocket(void);
+    static void CheckAndHandleUdpUnicastSocket();
 
     /** @brief TODO: FILL IN!
     */
-    static void CheckAndHandleUdpGlobalBroadcastSocket(void);
+    static void CheckAndHandleUdpGlobalBroadcastSocket();
 
     /** @brief handle any connection request coming in the TCP server socket.
     */
-    static void CheckAndHandleTcpListenerSocket(void);
+    static void CheckAndHandleTcpListenerSocket();
 };
 #endif /* GENERIC_NETWORKHANDLER_H_ */

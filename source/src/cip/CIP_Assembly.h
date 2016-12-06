@@ -15,6 +15,8 @@ class CIP_Assembly;
 class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
 {
     public:
+		CIP_Assembly();
+		~CIP_Assembly ();
 		/** @brief Setup the Assembly object
 		 * 
 		 * Creates the Assembly Class with zero instances and sets up all services.

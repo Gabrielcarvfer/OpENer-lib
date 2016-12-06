@@ -14,6 +14,25 @@
 #include "Opener_Interface.h"
 #include "trace.h"
 
+CIP_Assembly::CIP_Assembly()
+{
+    if (CIP_Assembly::GetNumberOfInstances () == 0)
+    {
+        this->InsertService (kSetAttributeSingle, &this->SetAssemblyAttributeSingle, std::string ("SetAssemblyAttributeSingle"));
+    }
+    else
+    {
+
+    }
+    //TODO:Fix to emplace in the first empty slot instead of appending
+    CIP_Assembly::AddClassInstance(this, CIP_Assembly::GetNumberOfInstances());
+}
+
+CIP_Assembly::~CIP_Assembly()
+{
+    CIP_Assembly::RemoveClassInstance(this);
+}
+
 // create the CIP Assembly object with zero instances
 CipStatus CIP_Assembly::CipAssemblyInitialize(void)
 {
@@ -22,21 +41,23 @@ CipStatus CIP_Assembly::CipAssemblyInitialize(void)
     get_all_class_attributes_mask = 0;
     get_all_instance_attributes_mask = 0;
     revision = 0;
-    InsertClassService(kSetAttributeSingle, &SetAssemblyAttributeSingle, std::string("SetAssemblyAttributeSingle"));
+
+    CIP_Assembly *instance = new CIP_Assembly();
+
 
     return kCipStatusOk;
 }
 
 void CIP_Assembly::ShutdownAssemblies(void)
 {
-    if (GetCipClass(kCipAssemblyClassCode) != NULL)
+    if (CIP_Assembly::GetClass() != NULL)
     {
         CIP_Attribute* attribute;
         CIP_ClassInstance* instance;
 
-        for(int i = 1; i <= GetCipClassNumberInstances(kCipAssemblyClassCode); i++)
+        for(int i = 1; i <= GetNumberOfInstances(); i++)
         {
-            instance = GetCipClassInstance(kCipAssemblyClassCode, i);
+            instance = GetInstance(i);
 
             attribute = instance->GetCipAttribute(3);
             if (NULL != attribute) 
@@ -54,7 +75,7 @@ CIP_ClassInstance* CIP_Assembly::CreateAssemblyObject(CipUdint instance_id, CipB
     CIP_ClassInstance* instance;
     CipByteArray* assembly_byte_array;
 
-    if (NULL == (assembly_class = GetCipClassInstance(kCipAssemblyClassCode, instance_id)))
+    if (NULL == (assembly_class = GetInstance(instance_id)))
     {
         if (NULL == (assembly_class = CreateAssemblyClass())) 
         {
@@ -123,7 +144,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
             CipByteArray* data = (CipByteArray*)attribute->getData ();
 
             /* TODO: check for ATTRIBUTE_SET/GETABLE MASK */
-            if (true == CIP_Connection::IsConnectedOutputAssembly(GetCipInstanceNumber(this)))
+            if (true == CIP_Connection::IsConnectedOutputAssembly(GetInstanceNumber(this)))
             {
                 OPENER_TRACE_WARN("Assembly AssemblyAttributeSingle: received data for connected output assembly\n\r");
                 message_router_response->general_status = kCipErrorAttributeNotSetable;

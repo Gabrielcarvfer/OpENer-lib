@@ -5,39 +5,64 @@
 #include "CIP_Template.h"
 
 template <typename T>
-T * CIP_Template::GetCipClassInstance(CipUdint class_id, CipUdint instance_number)
+T * CIP_Template::GetInstance(CipUdint instance_number)
 {
-    if (object_set[class_id].size() >= instance_number)
-        return CIP_object_set[class_id][instance_number];
+    if (object_Set.size() >= instance_number)
+        return CIP_object_Set[instance_number];
     else
         return NULL;
 }
 
 template <typename T>
-T * CIP_Template::GetCipClass(CipUdint class_id)
+T * CIP_Template::GetClass()
 {
-    if (object_set[class_id].size() > 0)
-        return object_set[class_id][0];
+    GetInstance(0);
+}
+
+template <typename T>
+CipUdint CIP_Template::GetNumberOfInstances()
+{
+    return object_Set.size();
+}
+
+template <typename T>
+CipUdint CIP_Template::GetInstanceNumber(T * instance)
+{
+    return std::distance(object_Set.begin(), object_Set.find(instance) );
+}
+
+template <typename T>
+bool CIP_Template::AddClassInstance(T* instance, CipUdint position)
+{
+    object_Set.emplace(position,instance);
+    auto it = object_Set.find(position);
+    return (it != object_Set.end());
+}
+
+<T>
+bool CIP_Template::RemoveClassInstance(T* instance)
+{
+    for (auto it = object_Set.begin(); it != object_Set.end(); it++)
+    {
+        if (it->second == instance)
+        {
+            object_Set.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
+<T>
+bool RemoveClassInstance(CipUdint position)
+{
+    if ( object_Set.find(position) != object_Set.end() )
+    {
+        object_Set.erase (position);
+        return true;
+    }
     else
-        return NULL;
-}
-
-template <typename T>
-CipUdint CIP_Template::GetCipClassNumberInstances(CipUdint class_id)
-{
-    return object_set[class_id].size();
-}
-
-template <typename T>
-CipUdint CIP_Template::GetCipInstanceNumber(T * instance)
-{
-    return std::distance(object_set[instance->class_id].begin(), object_set[instance->class_id].find(instance) );
-}
-
-template <typename T>
-bool CIP_Template::AddCipClassInstance(T* instance, CipUdint position)
-{
-    object_set[instance->class_id].emplace(position,instance);
-    auto it = object_set[instance->class_id].find(position);
-    return (it != Cobject_set[instance->class_id].end());
+    {
+        return false;
+    }
 }

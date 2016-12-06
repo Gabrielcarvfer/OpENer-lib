@@ -79,7 +79,7 @@ private:
         kAtLeastOneIoConnectionEstablishedAllInIdleMode = 0x0070
     } CipIdentityExtendedStatus;
 
-    static CipStatus Reset(CIP_Identity* instance, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus Reset(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
     static void SetDeviceStatus(CipUint status);
     static void SetDeviceSerialNumber(CipUdint serial_number);
 };

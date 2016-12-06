@@ -71,7 +71,7 @@ CipStatus AfterAssemblyDataReceived(CIP_Assembly* pa_pstInstance)
     CipStatus nRetVal = kCipStatusOk;
 
     /*handle the data received e.g., update outputs of the device */
-    switch (CIP_Assembly::GetCipInstanceNumber(pa_pstInstance))
+    switch (CIP_Assembly::GetInstanceNumber(pa_pstInstance))
     {
     case DEMO_APP_OUTPUT_ASSEMBLY_NUM:
         /* Data for the output assembly has been received.
@@ -101,7 +101,7 @@ CipBool BeforeAssemblyDataSend(CIP_Assembly* pa_pstInstance)
    * therefore we need nothing to do here. Just return true to inform that
    * the data is new.
    */
-    if (CIP_Assembly::GetCipInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM)
+    if (CIP_Assembly::GetInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM)
     {
         // do something interesting with the existing data
         // for the explicit get-data-attribute message

@@ -16,9 +16,6 @@ class CIP_ClassInstance
         static std::string class_name;
         static CipUint revision;
 
-        static std::map< CipUdint, CIP_Attribute * > class_attributes;
-        static std::map< CipUdint, CIP_Service * > class_services;
-
         std::map< CipUdint, CIP_Attribute * > attributes;
         std::map< CipUdint, CIP_Service * > services;
 
@@ -76,7 +73,6 @@ class CIP_ClassInstance
      *  @param cip_flags flags to indicate set-ability and get-ability of attribute.
      */
     void InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
-    static void InsertClassAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
 
 
     /** @ingroup CIP_API
@@ -93,7 +89,6 @@ class CIP_ClassInstance
     * @param service_name name of the service
     */
     void InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name);
-    static void InsertClassService(CipUsint service_number, CipServiceFunction service_function, std::string service_name);
 
 
     /** @ingroup CIP_API
