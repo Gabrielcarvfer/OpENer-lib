@@ -3,8 +3,11 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#pragma once
-#include "typedefs.h"
+
+#ifndef OPENER_CIPTYPES_H_
+#define OPENER_CIPTYPES_H_
+
+#include "../typedefs.h"
 #include "ciperror.h"
 #include <string>
 /** @brief Segment type Enum
@@ -352,3 +355,5 @@ typedef enum {
     (1 << (a) | 1 << (b) | 1 << (c) | 1 << (d) | 1 << (e) | 1 << (f) | 1 << (g))
 #define MASK8(a, b, c, d, e, f, g, h) \
     (1 << (a) | 1 << (b) | 1 << (c) | 1 << (d) | 1 << (e) | 1 << (f) | 1 << (g) | 1 << (h))
+
+#endif

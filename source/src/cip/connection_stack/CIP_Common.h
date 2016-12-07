@@ -3,7 +3,8 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#pragma once
+#ifndef OPENER_CIP_COMMON_H_
+#define OPENER_CIP_COMMON_H_
 
 /** @file cipcommon.h
  * Common CIP object interface
@@ -11,7 +12,6 @@
 #include "ciptypes.h"
 #include "typedefs.h"
 #include "src/cip/class_stack/CIP_ClassInstance.h"
-//#include "opener_user_conf.h"
 #include <array>
 
 class CIP_Common
@@ -78,3 +78,5 @@ class CIP_Common
 		static int DecodeData(CipUsint cip_type, void* data, CipUsint** message);
 
 };
+
+#endif

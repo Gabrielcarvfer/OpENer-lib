@@ -9,11 +9,9 @@
 
 #include "connection_stack/CIP_Common.h"
 #include "connection_stack/CIP_Connection.h"
-#include "ciperror.h"
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
 #include "src/utils/endianconv.h"
 #include "src/cip/network_stack/ethernetip_net/eip_endianconv.h"
-#include "Opener_Interface.h"
 #include "opener_user_conf.h"
 #include "trace.h"
 

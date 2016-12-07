@@ -3,7 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#pragma once
+#ifndef OPENER_CIP_TYPEDEFS_H_
+#define OPENER_CIP_TYPEDEFS_H_
 
 #include <cstdint>
 
@@ -99,3 +100,5 @@ typedef enum {
     true = 1 /**< defines "true" as 1 */
 } BoolKeywords;
 #endif /* __cplusplus */
+
+#endif

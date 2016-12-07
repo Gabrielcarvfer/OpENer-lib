@@ -1,4 +1,4 @@
-add_subdirectory(sample_application)
+#add_subdirectory(sample_application)
 
 #######################################
 # Add common includes                 #
@@ -11,6 +11,6 @@ opener_common_includes()
 opener_platform_support("INCLUDES")
 
 
-add_executable(OpENer main.cpp)
+add_executable(OpENerMain main.cpp)
 
-target_link_libraries( OpENer CIP SAMPLE_APP ws2_32 ${OpENer_CIP_OBJECTS} )
+target_link_libraries( OpENerMain OpENer )#SAMPLE_APP  )

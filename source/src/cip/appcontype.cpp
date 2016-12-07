@@ -4,9 +4,6 @@
  *
  ******************************************************************************/
 #include "appcontype.h"
-#include "src/cip/connection_stack/CIP_Connection.h"
-#include "Opener_Interface.h"
-#include <string.h>
 #include <src/opener_user_conf.h>
 
 typedef struct {

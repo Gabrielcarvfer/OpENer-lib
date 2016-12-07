@@ -3,7 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#pragma once
+#ifndef OPENER_APPCONTYPE_H_
+#define OPENER_APPCONTYPE_H_
 
 #include "connection_stack/CIP_Connection.h"
 #include "ciptypes.h"
@@ -109,3 +110,5 @@ void ConfigureInputOnlyConnectionPoint(unsigned int connection_number, unsigned 
  * this connection
  */
 void ConfigureListenOnlyConnectionPoint(unsigned int connection_number, unsigned int output_assembly_id, unsigned int input_assembly_id, unsigned int configuration_assembly_id);
+
+#endif

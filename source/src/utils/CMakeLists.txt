@@ -1,6 +1,6 @@
 
 opener_common_includes()
-opener_platform_spec()
 
-set(  random.cpp xorshiftrandom.cpp endianconv.cpp)
+set( UTILS_SRC random.cpp xorshiftrandom.cpp endianconv.cpp)
 
+add_library( OpENer_UTILS ${UTILS_SRC})

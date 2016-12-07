@@ -9,16 +9,14 @@
 #include <malloc.h>
 
 #include "CIP_Assembly.h"
-#include "src/cip/connection_stack/CIP_Common.h"
 #include "src/cip/connection_stack/CIP_Connection.h"
-#include "Opener_Interface.h"
 #include "trace.h"
 
 CIP_Assembly::CIP_Assembly()
 {
     if (CIP_Assembly::GetNumberOfInstances () == 0)
     {
-        this->InsertService (kSetAttributeSingle, &this->SetAssemblyAttributeSingle, std::string ("SetAssemblyAttributeSingle"));
+        this->InsertService (kSetAttributeSingle, (CipServiceFunction)&this->SetAssemblyAttributeSingle, std::string ("SetAssemblyAttributeSingle"));
     }
     else
     {

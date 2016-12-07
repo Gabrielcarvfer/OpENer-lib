@@ -10,6 +10,7 @@
 #include "typedefs.h"
 #include "class_stack/CIP_ClassInstance.h"
 #include "class_stack/CIP_Template.h"
+
 class CIP_Identity;
 
 class CIP_Identity : public CIP_ClassInstance, public CIP_Template<CIP_Identity>

@@ -3,8 +3,7 @@
 //
 
 #include "Opener_Interface.h"
-#include <src/cip/network_stack/NET_NetworkHandler.h>
-#include <stdlib.h>
+#include "cip/network_stack/NET_NetworkHandler.h"
 
 
 bool Opener_Interface::Opener_Initialize()
@@ -24,7 +23,6 @@ bool Opener_Interface::Opener_Initialize()
     CipStackInit(unique_connection_id);
 
     // Setup Network Handles
-
     if (kCipStatusOk == NET_NetworkHandler::NetworkHandlerInitialize ())
     {
         g_end_stack = 0;
@@ -41,7 +39,11 @@ bool Opener_Interface::Opener_Initialize()
                 break;
             }
         }
+
+        return true;
     }
+
+    return false;
 }
 
 bool Opener_Interface::Opener_Shutdown()
@@ -54,6 +56,7 @@ bool Opener_Interface::Opener_Shutdown()
 
     // close remaining sessions and connections, cleanup used data
     //ShutdownCipStack();
+    return true;
 }
 
 //Open a new Explicit connection

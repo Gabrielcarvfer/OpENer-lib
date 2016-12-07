@@ -39,7 +39,7 @@ bool CIP_Template::AddClassInstance(T* instance, CipUdint position)
     return (it != object_Set.end());
 }
 
-<T>
+template <typename T>
 bool CIP_Template::RemoveClassInstance(T* instance)
 {
     for (auto it = object_Set.begin(); it != object_Set.end(); it++)
@@ -53,8 +53,8 @@ bool CIP_Template::RemoveClassInstance(T* instance)
     return false;
 }
 
-<T>
-bool RemoveClassInstance(CipUdint position)
+template <typename T>
+bool CIP_Template::RemoveClassInstance(CipUdint position)
 {
     if ( object_Set.find(position) != object_Set.end() )
     {

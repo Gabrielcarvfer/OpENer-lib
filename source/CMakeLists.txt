@@ -78,4 +78,7 @@ include(${OpENer_BUILDSUPPORT_DIR}/OpENer_CIP_Object_generator.cmake)
 #######################################
 # Add subdirectories                  #
 #######################################
+
 add_subdirectory( src )
+add_executable(OpENerMain src/ports/WIN32/main.cpp ${OPENER_SRC})
+target_link_libraries(OpENerMain OpENer)

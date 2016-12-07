@@ -3,7 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#pragma once
+#ifndef OPENER_CIP_TRACE_H_
+#define OPENER_CIP_TRACE_H_
 
 //#include <opener_user_conf.h>
 
@@ -91,3 +92,4 @@
 #endif
 /* TRACING *******************************************************************/
 
+#endif //OPENER_CIP_TRACE_H_

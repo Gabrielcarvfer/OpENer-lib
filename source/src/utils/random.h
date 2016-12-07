@@ -5,7 +5,8 @@
  *      Author: mmm
  */
 
-#pragma once
+#ifndef OPENER_UTILS_RANDOM_H_
+#define OPENER_UTILS_RANDOM_H_
 
 #include <stdint.h>
 
@@ -25,4 +26,6 @@ class RandomGen
 
 
 };
+
+#endif
 

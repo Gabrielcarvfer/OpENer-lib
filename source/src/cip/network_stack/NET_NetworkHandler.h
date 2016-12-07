@@ -54,8 +54,33 @@ class NET_NetworkHandler
     static NET_Connection *netStats[3];
 
 
+    /** @brief check if on one of the UDP consuming sockets data has been received and if yes handle it correctly
+    */
+    static void CheckAndHandleConsumingUdpSockets();
+
+    static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr* socket_data);
+
+    /** @brief TODO: FILL IN!
+    */
+    static CipStatus HandleDataOnTcpSocket(int socket);
+
+    static CipStatus SendUdpData(struct sockaddr* address, int socket, CipUsint* data, CipUint data_length);
+
+    /** @brief Checks and processes request received via the UDP unicast socket, currently the implementation is port-specific
+    */
+    static void CheckAndHandleUdpUnicastSocket();
+
+    /** @brief TODO: FILL IN!
+    */
+    static void CheckAndHandleUdpGlobalBroadcastSocket();
+
+    /** @brief handle any connection request coming in the TCP server socket.
+    */
+    static void CheckAndHandleTcpListenerSocket();
+
+
     //   static NetworkStatus g_network_status; /**< Global variable holding the current network status */
-    public:
+public:
     /** @brief The platform independent part of network handler initialization routine
      *
      *  @return Returns the OpENer status after the initialization routine
@@ -101,29 +126,6 @@ class NET_NetworkHandler
      *  @return Current time relative to epoch as MilliSeconds
      */
         static MilliSeconds GetMilliSeconds();
-private:
-    /** @brief check if on one of the UDP consuming sockets data has been received and if yes handle it correctly
-    */
-    static void CheckAndHandleConsumingUdpSockets();
 
-    static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr* socket_data);
-
-    /** @brief TODO: FILL IN!
-    */
-    static CipStatus HandleDataOnTcpSocket(int socket);
-
-    static CipStatus SendUdpData(struct sockaddr* address, int socket, CipUsint* data, CipUint data_length);
-
-    /** @brief Checks and processes request received via the UDP unicast socket, currently the implementation is port-specific
-    */
-    static void CheckAndHandleUdpUnicastSocket();
-
-    /** @brief TODO: FILL IN!
-    */
-    static void CheckAndHandleUdpGlobalBroadcastSocket();
-
-    /** @brief handle any connection request coming in the TCP server socket.
-    */
-    static void CheckAndHandleTcpListenerSocket();
 };
 #endif /* GENERIC_NETWORKHANDLER_H_ */

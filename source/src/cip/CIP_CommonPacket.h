@@ -3,12 +3,12 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#ifndef OPENER_CPF_H_
-#define OPENER_CPF_H_
+#ifndef OPENER_COMMONPACKETFORMAT_H_
+#define OPENER_COMMONPACKETFORMAT_H_
 
 #include "ciptypes.h"
-#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
-#include "typedefs.h"
+#include "network_stack/ethernetip_net/eip_encap.h"
+#include "../typedefs.h"
 
 
 /** @ingroup ENCAP

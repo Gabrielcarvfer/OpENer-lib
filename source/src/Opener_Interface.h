@@ -7,9 +7,9 @@
 #define OPENER_OPENER_INTERFACE_H
 
 #include <cassert>
-#include "ciperror.h"
+#include "cip/ciperror.h"
 #include "cip/ciptypes.h"
-#include "src/cip/class_stack/CIP_ClassInstance.h"
+#include "cip/class_stack/CIP_ClassInstance.h"
 #include "typedefs.h"
 #include "cip/connection_stack/CIP_Connection.h"
 #include "Opener_IOConnection.h"

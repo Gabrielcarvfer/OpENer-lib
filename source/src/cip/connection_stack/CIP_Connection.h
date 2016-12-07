@@ -3,16 +3,18 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#pragma once
+#ifndef OPENER_CIP_CONNECTION_H_
+#define OPENER_CIP_CONNECTION_H_
 
-#include "ciptypes.h"
-#include "Opener_Interface.h"
-#include "typedefs.h"
-#include "class_stack/CIP_ClassInstance.h"
-#include "../CIP_CommonPacket.h"
+
 #include <map>
-#include "src/cip/class_stack/CIP_Template.h"
+#include "../ciptypes.h"
+#include "../CIP_CommonPacket.h"
+#include "../class_stack/CIP_ClassInstance.h"
+#include "../class_stack/CIP_Template.h"
 #include "../network_stack/NET_Connection.h"
+#include "../../Opener_Interface.h"
+#include "../../typedefs.h"
 
 
 
@@ -424,4 +426,6 @@ public:
 
 };
 
-CipStatus (*OpenConnectionPtr) (CIP_Connection* connection_object, CipUint* extended_error);
+//CipStatus (*OpenConnectionPtr) (CIP_Connection* connection_object, CipUint* extended_error);
+
+#endif

@@ -3,7 +3,8 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#pragma once
+#ifndef OPENER_CIPASSEMBLY_H_
+#define OPENER_CIPASSEMBLY_H_
 
 #include "ciptypes.h"
 #include "typedefs.h"
@@ -61,3 +62,4 @@ class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
 		static CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length);
 };
 
+#endif
