@@ -246,7 +246,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
     if (g_elapsed_time >= kOpenerTimerTickInMilliSeconds)
     {
         /* call manage_connections() in connection manager every OPENER_TIMER_TICK ms */
-        ManageConnections(g_elapsed_time);
+        CIP_Connection::ManageConnections(g_elapsed_time);
         g_elapsed_time = 0;
     }
     return kCipStatusOk;
@@ -621,7 +621,7 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
                 continue;
             }
 
-            HandleReceivedConnectedData(g_ethernet_communication_buffer, received_size, &from_address);
+            current_connection_object->HandleReceivedConnectedData(g_ethernet_communication_buffer, received_size, &from_address);
         }
     }
 }

@@ -274,7 +274,6 @@ typedef struct {
 } CipMessageRouterResponse;
 
 
-/* type definition of CIP service structure */
 
 /** @ingroup CIP_API
  *  @typedef  EIP_STATUS (*TCIPServiceFunc)(S_CIP_Instance *pa_pstInstance,
@@ -292,8 +291,8 @@ typedef struct {
  *should be sent
  */
 typedef CipStatus (*CipServiceFunction)(
-    void* instance, CipMessageRouterRequest* message_router_request,
-    CipMessageRouterResponse* message_router_response);
+        CipMessageRouterRequest* message_router_request,
+        CipMessageRouterResponse* message_router_response);
 
 /**
  * @brief Struct for saving TCP/IP interface information

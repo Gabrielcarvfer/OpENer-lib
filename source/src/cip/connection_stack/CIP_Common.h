@@ -36,7 +36,7 @@ class CIP_Common
 		 *     - EIP_OK  ... no reply to send back
 		 *     - EIP_ERROR ... error
 		 */
-		static CipStatus NotifyClass(CIP_ClassInstance * cipClass, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+		static CipStatus NotifyClass(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
 
 		/** @brief Decodes padded EPath
@@ -48,21 +48,22 @@ class CIP_Common
 
 		static void CipStackInit(CipUint unique_connection_id);
 		static void ShutdownCipStack(void);
+	/** @brief Produce the data according to CIP encoding onto the message buffer.
+     *
+     * This function may be used in own services for sending data back to the
+     * requester (e.g., getAttributeSingle for special structs).
+     *  @param cip_data_type the cip type to encode
+     *  @param cip_data pointer to data value.
+     *  @param cip_message pointer to memory where response should be written
+     *  @return length of attribute in bytes
+     *          -1 .. error
+     */
+	static int EncodeData(CipUsint cip_type, void* data, CipUsint** message);
 	private:
 		static const CipUint kCipUintZero = 0;
 		static int EncodeEPath(CipEpath* epath, CipUsint** message);
 
-		/** @brief Produce the data according to CIP encoding onto the message buffer.
-		 *
-		 * This function may be used in own services for sending data back to the
-		 * requester (e.g., getAttributeSingle for special structs).
-		 *  @param cip_data_type the cip type to encode
-		 *  @param cip_data pointer to data value.
-		 *  @param cip_message pointer to memory where response should be written
-		 *  @return length of attribute in bytes
-		 *          -1 .. error
-		 */
-		static int EncodeData(CipUsint cip_type, void* data, CipUsint** message);
+
 
 		/** @brief Retrieve the given data according to CIP encoding from the message
 		 * buffer.

@@ -14,16 +14,9 @@
 
 CIP_Assembly::CIP_Assembly()
 {
-    if (CIP_Assembly::GetNumberOfInstances () == 0)
-    {
-        this->InsertService (kSetAttributeSingle, (CipServiceFunction)&this->SetAssemblyAttributeSingle, std::string ("SetAssemblyAttributeSingle"));
-    }
-    else
-    {
-
-    }
+    this->id = GetNumberOfInstances ();
     //TODO:Fix to emplace in the first empty slot instead of appending
-    CIP_Assembly::AddClassInstance(this, CIP_Assembly::GetNumberOfInstances());
+    CIP_Assembly::AddClassInstance(this, this->id);
 }
 
 CIP_Assembly::~CIP_Assembly()
@@ -67,25 +60,17 @@ void CIP_Assembly::ShutdownAssemblies(void)
     }
 }
 
-CIP_ClassInstance* CIP_Assembly::CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length)
+CIP_Assembly::CIP_Assembly(CipByte* data, CipUint data_length)
 {
-    CIP_ClassInstance* assembly_class;
-    CIP_ClassInstance* instance;
+    CIP_Assembly* instance;
     CipByteArray* assembly_byte_array;
 
-    if (NULL == (assembly_class = GetInstance(instance_id)))
-    {
-        if (NULL == (assembly_class = CreateAssemblyClass())) 
-        {
-            return NULL;
-        }
-    }
     /* add instances (always succeeds (or asserts))*/
-    instance = CreateAssemblyInstance(instance_id);
+    instance = new CIP_Assembly();
 
     if ((assembly_byte_array = new CipByteArray()) == NULL)
     {
-        return NULL; /*TODO remove assembly instance in case of error*/
+        exit(-1);//return NULL; /*TODO remove assembly instance in case of error*/
     }
 
     assembly_byte_array->length = data_length;
@@ -94,8 +79,6 @@ CIP_ClassInstance* CIP_Assembly::CreateAssemblyObject(CipUdint instance_id, CipB
 
     /* Attribute 4 Number of bytes in Attribute 3 */
     instance->InsertAttribute(4, kCipUint, &(assembly_byte_array->length), kGetableSingle);
-
-    return instance;
 }
 
 CipStatus CIP_Assembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUint data_length)
@@ -198,4 +181,18 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
     }
 
     return kCipStatusOkSend;
+}
+
+CipStatus CIP_Assembly::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
+{
+    //Class services
+    if (this->id == 0)
+    {
+        this->SetAssemblyAttributeSingle(msg_router_request, msg_router_response);
+    }
+    //Instance services
+    else
+    {
+
+    }
 }

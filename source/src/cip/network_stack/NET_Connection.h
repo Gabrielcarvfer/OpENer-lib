@@ -5,6 +5,8 @@
 #ifndef OPENER_NET_CONNECTION_H
 #define OPENER_NET_CONNECTION_H
 
+#include "../ciptypes.h"
+
 #ifdef WIN32
     #include <winsock.h>
     #include <windows.h>
@@ -21,6 +23,8 @@
 /**
  * @brief NET_Connection abstracts sockets (EthernetIP/TCPIP and DeviceNet/CAN) from CIP Connection
  */
+class NET_Connection;
+
 class NET_Connection
 {
     public:

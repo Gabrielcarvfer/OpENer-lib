@@ -1,20 +1,26 @@
+#include "../../trace.h"
 #include "CIP_ClassInstance.h"
-#include "trace.h"
 #include "src/cip/connection_stack/CIP_Common.h"
-#include "CIP_Service.h"
+//#include "CIP_Service.h"
 #include "CIP_Attribute.h"
 #include <utility>
-#include "../CIP_Protocol.h"
+#include <src/opener_user_conf.h>
 
-
+//Methods
 CIP_ClassInstance::CIP_ClassInstance()
 {
+    id = num_instances;
+    num_instances++;
 
+    if (id == 0)
+    {
+        class_ptr = this;
+    }
 }
 
 CIP_ClassInstance::~CIP_ClassInstance()
 {
-
+    num_instances--;
 }
 
 void CIP_ClassInstance::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
@@ -38,11 +44,11 @@ void CIP_ClassInstance::InsertAttribute(CipUint attribute_number, CipUsint cip_t
     /* trying to insert too many attributes*/
 }
 
-void CIP_ClassInstance::InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name)
+/*void CIP_ClassInstance::InsertService(CipUsint service_number, CipServiceFunction * service_function, std::string service_name)
 {
     auto it = this->services.find(service_number);
 
-    /* cant add service that already exists */
+    // cant add service that already exists
     if (it == std::map::end())
     {
         OPENER_ASSERT(true);
@@ -55,14 +61,12 @@ void CIP_ClassInstance::InsertService(CipUsint service_number, CipServiceFunctio
         return;
     }
     OPENER_ASSERT(0);
-    /* adding more services than were declared is a no-no*/
-}
+    // adding more services than were declared is a no-no
+}*/
 
 CIP_Attribute* CIP_ClassInstance::GetCipAttribute(CipUint attribute_number)
 {
-    auto it = this->attributes[attribute_number]; /* init pointer to array of attributes*/
-    //TODO: Check that again
-    if (it == std::end)
+    if (this->attributes.find(attribute_number) == this->attributes.end ())
     {
         OPENER_TRACE_WARN("attribute %d not defined\n", attribute_number);
 
@@ -70,7 +74,7 @@ CIP_Attribute* CIP_ClassInstance::GetCipAttribute(CipUint attribute_number)
     }
     else
     {
-        return it;
+        return this->attributes[attribute_number];
     }
 
     
@@ -117,10 +121,12 @@ CipStatus CIP_ClassInstance::GetAttributeSingle(CipMessageRouterRequest* message
             {
                 // we are getting a byte array of a assembly object, kick out to the app callback
                 OPENER_TRACE_INFO(" -> getAttributeSingle CIP_BYTE_ARRAY\r\n");
-                BeforeAssemblyDataSend(this);
+
+                //TODO:build an alternative
+                //BeforeAssemblyDataSend(this);
             }
 
-            message_router_response->data_length = EncodeData(attribute->getType(), attribute->getData(), &message);
+            message_router_response->data_length = CIP_Common::EncodeData(attribute->getType(), attribute->getData(), &message);
             message_router_response->general_status = kCipErrorSuccess;
         }
     }
@@ -128,17 +134,16 @@ CipStatus CIP_ClassInstance::GetAttributeSingle(CipMessageRouterRequest* message
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_ClassInstance::GetAttributeAll(CipMessageRouterRequest* message_router_request,
-    CipMessageRouterResponse* message_router_response)
+CipStatus CIP_ClassInstance::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     int i, j;
     CipUsint* reply;
-    CIP_ClassInstance * class_ptr = GetCipClass(this->class_id);
 
     // pointer into the reply
     reply = message_router_response->data;
 
-    if (GetCipInstanceNumber(this) == 2) {
+    if (this->id == 2)
+    {
         OPENER_TRACE_INFO("GetAttributeAll: instance number 2\n");
     }
 
@@ -169,7 +174,7 @@ CipStatus CIP_ClassInstance::GetAttributeAll(CipMessageRouterRequest* message_ro
                     if (attrNum < 32 && (class_ptr->get_all_class_attributes_mask & 1 << attrNum))
                     {
                         message_router_request->request_path.attribute_number = attrNum;
-                        if (kCipStatusOkSend != service->getService()(this, message_router_request, message_router_response))
+                        if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response))
                         {
                             message_router_response->data = reply;
                             return kCipStatusError;

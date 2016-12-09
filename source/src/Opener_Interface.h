@@ -327,7 +327,7 @@ class Opener_Interface
      * The notification on received configuration data is handled with the
      * IApp_after_receive function.
      */
-    static CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_number, CipByte* data, CipUint data_length);
+    //static CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_number, CipByte* data, CipUint data_length);
 
     /** @ingroup CIP_API
      * @brief Function prototype for handling the opening of connections
@@ -474,7 +474,7 @@ class Opener_Interface
      *          - true assembly data has changed
      *          - false assembly data has not changed
      */
-    static CipBool BeforeAssemblyDataSend(CIP_ClassInstance* instance);
+    //static CipBool BeforeAssemblyDataSend(CIP_ClassInstance* instance);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Emulate as close a possible a power cycle of the device
@@ -504,7 +504,7 @@ class Opener_Interface
      * @param size_of_element size in bytes of one element
      * @return pointer to the allocated memory, 0 on error
      */
-    void* CipCalloc(unsigned int number_of_elements, unsigned int size_of_element);
+    //void* CipCalloc(unsigned int number_of_elements, unsigned int size_of_element);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Free memory allocated by the OpENer
@@ -512,7 +512,7 @@ class Opener_Interface
      * emulate the common c-library function free
      * @param pa_poData pointer to the allocated memory
      */
-    void CipFree(void* data);
+    //void CipFree(void* data);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Inform the application that the Run/Idle State has been changed

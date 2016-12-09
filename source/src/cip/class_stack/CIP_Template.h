@@ -5,6 +5,9 @@
 #ifndef OPENER_CIP_TEMPLATE_H
 #define OPENER_CIP_TEMPLATE_H
 
+#include "../ciptypes.h"
+#include <map>
+
 template <typename T>
 class CIP_Template
 {

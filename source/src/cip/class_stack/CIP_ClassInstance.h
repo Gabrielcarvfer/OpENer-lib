@@ -1,15 +1,23 @@
 #pragma once
-#include "ciptypes.h"
-#include "src/typedefs.h"
+#include "../ciptypes.h"
+#include "../../typedefs.h"
 #include <string>
 #include <map>
 
 #include "CIP_Attribute.h"
 #include "CIP_Service.h"
 
+
 class CIP_ClassInstance
 {
+    private:
+        int id;
+        static int num_instances;
+        static CIP_ClassInstance* class_ptr;
     public:
+        CIP_ClassInstance();
+        ~CIP_ClassInstance ();
+
         static CipUdint class_id;
         static CipUdint get_all_class_attributes_mask;
         static CipUdint get_all_instance_attributes_mask;
@@ -40,14 +48,6 @@ class CIP_ClassInstance
         *  @return pointer to new class object
         *      0 on error
         */
-        /*CIP_ClassInstance(
-                 CipUdint class_id,
-                 CipUdint get_all_class_attributes_mask,
-                 CipUdint get_all_instance_attributes_mask,
-                 CipUdint position
-                );
-*/
-        ~CIP_ClassInstance();
 
 /** @ingroup CIP_API
                * @brief Get a pointer to an instance
@@ -88,7 +88,7 @@ class CIP_ClassInstance
     * @param service_function pointer to function which represents the service.
     * @param service_name name of the service
     */
-    void InsertService(CipUsint service_number, CipServiceFunction service_function, std::string service_name);
+    //void InsertService(CipUsint service_number, CIP_Service service_function, std::string service_name);
 
 
     /** @ingroup CIP_API
@@ -127,5 +127,8 @@ class CIP_ClassInstance
      *          -1 .. requested attribute not available
      */
     CipStatus GetAttributeSingle(CipMessageRouterRequest* message_router_request,CipMessageRouterResponse* message_router_response);
+    /* type definition of CIP service structure */
+
+    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request,CipMessageRouterResponse* msg_router_response);
 
 };

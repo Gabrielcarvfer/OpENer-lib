@@ -18,9 +18,9 @@ CIP_Attribute::CIP_Attribute(CipUint attribute_number, CipUsint type, void * dat
     // fill in attribute data
     this->data = data;
 }
-void CIP_Attribute::~CIP_Attribute ()
+CIP_Attribute::~CIP_Attribute ()
 {
-    delete[] this->data;
+
 }
 
 CipUint CIP_Attribute::getNumber()

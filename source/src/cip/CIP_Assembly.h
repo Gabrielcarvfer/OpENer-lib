@@ -15,8 +15,11 @@ class CIP_Assembly;
 
 class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
 {
+    private:
+    int id;
     public:
 		CIP_Assembly();
+        CIP_Assembly(CipByte* data, CipUint data_length);
 		~CIP_Assembly ();
 		/** @brief Setup the Assembly object
 		 * 
@@ -55,11 +58,7 @@ class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
 		 */
         CipStatus SetAssemblyAttributeSingle(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
-
-
-		static CIP_ClassInstance* CreateAssemblyClass(void);
-	    static CIP_ClassInstance* CreateAssemblyInstance(CipUdint instance_id);
-		static CIP_ClassInstance* CreateAssemblyObject(CipUdint instance_id, CipByte* data, CipUint data_length);
+        CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 };
 
 #endif

@@ -11,7 +11,7 @@ class CIP_Service
 {
     public:
         //Constructor and deconstructor
-        CIP_Service(CipUsint service_number, CipServiceFunction service_function, std::string name);
+        CIP_Service(CipUsint service_number, CipServiceFunction* service_function, std::string name);
         ~CIP_Service ();
 
         //Functions avaiable
@@ -21,7 +21,7 @@ class CIP_Service
 
     private:
         CipUsint service_number; /**< service number*/
-        CipServiceFunction service_function; /**< pointer to a function call*/
+        CipServiceFunction* service_function;//CipServiceFunction service_function; /**< pointer to a function call*/
         std::string name; /**< name of the service */
 };
 

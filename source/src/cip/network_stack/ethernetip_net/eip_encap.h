@@ -92,7 +92,7 @@ void ManageEncapsulationMessages(MilliSeconds elapsed_time);
      * over after we're done here
      * @return length of reply that need to be sent back
      */
-static int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes);
+int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes);
 
 /** @ingroup CIP_API
  * @brief Notify the encapsulation layer that an explicit message has been
@@ -107,7 +107,7 @@ static int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned i
  * over after we're done here
  * @return length of reply that need to be sent back
  */
-static int HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
+int HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
 
 
 #endif /* OPENER_ENCAP_H_ */

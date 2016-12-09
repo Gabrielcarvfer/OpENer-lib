@@ -144,7 +144,17 @@ CipStatus CIP_Identity::CipIdentityInit()
     instance->InsertAttribute(6, kCipUdint,       &serial_number_, kGetableSingleAndAll);
     instance->InsertAttribute(7, kCipShortString, &product_name_,  kGetableSingleAndAll);
 
-    instance->InsertService (kReset, &this->Reset, std::string("Reset"));
-
     return kCipStatusOk;
+}
+
+CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest *msg_router_request, CipMessageRouterResponse *msg_router_response)
+{
+    switch(service)
+    {
+        case kReset:
+            this->Reset(msg_router_request, msg_router_response);
+            break;
+        default:
+            break;
+    }
 }
