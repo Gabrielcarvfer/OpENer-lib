@@ -5,6 +5,8 @@
 #ifndef OPENER_NET_CONNECTION_H
 #define OPENER_NET_CONNECTION_H
 
+#include <map>
+
 #include "../ciptypes.h"
 
 #ifdef WIN32
@@ -40,12 +42,12 @@ class NET_Connection
         //Instance stuff
         enum { kOriginatorAddress, kRemoteAddress} AddressOptions;
         NET_Connection();
-        NET_Connection(struct sockaddr originator_address, struct sockaddr remote_address);
+        NET_Connection(struct sockaddr *originator_address, struct sockaddr *remote_address);
         ~NET_Connection ();
 
         int InitSocket(CipUdint family, CipUdint type, CipUdint protocol);
         int SetSocketOpt(CipUdint type, CipUdint reuse, CipUdint val);
-        int BindSocket(struct sockaddr * address);
+        int BindSocket(int address_option, struct sockaddr * address);
         int Listen(int max_num_connections);
 
         void CloseSocket();
@@ -71,7 +73,7 @@ class NET_Connection
         struct sockaddr *originator_address;
 
         // socket handles, indexed by kConsuming or kProducing
-        int socket;
+        int sock;
         CipUdint type;
         CipUdint reuse;
         CipUdint val;

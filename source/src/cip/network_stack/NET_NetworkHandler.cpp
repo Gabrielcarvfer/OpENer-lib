@@ -87,13 +87,13 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
     my_address->sin_addr.s_addr = interface_configuration_.ip_address;
 
     // bind the new socket to port 0xAF12 (CIP)
-    if (netStats[tcp_listener]->BindSocket((struct sockaddr *) my_address) == -1)
+    if (netStats[tcp_listener]->BindSocket(NET_Connection::kOriginatorAddress, (struct sockaddr *) my_address) == -1)
     {
         OPENER_TRACE_ERR("error with TCP bind: %s\n", strerror(errno));
         return kCipStatusError;
     }
 
-    if (netStats[udp_ucast_listener]->BindSocket((struct sockaddr *) my_address) == -1)
+    if (netStats[udp_ucast_listener]->BindSocket(NET_Connection::kOriginatorAddress, (struct sockaddr *) my_address) == -1)
     {
         OPENER_TRACE_ERR("error with UDP unicast bind: %s\n", strerror(errno));
         return kCipStatusError;
@@ -112,7 +112,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
         return kCipStatusError;
     }
 
-    if (netStats[udp_global_bcast_listener]->BindSocket ((struct sockaddr*)global_broadcast_address) == -1)
+    if (netStats[udp_global_bcast_listener]->BindSocket (NET_Connection::kOriginatorAddress,(struct sockaddr*)global_broadcast_address) == -1)
     {
         OPENER_TRACE_ERR("error with global broadcast UDP bind: %s\n", strerror(errno));
         return kCipStatusError;

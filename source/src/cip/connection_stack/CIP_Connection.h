@@ -143,6 +143,7 @@ public:
 
     static const int classCode = kCipConnectionManagerClassCode;
     CIP_Connection(CipUint unique_connection_id);
+    CIP_Connection (struct sockaddr *originator_address, struct sockaddr *remote_address);
     ~CIP_Connection();
 
     /** @brief Initialize the data of the connection manager object

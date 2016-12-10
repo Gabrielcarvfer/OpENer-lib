@@ -11,6 +11,7 @@
  *  @brief CIP Class 3 connection
  */
 
+#include <src/opener_user_conf.h>
 #include "CIP_Connection.h"
 #include "Opener_Interface.h"
 

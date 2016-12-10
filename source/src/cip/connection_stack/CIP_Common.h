@@ -36,7 +36,7 @@ class CIP_Common
 		 *     - EIP_OK  ... no reply to send back
 		 *     - EIP_ERROR ... error
 		 */
-		static CipStatus NotifyClass(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+		CipStatus NotifyClass(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
 
 		/** @brief Decodes padded EPath

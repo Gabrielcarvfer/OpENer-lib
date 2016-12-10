@@ -23,6 +23,7 @@
 #include "src/typedefs.h"
 #include "class_stack/CIP_Service.h"
 #include <map>
+#include <src/opener_user_conf.h>
 
 void CIP_Common::CipStackInit (CipUint unique_connection_id)
 {
@@ -32,7 +33,7 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
-    eip_status = CipIdentityInit ();
+    eip_status = CIP_Identity::CipIdentityInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
     eip_status = CipTcpIpInterfaceInit ();
@@ -44,12 +45,12 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
     eip_status = CIP_Connection::ConnectionManagerInit (unique_connection_id);
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
-    eip_status = CIPAssembly::CipAssemblyInitialize ();
+    eip_status = CIP_Assembly::CipAssemblyInitialize ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
     /* the application has to be initialized at last */
-    eip_status = ApplicationInitialization ();
-    OPENER_ASSERT(kCipStatusOk == eip_status);
+    //eip_status = ApplicationInitialization ();
+    //OPENER_ASSERT(kCipStatusOk == eip_status);
 }
 
 void CIP_Common::ShutdownCipStack (void)
@@ -59,23 +60,22 @@ void CIP_Common::ShutdownCipStack (void)
     /* Than free the sockets of currently active encapsulation sessions */
     EncapsulationShutDown ();
     /*clean the data needed for the assembly object's attribute 3*/
-    CIPAssembly::ShutdownAssemblies ();
+    CIP_Assembly::ShutdownAssemblies ();
 
     ShutdownTcpIpInterface ();
 
     /*no clear all the instances and classes */
     CIP_MessageRouter::DeleteAllClasses ();
 }
-
-CipStatus CIP_Common::NotifyClass (CIP_ClassInstance *CIP_ClassInstance, CipMessageRouterRequest *message_router_request,
-                                  CipMessageRouterResponse *message_router_response)
+/*
+CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
 {
     int i;
     CIP_ClassInstance *instance;
     std::map<CipUdint, CIP_Service *>service_set;
-    unsigned instance_number; /* my instance number */
+    unsigned instance_number; // my instance number
 
-    /* find the instance: if instNr==0, the class is addressed, else find the instance */
+    // find the instance: if instNr==0, the class is addressed, else find the instance
 
     // get the instance number
     instance_number = message_router_request->request_path.instance_number;
@@ -83,36 +83,37 @@ CipStatus CIP_Common::NotifyClass (CIP_ClassInstance *CIP_ClassInstance, CipMess
     // look up the instance (note that if inst==0 this will be the class itself)
     instance = CIP_ClassInstance::GetCipClassInstance (CIP_ClassInstance->class_id, instance_number);
 
-    if (instance) /* if instance is found */
+    if (instance) // if instance is found
     {
         OPENER_TRACE_INFO("notify: found instance %d%s\n", instance_number,
                           instance_number == 0 ? " (class object)" : "");
 
-        service_set = CIP_ClassInstance::GetCipClass (instance->class_id)->services; /* get pointer to array of services */
-        if (service_set.size()>0) /* if services are defined */
+        service_set = CIP_ClassInstance::GetCipClass (instance->class_id)->services; // get pointer to array of services
+        if (service_set.size()>0) // if services are defined
         {
-            for (i = 0; i < service_set.size(); i++) /* seach the services list */
+            for (i = 0; i < service_set.size(); i++) // seach the services list
             {
-                if (service_set.find(message_router_request->service) != service_set.end()) /* if match is found */
+                if (service_set.find(message_router_request->service) != service_set.end()) // if match is found
                 {
-                    /* call the service, and return what it returns */
+                    // call the service, and return what it returns
                     OPENER_TRACE_INFO("notify: calling %s service\n", service->name);
                     //OPENER_ASSERT(NULL != service_set[i]->service_function);
-                    return service_set[i]->getService ()(instance, message_router_request, message_router_response);
+                    return service_set[i]->getService (instance, message_router_request, message_router_response);
                 }
             }
         }
         OPENER_TRACE_WARN("notify: service 0x%x not supported\n", message_router_request->service);
-        message_router_response->general_status = kCipErrorServiceNotSupported; /* if no services or service not found, return an error reply*/
-    } else
+        message_router_response->general_status = kCipErrorServiceNotSupported; // if no services or service not found, return an error reply
+    }
+    else
     {
         OPENER_TRACE_WARN("notify: instance number %d unknown\n", instance_number);
-        /* if instance not found, return an error reply*/
+        // if instance not found, return an error reply
         //according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;
         message_router_response->general_status = kCipErrorPathDestinationUnknown;
     }
 
-    /* handle error replies*/
+    // handle error replies
 
     // fill in the rest of the reply with not much of anything
     message_router_response->size_of_additional_status = 0;
@@ -122,7 +123,7 @@ CipStatus CIP_Common::NotifyClass (CIP_ClassInstance *CIP_ClassInstance, CipMess
     message_router_response->reply_service = (CipUsint)(0x80 | message_router_request->service);
     return kCipStatusOkSend;
 }
-
+*/
 int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
 {
     int counter = 0;

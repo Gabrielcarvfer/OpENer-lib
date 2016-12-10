@@ -39,7 +39,7 @@ public:
  *
  * @returns EipError if the class could not be created, otherwise EipOk
  */
-    CipStatus CipIdentityInit (void);
+    static CipStatus CipIdentityInit (void);
 private:
     /** @brief Status of the CIP Identity object */
     typedef enum
