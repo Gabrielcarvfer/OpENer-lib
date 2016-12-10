@@ -19,20 +19,27 @@ CipMessageRouterResponse g_message_router_response;
 
 CipStatus CIP_MessageRouter::CipMessageRouterInit()
 {
-    CIP_ClassInstance* message_router;
+    classAttributesNum = 0;
+    instanceAttributesNum = 0;
 
-    message_router = CIP_ClassInstance(kCipMessageRouterClassCode, /* class ID*/
-                                                       0, /* # of class attributes */
-                                              0xffffffff, /* class getAttributeAll mask*/
-                                                       0, /* # of class services*/
-                                                       0, /* # of instance attributes*/
-                                              0xffffffff, /* instance getAttributeAll mask*/
-                                                       0, /* # of instance services*/
-                                                       1, /* # of instances*/
-                                        "message router", /* class name*/
-                                                       1  /* revision */
+    classServicesNum = 0;
+    instanceAttributesNum = 0;
+
+    maxNumOfInstances = 1;
+
+    revision = 1;
+    /*message_router = CIP_ClassInstance(kCipMessageRouterClassCode, / class ID
+                                                       0, /* # of class attributes
+                                              0xffffffff, /* class getAttributeAll mask
+                                                       0, /* # of class services
+                                                       0, /* # of instance attributes
+                                              0xffffffff, /* instance getAttributeAll mask
+                                                       0, /* # of instance services
+                                                       1, /* # of instances
+                                        "message router", /* class name
+                                                       1  /* revision
                               ); 
-
+*/
     if (message_router == 0)
         return kCipStatusError;
 

@@ -13,7 +13,7 @@
 
 class CIP_Assembly;
 
-class CIP_Assembly : public CIP_ClassInstance, public CIP_Template<CIP_Assembly>
+class CIP_Assembly : public CIP_ClassInstance<CIP_Assembly>, public CIP_Template<CIP_Assembly>
 {
     private:
     int id;

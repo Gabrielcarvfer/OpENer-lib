@@ -7,10 +7,11 @@
 #include <src/opener_user_conf.h>
 
 //Methods
-CIP_ClassInstance::CIP_ClassInstance()
+template <typename T>
+CIP_ClassInstance<T>::CIP_ClassInstance()
 {
-    id = num_instances;
-    num_instances++;
+    id = instancesNum;
+    instancesNum++;
 
     if (id == 0)
     {
@@ -18,12 +19,14 @@ CIP_ClassInstance::CIP_ClassInstance()
     }
 }
 
-CIP_ClassInstance::~CIP_ClassInstance()
+template <typename T>
+CIP_ClassInstance<T>::~CIP_ClassInstance()
 {
-    num_instances--;
+    instancesNum--;
 }
 
-void CIP_ClassInstance::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
+template <typename T>
+void CIP_ClassInstance<T>::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
 {
     auto it = this->attributes.find(attribute_number);
 
@@ -44,7 +47,8 @@ void CIP_ClassInstance::InsertAttribute(CipUint attribute_number, CipUsint cip_t
     /* trying to insert too many attributes*/
 }
 
-/*void CIP_ClassInstance::InsertService(CipUsint service_number, CipServiceFunction * service_function, std::string service_name)
+/*template <typename T>
+void CIP_ClassInstance::InsertService(CipUsint service_number, CipServiceFunction * service_function, std::string service_name)
 {
     auto it = this->services.find(service_number);
 
@@ -64,7 +68,8 @@ void CIP_ClassInstance::InsertAttribute(CipUint attribute_number, CipUsint cip_t
     // adding more services than were declared is a no-no
 }*/
 
-CIP_Attribute* CIP_ClassInstance::GetCipAttribute(CipUint attribute_number)
+template <typename T>
+CIP_Attribute* CIP_ClassInstance<T>::GetCipAttribute(CipUint attribute_number)
 {
     if (this->attributes.find(attribute_number) == this->attributes.end ())
     {
@@ -81,7 +86,8 @@ CIP_Attribute* CIP_ClassInstance::GetCipAttribute(CipUint attribute_number)
 }
 
 /* TODO: this needs to check for buffer overflow*/
-CipStatus CIP_ClassInstance::GetAttributeSingle(CipMessageRouterRequest* message_router_request,
+template <typename T>
+CipStatus CIP_ClassInstance<T>::GetAttributeSingle(CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
     // Mask for filtering get-ability
@@ -134,7 +140,7 @@ CipStatus CIP_ClassInstance::GetAttributeSingle(CipMessageRouterRequest* message
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_ClassInstance::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+template <typename T>CipStatus CIP_ClassInstance<T>::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     int i, j;
     CipUsint* reply;

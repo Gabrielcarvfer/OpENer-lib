@@ -19,7 +19,7 @@ class CIP_Template
         static bool AddClassInstance(T* instance, CipUdint position);
         static bool RemoveClassInstance(T* instance);
         static bool RemoveClassInstance(CipUdint position);
-    private:
+    protected:
         static std::map<CipUdint, T*> object_Set;
 };
 

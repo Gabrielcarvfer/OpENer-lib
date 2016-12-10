@@ -13,7 +13,7 @@
 
 class CIP_Identity;
 
-class CIP_Identity : public CIP_ClassInstance, public CIP_Template<CIP_Identity>
+class CIP_Identity : public CIP_ClassInstance<CIP_Identity>, public CIP_Template<CIP_Identity>
 {
 public:
 /* global public variables */

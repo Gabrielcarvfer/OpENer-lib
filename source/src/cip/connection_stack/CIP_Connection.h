@@ -22,7 +22,7 @@ class CIP_Connection; //trick compiler
 
 
 
-class CIP_Connection :  public CIP_ClassInstance, public CIP_Template<CIP_Connection>
+class CIP_Connection :  public CIP_ClassInstance<CIP_Connection>, public CIP_Template<CIP_Connection>
 {
 
 public:

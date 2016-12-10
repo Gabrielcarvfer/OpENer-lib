@@ -22,7 +22,7 @@ extern CipMessageRouterResponse g_message_router_response;
 
 class CIP_MessageRouter;
 
-class CIP_MessageRouter : public CIP_ClassInstance
+class CIP_MessageRouter : public CIP_ClassInstance<CIP_MessageRouter>
 {
     public:
 

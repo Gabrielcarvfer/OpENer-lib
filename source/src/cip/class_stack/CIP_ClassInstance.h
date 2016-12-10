@@ -7,20 +7,28 @@
 #include "CIP_Attribute.h"
 #include "CIP_Service.h"
 
-
+template <typename T>
 class CIP_ClassInstance
 {
-    private:
+    protected:
+        //Instance stuff
         int id;
-        static int num_instances;
-        static CIP_ClassInstance* class_ptr;
+        static T* class_ptr;
+
+        //Class stuff
+        static int instancesNum;
+        static int classAttributesNum;
+        static int instanceAttributesNum;
+        static int maxNumOfInstances;
+        static int classServicesNum;
+        static int instanceServicesNum;
+        static CipUdint get_all_class_attributes_mask;
+        static CipUdint get_all_instance_attributes_mask;
     public:
         CIP_ClassInstance();
         ~CIP_ClassInstance ();
 
         static CipUdint class_id;
-        static CipUdint get_all_class_attributes_mask;
-        static CipUdint get_all_instance_attributes_mask;
         static std::string class_name;
         static CipUint revision;
 
