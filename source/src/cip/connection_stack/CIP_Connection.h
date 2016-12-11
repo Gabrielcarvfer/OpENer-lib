@@ -18,14 +18,14 @@
 
 
 
-class CIP_Connection; //trick compiler
-
-
+class CIP_Connection;
 
 class CIP_Connection :  public CIP_ClassInstance<CIP_Connection>, public CIP_Template<CIP_Connection>
 {
 
 public:
+    CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+
     NET_Connection * conn;
 
     typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);

@@ -24,12 +24,6 @@
 #include "opener_user_conf.h"
 #include "trace.h"
 
-// values needed from the CIP identity object
-extern CipUint vendor_id_;
-extern CipUint device_type_;
-extern CipUint product_code_;
-extern CipRevision revision_;
-
 #define CIP_CONN_TYPE_MASK 0x6000 /**< Bit mask filter on bit 13 & 14 */
 
 const int g_kForwardOpenHeaderLength = 36; /**< the length in bytes of the forward open command specific data till the start of the connection path (including con path size)*/
@@ -39,10 +33,6 @@ const int g_kForwardOpenHeaderLength = 36; /**< the length in bytes of the forwa
 
 static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_SPECIFIC_CONNECTABLE_OBJECTS;
 
-
-
-
-
 CIP_Connection::CIP_Connection (struct sockaddr *originator_address, struct sockaddr *remote_address)
 {
     conn = new NET_Connection(originator_address, remote_address);
@@ -51,7 +41,6 @@ CIP_Connection::CIP_Connection (struct sockaddr *originator_address, struct sock
 CIP_Connection::~CIP_Connection ()
 {
     delete (conn);
-    delete (this);
 }
 
 /** @brief gets the padded logical path TODO: enhance documentation
@@ -105,10 +94,6 @@ CipStatus CIP_Connection::ConnectionManagerInit (CipUint unique_connection_id)
     get_all_instance_attributes_mask = 0xffffffff;
     class_name = "Connection Manager";
     revision = 1;
-
-    InsertClassService (kForwardOpen       , &ForwardOpen       , "ForwardOpen"       );
-    InsertClassService (kForwardClose      , &ForwardClose      , "ForwardClose"      );
-    InsertClassService (kGetConnectionOwner, &GetConnectionOwner, "GetConnectionOwner");
 
     g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
 
@@ -315,9 +300,9 @@ void CIP_Connection::GeneralConnectionConfiguration ()
     //setup the preconsuption timer: max(ConnectionTimeoutMultiplier * EpectetedPacketRate, 10s)
     this->inactivity_watchdog_timer = ((((this->o_to_t_requested_packet_interval) / 1000) << (2 + this->connection_timeout_multiplier)) > 10000) ? (((this->o_to_t_requested_packet_interval) / 1000) << (2 + this->connection_timeout_multiplier)) : 10000;
 
-    this->consumed_connection_size = this->o_to_t_network_connection_parameter & 0x01FF;
+    this->consumed_connection_size = CipUint(this->o_to_t_network_connection_parameter & 0x01FF);
 
-    this->produced_connection_size = this->t_to_o_network_connection_parameter & 0x01FF;
+    this->produced_connection_size = (CipUint)(this->t_to_o_network_connection_parameter & 0x01FF);
 }
 
 CipStatus CIP_Connection::ForwardClose (CIP_ClassInstance *instance, CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
@@ -1005,10 +990,8 @@ void CIP_Connection::CloseConnection (CIP_Connection *pa_pstConnObj)
     if (0x03 != (pa_pstConnObj->transport_type_class_trigger & 0x03))
     {
         // only close the UDP connection for not class 3 connections
-        IApp_CloseSocket_udp (pa_pstConnObj->socket[kUdpCommuncationDirectionConsuming]);
-        pa_pstConnObj->socket[kUdpCommuncationDirectionConsuming] = kEipInvalidSocket;
-        IApp_CloseSocket_udp (pa_pstConnObj->socket[kUdpCommuncationDirectionProducing]);
-        pa_pstConnObj->socket[kUdpCommuncationDirectionProducing] = kEipInvalidSocket;
+        //IApp_CloseSocket_udp (pa_pstConnObj->conn->GetSocketHandle());
+        pa_pstConnObj->conn->SetSocketHandle(kEipInvalidSocket);
     }
     RemoveFromActiveConnections (pa_pstConnObj);
 }
@@ -1110,4 +1093,26 @@ CipStatus CIP_Connection::TriggerConnections (CipUdint pa_unOutputAssembly, CipU
         }
     }
     return nRetVal;
+}
+
+CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+{
+    //Class services
+    if (this->id == 0)
+    {
+        switch(service)
+        {
+            case kForwardOpen:
+                break;
+            case kForwardClose:
+                break;
+            case kGetConnectionOwner:
+                break;
+        }
+    }
+    //Instance services
+    else
+    {
+
+    }
 }

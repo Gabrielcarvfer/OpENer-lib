@@ -3,6 +3,7 @@
  * All rights reserved. 
  *
  ******************************************************************************/
+#include <src/opener_user_conf.h>
 #include "CIP_MessageRouter.h"
 #include "src/cip/connection_stack/CIP_Common.h"
 #include "ciperror.h"
@@ -15,7 +16,7 @@
 CipMessageRouterRequest g_message_router_request;
 CipMessageRouterResponse g_message_router_response;
 
-
+CipOctet g_message_data_reply_buffer[100];
 
 CipStatus CIP_MessageRouter::CipMessageRouterInit()
 {
@@ -28,6 +29,7 @@ CipStatus CIP_MessageRouter::CipMessageRouterInit()
     maxNumOfInstances = 1;
 
     revision = 1;
+    class_name = "message router";
     /*message_router = CIP_ClassInstance(kCipMessageRouterClassCode, / class ID
                                                        0, /* # of class attributes
                                               0xffffffff, /* class getAttributeAll mask
@@ -40,41 +42,40 @@ CipStatus CIP_MessageRouter::CipMessageRouterInit()
                                                        1  /* revision
                               ); 
 */
-    if (message_router == 0)
-        return kCipStatusError;
+
 
     /* reserved for future use -> set to zero */
     g_message_router_response.reserved = 0;
 
-    /* set reply buffer, using a fixed buffer (about 100 bytes) */
+    // set reply buffer, using a fixed buffer (about 100 bytes)
     g_message_router_response.data = g_message_data_reply_buffer; 
 
     return kCipStatusOk;
 }
-
+/*
 CIP_ClassInstance* CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
 {
-    /* for each entry in list*/
+    // for each entry in list
     for(auto ptr : message_router_registered_classes) 
     {
-      /* return registration node if it matches class ID*/
+      // return registration node if it matches class ID
       if (*ptr->class_id == class_id)
-        return f;
+        return ptr;
     } 
 
     return 0;  
-}
+}*/
 
 CipStatus CIP_MessageRouter::RegisterCIPClass(CIP_ClassInstance* CIP_ClassInstance)
 {
-    std::pair<std::map<int>::iterator,bool> ret;
-
+    /*
     ret = message_router_registered_classes.insert(message_router_registered_classes.count(), CIP_ClassInstance);
 
     if (ret::second)
         return kCipStatusOk;
     else
         return kCipStatusError;
+        */
 }
 
 CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
@@ -114,19 +115,19 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
             g_message_router_response.size_of_additional_status = 0;
             g_message_router_response.reserved = 0;
             g_message_router_response.data_length = 0;
-            g_message_router_response.reply_service = (0x80 | g_message_router_request.service);
+            g_message_router_response.reply_service = (CipUsint)(0x80 | g_message_router_request.service);
         } 
         else 
         {
             /* call notify function from Object with ClassID (gMRRequest.RequestPath.ClassID)
             object will or will not make an reply into gMRResponse*/
             g_message_router_response.reserved = 0;
-            OPENER_ASSERT(NULL != registered_object->CIP_ClassInstance);
+            //OPENER_ASSERT(NULL != registered_object->CIP_ClassInstance);
 
             OPENER_TRACE_INFO("notifyMR: calling notify function of class '%s'\n",
                 registered_object->CIP_ClassInstance->class_name);
 
-            cip_status = NotifyClass(registered_object->CIP_ClassInstance, &g_message_router_request, &g_message_router_response);
+            //todo:cip_status = NotifyClass(registered_object->CIP_ClassInstance, &g_message_router_request, &g_message_router_response);
 
 #ifdef OPENER_TRACE_ENABLED
             switch(cip_status)
@@ -154,7 +155,7 @@ CipError CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, 
     data++; /*TODO: Fix for 16 bit path lengths (+1 */
     data_length--;
 
-    number_of_decoded_bytes = DecodePaddedEPath( &(message_router_request->request_path), &data );
+    number_of_decoded_bytes = CIP_Common::DecodePaddedEPath( &(message_router_request->request_path), &data );
 
     if (number_of_decoded_bytes < 0) 
     {
@@ -172,6 +173,7 @@ CipError CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, 
 
 void CIP_MessageRouter::DeleteAllClasses(void)
 {
+    /*TODO: fix
     while (message_router_registered_classes.size() != 0) 
     {
         for (auto class_instances_set : CIP_ClassInstance::CIP_Object_set)
@@ -193,7 +195,6 @@ void CIP_MessageRouter::DeleteAllClasses(void)
 
                 delete instance;
             }
-
             //Removing class
             for (auto attribute : CIP_ClassInstance::CIP_Class_set[class_id].attributes)
             {
@@ -209,6 +210,8 @@ void CIP_MessageRouter::DeleteAllClasses(void)
             CIP_ClassInstance::CIP_Class_set.erase(class_id);
             instances_classes_set.erase(class_id);
 
+
         }
     }
+     */
 }

@@ -18,7 +18,6 @@
  *  This buffer will be used for storing the result. The response message will be generated
  *  by assembleLinearMsg. 
  */
-extern CipMessageRouterResponse g_message_router_response;
 
 class CIP_MessageRouter;
 

@@ -8,21 +8,14 @@
 #include "CIP_Common.h"
 
 #include "CIP_CommonPacket.h"
-#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 #include "appcontype.h"
 #include "CIP_Assembly.h"
-#include "CIP_Connection.h"
-#include "ciperror.h"
 #include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
 #include "CIP_Identity.h"
 #include "CIP_MessageRouter.h"
 #include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 #include "endianconv.h"
-#include "Opener_Interface.h"
 #include "trace.h"
-#include "src/typedefs.h"
-#include "class_stack/CIP_Service.h"
-#include <map>
 #include <src/opener_user_conf.h>
 
 void CIP_Common::CipStackInit (CipUint unique_connection_id)
