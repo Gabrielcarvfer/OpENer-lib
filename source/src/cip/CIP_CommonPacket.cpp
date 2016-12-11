@@ -124,7 +124,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
  */
 CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
     CipUsint* data, int data_length,
-    CipCommonPacketFormatData* common_packet_format_data)
+    PacketFormat* common_packet_format_data)
 {
 
     common_packet_format_data->address_info_item[0].type_id = 0;
@@ -234,7 +234,7 @@ int CIP_CommonPacket::EncodeNullAddressItem(CipUsint** message, int size)
  *
  * @return The new size of the message frame after encoding
  */
-int CIP_CommonPacket::EncodeConnectedAddressItem(CipUsint** message, CipCommonPacketFormatData* common_packet_format_data_item, int size)
+int CIP_CommonPacket::EncodeConnectedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size)
 {
     // connected data item -> address length set to 4 and copy ConnectionIdentifier
     size += AddIntToMessage(kCipItemIdConnectionAddress, message);
@@ -246,7 +246,7 @@ int CIP_CommonPacket::EncodeConnectedAddressItem(CipUsint** message, CipCommonPa
 // TODO: Add doxygen documentation
 // sequenced address item -> address length set to 8 and copy ConnectionIdentifier and SequenceNumber
 // sequence number?????
-int CIP_CommonPacket::EncodeSequencedAddressItem(CipUsint** message, CipCommonPacketFormatData* common_packet_format_data_item, int size)
+int CIP_CommonPacket::EncodeSequencedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size)
 {
     // sequenced address item -> address length set to 8 and copy ConnectionIdentifier and SequenceNumber
     size += AddIntToMessage(kCipItemIdSequencedAddressItem, message);
@@ -265,7 +265,7 @@ int CIP_CommonPacket::EncodeSequencedAddressItem(CipUsint** message, CipCommonPa
  *
  * @return The new size of the message frame after encoding
  */
-int CIP_CommonPacket::EncodeItemCount(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
+int CIP_CommonPacket::EncodeItemCount(PacketFormat* common_packet_format_data_item, CipUsint** message, int size)
 {
     size += AddIntToMessage(common_packet_format_data_item->item_count, message); // item count
     return size;
@@ -280,7 +280,7 @@ int CIP_CommonPacket::EncodeItemCount(CipCommonPacketFormatData* common_packet_f
  *
  * @return The new size of the message frame after encoding
  */
-int CIP_CommonPacket::EncodeDataItemType(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
+int CIP_CommonPacket::EncodeDataItemType(PacketFormat* common_packet_format_data_item, CipUsint** message, int size)
 {
     size += AddIntToMessage(common_packet_format_data_item->data_item.type_id, message);
     return size;
@@ -295,7 +295,7 @@ int CIP_CommonPacket::EncodeDataItemType(CipCommonPacketFormatData* common_packe
  *
  * @return The new size of the message frame after encoding
  */
-int CIP_CommonPacket::EncodeDataItemLength(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
+int CIP_CommonPacket::EncodeDataItemLength(PacketFormat* common_packet_format_data_item, CipUsint** message, int size)
 {
     size += AddIntToMessage(common_packet_format_data_item->data_item.length, message);
     return size;
@@ -310,7 +310,7 @@ int CIP_CommonPacket::EncodeDataItemLength(CipCommonPacketFormatData* common_pac
  *
  * @return The new size of the message frame after encoding
  */
-int CIP_CommonPacket::EncodeDataItemData(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size)
+int CIP_CommonPacket::EncodeDataItemData(PacketFormat* common_packet_format_data_item, CipUsint** message, int size)
 {
     for (int i = 0; i < common_packet_format_data_item->data_item.length; i++)
     {
@@ -325,7 +325,7 @@ int CIP_CommonPacket::EncodeConnectedDataItemLength(CipMessageRouterResponse* me
     return size;
 }
 
-int CIP_CommonPacket::EncodeSequenceNumber(int size, const CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message)
+int CIP_CommonPacket::EncodeSequenceNumber(int size, const PacketFormat* common_packet_format_data_item, CipUsint** message)
 {
     // 2 bytes
     size += AddIntToMessage((CipUint)common_packet_format_data_item->address_item.data.sequence_number, message);
@@ -388,7 +388,7 @@ int CIP_CommonPacket::EncodeMessageRouterResponseData(int size, CipMessageRouter
     return size;
 }
 
-int CIP_CommonPacket::EncodeSockaddrInfoItemTypeId(int size, int item_type, CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message)
+int CIP_CommonPacket::EncodeSockaddrInfoItemTypeId(int size, int item_type, PacketFormat* common_packet_format_data_item, CipUsint** message)
 {
     OPENER_ASSERT(item_type == 0 || item_type == 1);
     size += AddIntToMessage(common_packet_format_data_item->address_info_item[item_type].type_id, message);
@@ -396,7 +396,7 @@ int CIP_CommonPacket::EncodeSockaddrInfoItemTypeId(int size, int item_type, CipC
     return size;
 }
 
-int CIP_CommonPacket::EncodeSockaddrInfoLength(int size, int j, CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message)
+int CIP_CommonPacket::EncodeSockaddrInfoLength(int size, int j, PacketFormat* common_packet_format_data_item, CipUsint** message)
 {
     size += AddIntToMessage(common_packet_format_data_item->address_info_item[j].length, message);
     return size;
@@ -411,7 +411,7 @@ int CIP_CommonPacket::EncodeSockaddrInfoLength(int size, int j, CipCommonPacketF
  *  @return length of reply in message in bytes
  * 			-1 .. error
  */
-int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_router_response, CipCommonPacketFormatData* common_packet_format_data_item, CipUsint* message)
+int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_router_response, PacketFormat* common_packet_format_data_item, CipUsint* message)
 {
 
     int message_size = 0;
@@ -504,7 +504,7 @@ int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_ro
     return message_size;
 }
 
-int CIP_CommonPacket::AssembleIOMessage(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint* message)
+int CIP_CommonPacket::AssembleIOMessage(PacketFormat* common_packet_format_data_item, CipUsint* message)
 {
     return AssembleLinearMessage(0, common_packet_format_data_item, (CipUsint*)CIP_Common::message_data_reply_buffer[0]);
 }

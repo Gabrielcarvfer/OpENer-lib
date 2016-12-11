@@ -76,7 +76,7 @@ public:
         AddressItem address_item;
         DataItem data_item;
         SocketAddressInfoItem address_info_item[2];
-    } CipCommonPacketFormatData;
+    } PacketFormat;
 
 /** @ingroup ENCAP
  * Parse the CPF data from a received unconnected explicit message and
@@ -108,8 +108,7 @@ public:
  * 	       EIP_OK .. success
  * 	       EIP_ERROR .. error
  */
-   static CipStatus CreateCommonPacketFormatStructure (CipUsint *data, int data_length,
-                                                 CipCommonPacketFormatData *common_packet_format_data);
+   static CipStatus CreateCommonPacketFormatStructure (CipUsint *data, int data_length, PacketFormat *common_packet_format_data);
 
 /** @ingroup ENCAP
  * Copy data from CPFDataItem into linear memory in message for transmission over in encapsulation.
@@ -119,7 +118,7 @@ public:
  * @return length of reply in pa_msg in bytes
  *     EIP_ERROR .. error
  */
-    static int AssembleIOMessage (CipCommonPacketFormatData *common_packet_format_data_item, CipUsint *message);
+    static int AssembleIOMessage (PacketFormat *common_packet_format_data_item, CipUsint *message);
 
 /** @ingroup ENCAP
  * Copy data from MRResponse struct and CPFDataItem into linear memory in message for transmission over in encapsulation.
@@ -129,35 +128,34 @@ public:
  * @return length of reply in pa_msg in bytes
  * 	   EIP_ERROR .. error
  */
-   static  int AssembleLinearMessage (CipMessageRouterResponse *message_router_response,
-                               CipCommonPacketFormatData *common_packet_format_data_item, CipUsint *message);
+   static  int AssembleLinearMessage (CipMessageRouterResponse *message_router_response, PacketFormat *common_packet_format_data_item, CipUsint *message);
 
 /** @ingroup ENCAP
  * @brief Data storage for the any CPF data
  * Currently we are single threaded and need only one CPF at the time.
  * For future extensions towards multithreading maybe more CPF data items may be necessary
  */
-   static  CipCommonPacketFormatData g_common_packet_format_data_item; /**< CPF global data items */
+   static  PacketFormat g_common_packet_format_data_item; /**< CPF global data items */
 private:
-    static int EncodeSockaddrInfoLength(int size, int j, CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message);
-    static int EncodeSockaddrInfoItemTypeId(int size, int item_type, CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message);
+    static int EncodeSockaddrInfoLength(int size, int j, PacketFormat* common_packet_format_data_item, CipUsint** message);
+    static int EncodeSockaddrInfoItemTypeId(int size, int item_type, PacketFormat* common_packet_format_data_item, CipUsint** message);
     static int EncodeMessageRouterResponseData(int size, CipMessageRouterResponse* message_router_response, CipUsint** message);
     static int EncodeUnconnectedDataItemLength(int size, CipMessageRouterResponse* message_router_response, CipUsint** message);
     static int EncodeExtendedStatus(int size, CipUsint** message, CipMessageRouterResponse* message_router_response);
-    static int EncodeDataItemData(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size);
+    static int EncodeDataItemData(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
     static int EncodeConnectedDataItemLength(CipMessageRouterResponse* message_router_response, CipUsint** message, int size);
-    static int EncodeSequenceNumber(int size, const CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message);
+    static int EncodeSequenceNumber(int size, const PacketFormat* common_packet_format_data_item, CipUsint** message);
     static int EncodeReplyService(int size, CipUsint** message, CipMessageRouterResponse* message_router_response);
     static int EncodeReservedFieldOfLengthByte(int size, CipUsint** message, CipMessageRouterResponse* message_router_response);
     static int EncodeGeneralStatus(int size, CipUsint** message, CipMessageRouterResponse* message_router_response);
     static int EncodeExtendedStatusLength(int size, CipUsint** message, CipMessageRouterResponse* message_router_response);
     static int EncodeExtendedStatusDataItems(int size, CipMessageRouterResponse* message_router_response, CipUsint** message);
     static int EncodeNullAddressItem(CipUsint** message, int size);
-    static int EncodeConnectedAddressItem(CipUsint** message, CipCommonPacketFormatData* common_packet_format_data_item, int size);
-    static int EncodeSequencedAddressItem(CipUsint** message, CipCommonPacketFormatData* common_packet_format_data_item, int size);
-    static int EncodeItemCount(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size);
-    static int EncodeDataItemType(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size);
-    static int EncodeDataItemLength(CipCommonPacketFormatData* common_packet_format_data_item, CipUsint** message, int size);
+    static int EncodeConnectedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size);
+    static int EncodeSequencedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size);
+    static int EncodeItemCount(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
+    static int EncodeDataItemType(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
+    static int EncodeDataItemLength(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
 
 };
 #endif /* OPENER_CPF_H_ */

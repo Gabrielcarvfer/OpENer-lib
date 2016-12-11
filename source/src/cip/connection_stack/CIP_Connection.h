@@ -368,7 +368,7 @@ public:
 
     void InitializeConnectionManagerData(void);
 
-    void AddNullAddressItem(CIP_CommonPacket::CipCommonPacketFormatData* common_data_packet_format_data);
+    void AddNullAddressItem(CIP_CommonPacket::PacketFormat* common_data_packet_format_data);
 
     static CipStatus AddConnectableObject(CipUdint pa_nClassId, OpenConnectionFunction pa_pfOpenFunc);
     static unsigned int GetPaddedLogicalPath(unsigned char** logical_path_segment);

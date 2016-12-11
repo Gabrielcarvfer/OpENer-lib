@@ -16,7 +16,7 @@
 #include "CIP_Common.h"
 #include "ciperror.h"
 #include "CIP_Identity.h"
-#include "cipioconnection.h"
+#include "CIP_IOConnection.h"
 #include "CIP_MessageRouter.h"
 #include "endianconv.h"
 #include "src/cip/network_stack/NET_NetworkHandler.h"
