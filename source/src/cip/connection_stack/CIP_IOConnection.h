@@ -41,6 +41,7 @@
 #define OPENER_CIPIOCONNECTION_H_
 
 
+#include <src/cip/CIP_Assembly.h>
 #include "CIP_Connection.h"
 #include "../CIP_CommonPacket.h"
 #include "../../Opener_Interface.h"
@@ -57,7 +58,7 @@ class CIP_IOConnection
          *    - EIP_OK ... on success
          *    - On an error the general status code to be put into the response
          */
-         CipStatus EstablishIoConnction (CIP_Connection *conn_obj, CipUint *extended_error);
+         CipStatus EstablishIoConnction (CipUint *extended_error);
 
         /** @brief Take the data given in the connection object structure and open the necessary communication channels
          *
@@ -67,41 +68,41 @@ class CIP_IOConnection
          *    - EIP_OK ... on success
          *    - On an error the general status code to be put into the response
          */
-        CipStatus OpenCommunicationChannels (CIP_Connection *conn_obj);
+        CipStatus OpenCommunicationChannels ();
 
         /** @brief close the communication channels of the given connection and remove it
          * from the active connections list.
          *
          * @param conn_obj pointer to the connection object data
          */
-        void CloseCommunicationChannelsAndRemoveFromActiveConnectionsList (CIP_Connection *conn_obj);
+        void CloseCommunicationChannelAndRemoveFromActiveConnectionsList ();
 
-        extern CipUsint *g_config_data_buffer;
-        extern unsigned int g_config_data_length;
 
     private:
+        CIP_Connection * cipConn;
+
         /*The port to be used per default for I/O messages on UDP.*/
         const int kOpenerEipIoUdpPort = 0x08AE;
 
         /* producing multicast connection have to consider the rules that apply for
          * application connection types.
          */
-        CipStatus OpenProducingMulticastConnection(CIP_Connection* conn_obj, CIP_CommonPacket::PacketFormat* cpf_data);
+        CipStatus OpenProducingMulticastConnection(CIP_CommonPacket::PacketFormat* cpf_data);
 
-        CipStatus OpenMulticastConnection(UdpCommuncationDirection direction, CIP_Connection* conn_obj, CIP_CommonPacket::PacketFormat* cpf_data);
+        CipStatus OpenMulticastConnection(UdpCommuncationDirection direction, CIP_CommonPacket::PacketFormat* cpf_data);
 
-        CipStatus OpenConsumingPointToPointConnection(CIP_Connection* conn_obj, CIP_CommonPacket::PacketFormat* cpf_data);
+        CipStatus OpenConsumingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data);
 
-        CipStatus OpenProducingPointToPointConnection(CIP_Connection* conn_obj, CIP_CommonPacket::PacketFormat* cpf_data);
+        CipStatus OpenProducingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data);
 
-        CipUint HandleConfigData(CIP_ClassInstance* assembly_class, CIP_Connection* conn_obj);
+        CipUint HandleConfigData(CIP_Assembly* assembly_class);
 
         /* Regularly close the IO connection. If it is an exclusive owner or input only
          * connection and in charge of the connection a new owner will be searched
          */
-        void CloseIoConnection(CIP_Connection* conn_obj);
+        void CloseIoConnection();
 
-        void HandleIoConnectionTimeOut(CIP_Connection* conn_obj);
+        void HandleIoConnectionTimeOut();
 
         /** @brief  Send the data from the produced CIP Object of the connection via the socket of the connection object
          *   on UDP.
@@ -109,9 +110,9 @@ class CIP_IOConnection
          *      @return status  EIP_OK .. success
          *                     EIP_ERROR .. error
          */
-        CipStatus SendConnectedData(CIP_Connection* conn_obj);
+        CipStatus SendConnectedData();
 
-        CipStatus HandleReceivedIoConnectionData(CIP_Connection* conn_obj, CipUsint* data, CipUint data_length);
+        CipStatus HandleReceivedIoConnectionData(CipUsint* data, CipUint data_length);
 
         /**** Global variables ****/
         CipUsint* g_config_data_buffer = NULL; /**< buffers for the config data coming with a forward open request. */

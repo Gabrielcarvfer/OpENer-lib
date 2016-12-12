@@ -35,12 +35,12 @@ static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_
 
 CIP_Connection::CIP_Connection (struct sockaddr *originator_address, struct sockaddr *remote_address)
 {
-    conn = new NET_Connection(originator_address, remote_address);
+    netConn = new NET_Connection(originator_address, remote_address);
 }
 
 CIP_Connection::~CIP_Connection ()
 {
-    delete (conn);
+    delete (netConn);
 }
 
 /** @brief gets the padded logical path TODO: enhance documentation
@@ -113,10 +113,10 @@ CipStatus CIP_Connection::HandleReceivedConnectedData (CipUsint *data, int data_
     else
     {
         // check if connected address item or sequenced address item  received, otherwise it is no connected message and should not be here
-        if ((g_common_packet_format_data_item.address_item.type_id == kCipItemIdConnectionAddress) || (g_common_packet_format_data_item.address_item.type_id == kCipItemIdSequencedAddressItem))
+        if ((g_common_packet_format_data_item.address_item.type_id == CIP_CommonPacket::kCipItemIdConnectionAddress) || (g_common_packet_format_data_item.address_item.type_id == CIP_CommonPacket::kCipItemIdSequencedAddressItem))
         {
             // found connected address item or found sequenced address item -> for now the sequence number will be ignored
-            if (g_common_packet_format_data_item.data_item.type_id == kCipItemIdConnectedDataItem)
+            if (g_common_packet_format_data_item.data_item.type_id == CIP_CommonPacket::kCipItemIdConnectedDataItem)
             {
                 // connected data item received
                 CIP_Connection *connection_object = GetConnectedObject (g_common_packet_format_data_item.address_item.data.connection_identifier);
@@ -164,9 +164,9 @@ CipStatus CIP_Connection::ForwardOpen (CIP_ClassInstance *instance, CipMessageRo
     //first check if we have already a connection with the given params
     g_dummy_connection_object.priority_timetick = *message_router_request->data++;
     g_dummy_connection_object.timeout_ticks = *message_router_request->data++;
-    // O_to_T Conn ID
+    // O_to_T netConn ID
     g_dummy_connection_object.consumed_connection_id = GetDintFromMessage (&message_router_request->data);
-    // T_to_O Conn ID
+    // T_to_O netConn ID
     g_dummy_connection_object.produced_connection_id = GetDintFromMessage (&message_router_request->data);
     g_dummy_connection_object.connection_serial_number = GetIntFromMessage (&message_router_request->data);
     g_dummy_connection_object.originator_vendor_id = GetIntFromMessage (&message_router_request->data);
@@ -445,10 +445,10 @@ CipStatus CIP_Connection::ManageConnections (MilliSeconds elapsed_time)
 CipStatus CIP_Connection::AssembleForwardOpenResponse (CIP_Connection *connection_object, CipMessageRouterResponse *message_router_response, CipUsint general_status, CipUint extended_status)
 {
     /* write reply information in CPF struct dependent of pa_status */
-    CipCommonPacketFormatData *cip_common_packet_format_data = &g_common_packet_format_data_item;
+    CIP_CommonPacket::PacketFormat *cip_common_packet_format_data = &g_common_packet_format_data_item;
     CipByte *message = message_router_response->data;
     cip_common_packet_format_data->item_count = 2;
-    cip_common_packet_format_data->data_item.type_id = kCipItemIdUnconnectedDataItem;
+    cip_common_packet_format_data->data_item.type_id = CIP_CommonPacket::kCipItemIdUnconnectedDataItem;
 
     AddNullAddressItem (cip_common_packet_format_data);
 
@@ -537,19 +537,19 @@ CipStatus CIP_Connection::AssembleForwardOpenResponse (CIP_Connection *connectio
     *message = 0; // reserved
     message++;
 
-    return kCipStatusOkSend; // send reply
+    return kCipStatusOkSend; // send reply'
 }
 
 /**
  * Adds a Null Address Item to the common data packet format data
  * @param common_data_packet_format_data The CPF data packet where the Null Address Item shall be added
  */
-void CIP_Connection::AddNullAddressItem (CipCommonPacketFormatData *common_data_packet_format_data)
+void CIP_Connection::AddNullAddressItem (CIP_CommonPacket::PacketFormat *common_data_packet_format_data)
 {
     // Precondition: Null Address Item only valid in unconnected messages
-    assert(common_data_packet_format_data->data_item.type_id == kCipItemIdUnconnectedDataItem);
+    assert(common_data_packet_format_data->data_item.type_id == CIP_CommonPacket::kCipItemIdUnconnectedDataItem);
 
-    common_data_packet_format_data->address_item.type_id = kCipItemIdNullAddress;
+    common_data_packet_format_data->address_item.type_id = CIP_CommonPacket::kCipItemIdNullAddress;
     common_data_packet_format_data->address_item.length = 0;
 }
 
@@ -571,10 +571,10 @@ void CIP_Connection::AddNullAddressItem (CipCommonPacketFormatData *common_data_
 CipStatus CIP_Connection::AssembleForwardCloseResponse (CipUint connection_serial_number, CipUint originatior_vendor_id, CipUdint originator_serial_number, CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response, CipUint extended_error_code)
 {
     // write reply information in CPF struct dependent of pa_status
-    CipCommonPacketFormatData *common_data_packet_format_data = &g_common_packet_format_data_item;
+    CIP_CommonPacket::PacketFormat *common_data_packet_format_data = &g_common_packet_format_data_item;
     CipByte *message = message_router_response->data;
     common_data_packet_format_data->item_count = 2;
-    common_data_packet_format_data->data_item.type_id = kCipItemIdUnconnectedDataItem;
+    common_data_packet_format_data->data_item.type_id = CIP_CommonPacket::kCipItemIdUnconnectedDataItem;
 
     AddNullAddressItem (common_data_packet_format_data);
 
@@ -990,8 +990,8 @@ void CIP_Connection::CloseConnection (CIP_Connection *pa_pstConnObj)
     if (0x03 != (pa_pstConnObj->transport_type_class_trigger & 0x03))
     {
         // only close the UDP connection for not class 3 connections
-        //IApp_CloseSocket_udp (pa_pstConnObj->conn->GetSocketHandle());
-        pa_pstConnObj->conn->SetSocketHandle(kEipInvalidSocket);
+        //IApp_CloseSocket_udp (pa_pstConnObj->netConn->GetSocketHandle());
+        pa_pstConnObj->netConn->SetSocketHandle(kEipInvalidSocket);
     }
     RemoveFromActiveConnections (pa_pstConnObj);
 }

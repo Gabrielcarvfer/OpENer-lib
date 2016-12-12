@@ -21,17 +21,20 @@ CipStatus EstablishClass3Connection(CIP_Connection* connection_object, CipUint* 
 
     CIP_Connection* explicit_connection = GetFreeExplicitConnection();
 
-    if (NULL == explicit_connection) {
+    if (NULL == explicit_connection)
+    {
         eip_status = (CipStatus)kCipErrorConnectionFailure;
-        *extended_error = kConnectionManagerStatusCodeErrorNoMoreConnectionsAvailable;
-    } else {
+        *extended_error = CIP_Connection::kConnectionManagerStatusCodeErrorNoMoreConnectionsAvailable;
+    }
+    else
+    {
         CIP_Connection::CopyConnectionData(explicit_connection, connection_object);
 
         produced_connection_id_buffer = explicit_connection->produced_connection_id;
         explicit_connection->GeneralConnectionConfiguration();
         explicit_connection->produced_connection_id = produced_connection_id_buffer;
-        explicit_connection->instance_type = kConnectionTypeExplicit;
-        explicit_connection->socket[0] = explicit_connection->socket[1] = kEipInvalidSocket;
+        explicit_connection->instance_type = CIP_Connection::kConnectionTypeExplicit;
+        explicit_connection->netConn->SetSocketHandle (kEipInvalidSocket);
         /* set the connection call backs */
         //explicit_connection->connection_close_function = CIP_CIP_Connection::RemoveFromActiveConnections;
         /* explicit connection have to be closed on time out*/
@@ -46,7 +49,7 @@ CIP_Connection* GetFreeExplicitConnection(void)
 {
     int i;
     for (i = 0; i < OPENER_CIP_NUM_EXPLICIT_CONNS; i++) {
-        if (g_explicit_connections[i]->state == kConnectionStateNonExistent)
+        if (g_explicit_connections[i]->state == CIP_Connection::kConnectionStateNonExistent)
             return g_explicit_connections[i];
     }
     return NULL;

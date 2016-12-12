@@ -26,7 +26,7 @@ class CIP_Connection :  public CIP_ClassInstance<CIP_Connection>, public CIP_Tem
 public:
     CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
-    NET_Connection * conn;
+    NET_Connection * netConn;
 
     typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
     typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
