@@ -238,7 +238,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
         j = 1;
     }
 
-    ///todo: create UDP socket only with CIP_Connection
+    ///todo: create UDP socket only with CIP_Connectio
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     //addr.in_port = htons(nUDPPort++);

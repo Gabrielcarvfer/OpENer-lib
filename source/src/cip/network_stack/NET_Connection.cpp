@@ -1,7 +1,7 @@
 //
 // Created by gabriel on 30/11/2016.
 //
-
+#define OPENER_NET_CONNECTION_H_PRIVATE
 #include <src/trace.h>
 #include "NET_Connection.h"
 

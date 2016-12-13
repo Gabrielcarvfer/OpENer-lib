@@ -9,14 +9,18 @@
 
 #include "../ciptypes.h"
 
-#ifdef WIN32
-    #include <winsock.h>
-    #include <windows.h>
-#else
-    #include <sys/sock.h>
-    #include <netinet/in.h>
-    #include <arpa/inet.h>
-    #include <sys/select.h>
+#ifdef OPENER_NET_CONNECTION_H_PRIVATE
+
+    #ifdef WIN32
+        #include <winsock.h>
+        #include <windows.h>
+    #else
+        #include <sys/sock.h>
+        #include <netinet/in.h>
+        #include <arpa/inet.h>
+        #include <sys/select.h>
+    #endif
+
 #endif
 
 
@@ -41,6 +45,8 @@ class NET_Connection
 
         //Instance stuff
         enum { kOriginatorAddress, kRemoteAddress} AddressOptions;
+        enum { kAF_INET, } SupportedSocketFamilies;
+        enum { kINADDR_ANY, } SupportedSocketAddresses;
         NET_Connection();
         NET_Connection(struct sockaddr *originator_address, struct sockaddr *remote_address);
         ~NET_Connection ();
@@ -58,11 +64,13 @@ class NET_Connection
         int SendData(void * data_ptr, CipUdint size);
         int RecvData (void *data_ptr, CipUdint size);
         int SendDataTo(void * data_ptr, CipUdint size, struct sockaddr * destination);
-        int RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr *source);
+        int RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr * source);
 
 
     private:
+#ifdef OPENER_NET_CONNECTION_H_PRIVATE
         static fd_set select_set[2]; //0-master_socket 1-read_socket
+#endif
         static std::map <int, NET_Connection*> socket_to_conn_map;
 
         // socket address for produce

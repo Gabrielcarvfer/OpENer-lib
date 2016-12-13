@@ -14,7 +14,6 @@
 #include "NET_NetworkHandler.h"
 
 #include "trace.h"
-
 #include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 
 #ifdef WIN32
