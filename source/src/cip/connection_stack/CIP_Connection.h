@@ -307,22 +307,13 @@ public:
 
 
     /* private functions */
-    CipStatus ForwardOpen(CIP_ClassInstance* instance,
-                          CipMessageRouterRequest* message_router_request,
-                          CipMessageRouterResponse* message_router_response);
+    CipStatus ForwardOpen(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
-    CipStatus ForwardClose(CIP_ClassInstance* instance,
-                           CipMessageRouterRequest* message_router_request,
-                           CipMessageRouterResponse* message_router_response);
+    CipStatus ForwardClose(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
-    CipStatus GetConnectionOwner(CIP_ClassInstance* instance,
-                                 CipMessageRouterRequest* message_router_request,
-                                 CipMessageRouterResponse* message_router_response);
+    CipStatus GetConnectionOwner(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
-    CipStatus AssembleForwardOpenResponse(
-            CIP_Connection* connection_object,
-            CipMessageRouterResponse* message_router_response, CipUsint general_status,
-            CipUint extended_status);
+    CipStatus AssembleForwardOpenResponse(CipMessageRouterResponse* message_router_response, CipUsint general_status, CipUint extended_status);
 
     CipStatus AssembleForwardCloseResponse(
             CipUint connection_serial_number, CipUint originatior_vendor_id,

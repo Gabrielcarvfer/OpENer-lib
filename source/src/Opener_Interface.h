@@ -539,7 +539,7 @@ class Opener_Interface
      * @return socket identifier on success
      *         -1 on error
      */
-    int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr_in* socket_data);
+    //int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr_in* socket_data);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief create a producing or consuming UDP socket

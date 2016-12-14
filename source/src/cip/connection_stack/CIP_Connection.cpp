@@ -3,12 +3,9 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#include <cstring>
 
 #include "CIP_Connection.h"
-
-
-#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
+#include <cstring>
 #include "src/cip/network_stack/ethernetip_net/eip_encap.h"
 #include "appcontype.h"
 #include "CIP_Assembly.h"
@@ -23,6 +20,12 @@
 #include "Opener_Interface.h"
 #include "opener_user_conf.h"
 #include "trace.h"
+
+#ifdef WIN32
+#include "winsock.h"
+#else
+#include "arpa/inet"
+#endif
 
 #define CIP_CONN_TYPE_MASK 0x6000 /**< Bit mask filter on bit 13 & 14 */
 
@@ -135,7 +138,7 @@ CipStatus CIP_Connection::HandleReceivedConnectedData (CipUsint *data, int data_
                         eip_level_sequence_count_consuming = CIP_CommonPacket::common_packet_data.address_item.data.sequence_number;
 
                         //TODO: fix handles per IO Type
-                        return HandleReceivedIoConnectionData (this, CIP_CommonPacket::common_packet_data.data_item.data, CIP_CommonPacket::common_packet_data.data_item.length);
+                        return HandleReceivedIoConnectionData (CIP_CommonPacket::common_packet_data.data_item.data, CIP_CommonPacket::common_packet_data.data_item.length);
                     }
                 } else
                 {
@@ -154,7 +157,7 @@ CipStatus CIP_Connection::HandleReceivedConnectedData (CipUsint *data, int data_
  * 		@return >0 .. success, 0 .. no reply to send back
  *      	-1 .. error
  */
-CipStatus CIP_Connection::ForwardOpen (CIP_ClassInstance *instance, CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
+CipStatus CIP_Connection::ForwardOpen (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
 {
     CipUint connection_status = kConnectionManagerStatusCodeSuccess;
     ConnectionManagementHandling *connection_management_entry;
@@ -255,7 +258,7 @@ CipStatus CIP_Connection::ForwardOpen (CIP_ClassInstance *instance, CipMessageRo
     {
         OPENER_TRACE_INFO("connection manager: connect succeeded\n");
         // in case of success the g_pstActiveConnectionList points to the new connection
-        return AssembleForwardOpenResponse (g_active_connection_list, message_router_response, kCipErrorSuccess, 0);
+        return this->AssembleForwardOpenResponse (message_router_response, kCipErrorSuccess, 0);
     }
 }
 
