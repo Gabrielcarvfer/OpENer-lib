@@ -349,9 +349,9 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
 
     cpf_data->address_info_item[j].length = 16;
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
-    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->.sin_family = AF_INET;
-    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->.sin_port = cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
-    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->.sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = g_multicast_configuration.starting_multicast_address;
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->sin_family = AF_INET;
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = g_multicast_configuration.starting_multicast_address;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
     cpf_data->address_info_item[j].sin_family = htons(AF_INET);
 
@@ -436,10 +436,10 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
     return kCipStatusOk;
 }
 
-CipUint CIP_IOConnection::HandleConfigData(CIP_ClassInstance* assembly_class)
+CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
 {
     CipUint connection_manager_status = 0;
-    CIP_ClassInstance* config_instance = GetCIPClass(assembly_class, cipConn->connection_path.connection_point[2]);
+    CIP_Assembly* config_instance = CIP_Assembly::GetClass();
 
     if (0 != g_config_data_length)
     {

@@ -24,6 +24,8 @@ class CIP_Connection :  public CIP_ClassInstance<CIP_Connection>, public CIP_Tem
 {
 
 public:
+    CipMessageRouterRequest g_message_router_request;
+    CipMessageRouterResponse g_message_router_response;
     CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
     NET_Connection * netConn;

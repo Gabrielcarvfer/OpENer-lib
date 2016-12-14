@@ -135,7 +135,7 @@ public:
  * Currently we are single threaded and need only one CPF at the time.
  * For future extensions towards multithreading maybe more CPF data items may be necessary
  */
-   static  PacketFormat g_common_packet_format_data_item; /**< CPF global data items */
+   static PacketFormat common_packet_data; /**< CPF global data items */
 private:
     static int EncodeSockaddrInfoLength(int size, int j, PacketFormat* common_packet_format_data_item, CipUsint** message);
     static int EncodeSockaddrInfoItemTypeId(int size, int item_type, PacketFormat* common_packet_format_data_item, CipUsint** message);

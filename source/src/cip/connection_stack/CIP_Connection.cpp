@@ -106,36 +106,36 @@ CipStatus CIP_Connection::ConnectionManagerInit (CipUint unique_connection_id)
 CipStatus CIP_Connection::HandleReceivedConnectedData (CipUsint *data, int data_length, struct sockaddr_in *from_address)
 {
 
-    if ((CreateCommonPacketFormatStructure (data, data_length, &g_common_packet_format_data_item)) == kCipStatusError)
+    if ((CreateCommonPacketFormatStructure (data, data_length, &CIP_CommonPacket::common_packet_data)) == kCipStatusError)
     {
         return kCipStatusError;
     }
     else
     {
         // check if connected address item or sequenced address item  received, otherwise it is no connected message and should not be here
-        if ((g_common_packet_format_data_item.address_item.type_id == CIP_CommonPacket::kCipItemIdConnectionAddress) || (g_common_packet_format_data_item.address_item.type_id == CIP_CommonPacket::kCipItemIdSequencedAddressItem))
+        if ((CIP_CommonPacket::common_packet_data.address_item.type_id == CIP_CommonPacket::kCipItemIdConnectionAddress) || (CIP_CommonPacket::common_packet_data.address_item.type_id == CIP_CommonPacket::kCipItemIdSequencedAddressItem))
         {
             // found connected address item or found sequenced address item -> for now the sequence number will be ignored
-            if (g_common_packet_format_data_item.data_item.type_id == CIP_CommonPacket::kCipItemIdConnectedDataItem)
+            if (CIP_CommonPacket::common_packet_data.data_item.type_id == CIP_CommonPacket::kCipItemIdConnectedDataItem)
             {
                 // connected data item received
-                //CIP_Connection *connection_object = GetConnectedObject (g_common_packet_format_data_item.address_item.data.connection_identifier);
+                //CIP_Connection *connection_object = GetConnectedObject (CIP_CommonPacket::common_packet_data.address_item.data.connection_identifier);
                 //if (connection_object == NULL)
                 //    return kCipStatusError;
 
                 // only handle the data if it is coming from the originator
                 if (((struct sockaddr_in*)(netConn->originator_address))->sin_addr.s_addr == from_address->sin_addr.s_addr)
                 {
-                    if (SEQ_GT32(g_common_packet_format_data_item.address_item.data.sequence_number, connection_object->eip_level_sequence_count_consuming))
+                    if (SEQ_GT32(CIP_CommonPacket::common_packet_data.address_item.data.sequence_number, ->eip_level_sequence_count_consuming)
                     {
                         // reset the watchdog timer
-                        inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000) << (2 + connection_object->connection_timeout_multiplier);
+                        inactivity_watchdog_timer = (o_to_t_requested_packet_interval / 1000) << (2 + connection_timeout_multiplier);
 
                         // only inform assembly object if the sequence counter is greater or equal
-                        eip_level_sequence_count_consuming = g_common_packet_format_data_item.address_item.data.sequence_number;
+                        eip_level_sequence_count_consuming = CIP_CommonPacket::common_packet_data.address_item.data.sequence_number;
 
                         //TODO: fix handles per IO Type
-                        return HandleReceivedIoConnectionData (this, g_common_packet_format_data_item.data_item.data, g_common_packet_format_data_item.data_item.length);
+                        return HandleReceivedIoConnectionData (this, CIP_CommonPacket::common_packet_data.data_item.data, CIP_CommonPacket::common_packet_data.data_item.length);
                     }
                 } else
                 {
@@ -315,8 +315,8 @@ CipStatus CIP_Connection::ForwardClose (CIP_ClassInstance *instance, CipMessageR
     CIP_Connection *connection_object;
 
     // set AddressInfo Items to invalid TypeID to prevent assembleLinearMsg to read them
-    g_common_packet_format_data_item.address_info_item[0].type_id = 0;
-    g_common_packet_format_data_item.address_info_item[1].type_id = 0;
+    CIP_CommonPacket::common_packet_data.address_info_item[0].type_id = 0;
+    CIP_CommonPacket::common_packet_data.address_info_item[1].type_id = 0;
 
     message_router_request->data += 2; // ignore Priority/Time_tick and Time-out_ticks
 
@@ -393,7 +393,7 @@ CipStatus CIP_Connection::ManageConnections (MilliSeconds elapsed_time)
             if (kConnectionStateEstablished == connection_object->state)
             {
                 // client connection
-                if ((connection_object->expected_packet_rate != 0) && (kEipInvalidSocket != connection_object->socket[kUdpCommuncationDirectionProducing])) /* only produce for the master connection */
+                if ((connection_object->expected_packet_rate != 0) && (kEipInvalidSocket != connection_object->sock[kUdpCommuncationDirectionProducing])) /* only produce for the master connection */
                 {
                     if (kConnectionTriggerTypeCyclicConnection != (connection_object->transport_type_class_trigger & kConnectionTriggerTypeProductionTriggerMask))
                     {
@@ -445,7 +445,7 @@ CipStatus CIP_Connection::ManageConnections (MilliSeconds elapsed_time)
 CipStatus CIP_Connection::AssembleForwardOpenResponse (CIP_Connection *connection_object, CipMessageRouterResponse *message_router_response, CipUsint general_status, CipUint extended_status)
 {
     /* write reply information in CPF struct dependent of pa_status */
-    CIP_CommonPacket::PacketFormat *cip_common_packet_format_data = &g_common_packet_format_data_item;
+    CIP_CommonPacket::PacketFormat *cip_common_packet_format_data = &CIP_CommonPacket::common_packet_data;
     CipByte *message = message_router_response->data;
     cip_common_packet_format_data->item_count = 2;
     cip_common_packet_format_data->data_item.type_id = CIP_CommonPacket::kCipItemIdUnconnectedDataItem;
@@ -571,7 +571,7 @@ void CIP_Connection::AddNullAddressItem (CIP_CommonPacket::PacketFormat *common_
 CipStatus CIP_Connection::AssembleForwardCloseResponse (CipUint connection_serial_number, CipUint originatior_vendor_id, CipUdint originator_serial_number, CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response, CipUint extended_error_code)
 {
     // write reply information in CPF struct dependent of pa_status
-    CIP_CommonPacket::PacketFormat *common_data_packet_format_data = &g_common_packet_format_data_item;
+    CIP_CommonPacket::PacketFormat *common_data_packet_format_data = &CIP_CommonPacket::common_packet_data;
     CipByte *message = message_router_response->data;
     common_data_packet_format_data->item_count = 2;
     common_data_packet_format_data->data_item.type_id = CIP_CommonPacket::kCipItemIdUnconnectedDataItem;
@@ -678,7 +678,7 @@ CipStatus CIP_Connection::CheckElectronicKeyData (CipUsint key_format, CipKeyDat
     }
 
     // Check VendorID and ProductCode, must match, or 0
-    if (((key_data->vendor_id != vendor_id_) && (key_data->vendor_id != 0)) || ((key_data->product_code != product_code_) && (key_data->product_code != 0)))
+    if (((key_data->vendor_id != CIP_Identity::vendor_id_) && (key_data->vendor_id != 0)) || ((key_data->product_code != CIP_Identity::product_code_) && (key_data->product_code != 0)))
     {
         *extended_status = kConnectionManagerStatusCodeErrorVendorIdOrProductcodeError;
         return kCipStatusError;
@@ -688,7 +688,7 @@ CipStatus CIP_Connection::CheckElectronicKeyData (CipUsint key_format, CipKeyDat
         // VendorID and ProductCode are correct
 
         // Check DeviceType, must match or 0
-        if ((key_data->device_type != device_type_) && (key_data->device_type != 0))
+        if ((key_data->device_type != CIP_Identity::device_type_) && (key_data->device_type != 0))
         {
             *extended_status = kConnectionManagerStatusCodeErrorDeviceTypeError;
             return kCipStatusError;
@@ -706,7 +706,7 @@ CipStatus CIP_Connection::CheckElectronicKeyData (CipUsint key_format, CipKeyDat
                 }
 
                 // Check Major / Minor Revision, Major must match, Minor match or 0
-                if ((key_data->major_revision != revision_.major_revision) || ((key_data->minor_revision != revision_.minor_revision) && (key_data->minor_revision != 0)))
+                if ((key_data->major_revision != CIP_Identity::revision_.major_revision) || ((key_data->minor_revision != CIP_Identity::revision_.minor_revision) && (key_data->minor_revision != 0)))
                 {
                     *extended_status = kConnectionManagerStatusCodeErrorRevisionMismatch;
                     return kCipStatusError;
@@ -716,7 +716,7 @@ CipStatus CIP_Connection::CheckElectronicKeyData (CipUsint key_format, CipKeyDat
                 // Compatibility mode is set
 
                 // Major must match, Minor != 0 and <= MinorRevision
-                if ((key_data->major_revision == revision_.major_revision) && (key_data->minor_revision > 0) && (key_data->minor_revision <= revision_.minor_revision))
+                if ((key_data->major_revision == CIP_Identity::revision_.major_revision) && (key_data->minor_revision > 0) && (key_data->minor_revision <= CIP_Identity::revision_.minor_revision))
                 {
                     return (kCipStatusOk);
                 }

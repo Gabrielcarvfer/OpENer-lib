@@ -3,10 +3,9 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#include <string.h>
-
 #include "CIP_CommonPacket.h"
 
+#include <string.h>
 #include "connection_stack/CIP_Common.h"
 #include "connection_stack/CIP_Connection.h"
 #include "src/cip/connection_stack/CIP_MessageRouter.h"
@@ -21,7 +20,7 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
 {
     int return_value = kCipStatusError;
 
-    if ((return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &g_common_packet_format_data_item)) == kCipStatusError)
+    if ((return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &common_packet_data)) == kCipStatusError)
     {
         OPENER_TRACE_ERR("notifyCPF: error from createCPFstructure\n");
     }
@@ -30,16 +29,16 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
         // In cases of errors we normally need to send an error response
         return_value = kCipStatusOk;
         // check if NullAddressItem received, otherwise it is no unconnected message and should not be here
-        if (g_common_packet_format_data_item.address_item.type_id == kCipItemIdNullAddress)
+        if (common_packet_data.address_item.type_id == kCipItemIdNullAddress)
         {
             // found null address item
-            if (g_common_packet_format_data_item.data_item.type_id == kCipItemIdUnconnectedDataItem)
+            if (common_packet_data.data_item.type_id == kCipItemIdUnconnectedDataItem)
             {
                 // unconnected data item received
-                return_value = CIP_MessageRouter::NotifyMR(g_common_packet_format_data_item.data_item.data, g_common_packet_format_data_item.data_item.length);
+                return_value = CIP_MessageRouter::NotifyMR(common_packet_data.data_item.data, common_packet_data.data_item.length);
                 if (return_value != kCipStatusError)
                 {
-                    return_value = AssembleLinearMessage(&g_message_router_response, &g_common_packet_format_data_item, reply_buffer);
+                    return_value = AssembleLinearMessage(&g_message_router_response, &common_packet_data, reply_buffer);
                 }
             }
             else
@@ -62,7 +61,7 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
 int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_data, CipUsint* reply_buffer)
 {
 
-    int return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &g_common_packet_format_data_item);
+    int return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &common_packet_data);
 
     if (kCipStatusError == return_value)
     {
@@ -71,27 +70,27 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
     else
     {
         return_value = kCipStatusError; /* For connected explicit messages status always has to be 0*/
-        if (g_common_packet_format_data_item.address_item.type_id == kCipItemIdConnectionAddress) /* check if ConnectedAddressItem received, otherwise it is no connected message and should not be here*/
+        if (common_packet_data.address_item.type_id == kCipItemIdConnectionAddress) /* check if ConnectedAddressItem received, otherwise it is no connected message and should not be here*/
         {
             // ConnectedAddressItem item
-            CIP_Connection* connection_object = CIP_Connection::GetConnectedObject(g_common_packet_format_data_item.address_item.data.connection_identifier);
+            CIP_Connection* connection_object = CIP_Connection::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
             if (NULL != connection_object)
             {
                 // reset the watchdog timer
                 connection_object->inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000) << (2 + connection_object->connection_timeout_multiplier);
 
                 //TODO check connection id  and sequence count
-                if (g_common_packet_format_data_item.data_item.type_id == kCipItemIdConnectedDataItem)
+                if (common_packet_data.data_item.type_id == kCipItemIdConnectedDataItem)
                 {
                     // connected data item received
-                    CipUsint* pnBuf = g_common_packet_format_data_item.data_item.data;
-                    g_common_packet_format_data_item.address_item.data.sequence_number = (CipUdint)UTIL_Endianconv::GetIntFromMessage(&pnBuf);
-                    return_value = CIP_MessageRouter::NotifyMR(pnBuf, g_common_packet_format_data_item.data_item.length - 2);
+                    CipUsint* pnBuf = common_packet_data.data_item.data;
+                    common_packet_data.address_item.data.sequence_number = (CipUdint)UTIL_Endianconv::GetIntFromMessage(&pnBuf);
+                    return_value = CIP_MessageRouter::NotifyMR(pnBuf, common_packet_data.data_item.length - 2);
 
                     if (return_value != kCipStatusError)
                     {
-                        g_common_packet_format_data_item.address_item.data.connection_identifier = connection_object->produced_connection_id;
-                        return_value = AssembleLinearMessage(&g_message_router_response, &g_common_packet_format_data_item,reply_buffer);
+                        common_packet_data.address_item.data.connection_identifier = connection_object->produced_connection_id;
+                        return_value = AssembleLinearMessage(&g_message_router_response, &common_packet_data,reply_buffer);
                     }
                 }
                 else
@@ -454,7 +453,7 @@ int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_ro
             {
                 //Connected Item
                 message_size = EncodeConnectedDataItemLength(message_router_response, &message, message_size);
-                message_size = EncodeSequenceNumber(message_size, &g_common_packet_format_data_item, &message);
+                message_size = EncodeSequenceNumber(message_size, &common_packet_data, &message);
 
             }
             else
