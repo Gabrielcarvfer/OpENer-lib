@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 #include <string.h>
+#include <winsock2.h>
 
 #include "CIP_IOConnection.h"
 #include "CIP_MessageRouter.h"
@@ -13,7 +14,7 @@
 #include "CIP_Common.h"
 #include "CIP_Connection.h"
 #include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
-#include "endianconv.h"
+#include "UTIL_Endianconv.h"
 #include "src/cip/network_stack/NET_NetworkHandler.h"
 #include "trace.h"
 
@@ -244,16 +245,15 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
     //addr.in_port = htons(nUDPPort++);
     addr.sin_port = htons(kOpenerEipIoUdpPort);
 
-    socket = CreateUdpSocket(kUdpCommuncationDirectionConsuming, &addr); // the address is only needed for bind used if consuming
-    if (socket == kEipInvalidSocket)
+    // the address is only needed for bind used if consuming
+    cipConn->netConn->SetSocketHandle (NET_NetworkHandler::CreateUdpSocket(kUdpCommuncationDirectionConsuming, (struct sockaddr*)&addr));
+    if (cipConn->netConn->GetSocketHandle () == kEipInvalidSocket)
     {
         OPENER_TRACE_ERR("cannot create UDP socket in OpenPointToPointConnection\n");
         return kCipStatusError;
     }
 
-    cipConn->originator_address = addr; // store the address of the originator for packet scanning
-    addr.sin_addr.s_addr = INADDR_ANY; // restore the address
-    cipConn->netConn->SetSocketHandle (socket);
+    cipConn->netConn->originator_address = (struct sockaddr *)&addr; // store the address of the originator for packet scanning
 
     cpf_data->address_info_item[j].length = 16;
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget;
@@ -284,11 +284,12 @@ CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket
         }
     }
 
-    cipConn->remote_address.sin_family = AF_INET;
-    cipConn->remote_address.sin_addr.s_addr = 0; /* we don't know the address of the originate will be set in the IApp_CreateUDPSocket */
-    cipConn->remote_address.sin_port = port;
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->sin_family = AF_INET;
+    // we don't know the address of the originate will be set in the IApp_CreateUDPSocket
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->sin_addr.s_addr = 0;
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->sin_port = port;
 
-    socket = CreateUdpSocket(kUdpCommuncationDirectionProducing, &cipConn->netConn->remote_address); /* the address is only needed for bind used if consuming */
+    socket = NET_NetworkHandler::CreateUdpSocket (kUdpCommuncationDirectionProducing, (struct sockaddr*)&cipConn->netConn->remote_address); /* the address is only needed for bind used if consuming */
 
     if (socket == kEipInvalidSocket)
     {
@@ -348,9 +349,9 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
 
     cpf_data->address_info_item[j].length = 16;
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
-    cipConn->netConn->remote_address.sin_family = AF_INET;
-    cipConn->netConn->remote_address.sin_port = cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
-    cipConn->netConn->remote_address.sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = g_multicast_configuration.starting_multicast_address;
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->.sin_family = AF_INET;
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->.sin_port = cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
+    ((struct sockaddr_in*)(cipConn->netConn->remote_address))->.sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = g_multicast_configuration.starting_multicast_address;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
     cpf_data->address_info_item[j].sin_family = htons(AF_INET);
 
@@ -407,29 +408,29 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
     }
 
     /* allocate an unused sockaddr struct to use */
-    struct sockaddr_in socket_address;
-    socket_address.sin_family = ntohs(cpf_data->address_info_item[j].sin_family);
-    socket_address.sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr;
-    socket_address.sin_port = cpf_data->address_info_item[j].sin_port;
+    struct sockaddr_in *socket_address = new struct sockaddr_in();
+    socket_address->sin_family = ntohs(cpf_data->address_info_item[j].sin_family);
+    socket_address->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr;
+    socket_address->sin_port = cpf_data->address_info_item[j].sin_port;
 
     // the address is only needed for bind used if consuming
-    socket = CreateUdpSocket(direction, &socket_address);
-    if (socket == kEipInvalidSocket)
+    cipConn->netConn->SetSocketHandle ( NET_NetworkHandler::CreateUdpSocket (direction, (struct sockaddr*)socket_address));
+
+    if (cipConn->netConn->GetSocketHandle () == kEipInvalidSocket)
     {
         OPENER_TRACE_ERR("cannot create UDP socket in OpenMulticastConnection\n");
         return kCipStatusError;
     }
-    cipConn->socket[direction] = socket;
 
     if (direction == kUdpCommuncationDirectionConsuming)
     {
         cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget;
-        cipConn->originator_address = socket_address;
+        cipConn->netConn->originator_address = (struct sockaddr*)socket_address;
     }
     else
     {
         cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
-        cipConn->remote_address = socket_address;
+        cipConn->netConn->remote_address = (struct sockaddr*)socket_address;
     }
 
     return kCipStatusOk;
@@ -527,7 +528,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
                     next_non_control_master_connection = GetNextNonControlMasterConnection(cipConn->connection_path.connection_point[1]);
                     if (NULL != next_non_control_master_connection)
                     {
-                        next_non_control_master_connection->conn->SetSocketHandle (cipConn->netConn->GetSocketHandle ());
+                        next_non_control_master_connection->netConn->SetSocketHandle (cipConn->netConn->GetSocketHandle ());
                         cipConn->netConn->SetSocketHandle (kEipInvalidSocket);
                         next_non_control_master_connection->transmission_trigger_timer = cipConn->transmission_trigger_timer;
                     }
@@ -547,7 +548,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
     cipConn->CloseConnection(cipConn);
 }
 
-CipStatus CIP_IOConnection::SendConnectedData(CIP_Connection* cipConn)
+CipStatus CIP_IOConnection::SendConnectedData()
 {
     CIP_CommonPacket::PacketFormat* cpf_data;
     CipUint reply_length;
@@ -604,33 +605,32 @@ CipStatus CIP_IOConnection::SendConnectedData(CIP_Connection* cipConn)
     if ((cipConn->transport_type_class_trigger & 0x0F) == 1)
     {
         cpf_data->data_item.length += 2;
-        AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
-        AddIntToMessage(cipConn->sequence_count_producing, &message_data_reply_buffer);
+        UTIL_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
+        UTIL_Endianconv::AddIntToMessage(cipConn->sequence_count_producing, &message_data_reply_buffer);
     }
     else
     {
-        AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
+        UTIL_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
     }
 
     if (kOpenerProducedDataHasRunIdleHeader)
     {
-        AddDintToMessage(g_run_idle_state, &(message_data_reply_buffer));
+        UTIL_Endianconv::AddDintToMessage(g_run_idle_state, &(message_data_reply_buffer));
     }
 
     memcpy(message_data_reply_buffer, producing_instance_attributes->data, producing_instance_attributes->length);
 
     reply_length += cpf_data->data_item.length;
-
-    return SendUdpData(&cipConn->remote_address, cipConn->sock, &g_message_data_reply_buffer[0], reply_length);
+    return NET_NetworkHandler::SendUdpData(&cipConn->netConn->remote_address, cipConn->netConn->sock, &g_message_data_reply_buffer[0], reply_length);
 }
 
-CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CIP_Connection* cipConn, CipUsint* data, CipUint data_length)
+CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUint data_length)
 {
 
     /* check class 1 sequence number*/
     if ((cipConn->transport_type_class_trigger & 0x0F) == 1)
     {
-        CipUint sequence_buffer = GetIntFromMessage(&(data));
+        CipUint sequence_buffer = UTIL_Endianconv::GetIntFromMessage(&(data));
         if (SEQ_LEQ16(sequence_buffer, cipConn->sequence_count_consuming))
         {
             return kCipStatusOk; // no new data for the assembly
@@ -643,7 +643,7 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CIP_Connection* cipCo
         // we have no heartbeat connection
         if (kOpenerConsumedDataHasRunIdleHeader)
         {
-            CipUdint nRunIdleBuf = GetDintFromMessage(&(data));
+            CipUdint nRunIdleBuf = UTIL_Endianconv::GetDintFromMessage(&(data));
             if (g_run_idle_state != nRunIdleBuf)
             {
                 RunIdleChanged(nRunIdleBuf);
@@ -660,7 +660,7 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CIP_Connection* cipCo
     return kCipStatusOk;
 }
 
-CipStatus CIP_IOConnection::OpenCommunicationChannels(CIP_Connection* cipConn)
+CipStatus CIP_IOConnection::OpenCommunicationChannels()
 {
 
     CipStatus eip_status = kCipStatusOk;
@@ -674,14 +674,14 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels(CIP_Connection* cipConn)
     // open a connection "point to point" or "multicast" based on the ConnectionParameter
     if (originator_to_target_connection_type == 1) //TODO: Fix magic number; Multicast consuming
     {
-        if (OpenMulticastConnection(kUdpCommuncationDirectionConsuming, cipConn, cpf_data) == kCipStatusError)
+        if (OpenMulticastConnection(kUdpCommuncationDirectionConsuming, cpf_data) == kCipStatusError)
         {
             OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
             return (CipStatus) kCipErrorConnectionFailure;
         }
     } else if (originator_to_target_connection_type == 2) // TODO: Fix magic number; Point to Point consuming
     {
-        if (OpenConsumingPointToPointConnection(cipConn, cpf_data) == kCipStatusError)
+        if (OpenConsumingPointToPointConnection(cpf_data) == kCipStatusError)
         {
             OPENER_TRACE_ERR("error in PointToPoint consuming connection\n");
             return (CipStatus) kCipErrorConnectionFailure;
@@ -690,7 +690,7 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels(CIP_Connection* cipConn)
 
     if (target_to_originator_connection_type == 1) // TODO: Fix magic number; Multicast producing
     {
-        if (OpenProducingMulticastConnection(cipConn, cpf_data) == kCipStatusError)
+        if (OpenProducingMulticastConnection(cpf_data) == kCipStatusError)
         {
             OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
             return (CipStatus) kCipErrorConnectionFailure;
@@ -699,7 +699,7 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels(CIP_Connection* cipConn)
     else if (target_to_originator_connection_type == 2) // TODO: Fix magic number; Point to Point producing
     {
 
-        if (OpenProducingPointToPointConnection(cipConn, cpf_data) != kCipStatusOk)
+        if (OpenProducingPointToPointConnection(cpf_data) != kCipStatusOk)
         {
             OPENER_TRACE_ERR("error in PointToPoint producing connection\n");
             return (CipStatus) kCipErrorConnectionFailure;

@@ -22,21 +22,21 @@ TEST_GROUP(EndianConversion){
 
 };
 
-TEST(EndianConversion, GetIntFromMessage)
+TEST(EndianConversion, UTIL_Endianconv::GetIntFromMessage)
 {
     CipOctet test_message[] = { 8, 60 };
     CipOctet* message = test_message;
-    CipUint returned_value = GetIntFromMessage(&message);
+    CipUint returned_value = UTIL_Endianconv::GetIntFromMessage(&message);
 
     LONGS_EQUAL(15368, returned_value);
     POINTERS_EQUAL(test_message + 2, message);
 }
 
-TEST(EndianConversion, GetDintFromMessage)
+TEST(EndianConversion, UTIL_Endianconv::GetDintFromMessage)
 {
     CipOctet test_message[] = { 28, 53, 41, 37 };
     CipOctet* message = test_message;
-    CipUdint returned_value = GetDintFromMessage(&message);
+    CipUdint returned_value = UTIL_Endianconv::GetDintFromMessage(&message);
 
     LONGS_EQUAL(623457564, returned_value);
     POINTERS_EQUAL(test_message + 4, message);

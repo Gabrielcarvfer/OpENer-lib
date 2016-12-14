@@ -45,8 +45,6 @@ class NET_Connection
 
         //Instance stuff
         enum { kOriginatorAddress, kRemoteAddress} AddressOptions;
-        enum { kAF_INET, } SupportedSocketFamilies;
-        enum { kINADDR_ANY, } SupportedSocketAddresses;
         NET_Connection();
         NET_Connection(struct sockaddr *originator_address, struct sockaddr *remote_address);
         ~NET_Connection ();
@@ -66,24 +64,33 @@ class NET_Connection
         int SendDataTo(void * data_ptr, CipUdint size, struct sockaddr * destination);
         int RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr * source);
 
+    static std::map <int, NET_Connection*> socket_to_conn_map;
+
+    // socket address for produce
+    struct sockaddr *remote_address;
+
+    // the address of the originator that established the connection. needed for
+    // scanning if the right packet is arriving
+    struct sockaddr *originator_address;
+
+    // socket handles, indexed by kConsuming or kProducing
+    int sock;
+
+
+    // endianness conversion
+    static uint32_t endian_htonl(uint32_t hostlong);
+    static uint16_t endian_htons(uint16_t hostshort);
+    static uint32_t endian_ntohl(uint32_t netlong);
+    static uint16_t endian_ntohs(uint16_t netshort);
 
     private:
 #ifdef OPENER_NET_CONNECTION_H_PRIVATE
         static fd_set select_set[2]; //0-master_socket 1-read_socket
 #endif
-        static std::map <int, NET_Connection*> socket_to_conn_map;
 
-        // socket address for produce
-        struct sockaddr *remote_address;
-
-        // the address of the originator that established the connection. needed for
-        // scanning if the right packet is arriving
-        struct sockaddr *originator_address;
-
-        // socket handles, indexed by kConsuming or kProducing
-        int sock;
         CipUdint type;
         CipUdint reuse;
+        CipUdint direction;
         CipUdint val;
 
         //private functions

@@ -413,7 +413,7 @@ void DetermineDelayTime(CipByte* buffer_start,  DelayedEncapsulationMessage* del
 {
 
     buffer_start += 12; /* start of the sender context */
-    CipUint maximum_delay_time = GetIntFromMessage(&buffer_start);
+    CipUint maximum_delay_time = UTIL_Endianconv::GetIntFromMessage(&buffer_start);
 
     if (0 == maximum_delay_time)
     {
@@ -438,9 +438,9 @@ void HandleReceivedRegisterSessionCommand(int socket,
 {
     int session_index = 0;
     CipUsint* receive_data_buffer;
-    CipUint protocol_version = GetIntFromMessage(
+    CipUint protocol_version = UTIL_Endianconv::GetIntFromMessage(
         &receive_data->current_communication_buffer_position);
-    CipUint nOptionFlag = GetIntFromMessage(
+    CipUint nOptionFlag = UTIL_Endianconv::GetIntFromMessage(
         &receive_data->current_communication_buffer_position);
 
     /* check if requested protocol version is supported and the register session option flag is zero*/
@@ -515,8 +515,8 @@ CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
     if (receive_data->data_length >= 6) {
         /* Command specific data UDINT .. Interface Handle, UINT .. Timeout, CPF packets */
         /* don't use the data yet */
-        GetDintFromMessage(&receive_data->current_communication_buffer_position); /* skip over null interface handle*/
-        GetIntFromMessage(&receive_data->current_communication_buffer_position); /* skip over unused timeout value*/
+        UTIL_Endianconv::GetDintFromMessage(&receive_data->current_communication_buffer_position); /* skip over null interface handle*/
+        UTIL_Endianconv::GetIntFromMessage(&receive_data->current_communication_buffer_position); /* skip over unused timeout value*/
         receive_data->data_length -= 6; /* the rest is in CPF format*/
 
         if (kSessionStatusValid == CheckRegisteredSessions(receive_data)) /* see if the EIP session is registered*/
@@ -557,8 +557,8 @@ CipStatus HandleReceivedSendRequestResponseDataCommand(
     if (receive_data->data_length >= 6) {
         /* Command specific data UDINT .. Interface Handle, UINT .. Timeout, CPF packets */
         /* don't use the data yet */
-        GetDintFromMessage(&receive_data->current_communication_buffer_position); /* skip over null interface handle*/
-        GetIntFromMessage(&receive_data->current_communication_buffer_position); /* skip over unused timeout value*/
+        UTIL_Endianconv::GetDintFromMessage(&receive_data->current_communication_buffer_position); /* skip over null interface handle*/
+        UTIL_Endianconv::GetIntFromMessage(&receive_data->current_communication_buffer_position); /* skip over unused timeout value*/
         receive_data->data_length -= 6; /* the rest is in CPF format*/
 
         if (kSessionStatusValid == CheckRegisteredSessions(receive_data)) /* see if the EIP session is registered*/
@@ -615,13 +615,13 @@ int GetFreeSessionIndex(void)
 CipInt CreateEncapsulationStructure(CipUsint* receive_buffer, int receive_buffer_length, EncapsulationData* encapsulation_data)
 {
     encapsulation_data->communication_buffer_start = receive_buffer;
-    encapsulation_data->command_code = GetIntFromMessage(&receive_buffer);
-    encapsulation_data->data_length = GetIntFromMessage(&receive_buffer);
-    encapsulation_data->session_handle = GetDintFromMessage(&receive_buffer);
-    encapsulation_data->status = GetDintFromMessage(&receive_buffer);
+    encapsulation_data->command_code = UTIL_Endianconv::GetIntFromMessage(&receive_buffer);
+    encapsulation_data->data_length = UTIL_Endianconv::GetIntFromMessage(&receive_buffer);
+    encapsulation_data->session_handle = UTIL_Endianconv::GetDintFromMessage(&receive_buffer);
+    encapsulation_data->status = UTIL_Endianconv::GetDintFromMessage(&receive_buffer);
 
     receive_buffer += kSenderContextSize;
-    encapsulation_data->options = GetDintFromMessage(&receive_buffer);
+    encapsulation_data->options = UTIL_Endianconv::GetDintFromMessage(&receive_buffer);
     encapsulation_data->current_communication_buffer_position = receive_buffer;
     return (receive_buffer_length - ENCAPSULATION_HEADER_LENGTH - encapsulation_data->data_length);
 }

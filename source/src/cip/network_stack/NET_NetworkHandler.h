@@ -24,8 +24,8 @@
 
 class NET_NetworkHandler
 {
-    private:
 
+public:
         static CipUsint g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE]; /**< communication buffer */
 
         static int highest_socket_handle; /**< temporary file descriptor for select() */
@@ -80,7 +80,7 @@ class NET_NetworkHandler
 
 
     //   static NetworkStatus g_network_status; /**< Global variable holding the current network status */
-public:
+
     /** @brief The platform independent part of network handler initialization routine
      *
      *  @return Returns the OpENer status after the initialization routine

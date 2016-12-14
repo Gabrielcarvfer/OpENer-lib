@@ -169,3 +169,23 @@ int NET_Connection::RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr
     int size_sock = sizeof(sockaddr*);
     return recvfrom(sock, (char*)data_ptr, size, 0, source, &size_sock);
 }
+
+uint32_t NET_Connection::endian_htonl(uint32_t hostlong)
+{
+    return htonl(hostlong);
+}
+
+uint16_t NET_Connection::endian_htons(uint16_t hostshort)
+{
+    return htons(hostshort);
+}
+
+uint32_t NET_Connection::endian_ntohl(uint32_t netlong)
+{
+    return ntohl(netlong);
+}
+
+uint16_t NET_Connection::endian_ntohs(uint16_t netshort)
+{
+    return ntohs(netshort);
+}

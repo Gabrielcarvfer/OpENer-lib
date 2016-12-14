@@ -7,7 +7,7 @@
 #include "CIP_MessageRouter.h"
 #include "src/cip/connection_stack/CIP_Common.h"
 #include "ciperror.h"
-#include "endianconv.h"
+#include "UTIL_Endianconv.h"
 #include "Opener_Interface.h"
 #include "trace.h"
 
