@@ -205,7 +205,7 @@ public:
    static void AddNewActiveConnection(CIP_Connection* connection_object);
 
     /* TODO: Missing documentation */
-    static void RemoveFromActiveConnections(CIP_Connection* connection_object);
+    void RemoveFromActiveConnections();
 
 
     static std::map<CipUdint, CIP_Connection *> active_connections_set;

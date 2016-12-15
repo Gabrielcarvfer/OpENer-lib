@@ -106,7 +106,7 @@ CipStatus CIP_Connection::ConnectionManagerInit (CipUint unique_connection_id)
 CipStatus CIP_Connection::HandleReceivedConnectedData (CipUsint *data, int data_length, struct sockaddr_in *from_address)
 {
 
-    if ((CreateCommonPacketFormatStructure (data, data_length, &CIP_CommonPacket::common_packet_data)) == kCipStatusError)
+    if ((CIP_CommonPacket::CreateCommonPacketFormatStructure (data, data_length, &CIP_CommonPacket::common_packet_data)) == kCipStatusError)
     {
         return kCipStatusError;
     }
@@ -380,7 +380,7 @@ CipStatus CIP_Connection::ManageConnections (MilliSeconds elapsed_time)
                     // we have a timed out connection perform watchdog time out action
                     OPENER_TRACE_INFO(">>>>>>>>>>Connection timed out\n");
                     //OPENER_ASSERT(NULL != connection_object->connection_timeout_function);
-                    CIP_Connection::RemoveFromActiveConnections (connection_object);
+                    connection_object->RemoveFromActiveConnections ();
                 }
             }
             // only if the connection has not timed out check if data is to be send
@@ -834,7 +834,7 @@ CipUsint CIP_Connection::ParseConnectionPath (CipMessageRouterRequest *message_r
             // store the configuration ID for later checking in the application connection types
             connection_path.connection_point[2] = GetPaddedLogicalPath (&message);
             OPENER_TRACE_INFO("Configuration instance id %"PRId32"\n", connection_path.connection_point[2]);
-            if (NULL == connection_path.connection_point[2])
+            //todo: fix this -> if (NULL == connection_path.connection_point[2])
             {
                 // according to the test tool we should respond with this extended error code
                 *extended_error = kConnectionManagerStatusCodeErrorInvalidSegmentTypeInPath;
@@ -1000,10 +1000,10 @@ void CIP_Connection::AddNewActiveConnection (CIP_Connection *pa_pstConn)
     pa_pstConn->state = kConnectionStateEstablished;
 }
 
-void CIP_Connection::RemoveFromActiveConnections (CIP_Connection *pa_pstConn)
+void CIP_Connection::RemoveFromActiveConnections ()
 {
-    pa_pstConn->state = kConnectionStateNonExistent;
-    auto it = active_connections_set.find (pa_pstConn);
+    state = kConnectionStateNonExistent;
+    auto it = active_connections_set.find (this);
     active_connections_set.erase (it);
 }
 

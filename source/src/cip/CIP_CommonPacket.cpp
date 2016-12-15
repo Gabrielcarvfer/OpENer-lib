@@ -502,7 +502,6 @@ int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_ro
     }
     return message_size;
 }
-
 int CIP_CommonPacket::AssembleIOMessage(PacketFormat* common_packet_format_data_item, CipUsint* message)
 {
     return AssembleLinearMessage(0, common_packet_format_data_item, (CipUsint*)CIP_Common::message_data_reply_buffer[0]);

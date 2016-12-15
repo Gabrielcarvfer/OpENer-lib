@@ -309,10 +309,10 @@ CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket
 
 CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
-    CIP_Connection* existing_this = GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
+    CIP_Connection* existing_connection_object = GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
     int j;
 
-    if (NULL == existing_this)
+    if (NULL == existing_connection_object)
     {
         // we are the first connection producing for the given Input Assembly
         return OpenMulticastConnection(kUdpCommuncationDirectionProducing, cpf_data);
@@ -320,7 +320,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     else
     {
         // we need to inform our originator on the correct connection id
-        produced_connection_id = existing_produced_connection_id;
+        produced_connection_id = existing_connection_object->produced_connection_id;
     }
 
     // we have a connection reuse the data and the socket
@@ -328,12 +328,12 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     // allocate an unused sockaddr struct to use
     j = 0;
 
-    if (CIP_CommonPacket::PacketFormat.address_info_item[0].type_id == 0)
+    if (CIP_CommonPacket::common_packet_data.address_info_item[0].type_id == 0)
     {
         // it is not used yet
         j = 0;
     }
-    else if (CIP_CommonPacket::PacketFormat.address_info_item[1].type_id == 0)
+    else if (CIP_CommonPacket::common_packet_data.address_info_item[1].type_id == 0)
     {
         j = 1;
     }
@@ -343,8 +343,8 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
         //exclusive owners take the socket and further manage the connection
         //especially in the case of time outs.
 
-        netConn->SetSocketHandle (existing_netConn->GetSocketHandle ());
-        existing_netConn->SetSocketHandle (kEipInvalidSocket);
+        netConn->SetSocketHandle (existing_connection_object->netConn->GetSocketHandle ());
+        existing_connection_object->netConn->SetSocketHandle (kEipInvalidSocket);
     }
     else
     {
@@ -377,7 +377,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
     int j = 0;
     int socket;
 
-    if (0 != CIP_CommonPacket::PacketFormat.address_info_item[0].type_id) {
+    if (0 != CIP_CommonPacket::common_packet_data.address_info_item[0].type_id) {
         if ((kUdpCommuncationDirectionConsuming == direction) && (CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget == cpf_data->address_info_item[0].type_id))
         {
             // for consuming connection points the originator can choose the multicast address to use
@@ -387,7 +387,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
         {
             j = 1;
             /* if the type is not zero (not used) or if a given type it has to be the correct one */
-            if ((0 != CIP_CommonPacket::PacketFormat.address_info_item[1].type_id) && (!((kUdpCommuncationDirectionConsuming == direction)
+            if ((0 != CIP_CommonPacket::common_packet_data.address_info_item[1].type_id) && (!((kUdpCommuncationDirectionConsuming == direction)
                        && (CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget == cpf_data->address_info_item[0].type_id))))
             {
                 OPENER_TRACE_ERR("no suitable addr info item available\n");
@@ -470,11 +470,13 @@ CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
         {
             // put the data on the configuration assembly object with the current
             // design this can be done rather efficiently
+            /*todo:
             if (kCipStatusOk != NotifyAssemblyConnectedDataReceived(config_instance, g_config_data_buffer, g_config_data_length))
             {
                 OPENER_TRACE_WARN("Configuration data was invalid\n");
                 connection_manager_status = CIP_Connection::kConnectionManagerStatusCodeInvalidConfigurationApplicationPath;
             }
+             */
         }
     }
     return connection_manager_status;
@@ -483,18 +485,18 @@ CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
 void CIP_IOConnection::CloseIoConnection()
 {
 
-    CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventClosed);
+    //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventClosed);
 
     if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == instance_type) || (CIP_Connection::kConnectionTypeIoInputOnly == instance_type))
     {
-        if ((CIP_Connection::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != sock))
+        if ((CIP_Connection::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
         {
             CIP_Connection* next_non_control_master_connection = GetNextNonControlMasterConnection(connection_path.connection_point[1]);
             if (NULL != next_non_control_master_connection)
             {
                 next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
 
-                memcpy(&(next_non_control_master_connection->netConn->remote_address), &(netConn->remote_address), sizeof(next_non_control_master_connection->remote_address));
+                memcpy(&(next_non_control_master_connection->netConn->remote_address), &(netConn->remote_address), sizeof(next_non_control_master_connection->netConn->remote_address));
 
                 next_non_control_master_connection->eip_level_sequence_count_producing = eip_level_sequence_count_producing;
 
@@ -516,7 +518,7 @@ void CIP_IOConnection::CloseIoConnection()
 void CIP_IOConnection::HandleIoConnectionTimeOut()
 {
     CIP_Connection* next_non_control_master_connection;
-    CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventTimedOut);
+    //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventTimedOut);
 
     if (CIP_Connection::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection))
     {
@@ -583,23 +585,26 @@ CipStatus CIP_IOConnection::SendConnectedData()
 
     cpf_data->data_item.type_id = CIP_CommonPacket::kCipItemIdConnectedDataItem;
 
-    CipByteArray* producing_instance_attributes = (CipByteArray*)producing_instance->attributes->data;
+    CipByteArray* producing_instance_attributes = (CipByteArray*)producing_instance->attributes[0]->getData();
     cpf_data->data_item.length = 0;
 
+    //todo: verify data before sending
     // notify the application that data will be sent immediately after the call
+    /*
     if (BeforeAssemblyDataSend(producing_instance))
     {
         // the data has changed increase sequence counter
         sequence_count_producing++;
     }
+     */
 
     // set AddressInfo Items to invalid Type
     cpf_data->address_info_item[0].type_id = 0;
     cpf_data->address_info_item[1].type_id = 0;
 
-    reply_length = AssembleIOMessage(cpf_data, &g_message_data_reply_buffer[0]);
+    reply_length = CIP_CommonPacket::AssembleIOMessage(cpf_data, (CipUsint*)CIP_Common::message_data_reply_buffer[0]);
 
-    message_data_reply_buffer = &g_message_data_reply_buffer[reply_length - 2];
+    message_data_reply_buffer = (CipUsint*)CIP_Common::message_data_reply_buffer[reply_length - 2];
     cpf_data->data_item.length = producing_instance_attributes->length;
 
     if (kOpenerProducedDataHasRunIdleHeader)
@@ -626,7 +631,7 @@ CipStatus CIP_IOConnection::SendConnectedData()
     memcpy(message_data_reply_buffer, producing_instance_attributes->data, producing_instance_attributes->length);
 
     reply_length += cpf_data->data_item.length;
-    return NET_NetworkHandler::SendUdpData(&netConn->remote_address, netConn->sock, &g_message_data_reply_buffer[0], reply_length);
+    return NET_NetworkHandler::SendUdpData(netConn->remote_address, netConn->sock, (CipUsint*)CIP_Common::message_data_reply_buffer[0], reply_length);
 }
 
 CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUint data_length)
@@ -649,18 +654,23 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUi
         if (kOpenerConsumedDataHasRunIdleHeader)
         {
             CipUdint nRunIdleBuf = UTIL_Endianconv::GetDintFromMessage(&(data));
+            //todo: update idle state
+            /*
             if (g_run_idle_state != nRunIdleBuf)
             {
                 RunIdleChanged(nRunIdleBuf);
             }
+            */
             g_run_idle_state = nRunIdleBuf;
             data_length -= 4;
         }
 
+        /*todo:
         if (NotifyAssemblyConnectedDataReceived(consuming_instance, data, data_length) != 0)
         {
             return kCipStatusError;
         }
+         */
     }
     return kCipStatusOk;
 }
@@ -717,6 +727,5 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels()
 void CIP_IOConnection::CloseCommunicationChannelAndRemoveFromActiveConnectionsList()
 {
     netConn->CloseSocket ();
-
-    CIP_Connection::RemoveFromActiveConnections(this);
+    RemoveFromActiveConnections();
 }
