@@ -1,15 +1,15 @@
 //Connection ID in Slaves identify their purpose
+//
+//	Predefined IDs are:
+//
+//	ConnID #   |  Utility
+//	1          |  references Explicit message conn into server
+//	2          |  references Poll I/O conn
+//	3          |  references bit-strobe I/O conn
+//	4          |  references the Slave changeOfState or Cyclic conn
+//	5          |  references multicast poll I/O
+//
 /*
-	Predefined IDs are:
-
-	ConnID #   |  Utility
-	1          |  references Explicit message conn into server
-	2          |  references Poll I/O conn
-	3          |  references bit-strobe I/O conn
-	4          |  references the Slave changeOfState or Cyclic conn
-	5          |  references multicast poll I/O
-*/
-
 typedef struct {
     kCipUsint mac_id;
     kCipUsint baud_rate;
@@ -22,7 +22,7 @@ typedef struct {
     kCipBool quick_connect;
 } CipDevicenetSlaveObject;
 
-/* global private variables */
+// global private variables
 CipDevicenetSlaveObject g_devicenet_slave;
 
 CipStatus CipDevicenetSlaveInit()
@@ -30,7 +30,7 @@ CipStatus CipDevicenetSlaveInit()
     CIPClass* devicenet_slave_class = 0;
     CIPClass* devicenet_slave_instance;
 
-    /* set attributes to initial values */
+    // set attributes to initial values
     g_devicenet_slave.baud_rate = 0;
     g_devicenet_slave.BOI = false;
     g_devicenet_slave.BOC = 0;
@@ -38,16 +38,16 @@ CipStatus CipDevicenetSlaveInit()
     g_devicenet_slave.baud_rate_switch = false;
     g_devicenet_slave.baud_rate_switch_val = 0;
     g_devicenet_slave.quick_connect = false;
-    g_devicenet_slave.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
+    g_devicenet_slave.interface_flags = 0xF; // successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active
 
     if ((devicenet_slave_class = CreateCIPClass(CIP_DEVICENETSLAVE_CLASS_CODE,
-             1, /* # class attributes*/
-             0xffffffff, /* class getAttributeAll mask*/
-             1, /* # class services*/
-             9, /* # instance attributes*/
-             0xffffffff, /* instance getAttributeAll mask*/
-             0, /* # instance services*/
-             1, /* # instances*/
+             1, // # class attributes
+             0xffffffff, /* class getAttributeAll mask
+             1, // # class services
+             9, // # instance attributes
+             0xffffffff, /* instance getAttributeAll mask
+             0, // # instance services
+             1, // # instances
              "Devicenet Slave Object", 1))
         != 0) {
 
@@ -66,7 +66,7 @@ CipStatus CipDevicenetSlaveInit()
 
         //MAC ID (USINT)
         InsertAttribute(devicenet_link_instance, 1, kCipUsint,
-            &g_devicenet_link.mac_id, kSetAndGetAble); /* bind attributes to the instance*/
+            &g_devicenet_link.mac_id, kSetAndGetAble); // bind attributes to the instance
 
         //Baud Rate (USINT)
         InsertAttribute(devicenet_link_instance, 2, kCipUsint,
@@ -145,3 +145,4 @@ DnetStatus GetAttributeSingleDeviceNetInterface(
 
     return status;
 }
+*/

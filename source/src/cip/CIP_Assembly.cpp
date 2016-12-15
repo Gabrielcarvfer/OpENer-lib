@@ -9,8 +9,8 @@
 #include <malloc.h>
 
 #include "CIP_Assembly.h"
-#include "src/cip/connection_stack/CIP_Connection.h"
-#include "trace.h"
+#include "connection_stack/CIP_Connection.h"
+#include "../trace.h"
 
 CIP_Assembly::CIP_Assembly()
 {

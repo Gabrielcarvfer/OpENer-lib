@@ -6,20 +6,11 @@
 
 #include "CIP_Connection.h"
 #include <cstring>
-#include "src/cip/network_stack/ethernetip_net/eip_encap.h"
-#include "appcontype.h"
-#include "CIP_Assembly.h"
 #include "CIP_Class3Connection.h"
-#include "CIP_Common.h"
-#include "ciperror.h"
-#include "CIP_Identity.h"
+#include "../CIP_Identity.h"
 #include "CIP_IOConnection.h"
-#include "CIP_MessageRouter.h"
-#include "UTIL_Endianconv.h"
-#include "src/cip/network_stack/NET_NetworkHandler.h"
-#include "Opener_Interface.h"
-#include "opener_user_conf.h"
-#include "trace.h"
+#include "../../utils/UTIL_Endianconv.h"
+#include "../../trace.h"
 
 #ifdef WIN32
 #include "winsock.h"
@@ -987,7 +978,7 @@ void CIP_Connection::CloseConnection ()
         //netConn->SetSocketHandle(kEipInvalidSocket);
         netConn->CloseSocket ();
     }
-    RemoveFromActiveConnections (this);
+    RemoveFromActiveConnections ();
 }
 
 void CIP_Connection::CopyConnectionData (CIP_Connection *pa_pstDst, CIP_Connection *pa_pstSrc)
@@ -1003,8 +994,7 @@ void CIP_Connection::AddNewActiveConnection (CIP_Connection *pa_pstConn)
 void CIP_Connection::RemoveFromActiveConnections ()
 {
     state = kConnectionStateNonExistent;
-    auto it = active_connections_set.find (this);
-    active_connections_set.erase (it);
+    active_connections_set.erase (id);
 }
 
 CipBool CIP_Connection::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)

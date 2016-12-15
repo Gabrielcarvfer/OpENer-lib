@@ -6,8 +6,8 @@
 #ifndef OPENER_CIPETHERNETLINK_H_
 #define OPENER_CIPETHERNETLINK_H_
 
-#include "ciptypes.h"
-#include "typedefs.h"
+#include "../../ciptypes.h"
+#include "../../../typedefs.h"
 
 
 /* public functions */

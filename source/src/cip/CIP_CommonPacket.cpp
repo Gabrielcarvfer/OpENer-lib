@@ -4,15 +4,13 @@
  *
  ******************************************************************************/
 #include "CIP_CommonPacket.h"
-
-#include <string.h>
 #include "connection_stack/CIP_Common.h"
 #include "connection_stack/CIP_Connection.h"
-#include "src/cip/connection_stack/CIP_MessageRouter.h"
-#include "src/utils/UTIL_Endianconv.h"
-#include "src/cip/network_stack/ethernetip_net/eip_endianconv.h"
-#include "opener_user_conf.h"
-#include "trace.h"
+#include "connection_stack/CIP_MessageRouter.h"
+#include "../utils/UTIL_Endianconv.h"
+#include "network_stack/ethernetip_net/eip_endianconv.h"
+#include "../opener_user_conf.h"
+#include "../trace.h"
 
 
 
@@ -38,7 +36,7 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
                 return_value = CIP_MessageRouter::NotifyMR(common_packet_data.data_item.data, common_packet_data.data_item.length);
                 if (return_value != kCipStatusError)
                 {
-                    return_value = AssembleLinearMessage(&g_message_router_response, &common_packet_data, reply_buffer);
+                    return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
                 }
             }
             else
@@ -90,7 +88,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
                     if (return_value != kCipStatusError)
                     {
                         common_packet_data.address_item.data.connection_identifier = connection_object->produced_connection_id;
-                        return_value = AssembleLinearMessage(&g_message_router_response, &common_packet_data,reply_buffer);
+                        return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data,reply_buffer);
                     }
                 }
                 else

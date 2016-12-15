@@ -5,13 +5,13 @@
 
 #include "NET_DeviceNetLink.h"
 
-#include "src/cip/connection_stack/CIP_Common.h"
-#include "ciperror.h"
-#include "src/cip/connection_stack/CIP_MessageRouter.h"
-#include "endianconv.h"
-#include "Opener_Interface.h"
-#include "typedefs.h"
-
+#include "../../connection_stack/CIP_Common.h"
+#include "../../ciperror.h"
+#include "../../connection_stack/CIP_MessageRouter.h"
+//#include "endianconv.h"
+#include "../../../Opener_Interface.h"
+#include "../../../typedefs.h"
+/*
 typedef struct {
     CipUsint mac_id;
     CipUsint baud_rate;
@@ -24,7 +24,7 @@ typedef struct {
     CipBool quick_connect;
 } CipDevicenetLinkObject;
 
-/* global private variables */
+// global private variables
 CipDevicenetLinkObject g_devicenet_link;
 
 void ConfigureMacAddress(const CipUsint* mac_address)
@@ -48,7 +48,7 @@ CipStatus CipDevicenetLinkInit()
     CIPClass* devicenet_link_class;
     CIPClass* devicenet_link_instance;
 
-    /* set attributes to initial values */
+    // set attributes to initial values
     g_devicenet_link.baud_rate = 0;
     g_devicenet_link.BOI = false;
     g_devicenet_link.BOC = 0;
@@ -56,15 +56,15 @@ CipStatus CipDevicenetLinkInit()
     g_devicenet_link.baud_rate_switch = false;
     g_devicenet_link.baud_rate_switch_val = 0;
     g_devicenet_link.quick_connect = false;
-    g_devicenet_link.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
+    g_devicenet_link.interface_flags = 0xF; // successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active
 
-    if ((devicenet_link_class = CreateCIPClass(kCipDeviceNetLinkClassCode, 1, /* # class attributes*/
-             0xffffffff, /* class getAttributeAll mask*/
-             1, /* # class services*/
-             9, /* # instance attributes*/
-             0xffffffff, /* instance getAttributeAll mask*/
-             0, /* # instance services*/
-             1, /* # instances*/
+    if ((devicenet_link_class = CreateCIPClass(kCipDeviceNetLinkClassCode, 1, // # class attributes
+             0xffffffff, // class getAttributeAll mask
+             1, // # class services
+             9, // # instance attributes
+             0xffffffff, // instance getAttributeAll mask
+             0, // # instance services
+             1, // # instances
              "Devicenet Link", 1))
         != 0) {
 
@@ -82,16 +82,13 @@ CipStatus CipDevicenetLinkInit()
         devicenet_link_instance = GetCIPClass(devicenet_link_class, 1);
 
         //MAC ID (USINT)
-        InsertAttribute(devicenet_link_instance, 1, kCipUsint,
-            &g_devicenet_link.mac_id, kSetAndGetAble); /* bind attributes to the instance*/
+        InsertAttribute(devicenet_link_instance, 1, kCipUsint, &g_devicenet_link.mac_id, kSetAndGetAble); // bind attributes to the instance
 
         //Baud Rate (USINT)
-        InsertAttribute(devicenet_link_instance, 2, kCipUsint,
-            &g_devicenet_link.baud_rate, kSetAndGetAble);
+        InsertAttribute(devicenet_link_instance, 2, kCipUsint, &g_devicenet_link.baud_rate, kSetAndGetAble);
 
         //BOI (BOOL)
-        InsertAttribute(devicenet_link_instance, 3, kCipBool,
-            &g_devicenet_link.BOI, kSetAndGetAble);
+        InsertAttribute(devicenet_link_instance, 3, kCipBool, &g_devicenet_link.BOI, kSetAndGetAble);
 
         //Bus-Off Counter (USINT)
         InsertAttribute(devicenet_link_instance, 4, kCipUsint,
@@ -161,4 +158,4 @@ DnetStatus GetAttributeSingleDeviceNetInterface(
         message_router_response);
 
     return status;
-}
+}*/

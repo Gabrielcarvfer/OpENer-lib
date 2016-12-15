@@ -1,10 +1,9 @@
 #include "../../trace.h"
 #include "CIP_ClassInstance.h"
-#include "src/cip/connection_stack/CIP_Common.h"
-//#include "CIP_Service.h"
+#include "../connection_stack/CIP_Common.h"
 #include "CIP_Attribute.h"
+#include "../../opener_user_conf.h"
 #include <utility>
-#include <src/opener_user_conf.h>
 
 //Methods
 template <typename T>

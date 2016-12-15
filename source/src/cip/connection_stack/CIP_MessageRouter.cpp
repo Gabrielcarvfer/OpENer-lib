@@ -3,20 +3,10 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#include <src/opener_user_conf.h>
 #include "CIP_MessageRouter.h"
-#include "src/cip/connection_stack/CIP_Common.h"
-#include "ciperror.h"
-#include "UTIL_Endianconv.h"
-#include "Opener_Interface.h"
-#include "trace.h"
+#include "../connection_stack/CIP_Common.h"
+#include "../../trace.h"
 
-
-
-CipMessageRouterRequest g_message_router_request;
-CipMessageRouterResponse g_message_router_response;
-
-CipOctet g_message_data_reply_buffer[100];
 
 CipStatus CIP_MessageRouter::CipMessageRouterInit()
 {

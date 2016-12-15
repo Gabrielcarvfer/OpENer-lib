@@ -1,5 +1,5 @@
 #include "NET_CanInterface.h"
-
+/*
 #include <fcntl.h>
 #include <net/if.h>
 #include <stdio.h>
@@ -22,7 +22,7 @@ int NET_CanInterface::open_port(const char *port)
 {
     struct ifreq ifr;
     struct sockaddr_can addr;
-    /* open socket */
+    // open socket
     soc = socket(PF_CAN, SOCK_RAW, CAN_RAW);
     if(soc < 0)
     {
@@ -90,4 +90,4 @@ int NET_CanInterface::close_port()
 {
     close(soc);
     return 0;
-}
+}*/

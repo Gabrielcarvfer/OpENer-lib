@@ -7,16 +7,15 @@
 
 #include "CIP_Common.h"
 
-#include "CIP_CommonPacket.h"
-#include "appcontype.h"
-#include "CIP_Assembly.h"
-#include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
-#include "CIP_Identity.h"
+#include "../CIP_CommonPacket.h"
+#include "../appcontype.h"
+#include "../network_stack/ethernetip_net/cipethernetlink.h"
+#include "../CIP_Identity.h"
 #include "CIP_MessageRouter.h"
-#include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
-#include "UTIL_Endianconv.h"
-#include "trace.h"
-#include <src/opener_user_conf.h>
+#include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
+#include "../../utils/UTIL_Endianconv.h"
+#include "../../trace.h"
+#include "../../opener_user_conf.h"
 
 void CIP_Common::CipStackInit (CipUint unique_connection_id)
 {
@@ -299,7 +298,7 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipInt):
         case (kCipUint):
         case (kCipWord):
-            (*(CipUint *) (data)) = UTIL_Endianconv::UTIL_Endianconv::GetIntFromMessage (message);
+            (*(CipUint *) (data)) = UTIL_Endianconv::GetIntFromMessage (message);
             number_of_decoded_bytes = 2;
             break;
 
@@ -322,7 +321,7 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipString):
         {
             CipString *string = (CipString *) data;
-            string->length = UTIL_Endianconv::UTIL_Endianconv::GetIntFromMessage (message);
+            string->length = UTIL_Endianconv::GetIntFromMessage (message);
             memcpy (string->string, *message, string->length);
             *message += string->length;
 
@@ -456,7 +455,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeClassId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->class_id = UTIL_Endianconv::UTIL_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->class_id = UTIL_Endianconv::GetIntFromMessage (&(message_runner));
                 number_of_decoded_elements++;
                 break;
 
@@ -469,7 +468,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeInstanceId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->instance_number = UTIL_Endianconv::UTIL_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->instance_number = UTIL_Endianconv::GetIntFromMessage (&(message_runner));
                 number_of_decoded_elements++;
                 break;
 
@@ -482,7 +481,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeAttributeId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->attribute_number = UTIL_Endianconv::UTIL_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->attribute_number = UTIL_Endianconv::GetIntFromMessage (&(message_runner));
                 number_of_decoded_elements++;
                 break;
 

@@ -7,7 +7,7 @@
 #define OPENER_CIPIDENTITY_H_
 
 #include "ciptypes.h"
-#include "typedefs.h"
+#include "../typedefs.h"
 #include "class_stack/CIP_ClassInstance.h"
 #include "class_stack/CIP_Template.h"
 

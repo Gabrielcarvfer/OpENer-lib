@@ -41,7 +41,7 @@
 #define OPENER_CIPIOCONNECTION_H_
 
 
-#include <src/cip/CIP_Assembly.h>
+#include "../CIP_Assembly.h"
 #include "CIP_Connection.h"
 #include "../CIP_CommonPacket.h"
 #include "../../Opener_Interface.h"

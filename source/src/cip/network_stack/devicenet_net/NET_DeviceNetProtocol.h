@@ -1,5 +1,5 @@
 
-
+/*
 enum dnet_object_error_codes {
     //When Allocate_master/Slave_conn_set is received
     //but Slave already allocated connection to another master
@@ -19,14 +19,14 @@ enum dnet_object_error_codes {
 };
 
 enum dnet_message_ids {
-    /*
-		Abreviations meaning
-		Prefixes				Infixes						Sufixes        
-		slv_ = slave			_cyc_ = cyclic				_res = response       
-		mstr_ = master  		_st8chng_ = state change	_req = request        
-		g2only_ = only G2   	_mcast_ = multicast			_cmd = command        
+    //
+	//	Abreviations meaning
+	//	Prefixes				Infixes						Sufixes
+	//	slv_ = slave			_cyc_ = cyclic				_res = response
+	//	mstr_ = master  		_st8chng_ = state change	_req = request
+	//	g2only_ = only G2   	_mcast_ = multicast			_cmd = command
 															_ack = acknowledge 
-	*/
+
 
     //Group 1
     slv_mcast_poll_res = 0x1100,
@@ -51,4 +51,4 @@ enum dnet_message_ids {
 };
 
 int dnet_identifier_group_check(__u32* can_id);
-int dnet_identifier_group_match(struct can_frame* frame_rd);
+int dnet_identifier_group_match(struct can_frame* frame_rd);*/

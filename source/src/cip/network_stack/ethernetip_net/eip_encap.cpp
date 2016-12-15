@@ -4,18 +4,11 @@
  *
  ******************************************************************************/
 #include <string.h>
-#include <cstdlib>
-
-#include "src/cip/connection_stack/CIP_Common.h"
-#include "src/cip/connection_stack/CIP_Connection.h"
-#include "CIP_Identity.h"
-#include "src/cip/connection_stack/CIP_MessageRouter.h"
-#include "CIP_CommonPacket.h"
-#include "eip_encap.h"
+#include "../../connection_stack/CIP_Common.h"
+#include "../../connection_stack/CIP_Connection.h"
 #include "eip_endianconv.h"
-#include "endianconv.h"
-#include "src/cip/network_stack/NET_NetworkHandler.h"
-#include "Opener_Interface.h"
+#include "../NET_NetworkHandler.h"
+#include "../../../utils/UTIL_Endianconv.h"
 
 /*Identity data from cipidentity.c*/
 extern CipUint vendor_id_;
@@ -125,11 +118,11 @@ int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer);
 void EncapsulationInit(void)
 {
 
-    DetermineEndianess();
+    UTIL_Endianconv::DetermineEndianess();
 
     /*initialize random numbers for random delayed response message generation
    * we use the ip address as seed as suggested in the spec */
-    srand(interface_configuration_.ip_address);
+    //srand(interface_configuration_.ip_address);
 
     /* initialize Sessions to invalid == free session */
     for (unsigned int i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; i++)
@@ -251,8 +244,7 @@ int HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
                         HandleReceivedListIdentityCommandTcp(&encapsulation_data);
                     } else
                     {
-                        HandleReceivedListIdentityCommandUdp(socket, from_address,
-                            &encapsulation_data);
+                        HandleReceivedListIdentityCommandUdp(socket, from_address, &encapsulation_data);
                         status = kCipStatusOk;
                     } /* as the response has to be delayed do not send it now */
                     break;
@@ -285,10 +277,10 @@ int HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
 int EncapsulateData(const EncapsulationData* const send_data)
 {
     CipUsint* communcation_buffer = send_data->communication_buffer_start + 2;
-    AddIntToMessage(send_data->data_length, &communcation_buffer);
+    UTIL_Endianconv::AddIntToMessage(send_data->data_length, &communcation_buffer);
     /*the CommBuf should already contain the correct session handle*/
-    MoveMessageNOctets(4, &communcation_buffer);
-    AddDintToMessage(send_data->status, &communcation_buffer);
+    UTIL_Endianconv::MoveMessageNOctets(4, &communcation_buffer);
+    UTIL_Endianconv::AddDintToMessage(send_data->status, &communcation_buffer);
     /*the CommBuf should already contain the correct sender context*/
     /*the CommBuf should already contain the correct  options value*/
 
@@ -305,15 +297,15 @@ void HandleReceivedListServicesCommand(EncapsulationData* receive_data)
     receive_data->data_length = g_interface_information.length + 2;
 
     /* copy Interface data to msg for sending */
-    AddIntToMessage(1, &communication_buffer);
+    UTIL_Endianconv::AddIntToMessage(1, &communication_buffer);
 
-    AddIntToMessage(g_interface_information.type_code, &communication_buffer);
+    UTIL_Endianconv::AddIntToMessage(g_interface_information.type_code, &communication_buffer);
 
-    AddIntToMessage((CipUint)(g_interface_information.length - 4), &communication_buffer);
+    UTIL_Endianconv::AddIntToMessage((CipUint)(g_interface_information.length - 4), &communication_buffer);
 
-    AddIntToMessage(g_interface_information.encapsulation_protocol_version, &communication_buffer);
+    UTIL_Endianconv::AddIntToMessage(g_interface_information.encapsulation_protocol_version, &communication_buffer);
 
-    AddIntToMessage(g_interface_information.capability_flags, &communication_buffer);
+    UTIL_Endianconv::AddIntToMessage(g_interface_information.capability_flags, &communication_buffer);
 
     memcpy(communication_buffer, g_interface_information.name_of_service, sizeof(g_interface_information.name_of_service));
 }
@@ -322,7 +314,7 @@ void HandleReceivedListInterfacesCommand(EncapsulationData* receive_data)
 {
     CipUsint* communication_buffer = receive_data->current_communication_buffer_position;
     receive_data->data_length = 2;
-    AddIntToMessage(0x0000, &communication_buffer); /* copy Interface data to msg for sending */
+    UTIL_Endianconv::AddIntToMessage(0x0000, &communication_buffer); /* copy Interface data to msg for sending */
 }
 
 void HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data)
@@ -330,9 +322,7 @@ void HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data)
     receive_data->data_length = EncapsulateListIdentyResponseMessage(receive_data->current_communication_buffer_position);
 }
 
-void HandleReceivedListIdentityCommandUdp(int socket,
-    struct sockaddr_in* from_address,
-    EncapsulationData* receive_data)
+void HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_address, EncapsulationData* receive_data)
 {
     DelayedEncapsulationMessage* delayed_message_buffer = NULL;
 
@@ -358,7 +348,7 @@ void HandleReceivedListIdentityCommandUdp(int socket,
             &(delayed_message_buffer->message[ENCAPSULATION_HEADER_LENGTH]));
 
         CipUsint* communication_buffer = delayed_message_buffer->message + 2;
-        AddIntToMessage(delayed_message_buffer->message_size, &communication_buffer);
+        UTIL_Endianconv::AddIntToMessage(delayed_message_buffer->message_size, &communication_buffer);
         delayed_message_buffer->message_size += ENCAPSULATION_HEADER_LENGTH;
     }
 }
@@ -367,33 +357,33 @@ int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer)
 {
     CipUsint* communication_buffer_runner = communication_buffer;
 
-    AddIntToMessage(1, &(communication_buffer_runner)); /* Item count: one item */
-    AddIntToMessage(CIP_CommonPacket::kCipItemIdListIdentityResponse, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(1, &(communication_buffer_runner)); /* Item count: one item */
+    UTIL_Endianconv::AddIntToMessage(CIP_CommonPacket::kCipItemIdListIdentityResponse, &communication_buffer_runner);
 
     CipByte* id_length_buffer = communication_buffer_runner;
     communication_buffer_runner += 2; /*at this place the real length will be inserted below*/
 
-    AddIntToMessage(kSupportedProtocolVersion, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(kSupportedProtocolVersion, &communication_buffer_runner);
 
-    EncapsulateIpAddress(htons(kOpenerEthernetPort), interface_configuration_.ip_address, &communication_buffer_runner);
+    EncapsulateIpAddress(NET_Connection::endian_htons (kOpenerEthernetPort), interface_configuration_.ip_address, &communication_buffer_runner);
 
     memset(communication_buffer_runner, 0, 8);
 
     communication_buffer_runner += 8;
 
-    AddIntToMessage(vendor_id_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(vendor_id_, &communication_buffer_runner);
 
-    AddIntToMessage(device_type_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(device_type_, &communication_buffer_runner);
 
-    AddIntToMessage(product_code_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(product_code_, &communication_buffer_runner);
 
     *(communication_buffer_runner)++ = revision_.major_revision;
 
     *(communication_buffer_runner)++ = revision_.minor_revision;
 
-    AddIntToMessage(status_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(status_, &communication_buffer_runner);
 
-    AddDintToMessage(serial_number_, &communication_buffer_runner);
+    UTIL_Endianconv::AddDintToMessage(serial_number_, &communication_buffer_runner);
 
     *communication_buffer_runner++ = (unsigned char)product_name_.length;
 
@@ -404,7 +394,7 @@ int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer)
     *communication_buffer_runner++ = 0xFF;
 
     // the -2 is for not counting the length field
-    AddIntToMessage(communication_buffer_runner - id_length_buffer - 2, &id_length_buffer);
+    UTIL_Endianconv::AddIntToMessage(communication_buffer_runner - id_length_buffer - 2, &id_length_buffer);
 
     return communication_buffer_runner - communication_buffer;
 }
@@ -426,7 +416,7 @@ void DetermineDelayTime(CipByte* buffer_start,  DelayedEncapsulationMessage* del
     }
 
     // Sets delay time between 0 and maximum_delay_time
-    delayed_message_buffer->time_out = (maximum_delay_time * std::rand()) / RAND_MAX;
+    delayed_message_buffer->time_out = (maximum_delay_time);//todo: add randomic factor
 }
 
 /* @brief Check supported protocol, generate session handle, send replay back to originator.
@@ -454,7 +444,7 @@ void HandleReceivedRegisterSessionCommand(int socket,
                 receive_data->status = kEncapsulationProtocolInvalidCommand;
                 session_index = kSessionStatusInvalid;
                 receive_data_buffer = &receive_data->communication_buffer_start[kEncapsulationHeaderSessionHandlePosition];
-                AddDintToMessage(receive_data->session_handle, &receive_data_buffer); /*EncapsulateData will not update the session handle so we have to do it here by hand*/
+                UTIL_Endianconv::AddDintToMessage(receive_data->session_handle, &receive_data_buffer); /*EncapsulateData will not update the session handle so we have to do it here by hand*/
                 break;
             }
         }
@@ -464,12 +454,14 @@ void HandleReceivedRegisterSessionCommand(int socket,
             if (kSessionStatusInvalid == session_index) /* no more sessions available */
             {
                 receive_data->status = kEncapsulationProtocolInsufficientMemory;
-            } else { /* successful session registered */
+            }
+            else
+            { /* successful session registered */
                 g_registered_sessions[session_index] = socket; /* store associated socket */
                 receive_data->session_handle = session_index + 1;
                 receive_data->status = kEncapsulationProtocolSuccess;
                 receive_data_buffer = &receive_data->communication_buffer_start[kEncapsulationHeaderSessionHandlePosition];
-                AddDintToMessage(receive_data->session_handle, &receive_data_buffer); /*EncapsulateData will not update the session handle so we have to do it here by hand*/
+                UTIL_Endianconv::AddDintToMessage(receive_data->session_handle, &receive_data_buffer); /*EncapsulateData will not update the session handle so we have to do it here by hand*/
             }
         }
     } else { /* protocol not supported */
@@ -491,8 +483,9 @@ CipStatus HandleReceivedUnregisterSessionCommand(
     if ((0 < receive_data->session_handle)
         && (receive_data->session_handle <= OPENER_NUMBER_OF_SUPPORTED_SESSIONS)) {
         i = receive_data->session_handle - 1;
-        if (kEipInvalidSocket != g_registered_sessions[i]) {
-            IApp_CloseSocket_tcp(g_registered_sessions[i]);
+        if (kEipInvalidSocket != g_registered_sessions[i])
+        {
+            //IApp_CloseSocket_tcp(g_registered_sessions[i]);
             g_registered_sessions[i] = kEipInvalidSocket;
             return kCipStatusOk;
         }
@@ -650,7 +643,7 @@ void CloseSession(int socket)
     {
         if (g_registered_sessions[i] == socket)
         {
-            IApp_CloseSocket_tcp(socket);
+            //IApp_CloseSocket_tcp(socket);
             g_registered_sessions[i] = kEipInvalidSocket;
             break;
         }
@@ -663,7 +656,7 @@ void EncapsulationShutDown(void)
     {
         if (kEipInvalidSocket != g_registered_sessions[i])
         {
-            IApp_CloseSocket_tcp(g_registered_sessions[i]);
+            //IApp_CloseSocket_tcp(g_registered_sessions[i]);
             g_registered_sessions[i] = kEipInvalidSocket;
         }
     }
@@ -679,11 +672,7 @@ void ManageEncapsulationMessages(MilliSeconds elapsed_time)
             if (0 > g_delayed_encapsulation_messages[i].time_out)
             {
                 // If delay is reached or passed, send the UDP message
-                SendUdpData(&(g_delayed_encapsulation_messages[i].receiver),
-                    g_delayed_encapsulation_messages[i].socket,
-                    &(g_delayed_encapsulation_messages[i].message[0]),
-                    g_delayed_encapsulation_messages[i].message_size);
-                g_delayed_encapsulation_messages[i].socket = -1;
+                SendUdpData(&(g_delayed_encapsulation_messages[i].receiver), g_delayed_encapsulation_messages[i].socket, &(g_delayed_encapsulation_messages[i].message[0]), g_delayed_encapsulation_messages[i].message_size);g_delayed_encapsulation_messages[i].socket = -1;
             }
         }
     }

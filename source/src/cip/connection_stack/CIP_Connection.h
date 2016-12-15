@@ -15,7 +15,7 @@
 #include "../network_stack/NET_Connection.h"
 #include "../../Opener_Interface.h"
 #include "../../typedefs.h"
-
+#include "../CIP_Assembly.h"
 
 
 class CIP_Connection;
@@ -268,10 +268,10 @@ public:
     CipConnectionPath connection_path; // padded EPATH
     LinkObject link_object;
 
-    CIP_ClassInstance* consuming_instance;
+    CIP_Assembly* consuming_instance;
     /*S_CIP_CM_Object *p_stConsumingCMObject; */
 
-    CIP_ClassInstance* producing_instance;
+    CIP_Assembly* producing_instance;
     /*S_CIP_CM_Object *p_stProducingCMObject; */
 
     /* the EIP level sequence Count for Class 0/1 Producing Connections may have a different

@@ -1,9 +1,10 @@
 
 
 #include "NET_DeviceNetProtocol.h"
+//
+//	Get datagram group from CAN identifier
+//
 /*
-*	Get datagram group from CAN identifier
-*/
 int dnet_identifier_group_check(__u32* can_id)
 {
 
@@ -31,9 +32,9 @@ int dnet_identifier_group_check(__u32* can_id)
     return -1;
 }
 
-/*
-*	Get info from CAN identifier based on Group ID
-*/
+//
+//	Get info from CAN identifier based on Group ID
+//
 int dnet_identifier_group_match(struct can_frame* frame_rd)
 {
     enum dnet_message_ids msg_id;
@@ -94,4 +95,4 @@ int dnet_identifier_group_match(struct can_frame* frame_rd)
         return -1;
     }
     printf("dnet_identifier -> msg_id = %d source_mac = %d\n", msg_id, mac);
-}
+}*/

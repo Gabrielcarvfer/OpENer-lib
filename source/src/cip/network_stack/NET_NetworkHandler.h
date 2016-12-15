@@ -15,8 +15,8 @@
 #define GENERIC_NETWORKHANDLER_H_
 
 
-#include <src/opener_user_conf.h>
-#include "typedefs.h"
+#include "../../opener_user_conf.h"
+#include "../../typedefs.h"
 #include "../connection_stack/CIP_Connection.h"
 #include "NET_Connection.h"
 

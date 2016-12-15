@@ -1,4 +1,4 @@
-#include <linux/can.h>
+/*#include <linux/can.h>
 
 class NET_CanInterface
 {
@@ -11,4 +11,4 @@ class NET_CanInterface
         int open_port(const char *port);
     private:
         int soc;
-};
+};*/

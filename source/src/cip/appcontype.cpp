@@ -4,7 +4,8 @@
  *
  ******************************************************************************/
 #include "appcontype.h"
-#include <src/opener_user_conf.h>
+#include "../opener_user_conf.h"
+#include <cstring>
 
 typedef struct {
     unsigned int output_assembly; /**< the O-to-T point for the connection */
@@ -246,7 +247,7 @@ CIP_Connection* GetExistingProducerMulticastConnection(CipUdint input_point)
         {
             if ((input_point == producer_multicast_connection->connection_path.connection_point[1])
                 && (CIP_Connection::kRoutingTypeMulticastConnection == (producer_multicast_connection->t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection))
-                && (kEipInvalidSocket!= producer_multicast_connection->conn->GetSocketHandle()));//todo:kUdpCommuncationDirectionProducing)))
+                && (kEipInvalidSocket!= producer_multicast_connection->netConn->GetSocketHandle()));//todo:kUdpCommuncationDirectionProducing)))
             {
                 /* we have a connection that produces the same input assembly,
          * is a multicast producer and manages the connection.
@@ -272,7 +273,7 @@ CIP_Connection* GetNextNonControlMasterConnection(CipUdint input_point)
             if ((input_point == next_non_control_master_connection->connection_path.connection_point[1])
                 && (CIP_Connection::kRoutingTypeMulticastConnection == (next_non_control_master_connection->t_to_o_network_connection_parameter
                               & CIP_Connection::kRoutingTypeMulticastConnection))
-                && (kEipInvalidSocket == next_non_control_master_connection->conn->GetSocketHandle()))//todo:kUdpCommuncationDirectionProducing)))
+                && (kEipInvalidSocket == next_non_control_master_connection->netConn->GetSocketHandle()))//todo:kUdpCommuncationDirectionProducing)))
             {
                 /* we have a connection that produces the same input assembly,
          * is a multicast producer and does not manages the connection.
@@ -301,9 +302,7 @@ void CloseAllConnectionsForInputWithSameType(CipUdint input_point,
 
             /* FIXME check if this is ok */
             //connection_to_delete->connection_close_function(connection_to_delete);
-            CIP_Connection::CloseConnection(connection); /*will remove the connection from the active connection list */
-
-            CIP_Connection::active_connections_set.erase(i);
+            connection->CloseConnection (); /*will remove the connection from the active connection list */
         } 
     }
 }
@@ -315,7 +314,7 @@ void CloseAllConnections(void)
     {
         connection = CIP_Connection::active_connections_set[i];
         /*FIXME check if m_pfCloseFunc would be suitable*/
-        CIP_Connection::CloseConnection(connection);
+        connection->CloseConnection();
         /* Close connection will remove the connection from the list therefore we
      * need to get again the start until there is no connection left
      */

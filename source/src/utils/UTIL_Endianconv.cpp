@@ -1,8 +1,5 @@
 
 #include "UTIL_Endianconv.h"
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 
@@ -28,7 +25,7 @@ CipUsint UTIL_Endianconv::GetSintFromMessage(CipUsint** buffer)
  *   @param buffer pointer where data should be reed.
  *   @return EIP_UINT16 data value
  */
-CipUint UTIL_Endianconv::UTIL_Endianconv::GetIntFromMessage(CipUsint** buffer)
+CipUint UTIL_Endianconv::GetIntFromMessage(CipUsint** buffer)
 {
     unsigned char* buffer_address = (unsigned char*)*buffer;
     CipUint data = buffer_address[0] | buffer_address[1] << 8;

@@ -5,19 +5,21 @@
  ******************************************************************************/
 
 #include <string.h>
-#include <winsock2.h>
-#include <src/cip/CIP_CommonPacket.h>
+#include "../CIP_CommonPacket.h"
 
 #include "CIP_IOConnection.h"
-#include "CIP_MessageRouter.h"
-#include "appcontype.h"
-#include "src/cip/CIP_Assembly.h"
+#include "../appcontype.h"
 #include "CIP_Common.h"
-#include "CIP_Connection.h"
 #include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
-#include "UTIL_Endianconv.h"
-#include "src/cip/network_stack/NET_NetworkHandler.h"
-#include "trace.h"
+#include "../../utils/UTIL_Endianconv.h"
+#include "../network_stack/NET_NetworkHandler.h"
+#include "../../trace.h"
+
+
+#ifdef WIN32
+#include <winsock2.h>
+#else
+#endif
 
 void CIP_IOConnection::InitializeIOConnectionData()
 {
@@ -551,7 +553,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
         }
     }
 
-    OPENER_ASSERT(NULL != CloseConnection ());
+    //OPENER_ASSERT(NULL != CloseConnection ());
     CloseConnection();
 }
 

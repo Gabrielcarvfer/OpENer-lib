@@ -7,9 +7,9 @@
 #define OPENER_CIPMESSAGEROUTER_H_
 
 
-#include "ciptypes.h"
-#include "typedefs.h"
-#include "src/cip/class_stack/CIP_ClassInstance.h"
+#include "../ciptypes.h"
+#include "../../typedefs.h"
+#include "../class_stack/CIP_ClassInstance.h"
 #include <map>
 
 
@@ -24,7 +24,10 @@ class CIP_MessageRouter;
 class CIP_MessageRouter : public CIP_ClassInstance<CIP_MessageRouter>
 {
     public:
+            static CipMessageRouterRequest g_message_router_request;
+            static CipMessageRouterResponse g_message_router_response;
 
+            static CipOctet g_message_data_reply_buffer[100];
         /** @brief Initialize the data structures of the message router
          *  @return kCipStatusOk if class was initialized, otherwise kCipStatusError
          */

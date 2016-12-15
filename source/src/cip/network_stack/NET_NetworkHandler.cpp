@@ -10,15 +10,16 @@
  *
  */
 
-#include <src/utils/UTIL_Endianconv.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+#include "../../utils/UTIL_Endianconv.h"
 #include "NET_NetworkHandler.h"
 
-#include "trace.h"
-#include "src/cip/network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
+#include "../../trace.h"
+#include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
 
-#ifndef WIN32
+#ifdef WIN32
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+#else
     typedef unsigned long socklen_t;
 #endif
 

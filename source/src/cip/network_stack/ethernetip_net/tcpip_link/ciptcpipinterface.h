@@ -11,8 +11,8 @@
  *
  */
 
-#include "ciptypes.h"
-#include "typedefs.h"
+#include "../../../ciptypes.h"
+#include "../../../../typedefs.h"
 
 extern CipTcpIpNetworkInterfaceConfiguration interface_configuration_;
 

@@ -7,13 +7,13 @@
 
 #include "ciptcpipinterface.h"
 
-#include "src/cip/connection_stack/CIP_Common.h"
-#include "ciperror.h"
-#include "src/cip/network_stack/ethernetip_net/cipethernetlink.h"
-#include "src/cip/connection_stack/CIP_MessageRouter.h"
-#include "endianconv.h"
-#include "Opener_Interface.h"
-#include "opener_user_conf.h"
+#include "../../../connection_stack/CIP_Common.h"
+#include "../../../ciperror.h"
+#include "../../../network_stack/ethernetip_net/cipethernetlink.h"
+#include "../../../connection_stack/CIP_MessageRouter.h"
+//#include "endianconv.h"
+#include "../../../../Opener_Interface.h"
+#include "../../../../opener_user_conf.h"
 
 CipDword tcp_status_ = 0x1; /**< #1  TCP status with 1 we indicate that we got a valid configuration from DHCP or BOOTP */
 CipDword configuration_capability_ = 0x04 | 0x20; /**< #2  This is a default value meaning that it is a DHCP client see 5-3.2.2.2 EIP specification; 0x20 indicates "Hardware Configurable" */
