@@ -24,6 +24,8 @@ class CIP_Connection :  public CIP_ClassInstance<CIP_Connection>, public CIP_Tem
 {
 
 public:
+    CIP_Connection();
+    ~CIP_Connection();
     CipMessageRouterRequest g_message_router_request;
     CipMessageRouterResponse g_message_router_response;
     CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
@@ -144,9 +146,8 @@ public:
     } LinkObject;
 
     static const int classCode = kCipConnectionManagerClassCode;
-    CIP_Connection(CipUint unique_connection_id);
     CIP_Connection (struct sockaddr *originator_address, struct sockaddr *remote_address);
-    ~CIP_Connection();
+
 
     /** @brief Initialize the data of the connection manager object
      */
@@ -179,7 +180,7 @@ public:
      * @param connection_object pointer to the connection object structure to be
      *closed
      */
-    static void CloseConnection(CIP_Connection* connection_object);
+    void CloseConnection();
 
     /* TODO: Missing documentation */
     static CipBool IsConnectedOutputAssembly(CipUdint instance_number);
@@ -347,15 +348,13 @@ public:
     /** @brief Parse the connection path of a forward open request
      *
      * This function will take the connection object and the received data stream and parse the connection path.
-     * @param connection_object pointer to the connection object structure for which the connection should
-     *                      be established
      * @param message_router_request pointer to the received request structure. The position of the data stream pointer has to be at the connection length entry
      * @param extended_status the extended error code in case an error happened
      * @return general status on the establishment
      *    - EIP_OK ... on success
      *    - On an error the general status code to be put into the response
      */
-    CipUsint ParseConnectionPath(CIP_Connection* connection_object, CipMessageRouterRequest* message_router_request, CipUint* extended_error);
+    CipUsint ParseConnectionPath( CipMessageRouterRequest* message_router_request, CipUint* extended_error);
 
     ConnectionManagementHandling* GetConnMgmEntry(CipUdint class_id);
 

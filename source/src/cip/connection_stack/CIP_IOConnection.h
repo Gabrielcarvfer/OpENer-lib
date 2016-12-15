@@ -46,7 +46,7 @@
 #include "../CIP_CommonPacket.h"
 #include "../../Opener_Interface.h"
 
-class CIP_IOConnection
+class CIP_IOConnection : public CIP_Connection
 {
     public:
         /** @brief Setup all data in order to establish an IO connection
@@ -58,7 +58,7 @@ class CIP_IOConnection
          *    - EIP_OK ... on success
          *    - On an error the general status code to be put into the response
          */
-         CipStatus EstablishIoConnction (CipUint *extended_error);
+         CipStatus EstablishIoConnection (CipUint *extended_error);
 
         /** @brief Take the data given in the connection object structure and open the necessary communication channels
          *
@@ -77,9 +77,14 @@ class CIP_IOConnection
          */
         void CloseCommunicationChannelAndRemoveFromActiveConnectionsList ();
 
+    /**** Global variables ****/
+    static CipUsint* g_config_data_buffer; /**< buffers for the config data coming with a forward open request. */
+    static unsigned int g_config_data_length;
 
-    private:
-        CIP_Connection * cipConn;
+    static CipUdint g_run_idle_state; /**< buffer for holding the run idle information. */
+    static void InitializeIOConnectionData();
+
+private:
 
         /*The port to be used per default for I/O messages on UDP.*/
         const int kOpenerEipIoUdpPort = 0x08AE;
@@ -114,10 +119,5 @@ class CIP_IOConnection
 
         CipStatus HandleReceivedIoConnectionData(CipUsint* data, CipUint data_length);
 
-        /**** Global variables ****/
-        CipUsint* g_config_data_buffer = NULL; /**< buffers for the config data coming with a forward open request. */
-        unsigned int g_config_data_length = 0;
-
-        CipUdint g_run_idle_state; /**< buffer for holding the run idle information. */
 };
 #endif /* OPENER_CIPIOCONNECTION_H_ */

@@ -611,14 +611,14 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
             if (0 == received_size) 
             {
                 OPENER_TRACE_STATE("connection closed by client\n");
-                current_connection_object->CloseConnection (current_connection_object);
+                current_connection_object->CloseConnection ();
                 continue;
             }
 
             if (0 > received_size) 
             {
                 OPENER_TRACE_ERR("networkhandler: error on recv: %s\n", strerror(errno));
-                current_connection_object->CloseConnection (current_connection_object);
+                current_connection_object->CloseConnection ();
                 continue;
             }
 

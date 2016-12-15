@@ -24,8 +24,7 @@ void InitializeIoConnectionData(void);
  *          data given in pa_pstConnData.
  *        - on error: NULL
  */
-CIP_Connection* GetIoConnectionForConnectionData(
-    CIP_Connection* connection_object, CipUint* extended_error);
+CIP_Connection* GetIoConnectionForConnectionData(CIP_Connection* connection_object, CipUint* extended_error);
 
 /** @brief Check if there exists already an exclusive owner or listen only connection
  *         which produces the input assembly.
