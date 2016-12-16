@@ -523,34 +523,6 @@ class Opener_Interface
      */
     void RunIdleChanged(CipUdint run_idle_value);
 
-    /** @ingroup CIP_CALLBACK_API
-     * @brief create a producing or consuming UDP socket
-     *
-     * @param communication_direction PRODCUER or CONSUMER
-     * @param socket_data pointer to the address holding structure
-     *     Attention: For producing point-to-point connection the
-     *     *pa_pstAddr->sin_addr.s_addr member is set to 0 by OpENer. The network
-     *     layer of the application has to set the correct address of the
-     *     originator.
-     *     Attention: For consuming connection the network layer has to set the
-     * pa_pstAddr->sin_addr.s_addr to the correct address of the originator.
-     * FIXME add an additional parameter that can be used by the CIP stack to
-     * request the originators sockaddr_in data.
-     * @return socket identifier on success
-     *         -1 on error
-     */
-    //int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr_in* socket_data);
-
-    /** @ingroup CIP_CALLBACK_API
-     * @brief create a producing or consuming UDP socket
-     *
-     * @param socket_data pointer to the "send to" address
-     * @param socket_handle socket descriptor to send on
-     * @param data pointer to the data to send
-     * @param data_length length of the data to send
-     * @return  EIP_SUCCESS on success
-     */
-    CipStatus SendUdpData(struct sockaddr_in* socket_data, int socket, CipUsint* data, CipUint data_length);
 
     /** @ingroup CIP_CALLBACK_API
      * @brief Close the given socket and clean up the stack

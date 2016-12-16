@@ -4,9 +4,6 @@
  *
  ******************************************************************************/
 
-#define ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES 2 /**< According to EIP spec at least 2 delayed message requests should be supported */
-
-#define ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE (ENCAPSULATION_HEADER_LENGTH + 39 + sizeof(OPENER_DEVICE_NAME)) /* currently we only have the size of an encapsulation message */
 
 #include <string.h>
 #include "../../connection_stack/CIP_Common.h"
@@ -15,6 +12,7 @@
 #include "../NET_NetworkHandler.h"
 #include "../../../utils/UTIL_Endianconv.h"
 #include "../../CIP_Identity.h"
+#include "tcpip_link/ciptcpipinterface.h"
 
 
 /*   @brief Initializes session list and interface information. */
@@ -117,8 +115,7 @@ int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
     return return_value;
 }
 
-int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
-    CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
+int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
 {
     CipStatus status = kCipStatusOk;
     EncapsulationData encapsulation_data;
@@ -147,7 +144,7 @@ int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr_in
                         HandleReceivedListIdentityCommandTcp(&encapsulation_data);
                     } else
                     {
-                        HandleReceivedListIdentityCommandUdp(socket, from_address, &encapsulation_data);
+                        HandleReceivedListIdentityCommandUdp (socket, from_address, &encapsulation_data);
                         status = kCipStatusOk;
                     } /* as the response has to be delayed do not send it now */
                     break;
@@ -571,7 +568,7 @@ void NET_EthIP_Encap::ManageEncapsulationMessages(MilliSeconds elapsed_time)
             if (0 > g_delayed_encapsulation_messages[i].time_out)
             {
                 // If delay is reached or passed, send the UDP message
-                SendUdpData(&(g_delayed_encapsulation_messages[i].receiver), g_delayed_encapsulation_messages[i].socket, &(g_delayed_encapsulation_messages[i].message[0]), g_delayed_encapsulation_messages[i].message_size);g_delayed_encapsulation_messages[i].socket = -1;
+                NET_NetworkHandler::SendUdpData((struct sockaddr*)g_delayed_encapsulation_messages[i].receiver, g_delayed_encapsulation_messages[i].socket, &(g_delayed_encapsulation_messages[i].message[0]), g_delayed_encapsulation_messages[i].message_size);g_delayed_encapsulation_messages[i].socket = -1;
             }
         }
     }

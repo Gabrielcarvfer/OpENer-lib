@@ -8,10 +8,6 @@
 #include "cipethernetlink.h"
 
 #include "../../connection_stack/CIP_Common.h"
-#include "../../ciperror.h"
-#include "../../connection_stack/CIP_MessageRouter.h"
-//#include "endianconv.h"
-#include "../../../Opener_Interface.h"
 
 typedef struct {
     CipUdint interface_speed;
@@ -24,8 +20,7 @@ CipEthernetLinkObject g_ethernet_link;
 
 void ConfigureMacAddress(const CipUsint* mac_address)
 {
-    memcpy(&g_ethernet_link.physical_address, mac_address,
-        sizeof(g_ethernet_link.physical_address));
+    memcpy(&g_ethernet_link.physical_address, mac_address, sizeof(g_ethernet_link.physical_address));
 }
 
 CipStatus CipEthernetLinkInit()

@@ -303,8 +303,7 @@ void NET_NetworkHandler::CheckAndHandleUdpGlobalBroadcastSocket(void)
         int remaining_bytes = 0;
         do
         {
-            int reply_length = HandleReceivedExplictUdpData(netStats[udp_global_bcast_listener]->GetSocketHandle(),
-                                                            (struct sockaddr*)&from_address, receive_buffer, received_size, &remaining_bytes, false);
+            int reply_length = NET_EthIP_Encap::HandleReceivedExplictUdpData(netStats[udp_global_bcast_listener]->GetSocketHandle(), (struct sockaddr*)&from_address, receive_buffer, received_size, &remaining_bytes, false);
 
             receive_buffer += received_size - remaining_bytes;
             received_size = remaining_bytes;
@@ -354,7 +353,7 @@ void NET_NetworkHandler::CheckAndHandleUdpUnicastSocket(void)
         int remaining_bytes = 0;
         do
         {
-            int reply_length = HandleReceivedExplictUdpData(netStats[udp_ucast_listener]->GetSocketHandle (), (struct sockaddr*)&from_address, receive_buffer, recv_size, &remaining_bytes, true);
+            int reply_length = NET_EthIP_Encap::HandleReceivedExplictUdpData(netStats[udp_ucast_listener]->GetSocketHandle (), (struct sockaddr*)&from_address, receive_buffer, recv_size, &remaining_bytes, true);
 
             receive_buffer += recv_size - remaining_bytes;
             recv_size = remaining_bytes;
@@ -476,7 +475,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
 
         g_current_active_tcp_socket = socket;
 
-        number_of_read_bytes = HandleReceivedExplictTcpData(socket, g_ethernet_communication_buffer, data_size, &remaining_bytes);
+        number_of_read_bytes = NET_EthIP_Encap::HandleReceivedExplictTcpData(socket, g_ethernet_communication_buffer, data_size, &remaining_bytes);
 
         g_current_active_tcp_socket = -1;
 

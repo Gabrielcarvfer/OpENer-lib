@@ -20,6 +20,11 @@
 #include "../connection_stack/CIP_Connection.h"
 #include "NET_Connection.h"
 
+#ifdef WIN32
+#include "winsock.h"
+#else
+#endif
+
 #define MAX_NO_OF_TCP_SOCKETS 10
 
 class NET_NetworkHandler
@@ -58,12 +63,37 @@ public:
     */
     static void CheckAndHandleConsumingUdpSockets();
 
+    /** @ingroup CIP_CALLBACK_API
+    * @brief create a producing or consuming UDP socket
+    *
+    * @param communication_direction PRODCUER or CONSUMER
+    * @param socket_data pointer to the address holding structure
+    *     Attention: For producing point-to-point connection the
+    *     *pa_pstAddr->sin_addr.s_addr member is set to 0 by OpENer. The network
+    *     layer of the application has to set the correct address of the
+    *     originator.
+    *     Attention: For consuming connection the network layer has to set the
+    * pa_pstAddr->sin_addr.s_addr to the correct address of the originator.
+    * FIXME add an additional parameter that can be used by the CIP stack to
+    * request the originators sockaddr_in data.
+    * @return socket identifier on success
+    *         -1 on error
+    */
     static int CreateUdpSocket(UdpCommuncationDirection communication_direction, struct sockaddr* socket_data);
 
     /** @brief TODO: FILL IN!
     */
     static CipStatus HandleDataOnTcpSocket(int socket);
 
+    /** @ingroup CIP_CALLBACK_API
+     * @brief create a producing or consuming UDP socket
+     *
+     * @param socket_data pointer to the "send to" address
+     * @param socket_handle socket descriptor to send on
+     * @param data pointer to the data to send
+     * @param data_length length of the data to send
+     * @return  EIP_SUCCESS on success
+     */
     static CipStatus SendUdpData(struct sockaddr* address, int socket, CipUsint* data, CipUint data_length);
 
     /** @brief Checks and processes request received via the UDP unicast socket, currently the implementation is port-specific

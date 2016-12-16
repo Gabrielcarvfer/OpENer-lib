@@ -6,6 +6,10 @@
 #ifndef OPENER_ENCAP_H_
 #define OPENER_ENCAP_H_
 
+#define ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES 2 /**< According to EIP spec at least 2 delayed message requests should be supported */
+
+#define ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE (ENCAPSULATION_HEADER_LENGTH + 39 + sizeof(OPENER_DEVICE_NAME)) /* currently we only have the size of an encapsulation message */
+
 #include "../../../typedefs.h"
 #include "../../../opener_user_conf.h"
 #include "../NET_Encapsulation.h"
@@ -49,14 +53,14 @@ public:
 /** @ingroup ENCAP
  * @brief Initialize the encapsulation layer.
  */
-    void EncapsulationInit (void);
+    static  void EncapsulationInit (void);
 
 /** @ingroup ENCAP
  * @brief Shutdown the encapsulation layer.
  *
  * This means that all open sessions including their sockets are closed.
  */
-    void EncapsulationShutDown (void);
+    static void EncapsulationShutDown (void);
 
 /** @ingroup ENCAP
  * @brief Handle delayed encapsulation message responses
@@ -65,7 +69,7 @@ public:
  * message. This functions checks if messages need to be sent and performs the
  * sending.
  */
-    void ManageEncapsulationMessages (MilliSeconds elapsed_time);
+    static void ManageEncapsulationMessages (MilliSeconds elapsed_time);
 
 /** @ingroup CIP_API
      * @brief Notify the encapsulation layer that an explicit message has been
@@ -79,7 +83,7 @@ public:
      * over after we're done here
      * @return length of reply that need to be sent back
      */
-    int HandleReceivedExplictTcpData (int socket, CipUsint *buffer, unsigned int buffer_length,
+    static int HandleReceivedExplictTcpData (int socket, CipUsint *buffer, unsigned int buffer_length,
                                       int *number_of_remaining_bytes);
 
 /** @ingroup CIP_API
@@ -95,27 +99,24 @@ public:
  * over after we're done here
  * @return length of reply that need to be sent back
  */
-    int HandleReceivedExplictUdpData (int socket, struct sockaddr *from_address, CipUsint *buffer, unsigned int buffer_length, int *number_of_remaining_bytes, int unicast);
+    static int HandleReceivedExplictUdpData (int socket, struct sockaddr_in* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
 
 private:
-    /*ip address data taken from TCPIPInterfaceObject*/
-    extern CipTcpIpNetworkInterfaceConfiguration interface_configuration_;
+    static const int kSupportedProtocolVersion = 1; /**< Supported Encapsulation protocol version */
 
-    const int kSupportedProtocolVersion = 1; /**< Supported Encapsulation protocol version */
+    static const int kEncapsulationHeaderOptionsFlag = 0x00; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
 
-    const int kEncapsulationHeaderOptionsFlag = 0x00; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
+    static const int kEncapsulationHeaderSessionHandlePosition = 4; /**< the position of the session handle within the encapsulation header*/
 
-    const int kEncapsulationHeaderSessionHandlePosition = 4; /**< the position of the session handle within the encapsulation header*/
-
-    const int kListIdentityDefaultDelayTime = 2000; /**< Default delay time for List Identity response */
-    const int kListIdentityMinimumDelayTime = 500; /**< Minimum delay time for List Identity response */
+    static const int kListIdentityDefaultDelayTime = 2000; /**< Default delay time for List Identity response */
+    static const int kListIdentityMinimumDelayTime = 500; /**< Minimum delay time for List Identity response */
 
     typedef enum {
         kSessionStatusInvalid = -1,
         kSessionStatusValid = 0
     } SessionStatus;
 
-    const int kSenderContextSize = 8; /**< size of sender context in encapsulation header*/
+    static const int kSenderContextSize = 8; /**< size of sender context in encapsulation header*/
 
 /** @brief definition of known encapsulation commands */
     typedef enum {
@@ -142,7 +143,7 @@ private:
     typedef struct {
         CipDint time_out; /**< time out in milli seconds */
         int socket; /**< associated socket */
-        struct sockaddr_in receiver;
+        struct sockaddr_in *receiver;
         CipByte message[ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE];
         unsigned int message_size;
     } DelayedEncapsulationMessage;
@@ -154,41 +155,40 @@ private:
     static DelayedEncapsulationMessage g_delayed_encapsulation_messages[ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES];
 
 /*** private functions ***/
-    void HandleReceivedListServicesCommand(EncapsulationData* receive_data);
+    static void HandleReceivedListServicesCommand(EncapsulationData* receive_data);
 
-    void HandleReceivedListInterfacesCommand(EncapsulationData* receive_data);
+    static void HandleReceivedListInterfacesCommand(EncapsulationData* receive_data);
 
-    void HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data);
+    static void HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data);
 
-    void HandleReceivedListIdentityCommandUdp(int socket,
-                                              struct sockaddr_in* from_address,
+    static void HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_address, EncapsulationData* receive_data);
+
+    static void HandleReceivedRegisterSessionCommand(int socket,
                                               EncapsulationData* receive_data);
 
-    void HandleReceivedRegisterSessionCommand(int socket,
-                                              EncapsulationData* receive_data);
-
-    CipStatus HandleReceivedUnregisterSessionCommand(
+    static CipStatus HandleReceivedUnregisterSessionCommand(
             EncapsulationData* receive_data);
 
-    CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data);
+    static CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data);
 
-    CipStatus HandleReceivedSendRequestResponseDataCommand(
+    static CipStatus HandleReceivedSendRequestResponseDataCommand(
             EncapsulationData* receive_data);
 
-    int GetFreeSessionIndex(void);
+    static int GetFreeSessionIndex(void);
 
-    CipInt CreateEncapsulationStructure(CipUsint* receive_buffer,
+    static CipInt CreateEncapsulationStructure(CipUsint* receive_buffer,
                                         int receive_buffer_length,
                                         EncapsulationData* encapsulation_data);
 
-    SessionStatus CheckRegisteredSessions(EncapsulationData* receive_data);
+    static SessionStatus CheckRegisteredSessions(EncapsulationData* receive_data);
 
-    int EncapsulateData(const EncapsulationData* const send_data);
+    static int EncapsulateData(const EncapsulationData* const send_data);
 
-    void DetermineDelayTime(CipByte* buffer_start,
+    static void DetermineDelayTime(CipByte* buffer_start,
                             DelayedEncapsulationMessage* delayed_message_buffer);
 
-    int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer);
+    static int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer);
+    static void CloseSession(int socket);
 
 
 };

@@ -7,7 +7,7 @@
 #define OPENER_COMMONPACKETFORMAT_H_
 
 #include "ciptypes.h"
-#include "network_stack/ethernetip_net/eip_encap.h"
+#include "network_stack/ethernetip_net/NET_EthIP_Encap.h"
 #include "../typedefs.h"
 #include "network_stack/devicenet_net/NET_DeviceNetEncapsulation.h"
 
