@@ -7,6 +7,8 @@
 #define OPENER_ENCAP_H_
 
 #include "../../../typedefs.h"
+#include "../../../opener_user_conf.h"
+#include "../NET_Encapsulation.h"
 
 /** @file encap.h
  * @brief This file contains the public interface of the encapsulation layer
@@ -16,45 +18,30 @@
  * The Ethernet encapsulation layer handles provides the abstraction between the Ethernet and the CIP layer.
  */
 
+class NET_EthIP_Encap
+{
+public:
 /*** defines ***/
 
 #define ENCAPSULATION_HEADER_LENGTH 24
 
 /** @brief Ethernet/IP standard port */
-static const int kOpenerEthernetPort = 0xAF12;
+    static const int kOpenerEthernetPort = 0xAF12;
 
 /** @brief definition of status codes in encapsulation protocol
  * All other codes are either legacy codes, or reserved for future use
  *  */
-typedef enum {
-    kEncapsulationProtocolSuccess = 0x0000,
-    kEncapsulationProtocolInvalidCommand = 0x0001,
-    kEncapsulationProtocolInsufficientMemory = 0x0002,
-    kEncapsulationProtocolIncorrectData = 0x0003,
-    kEncapsulationProtocolInvalidSessionHandle = 0x0064,
-    kEncapsulationProtocolInvalidLength = 0x0065,
-    kEncapsulationProtocolUnsupportedProtocol = 0x0069
-} EncapsulationProtocolErrorCode;
+    typedef enum
+    {
+        kEncapsulationProtocolSuccess = 0x0000,
+        kEncapsulationProtocolInvalidCommand = 0x0001,
+        kEncapsulationProtocolInsufficientMemory = 0x0002,
+        kEncapsulationProtocolIncorrectData = 0x0003,
+        kEncapsulationProtocolInvalidSessionHandle = 0x0064,
+        kEncapsulationProtocolInvalidLength = 0x0065,
+        kEncapsulationProtocolUnsupportedProtocol = 0x0069
+    } EncapsulationProtocolErrorCode;
 
-/*** structs ***/
-typedef struct encapsulation_data {
-    CipUint command_code;
-    CipUint data_length;
-    CipUdint session_handle;
-    CipUdint status;
-    CipOctet sender_context[8]; /**< length of 8, according to the specification */
-    CipUdint options;
-    CipUsint* communication_buffer_start; /**< Pointer to the communication buffer used for this message */
-    CipUsint* current_communication_buffer_position; /**< The current position in the communication buffer during the decoding process */
-} EncapsulationData;
-
-typedef struct encapsulation_interface_information {
-    CipUint type_code;
-    CipUint length;
-    CipUint encapsulation_protocol_version;
-    CipUint capability_flags;
-    CipSint name_of_service[16];
-} EncapsulationInterfaceInformation;
 
 /*** global variables (public) ***/
 
@@ -62,14 +49,14 @@ typedef struct encapsulation_interface_information {
 /** @ingroup ENCAP
  * @brief Initialize the encapsulation layer.
  */
-void EncapsulationInit(void);
+    void EncapsulationInit (void);
 
 /** @ingroup ENCAP
  * @brief Shutdown the encapsulation layer.
  *
  * This means that all open sessions including their sockets are closed.
  */
-void EncapsulationShutDown(void);
+    void EncapsulationShutDown (void);
 
 /** @ingroup ENCAP
  * @brief Handle delayed encapsulation message responses
@@ -78,7 +65,7 @@ void EncapsulationShutDown(void);
  * message. This functions checks if messages need to be sent and performs the
  * sending.
  */
-void ManageEncapsulationMessages(MilliSeconds elapsed_time);
+    void ManageEncapsulationMessages (MilliSeconds elapsed_time);
 
 /** @ingroup CIP_API
      * @brief Notify the encapsulation layer that an explicit message has been
@@ -92,7 +79,8 @@ void ManageEncapsulationMessages(MilliSeconds elapsed_time);
      * over after we're done here
      * @return length of reply that need to be sent back
      */
-int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes);
+    int HandleReceivedExplictTcpData (int socket, CipUsint *buffer, unsigned int buffer_length,
+                                      int *number_of_remaining_bytes);
 
 /** @ingroup CIP_API
  * @brief Notify the encapsulation layer that an explicit message has been
@@ -107,7 +95,101 @@ int HandleReceivedExplictTcpData(int socket, CipUsint* buffer, unsigned int buff
  * over after we're done here
  * @return length of reply that need to be sent back
  */
-int HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
+    int HandleReceivedExplictUdpData (int socket, struct sockaddr *from_address, CipUsint *buffer, unsigned int buffer_length, int *number_of_remaining_bytes, int unicast);
+
+private:
+    /*ip address data taken from TCPIPInterfaceObject*/
+    extern CipTcpIpNetworkInterfaceConfiguration interface_configuration_;
+
+    const int kSupportedProtocolVersion = 1; /**< Supported Encapsulation protocol version */
+
+    const int kEncapsulationHeaderOptionsFlag = 0x00; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
+
+    const int kEncapsulationHeaderSessionHandlePosition = 4; /**< the position of the session handle within the encapsulation header*/
+
+    const int kListIdentityDefaultDelayTime = 2000; /**< Default delay time for List Identity response */
+    const int kListIdentityMinimumDelayTime = 500; /**< Minimum delay time for List Identity response */
+
+    typedef enum {
+        kSessionStatusInvalid = -1,
+        kSessionStatusValid = 0
+    } SessionStatus;
+
+    const int kSenderContextSize = 8; /**< size of sender context in encapsulation header*/
+
+/** @brief definition of known encapsulation commands */
+    typedef enum {
+        kEncapsulationCommandNoOperation = 0x0000, /**< only allowed for TCP */
+        kEncapsulationCommandListServices = 0x0004, /**< allowed for both UDP and TCP */
+        kEncapsulationCommandListIdentity = 0x0063, /**< allowed for both UDP and TCP */
+        kEncapsulationCommandListInterfaces = 0x0064, /**< optional, allowed for both UDP and TCP */
+        kEncapsulationCommandRegisterSession = 0x0065, /**< only allowed for TCP */
+        kEncapsulationCommandUnregisterSession = 0x0066, /**< only allowed for TCP */
+        kEncapsulationCommandSendRequestReplyData = 0x006F, /**< only allowed for TCP */
+        kEncapsulationCommandSendUnitData = 0x0070 /**< only allowed for TCP */
+    } EncapsulationCommand;
+
+/** @brief definition of capability flags */
+    typedef enum {
+        kCapabilityFlagsCipTcp = 0x0020,
+        kCapabilityFlagsCipUdpClass0or1 = 0x0100
+    } CapabilityFlags;
 
 
+/* Encapsulation layer data  */
+
+/** @brief Delayed Encapsulation Message structure */
+    typedef struct {
+        CipDint time_out; /**< time out in milli seconds */
+        int socket; /**< associated socket */
+        struct sockaddr_in receiver;
+        CipByte message[ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE];
+        unsigned int message_size;
+    } DelayedEncapsulationMessage;
+
+    static EncapsulationInterfaceInformation g_interface_information;
+
+    static int g_registered_sessions[OPENER_NUMBER_OF_SUPPORTED_SESSIONS];
+
+    static DelayedEncapsulationMessage g_delayed_encapsulation_messages[ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES];
+
+/*** private functions ***/
+    void HandleReceivedListServicesCommand(EncapsulationData* receive_data);
+
+    void HandleReceivedListInterfacesCommand(EncapsulationData* receive_data);
+
+    void HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data);
+
+    void HandleReceivedListIdentityCommandUdp(int socket,
+                                              struct sockaddr_in* from_address,
+                                              EncapsulationData* receive_data);
+
+    void HandleReceivedRegisterSessionCommand(int socket,
+                                              EncapsulationData* receive_data);
+
+    CipStatus HandleReceivedUnregisterSessionCommand(
+            EncapsulationData* receive_data);
+
+    CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data);
+
+    CipStatus HandleReceivedSendRequestResponseDataCommand(
+            EncapsulationData* receive_data);
+
+    int GetFreeSessionIndex(void);
+
+    CipInt CreateEncapsulationStructure(CipUsint* receive_buffer,
+                                        int receive_buffer_length,
+                                        EncapsulationData* encapsulation_data);
+
+    SessionStatus CheckRegisteredSessions(EncapsulationData* receive_data);
+
+    int EncapsulateData(const EncapsulationData* const send_data);
+
+    void DetermineDelayTime(CipByte* buffer_start,
+                            DelayedEncapsulationMessage* delayed_message_buffer);
+
+    int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer);
+
+
+};
 #endif /* OPENER_ENCAP_H_ */

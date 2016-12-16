@@ -3,119 +3,22 @@
  * All rights reserved. 
  *
  ******************************************************************************/
+
+#define ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES 2 /**< According to EIP spec at least 2 delayed message requests should be supported */
+
+#define ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE (ENCAPSULATION_HEADER_LENGTH + 39 + sizeof(OPENER_DEVICE_NAME)) /* currently we only have the size of an encapsulation message */
+
 #include <string.h>
 #include "../../connection_stack/CIP_Common.h"
 #include "../../connection_stack/CIP_Connection.h"
 #include "eip_endianconv.h"
 #include "../NET_NetworkHandler.h"
 #include "../../../utils/UTIL_Endianconv.h"
+#include "../../CIP_Identity.h"
 
-/*Identity data from cipidentity.c*/
-extern CipUint vendor_id_;
-extern CipUint device_type_;
-extern CipUint product_code_;
-extern CipRevision revision_;
-extern CipUint status_;
-extern CipUdint serial_number_;
-extern CipShortString product_name_;
-
-/*ip address data taken from TCPIPInterfaceObject*/
-extern CipTcpIpNetworkInterfaceConfiguration interface_configuration_;
-
-const int kSupportedProtocolVersion = 1; /**< Supported Encapsulation protocol version */
-
-const int kEncapsulationHeaderOptionsFlag = 0x00; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
-
-const int kEncapsulationHeaderSessionHandlePosition = 4; /**< the position of the session handle within the encapsulation header*/
-
-const int kListIdentityDefaultDelayTime = 2000; /**< Default delay time for List Identity response */
-const int kListIdentityMinimumDelayTime = 500; /**< Minimum delay time for List Identity response */
-
-typedef enum {
-    kSessionStatusInvalid = -1,
-    kSessionStatusValid = 0
-} SessionStatus;
-
-const int kSenderContextSize = 8; /**< size of sender context in encapsulation header*/
-
-/** @brief definition of known encapsulation commands */
-typedef enum {
-    kEncapsulationCommandNoOperation = 0x0000, /**< only allowed for TCP */
-    kEncapsulationCommandListServices = 0x0004, /**< allowed for both UDP and TCP */
-    kEncapsulationCommandListIdentity = 0x0063, /**< allowed for both UDP and TCP */
-    kEncapsulationCommandListInterfaces = 0x0064, /**< optional, allowed for both UDP and TCP */
-    kEncapsulationCommandRegisterSession = 0x0065, /**< only allowed for TCP */
-    kEncapsulationCommandUnregisterSession = 0x0066, /**< only allowed for TCP */
-    kEncapsulationCommandSendRequestReplyData = 0x006F, /**< only allowed for TCP */
-    kEncapsulationCommandSendUnitData = 0x0070 /**< only allowed for TCP */
-} EncapsulationCommand;
-
-/** @brief definition of capability flags */
-typedef enum {
-    kCapabilityFlagsCipTcp = 0x0020,
-    kCapabilityFlagsCipUdpClass0or1 = 0x0100
-} CapabilityFlags;
-
-#define ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES 2 /**< According to EIP spec at least 2 delayed message requests should be supported */
-
-#define ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE (ENCAPSULATION_HEADER_LENGTH + 39 + sizeof(OPENER_DEVICE_NAME)) /* currently we only have the size of an encapsulation message */
-
-/* Encapsulation layer data  */
-
-/** @brief Delayed Encapsulation Message structure */
-typedef struct {
-    CipDint time_out; /**< time out in milli seconds */
-    int socket; /**< associated socket */
-    struct sockaddr_in receiver;
-    CipByte message[ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE];
-    unsigned int message_size;
-} DelayedEncapsulationMessage;
-
-EncapsulationInterfaceInformation g_interface_information;
-
-int g_registered_sessions[OPENER_NUMBER_OF_SUPPORTED_SESSIONS];
-
-DelayedEncapsulationMessage g_delayed_encapsulation_messages[ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES];
-
-/*** private functions ***/
-void HandleReceivedListServicesCommand(EncapsulationData* receive_data);
-
-void HandleReceivedListInterfacesCommand(EncapsulationData* receive_data);
-
-void HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data);
-
-void HandleReceivedListIdentityCommandUdp(int socket,
-    struct sockaddr_in* from_address,
-    EncapsulationData* receive_data);
-
-void HandleReceivedRegisterSessionCommand(int socket,
-    EncapsulationData* receive_data);
-
-CipStatus HandleReceivedUnregisterSessionCommand(
-    EncapsulationData* receive_data);
-
-CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data);
-
-CipStatus HandleReceivedSendRequestResponseDataCommand(
-    EncapsulationData* receive_data);
-
-int GetFreeSessionIndex(void);
-
-CipInt CreateEncapsulationStructure(CipUsint* receive_buffer,
-    int receive_buffer_length,
-    EncapsulationData* encapsulation_data);
-
-SessionStatus CheckRegisteredSessions(EncapsulationData* receive_data);
-
-int EncapsulateData(const EncapsulationData* const send_data);
-
-void DetermineDelayTime(CipByte* buffer_start,
-    DelayedEncapsulationMessage* delayed_message_buffer);
-
-int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer);
 
 /*   @brief Initializes session list and interface information. */
-void EncapsulationInit(void)
+void NET_EthIP_Encap::EncapsulationInit(void)
 {
 
     UTIL_Endianconv::DetermineEndianess();
@@ -144,7 +47,7 @@ void EncapsulationInit(void)
     strcpy((char*)g_interface_information.name_of_service, "Communications");
 }
 
-int HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
+int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
     unsigned int length, int* remaining_bytes)
 {
     CipStatus return_value = kCipStatusOk;
@@ -214,7 +117,7 @@ int HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
     return return_value;
 }
 
-int HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
+int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
     CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
 {
     CipStatus status = kCipStatusOk;
@@ -274,7 +177,7 @@ int HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address,
     return status;
 }
 
-int EncapsulateData(const EncapsulationData* const send_data)
+int NET_EthIP_Encap::EncapsulateData(const EncapsulationData* const send_data)
 {
     CipUsint* communcation_buffer = send_data->communication_buffer_start + 2;
     UTIL_Endianconv::AddIntToMessage(send_data->data_length, &communcation_buffer);
@@ -290,7 +193,7 @@ int EncapsulateData(const EncapsulationData* const send_data)
 /** @brief generate reply with "Communications Services" + compatibility Flags.
  *  @param receive_data pointer to structure with received data
  */
-void HandleReceivedListServicesCommand(EncapsulationData* receive_data)
+void NET_EthIP_Encap::HandleReceivedListServicesCommand(EncapsulationData* receive_data)
 {
     CipUsint* communication_buffer = receive_data->current_communication_buffer_position;
 
@@ -310,19 +213,19 @@ void HandleReceivedListServicesCommand(EncapsulationData* receive_data)
     memcpy(communication_buffer, g_interface_information.name_of_service, sizeof(g_interface_information.name_of_service));
 }
 
-void HandleReceivedListInterfacesCommand(EncapsulationData* receive_data)
+void NET_EthIP_Encap::HandleReceivedListInterfacesCommand(EncapsulationData* receive_data)
 {
     CipUsint* communication_buffer = receive_data->current_communication_buffer_position;
     receive_data->data_length = 2;
     UTIL_Endianconv::AddIntToMessage(0x0000, &communication_buffer); /* copy Interface data to msg for sending */
 }
 
-void HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data)
+void NET_EthIP_Encap::HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data)
 {
     receive_data->data_length = EncapsulateListIdentyResponseMessage(receive_data->current_communication_buffer_position);
 }
 
-void HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_address, EncapsulationData* receive_data)
+void NET_EthIP_Encap::HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_address, EncapsulationData* receive_data)
 {
     DelayedEncapsulationMessage* delayed_message_buffer = NULL;
 
@@ -353,7 +256,7 @@ void HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_a
     }
 }
 
-int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer)
+int NET_EthIP_Encap::EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer)
 {
     CipUsint* communication_buffer_runner = communication_buffer;
 
@@ -371,25 +274,25 @@ int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer)
 
     communication_buffer_runner += 8;
 
-    UTIL_Endianconv::AddIntToMessage(vendor_id_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(CIP_Identity::vendor_id_, &communication_buffer_runner);
 
-    UTIL_Endianconv::AddIntToMessage(device_type_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(CIP_Identity::device_type_, &communication_buffer_runner);
 
-    UTIL_Endianconv::AddIntToMessage(product_code_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(CIP_Identity::product_code_, &communication_buffer_runner);
 
-    *(communication_buffer_runner)++ = revision_.major_revision;
+    *(communication_buffer_runner)++ = CIP_Identity::revision_.major_revision;
 
-    *(communication_buffer_runner)++ = revision_.minor_revision;
+    *(communication_buffer_runner)++ = CIP_Identity::revision_.minor_revision;
 
-    UTIL_Endianconv::AddIntToMessage(status_, &communication_buffer_runner);
+    UTIL_Endianconv::AddIntToMessage(CIP_Identity::status_, &communication_buffer_runner);
 
-    UTIL_Endianconv::AddDintToMessage(serial_number_, &communication_buffer_runner);
+    UTIL_Endianconv::AddDintToMessage(CIP_Identity::serial_number_, &communication_buffer_runner);
 
-    *communication_buffer_runner++ = (unsigned char)product_name_.length;
+    *communication_buffer_runner++ = (unsigned char)CIP_Identity::product_name_.length;
 
-    memcpy(communication_buffer_runner, product_name_.string, product_name_.length);
+    memcpy(communication_buffer_runner, CIP_Identity::product_name_.string, CIP_Identity::product_name_.length);
 
-    communication_buffer_runner += product_name_.length;
+    communication_buffer_runner += CIP_Identity::product_name_.length;
 
     *communication_buffer_runner++ = 0xFF;
 
@@ -399,7 +302,7 @@ int EncapsulateListIdentyResponseMessage(CipByte* const communication_buffer)
     return communication_buffer_runner - communication_buffer;
 }
 
-void DetermineDelayTime(CipByte* buffer_start,  DelayedEncapsulationMessage* delayed_message_buffer)
+void NET_EthIP_Encap::DetermineDelayTime(CipByte* buffer_start,  DelayedEncapsulationMessage* delayed_message_buffer)
 {
 
     buffer_start += 12; /* start of the sender context */
@@ -423,7 +326,7 @@ void DetermineDelayTime(CipByte* buffer_start,  DelayedEncapsulationMessage* del
  * @param socket Socket this request is associated to. Needed for double register check
  * @param receive_data Pointer to received data with request/response.
  */
-void HandleReceivedRegisterSessionCommand(int socket,
+void NET_EthIP_Encap::HandleReceivedRegisterSessionCommand(int socket,
     EncapsulationData* receive_data)
 {
     int session_index = 0;
@@ -475,7 +378,7 @@ void HandleReceivedRegisterSessionCommand(int socket,
  *   close all corresponding TCP connections and delete session handle.
  *      pa_S_ReceiveData pointer to unregister session request with corresponding socket handle.
  */
-CipStatus HandleReceivedUnregisterSessionCommand(
+CipStatus NET_EthIP_Encap::HandleReceivedUnregisterSessionCommand(
     EncapsulationData* receive_data)
 {
     int i;
@@ -500,7 +403,7 @@ CipStatus HandleReceivedUnregisterSessionCommand(
 /** @brief Call Connection Manager.
  *  @param receive_data Pointer to structure with data and header information.
  */
-CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
+CipStatus NET_EthIP_Encap::HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
 {
     CipInt send_size;
     CipStatus return_value = kCipStatusOkSend;
@@ -514,9 +417,7 @@ CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
 
         if (kSessionStatusValid == CheckRegisteredSessions(receive_data)) /* see if the EIP session is registered*/
         {
-            send_size = CIP_CommonPacket::NotifyConnectedCommonPacketFormat(
-                receive_data,
-                &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
+            send_size = CIP_CommonPacket::NotifyConnectedCommonPacketFormat(receive_data, &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
 
             if (0 < send_size)
             { /* need to send reply */
@@ -541,7 +442,7 @@ CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
  *  @return status 	0 .. success.
  * 					-1 .. error
  */
-CipStatus HandleReceivedSendRequestResponseDataCommand(
+CipStatus NET_EthIP_Encap::HandleReceivedSendRequestResponseDataCommand(
     EncapsulationData* receive_data)
 {
     CipInt send_size;
@@ -556,9 +457,7 @@ CipStatus HandleReceivedSendRequestResponseDataCommand(
 
         if (kSessionStatusValid == CheckRegisteredSessions(receive_data)) /* see if the EIP session is registered*/
         {
-            send_size = CIP_CommonPacket::NotifyCommonPacketFormat(
-                receive_data,
-                &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
+            send_size = CIP_CommonPacket::NotifyCommonPacketFormat(receive_data, &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
 
             if (send_size >= 0)
             {
@@ -584,7 +483,7 @@ CipStatus HandleReceivedSendRequestResponseDataCommand(
  *  @return return index of free session in anRegisteredSessions.
  * 			kInvalidSession .. no free session available
  */
-int GetFreeSessionIndex(void)
+int NET_EthIP_Encap::GetFreeSessionIndex(void)
 {
     for (int session_index = 0; session_index < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; session_index++)
     {
@@ -605,7 +504,7 @@ int GetFreeSessionIndex(void)
  * 			>0 .. more than one packet received
  * 			<0 .. only fragment of data portion received
  */
-CipInt CreateEncapsulationStructure(CipUsint* receive_buffer, int receive_buffer_length, EncapsulationData* encapsulation_data)
+CipInt NET_EthIP_Encap::CreateEncapsulationStructure(CipUsint* receive_buffer, int receive_buffer_length, EncapsulationData* encapsulation_data)
 {
     encapsulation_data->communication_buffer_start = receive_buffer;
     encapsulation_data->command_code = UTIL_Endianconv::GetIntFromMessage(&receive_buffer);
@@ -624,7 +523,7 @@ CipInt CreateEncapsulationStructure(CipUsint* receive_buffer, int receive_buffer
  *  @return 0 .. Session registered
  *  		kInvalidSession .. invalid session -> return unsupported command received
  */
-SessionStatus CheckRegisteredSessions(EncapsulationData* receive_data)
+SessionStatus NET_EthIP_Encap::CheckRegisteredSessions(EncapsulationData* receive_data)
 {
     if ((0 < receive_data->session_handle) && (receive_data->session_handle <= OPENER_NUMBER_OF_SUPPORTED_SESSIONS))
     {
@@ -636,7 +535,7 @@ SessionStatus CheckRegisteredSessions(EncapsulationData* receive_data)
     return kSessionStatusInvalid;
 }
 
-void CloseSession(int socket)
+void NET_EthIP_Encap::CloseSession(int socket)
 {
     int i;
     for (i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; ++i)
@@ -650,7 +549,7 @@ void CloseSession(int socket)
     }
 }
 
-void EncapsulationShutDown(void)
+void NET_EthIP_Encap::EncapsulationShutDown(void)
 {
     for (int i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; ++i)
     {
@@ -662,7 +561,7 @@ void EncapsulationShutDown(void)
     }
 }
 
-void ManageEncapsulationMessages(MilliSeconds elapsed_time)
+void NET_EthIP_Encap::ManageEncapsulationMessages(MilliSeconds elapsed_time)
 {
     for (unsigned int i = 0; i < ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES; i++)
     {

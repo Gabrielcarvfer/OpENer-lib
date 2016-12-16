@@ -9,6 +9,7 @@
 #include "ciptypes.h"
 #include "network_stack/ethernetip_net/eip_encap.h"
 #include "../typedefs.h"
+#include "network_stack/devicenet_net/NET_DeviceNetEncapsulation.h"
 
 
 /** @ingroup ENCAP

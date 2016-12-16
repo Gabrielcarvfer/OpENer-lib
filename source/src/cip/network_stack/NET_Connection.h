@@ -83,6 +83,7 @@ class NET_Connection
     static uint32_t endian_ntohl(uint32_t netlong);
     static uint16_t endian_ntohs(uint16_t netshort);
 
+
     private:
 #ifdef OPENER_NET_CONNECTION_H_PRIVATE
         static fd_set select_set[2]; //0-master_socket 1-read_socket
