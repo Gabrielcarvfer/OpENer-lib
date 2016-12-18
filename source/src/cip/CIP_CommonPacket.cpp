@@ -3,14 +3,14 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#include "CIP_CommonPacket.h"
-#include "connection_stack/CIP_Common.h"
-#include "connection_stack/CIP_Connection.h"
-#include "connection_stack/CIP_MessageRouter.h"
-#include "../utils/UTIL_Endianconv.h"
-#include "network_stack/ethernetip_net/eip_endianconv.h"
-#include "../opener_user_conf.h"
-#include "../trace.h"
+#include <CIP_CommonPacket.h>
+#include <connection_stack/CIP_Common.h>
+#include <connection_stack/CIP_Connection.h>
+#include <connection_stack/CIP_MessageRouter.h>
+#include <utils/UTIL_Endianconv.h>
+#include <ethernetip_net/eip_endianconv.h>
+#include <opener_user_conf.h>
+#include <trace.h>
 
 
 

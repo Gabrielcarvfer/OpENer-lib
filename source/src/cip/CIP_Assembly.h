@@ -1,19 +1,19 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
 #ifndef OPENER_CIPASSEMBLY_H_
 #define OPENER_CIPASSEMBLY_H_
 
-#include "ciptypes.h"
-#include "../typedefs.h"
-#include "class_stack/CIP_ClassInstance.h"
-#include "class_stack/CIP_Template.h"
+#include <ciptypes.h>
+#include <typedefs.h>
+#include <CIP_Template.h>
+#include <CIP_Template.h>
 
 class CIP_Assembly;
 
-class CIP_Assembly : public CIP_ClassInstance<CIP_Assembly>, public CIP_Template<CIP_Assembly>
+class CIP_Assembly : public CIP_Template<CIP_Assembly>
 {
     private:
     int id;
@@ -23,7 +23,7 @@ class CIP_Assembly : public CIP_ClassInstance<CIP_Assembly>, public CIP_Template
 		~CIP_Assembly ();
 
 		/** @brief Setup the Assembly object
-		 * 
+		 *
 		 * Creates the Assembly Class with zero instances and sets up all services.
 		 *
 		 * @return Returns kCipStatusOk if assembly object was successfully created, otherwise kCipStatusError
@@ -40,14 +40,14 @@ class CIP_Assembly : public CIP_ClassInstance<CIP_Assembly>, public CIP_Template
 		static void ShutdownAssemblies(void);
 
 		/** @brief notify an Assembly object that data has been received for it.
-		 * 
+		 *
 		 *  The data will be copied into the assembly objects attribute 3 and
 		 *  the application will be informed with the IApp_after_assembly_data_received function.
-		 *  
+		 *
 		 *  @param instance the assembly object instance for which the data was received
 		 *  @param data pointer to the data received
 		 *  @param data_length number of bytes received
-		 *  @return 
+		 *  @return
 		 *     - EIP_OK the received data was okay
 		 *     - EIP_ERROR the received data was wrong
 		 */

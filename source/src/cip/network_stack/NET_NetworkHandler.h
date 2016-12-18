@@ -15,13 +15,13 @@
 #define GENERIC_NETWORKHANDLER_H_
 
 
-#include "../../opener_user_conf.h"
-#include "../../typedefs.h"
-#include "../connection_stack/CIP_Connection.h"
-#include "NET_Connection.h"
+#include <opener_user_conf.h>
+#include <typedefs.h>
+#include <connection_stack/CIP_Connection.h>
+#include <NET_Connection.h>
 
 #ifdef WIN32
-#include "winsock.h"
+#include <winsock.h>
 #else
 #endif
 

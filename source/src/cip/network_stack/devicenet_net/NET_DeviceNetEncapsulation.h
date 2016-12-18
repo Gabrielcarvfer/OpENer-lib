@@ -1,7 +1,7 @@
 #ifndef OPENER_DNET_ENCAP_H_
 #define OPENER_DNET_ENCAP_H_
 
-#include "../../../typedefs.h"
+#include <typedefs.h>
 
 /** @file encap.h
  * @brief This file contains the public interface of the encapsulation layer

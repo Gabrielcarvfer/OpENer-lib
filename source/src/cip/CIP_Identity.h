@@ -1,19 +1,19 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
 #ifndef OPENER_CIPIDENTITY_H_
 #define OPENER_CIPIDENTITY_H_
 
-#include "ciptypes.h"
-#include "../typedefs.h"
-#include "class_stack/CIP_ClassInstance.h"
-#include "class_stack/CIP_Template.h"
+#include <ciptypes.h>
+#include <typedefs.h>
+#include <CIP_Template.h>
+#include <CIP_Template.h>
 
 class CIP_Identity;
 
-class CIP_Identity : public CIP_ClassInstance<CIP_Identity>, public CIP_Template<CIP_Identity>
+class CIP_Identity : public CIP_Template<CIP_Identity>
 {
 public:
 /* global public variables */

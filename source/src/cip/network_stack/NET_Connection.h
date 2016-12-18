@@ -7,7 +7,7 @@
 
 #include <map>
 
-#include "../ciptypes.h"
+#include <ciptypes.h>
 
 #ifdef OPENER_NET_CONNECTION_H_PRIVATE
 

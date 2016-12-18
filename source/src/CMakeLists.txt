@@ -1,22 +1,16 @@
 #######################################
 # Add subdirectories                  #
 #######################################
-
-add_subdirectory( cip )
-add_subdirectory( cip_objects )
-add_subdirectory( utils )
-
-#######################################
-# Add common includes                 #
-#######################################
 opener_common_includes()
 
-#######################################
-# Add platfrom specific things        #
-#######################################
+add_subdirectory( cip_objects )
+add_subdirectory( utils )
+add_subdirectory( cip )
 
-opener_platform_support( "INCLUDES" )
-set( OPENER_SRC ${CIP_SRC} ${UTILS_SRC} typedefs.h trace.h opener_user_conf.h Opener_ExplicitConnection.cpp Opener_IOConnection.cpp  Opener_Interface.cpp ./cip/network_stack/NET_NetworkHandler.cpp)
+set( OPENER_SRC typedefs.h trace.h opener_user_conf.h Opener_ExplicitConnection.cpp Opener_IOConnection.cpp  Opener_Interface.cpp) #${CIP_SRC} ${UTILS_SRC} )
 
-add_library( OpENer ${OPENER_SRC})
-target_link_libraries(OpENer OpENer_CIP OpENer_UTILS)
+add_library( OpENer SHARED ${OPENER_SRC})
+
+if(WIN32)
+    target_link_libraries(OpENer OpENer_CLASS OpENer_UTILS OpENer_CONN OpENer_NET OpENer_CIP CIP_NET_ETHIP wsock32 ws2_32)
+endif()

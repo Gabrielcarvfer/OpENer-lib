@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
-#include "../../Opener_Interface.h"
+#include <Opener_Interface.h>
 
 /******************************************************************************/
 int main(int argc, char* arg[])

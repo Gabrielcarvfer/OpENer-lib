@@ -6,7 +6,7 @@
 
 #include <string.h>
 
-#include "CIP_Class3Connection.h"
+#include <CIP_Class3Connection.h>
 
 
 

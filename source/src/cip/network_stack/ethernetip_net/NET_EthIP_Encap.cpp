@@ -4,15 +4,15 @@
  *
  ******************************************************************************/
 
-
 #include <string.h>
-#include "../../connection_stack/CIP_Common.h"
-#include "../../connection_stack/CIP_Connection.h"
-#include "eip_endianconv.h"
-#include "../NET_NetworkHandler.h"
-#include "../../../utils/UTIL_Endianconv.h"
-#include "../../CIP_Identity.h"
-#include "tcpip_link/ciptcpipinterface.h"
+#include <NET_EthIP_Encap.h>
+#include <connection_stack/CIP_Common.h>
+#include <connection_stack/CIP_Connection.h>
+#include <eip_endianconv.h>
+#include <NET_NetworkHandler.h>
+#include <utils/UTIL_Endianconv.h>
+#include <CIP_Identity.h>
+#include <tcpip_link/NET_EthIP_Interface.h>
 
 
 /*   @brief Initializes session list and interface information. */
@@ -115,7 +115,7 @@ int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
     return return_value;
 }
 
-int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr_in* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
+int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
 {
     CipStatus status = kCipStatusOk;
     EncapsulationData encapsulation_data;
@@ -144,7 +144,7 @@ int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr_in
                         HandleReceivedListIdentityCommandTcp(&encapsulation_data);
                     } else
                     {
-                        HandleReceivedListIdentityCommandUdp (socket, from_address, &encapsulation_data);
+                        HandleReceivedListIdentityCommandUdp (socket, (struct sockaddr_in*)from_address, &encapsulation_data);
                         status = kCipStatusOk;
                     } /* as the response has to be delayed do not send it now */
                     break;
@@ -265,7 +265,7 @@ int NET_EthIP_Encap::EncapsulateListIdentyResponseMessage(CipByte* const communi
 
     UTIL_Endianconv::AddIntToMessage(kSupportedProtocolVersion, &communication_buffer_runner);
 
-    EncapsulateIpAddress(NET_Connection::endian_htons (kOpenerEthernetPort), interface_configuration_.ip_address, &communication_buffer_runner);
+    EncapsulateIpAddress(NET_Connection::endian_htons (kOpenerEthernetPort), NET_EthIP_Interface::interface_configuration_.ip_address, &communication_buffer_runner);
 
     memset(communication_buffer_runner, 0, 8);
 

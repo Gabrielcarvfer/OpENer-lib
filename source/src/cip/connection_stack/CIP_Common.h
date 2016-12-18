@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
 #ifndef OPENER_CIP_COMMON_H_
@@ -9,10 +9,11 @@
 /** @file cipcommon.h
  * Common CIP object interface
  */
-#include "../ciptypes.h"
-#include "../../typedefs.h"
-#include "../class_stack/CIP_ClassInstance.h"
+#include <ciptypes.h>
+#include <typedefs.h>
+#include <CIP_Template.h>
 #include <array>
+#include <map>
 
 class CIP_Common
 {

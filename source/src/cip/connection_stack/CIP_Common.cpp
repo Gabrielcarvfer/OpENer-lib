@@ -1,26 +1,27 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
 #include <string.h>
 
-#include "CIP_Common.h"
+#include <CIP_Common.h>
 
-#include "../CIP_CommonPacket.h"
-#include "../appcontype.h"
-#include "../network_stack/ethernetip_net/cipethernetlink.h"
-#include "../CIP_Identity.h"
-#include "CIP_MessageRouter.h"
-#include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
-#include "../../utils/UTIL_Endianconv.h"
-#include "../../trace.h"
-#include "../../opener_user_conf.h"
+#include <CIP_CommonPacket.h>
+#include <appcontype.h>
+#include <NET_EthIP_Link.h>
+#include <CIP_Identity.h>
+#include <CIP_MessageRouter.h>
+#include <NET_EthIP_Interface.h>
+#include <UTIL_Endianconv.h>
+#include <trace.h>
+#include <opener_user_conf.h>
 
 void CIP_Common::CipStackInit (CipUint unique_connection_id)
 {
     CipStatus eip_status;
     EncapsulationInit ();
+
     /* The message router is the first CIP object be initialized!!! */
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
@@ -28,10 +29,10 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
     eip_status = CIP_Identity::CipIdentityInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
-    eip_status = CipTcpIpInterfaceInit ();
+    eip_status = NET_EthIP_Interface::CipTcpIpInterfaceInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
-    eip_status = CipEthernetLinkInit ();
+    eip_status = NET_EthIP_Link::CipEthernetLinkInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
     eip_status = CIP_Connection::ConnectionManagerInit (unique_connection_id);
@@ -54,7 +55,7 @@ void CIP_Common::ShutdownCipStack (void)
     /*clean the data needed for the assembly object's attribute 3*/
     CIP_Assembly::ShutdownAssemblies ();
 
-    ShutdownTcpIpInterface ();
+    NET_EthIP_Interface::ShutdownTcpIpInterface ();
 
     /*no clear all the instances and classes */
     CIP_MessageRouter::DeleteAllClasses ();

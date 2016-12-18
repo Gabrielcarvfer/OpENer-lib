@@ -2,7 +2,7 @@
 // Created by gabriel on 11/11/2016.
 //
 
-#include "CIP_Attribute.h"
+#include <CIP_Attribute.h>
 
 CIP_Attribute::CIP_Attribute(CipUint attribute_number, CipUsint type, void * data, CipAttributeFlag attributeFlag)
 {

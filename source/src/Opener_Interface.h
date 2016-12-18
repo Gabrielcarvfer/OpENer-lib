@@ -7,13 +7,13 @@
 #define OPENER_OPENER_INTERFACE_H
 
 #include <cassert>
-#include "cip/ciperror.h"
-#include "cip/ciptypes.h"
-#include "cip/class_stack/CIP_ClassInstance.h"
-#include "typedefs.h"
-#include "cip/connection_stack/CIP_Connection.h"
-#include "Opener_IOConnection.h"
-#include "Opener_ExplicitConnection.h"
+#include <ciperror.h>
+#include <ciptypes.h>
+#include <CIP_Template.h>
+#include <typedefs.h>
+#include <connection_stack/CIP_Connection.h>
+#include <Opener_IOConnection.h>
+#include <Opener_ExplicitConnection.h>
 
 /** @mainpage OpENer - Open Source EtherNet/IP(TM) Communication Stack
  *Documentation

@@ -3,14 +3,14 @@
  ******************************************************************************/
 #include <string.h>
 
-#include "NET_DeviceNetLink.h"
+#include <NET_DeviceNetLink.h>
 
-#include "../../connection_stack/CIP_Common.h"
-#include "../../ciperror.h"
-#include "../../connection_stack/CIP_MessageRouter.h"
-//#include "endianconv.h"
-#include "../../../Opener_Interface.h"
-#include "../../../typedefs.h"
+#include <connection_stack/CIP_Common.h>
+#include <ciperror.h>
+#include <connection_stack/CIP_MessageRouter.h>
+//#include <endianconv.h>
+#include <Opener_Interface.h>
+#include <typedefs.h>
 /*
 typedef struct {
     CipUsint mac_id;

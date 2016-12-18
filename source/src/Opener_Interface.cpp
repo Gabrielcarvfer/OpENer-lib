@@ -2,8 +2,8 @@
 // Created by gabriel on 11/11/2016.
 //
 
-#include "Opener_Interface.h"
-#include "cip/network_stack/NET_NetworkHandler.h"
+#include <Opener_Interface.h>
+#include <NET_NetworkHandler.h>
 
 
 bool Opener_Interface::Opener_Initialize()

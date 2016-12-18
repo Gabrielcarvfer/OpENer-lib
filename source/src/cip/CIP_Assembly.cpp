@@ -1,20 +1,18 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
 
 #include <cstring> /*needed for memcpy */
 #include <stdlib.h>
-#include <malloc.h>
-
-#include "CIP_Assembly.h"
-#include "connection_stack/CIP_Connection.h"
-#include "../trace.h"
+#include <CIP_Assembly.h>
+#include <CIP_Connection.h>
+#include <trace.h>
 
 CIP_Assembly::CIP_Assembly()
 {
-    this->id = GetNumberOfInstances ();
+    this->id = CIP_Assembly::GetNumberOfInstances();
     //TODO:Fix to emplace in the first empty slot instead of appending
     CIP_Assembly::AddClassInstance(this, this->id);
 }
@@ -35,6 +33,7 @@ CipStatus CIP_Assembly::CipAssemblyInitialize(void)
 
     CIP_Assembly *instance = new CIP_Assembly();
 
+    object_Set.emplace(object_Set.size(), instance);
 
     return kCipStatusOk;
 }
@@ -44,14 +43,14 @@ void CIP_Assembly::ShutdownAssemblies(void)
     if (CIP_Assembly::GetClass() != NULL)
     {
         CIP_Attribute* attribute;
-        CIP_ClassInstance* instance;
+        CIP_Assembly* instance;
 
-        for(int i = 1; i <= GetNumberOfInstances(); i++)
+        for(unsigned int i = 1; i <= GetNumberOfInstances(); i++)
         {
             instance = GetInstance(i);
 
             attribute = instance->GetCipAttribute(3);
-            if (NULL != attribute) 
+            if (NULL != attribute)
             {
                 //delete[] (attribute->getData());
                 free(attribute->getData ());
@@ -88,7 +87,7 @@ CipStatus CIP_Assembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipU
     /* empty path (path size = 0) need to be checked and taken care of in future */
     /* copy received data to Attribute 3 */
     assembly_byte_array = (decltype (assembly_byte_array))(this->attributes[2]->getData());
-    if (assembly_byte_array->length != data_length) 
+    if (assembly_byte_array->length != data_length)
     {
         OPENER_TRACE_ERR("wrong amount of data arrived for assembly object\n");
         return kCipStatusError; /*TODO question should we notify the application that wrong data has been recieved???*/
@@ -129,22 +128,22 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
             {
                 OPENER_TRACE_WARN("Assembly AssemblyAttributeSingle: received data for connected output assembly\n\r");
                 message_router_response->general_status = kCipErrorAttributeNotSetable;
-            } 
-            else 
+            }
+            else
             {
-                if (message_router_request->data_length < data->length) 
+                if (message_router_request->data_length < data->length)
                 {
                     OPENER_TRACE_INFO("Assembly setAssemblyAttributeSingle: not enough data received.\r\n");
                     message_router_response->general_status = kCipErrorNotEnoughData;
-                } 
-                else 
+                }
+                else
                 {
-                    if (message_router_request->data_length > data->length) 
+                    if (message_router_request->data_length > data->length)
                     {
                         OPENER_TRACE_INFO("Assembly setAssemblyAttributeSingle: too much data received.\r\n");
                         message_router_response->general_status = kCipErrorTooMuchData;
-                    } 
-                    else 
+                    }
+                    else
                     {
                         memcpy(data->data, router_request_data, data->length);
 
@@ -159,23 +158,23 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
                * data was not ok.
                */
                             message_router_response->general_status = kCipErrorInvalidAttributeValue;
-                        } 
-                        else 
+                        }
+                        else
                         {
                             message_router_response->general_status = kCipErrorSuccess;
                         }
                     }
                 }
             }
-        } 
-        else 
+        }
+        else
         {
             /* the attribute was zero we are a heartbeat assembly */
             message_router_response->general_status = kCipErrorTooMuchData;
         }
     }
 
-    if ((attribute != NULL) && (4 == message_router_request->request_path.attribute_number)) 
+    if ((attribute != NULL) && (4 == message_router_request->request_path.attribute_number))
     {
         message_router_response->general_status = kCipErrorAttributeNotSetable;
     }
@@ -188,11 +187,11 @@ CipStatus CIP_Assembly::InstanceServices(int service, CipMessageRouterRequest* m
     //Class services
     if (this->id == 0)
     {
-        this->SetAssemblyAttributeSingle(msg_router_request, msg_router_response);
+        return this->SetAssemblyAttributeSingle(msg_router_request, msg_router_response);
     }
     //Instance services
     else
     {
-
+        return kCipStatusError;
     }
 }

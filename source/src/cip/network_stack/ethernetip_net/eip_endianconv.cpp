@@ -5,9 +5,9 @@
  ******************************************************************************/
 
 #include <stdio.h>
-#include "eip_endianconv.h"
-#include "../../../utils/UTIL_Endianconv.h"
-#include "../NET_Connection.h"
+#include <eip_endianconv.h>
+#include <utils/UTIL_Endianconv.h>
+#include <NET_Connection.h>
 
 
 #ifdef WIN32

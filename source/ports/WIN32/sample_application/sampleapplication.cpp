@@ -1,13 +1,13 @@
-/*******************************************************************************
+/******************************************************************************
  * Copyright (c) 2012, Rockwell Automation, Inc.
  * All rights reserved.
  *
- ******************************************************************************/
-
-#include "../../../Opener_Interface.h"
-#include <src/cip/CIP_Assembly.h>
+ *****************************************************************************/
+/*
+#include <Opener_Interface.h>
+#include <CIP_Assembly.h>
 #include <malloc.h>
-#include <src/cip/appcontype.h>
+#include <appcontype.h>
 
 #define DEMO_APP_INPUT_ASSEMBLY_NUM 100 //0x064
 #define DEMO_APP_OUTPUT_ASSEMBLY_NUM 150 //0x096
@@ -16,12 +16,12 @@
 #define DEMO_APP_HEARBEAT_LISTEN_ONLY_ASSEMBLY_NUM 153 //0x099
 #define DEMO_APP_EXPLICT_ASSEMBLY_NUM 154 //0x09A
 
-/* global variables for demo application (4 assembly data fields)  ************/
+// global variables for demo application (4 assembly data fields)  **
 
-CipUsint g_assembly_data064[32]; /* Input */
-CipUsint g_assembly_data096[32]; /* Output */
-CipUsint g_assembly_data097[10]; /* Config */
-CipUsint g_assembly_data09A[32]; /* Explicit */
+CipUsint g_assembly_data064[32]; // Input 
+CipUsint g_assembly_data096[32]; // Output 
+CipUsint g_assembly_data097[10]; // Config 
+CipUsint g_assembly_data09A[32]; // Explicit 
 
 CipStatus ApplicationInitialization(void)
 {
@@ -54,40 +54,40 @@ CipStatus ApplicationInitialization(void)
 
 void HandleApplication(void)
 {
-    /* check if application needs to trigger an connection */
+    // check if application needs to trigger an connection 
 }
 
 void CheckIoConnectionEvent(unsigned int pa_unOutputAssembly, unsigned int pa_unInputAssembly, IoConnectionEvent pa_eIOConnectionEvent)
 {
-    /* maintain a correct output state according to the connection state*/
+    // maintain a correct output state according to the connection state
 
-    (void)pa_unOutputAssembly; /* suppress compiler warning */
-    (void)pa_unInputAssembly; /* suppress compiler warning */
-    (void)pa_eIOConnectionEvent; /* suppress compiler warning */
+    (void)pa_unOutputAssembly; // suppress compiler warning 
+    (void)pa_unInputAssembly; // suppress compiler warning 
+    (void)pa_eIOConnectionEvent; // suppress compiler warning 
 }
 
 CipStatus AfterAssemblyDataReceived(CIP_Assembly* pa_pstInstance)
 {
     CipStatus nRetVal = kCipStatusOk;
 
-    /*handle the data received e.g., update outputs of the device */
+    //handle the data received e.g., update outputs of the device 
     switch (CIP_Assembly::GetInstanceNumber(pa_pstInstance))
     {
     case DEMO_APP_OUTPUT_ASSEMBLY_NUM:
-        /* Data for the output assembly has been received.
-       * Mirror it to the inputs */
+        // Data for the output assembly has been received.
+        // Mirror it to the inputs
         memcpy(&g_assembly_data064[0], &g_assembly_data096[0], sizeof(g_assembly_data064));
         break;
     case DEMO_APP_EXPLICT_ASSEMBLY_NUM:
-        /* do something interesting with the new data from
-       * the explicit set-data-attribute message */
+        // do something interesting with the new data from
+        // the explicit set-data-attribute message
         break;
     case DEMO_APP_CONFIG_ASSEMBLY_NUM:
-        /* Add here code to handle configuration data and check if it is ok
+        // Add here code to handle configuration data and check if it is ok
        * The demo application does not handle config data.
        * However in order to pass the test we accept any data given.
        * EIP_ERROR
-       */
+       
         nRetVal = kCipStatusOk;
         break;
     }
@@ -96,11 +96,11 @@ CipStatus AfterAssemblyDataReceived(CIP_Assembly* pa_pstInstance)
 
 CipBool BeforeAssemblyDataSend(CIP_Assembly* pa_pstInstance)
 {
-    /*update data to be sent e.g., read inputs of the device */
-    /*In this sample app we mirror the data from out to inputs on data receive
-   * therefore we need nothing to do here. Just return true to inform that
-   * the data is new.
-   */
+    //update data to be sent e.g., read inputs of the device 
+    //In this sample app we mirror the data from out to inputs on data receive
+    // therefore we need nothing to do here. Just return true to inform that
+    // the data is new.
+   
     if (CIP_Assembly::GetInstanceNumber(pa_pstInstance) == DEMO_APP_EXPLICT_ASSEMBLY_NUM)
     {
         // do something interesting with the existing data
@@ -138,3 +138,4 @@ void RunIdleChanged(CipUdint pa_nRunIdleValue)
 {
     (void)pa_nRunIdleValue;
 }
+*/

@@ -3,8 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#include "appcontype.h"
-#include "../opener_user_conf.h"
+#include <appcontype.h>
+#include <opener_user_conf.h>
 #include <cstring>
 
 typedef struct {

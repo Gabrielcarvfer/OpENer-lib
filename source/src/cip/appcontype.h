@@ -6,8 +6,8 @@
 #ifndef OPENER_APPCONTYPE_H_
 #define OPENER_APPCONTYPE_H_
 
-#include "connection_stack/CIP_Connection.h"
-#include "ciptypes.h"
+#include <connection_stack/CIP_Connection.h>
+#include <ciptypes.h>
 
 void InitializeIoConnectionData(void);
 

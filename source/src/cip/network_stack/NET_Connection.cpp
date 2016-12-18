@@ -2,8 +2,8 @@
 // Created by gabriel on 30/11/2016.
 //
 #define OPENER_NET_CONNECTION_H_PRIVATE
-#include "../../trace.h"
-#include "NET_Connection.h"
+#include <trace.h>
+#include <NET_Connection.h>
 
 void NET_Connection::InitSelects()
 {

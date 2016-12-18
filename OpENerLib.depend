@@ -1,0 +1,354 @@
+# depslib dependency file v1.0
+1482089123 source:c:\users\gabriel\desktop\cip\toc-opener\main.cpp
+	<Opener_Interface.h>
+
+1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_interface.h
+	<cassert>
+	<ciperror.h>
+	<ciptypes.h>
+	<CIP_Template.h>
+	<typedefs.h>
+	<connection_stack/CIP_Connection.h>
+	<Opener_IOConnection.h>
+	<Opener_ExplicitConnection.h>
+
+1478396785 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\ciperror.h
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\ciptypes.h
+	<typedefs.h>
+	<ciperror.h>
+	<string>
+
+1481075582 c:\users\gabriel\desktop\cip\toc-opener\source\src\typedefs.h
+	<cstdint>
+
+1482090107 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_classinstance.h
+
+1482085296 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_attribute.h
+	<ciptypes.h>
+
+1482085404 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_service.h
+	<ciptypes.h>
+
+1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_connection.h
+	<map>
+	<ciptypes.h>
+	<CIP_CommonPacket.h>
+	<CIP_Template.h>
+	<CIP_Template.h>
+	<NET_Connection.h>
+	<Opener_Interface.h>
+	<typedefs.h>
+	<CIP_Assembly.h>
+
+1482085686 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_commonpacket.h
+	<ciptypes.h>
+	<ethernetip_net/NET_EthIP_Encap.h>
+	<typedefs.h>
+	<devicenet_net/NET_DeviceNetEncapsulation.h>
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\net_ethip_encap.h
+	<typedefs.h>
+	<opener_user_conf.h>
+	<NET_Encapsulation.h>
+
+1480701484 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_user_conf.h
+	<stdio.h>
+
+1482085404 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_encapsulation.h
+	<ciptypes.h>
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\net_devicenetencapsulation.h
+	<typedefs.h>
+
+1482090167 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_template.h
+	<ciptypes.h>
+	<map>
+	<typedefs.h>
+	<string>
+	<CIP_Attribute.h>
+	<CIP_Service.h>
+
+1482085404 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_connection.h
+	<map>
+	<ciptypes.h>
+	<winsock.h>
+	<windows.h>
+	<sys/sock.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<sys/select.h>
+
+1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.h
+	<ciptypes.h>
+	<typedefs.h>
+	<CIP_Template.h>
+	<CIP_Template.h>
+
+1478922947 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_ioconnection.h
+
+1478922976 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_explicitconnection.h
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\appcontype.cpp
+	<appcontype.h>
+	<opener_user_conf.h>
+	<cstring>
+
+1482085550 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\appcontype.h
+	<connection_stack/CIP_Connection.h>
+	<ciptypes.h>
+
+1482090196 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.cpp
+	<cstring>
+	<stdlib.h>
+	<CIP_Assembly.h>
+	<CIP_Connection.h>
+	<trace.h>
+
+1482079415 c:\users\gabriel\desktop\cip\toc-opener\source\src\trace.h
+
+1482085686 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_commonpacket.cpp
+	<CIP_CommonPacket.h>
+	<connection_stack/CIP_Common.h>
+	<connection_stack/CIP_Connection.h>
+	<connection_stack/CIP_MessageRouter.h>
+	<utils/UTIL_Endianconv.h>
+	<ethernetip_net/eip_endianconv.h>
+	<opener_user_conf.h>
+	<trace.h>
+
+1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_common.h
+	<ciptypes.h>
+	<typedefs.h>
+	<CIP_Template.h>
+	<array>
+	<map>
+
+1482090298 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_messagerouter.h
+	<ciptypes.h>
+	<typedefs.h>
+	<CIP_Template.h>
+	<map>
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\util_endianconv.h
+	<typedefs.h>
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\eip_endianconv.h
+	<typedefs.h>
+
+1482090531 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_identity.cpp
+	<CIP_Identity.h>
+	<Opener_Interface.h>
+	<opener_user_conf.h>
+
+1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_identity.h
+	<ciptypes.h>
+	<typedefs.h>
+	<CIP_Template.h>
+	<CIP_Template.h>
+
+1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_attribute.cpp
+	<CIP_Attribute.h>
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_classinstance.cpp
+	<trace.h>
+	<CIP_ClassInstance.h>
+	<connection_stack/CIP_Common.h>
+	<CIP_Attribute.h>
+	<opener_user_conf.h>
+	<utility>
+
+1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_service.cpp
+	<CIP_Service.h>
+
+1482090167 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_template.cpp
+	<CIP_Template.h>
+	<trace.h>
+	<CIP_Template.h>
+	<connection_stack/CIP_Common.h>
+	<CIP_Attribute.h>
+	<opener_user_conf.h>
+	<utility>
+
+1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_class3connection.cpp
+	<string.h>
+	<CIP_Class3Connection.h>
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_class3connection.h
+	<CIP_Connection.h>
+	<Opener_Interface.h>
+	<opener_user_conf.h>
+
+1482090409 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_common.cpp
+	<string.h>
+	<CIP_Common.h>
+	<CIP_CommonPacket.h>
+	<appcontype.h>
+	<NET_EthIP_Link.h>
+	<CIP_Identity.h>
+	<CIP_MessageRouter.h>
+	<NET_EthIP_Interface.h>
+	<UTIL_Endianconv.h>
+	<trace.h>
+	<opener_user_conf.h>
+
+1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\net_ethip_link.h
+	<ciptypes.h>
+	<typedefs.h>
+	<CIP_Template.h>
+
+1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\tcpip_link\net_ethip_interface.h
+	<CIP_Template.h>
+	<ciptypes.h>
+	<typedefs.h>
+
+1482085715 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_connection.cpp
+	<CIP_Connection.h>
+	<cstring>
+	<CIP_Class3Connection.h>
+	<CIP_Identity.h>
+	<CIP_IOConnection.h>
+	<utils/UTIL_Endianconv.h>
+	<trace.h>
+	<winsock.h>
+	<arpa/inet>
+
+1482085493 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_ioconnection.h
+	<CIP_Assembly.h>
+	<CIP_Connection.h>
+	<CIP_CommonPacket.h>
+	<Opener_Interface.h>
+
+1482085686 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_ioconnection.cpp
+	<string.h>
+	<CIP_CommonPacket.h>
+	<CIP_IOConnection.h>
+	<appcontype.h>
+	<CIP_Common.h>
+	<ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
+	<utils/UTIL_Endianconv.h>
+	<NET_NetworkHandler.h>
+	<trace.h>
+	<winsock.h>
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_networkhandler.h
+	<opener_user_conf.h>
+	<typedefs.h>
+	<connection_stack/CIP_Connection.h>
+	<NET_Connection.h>
+	<winsock.h>
+
+1482090312 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_messagerouter.cpp
+	<CIP_MessageRouter.h>
+	<connection_stack/CIP_Common.h>
+	<trace.h>
+
+1482089384 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\can_link\net_caninterface.cpp
+	"NET_CanInterface.h"
+	<fcntl.h>
+	<net/if.h>
+	<stdio.h>
+	<string.h>
+	<sys/ioctl.h>
+	<linux/can/raw.h>
+
+1481841305 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\can_link\net_caninterface.h
+
+1481841227 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\dnet_conn_objects.cpp
+
+1481841045 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\net_devicenetencapsulation.cpp
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\net_devicenetlink.cpp
+	<string.h>
+	<NET_DeviceNetLink.h>
+	<connection_stack/CIP_Common.h>
+	<ciperror.h>
+	<connection_stack/CIP_MessageRouter.h>
+	<Opener_Interface.h>
+	<typedefs.h>
+
+1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\net_devicenetlink.h
+	<./ciptypes.h>
+	<typedefs.h>
+
+1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\net_devicenetprotocol.cpp
+	<NET_DeviceNetProtocol.h>
+
+1481841045 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\net_devicenetprotocol.h
+
+1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\tombrady\devnet.cpp
+	<stdio.h>
+	<string.h>
+	<conio.h>
+	<bios.h>
+	<dos.h>
+	<math.h>
+	<devnet.h>
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\eip_endianconv.cpp
+	<stdio.h>
+	<eip_endianconv.h>
+	<utils/UTIL_Endianconv.h>
+	<NET_Connection.h>
+	<winsock2.h>
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\net_ethip_encap.cpp
+	<string.h>
+	<NET_EthIP_Encap.h>
+	<connection_stack/CIP_Common.h>
+	<connection_stack/CIP_Connection.h>
+	<eip_endianconv.h>
+	<NET_NetworkHandler.h>
+	<utils/UTIL_Endianconv.h>
+	<CIP_Identity.h>
+	<tcpip_link/NET_EthIP_Interface.h>
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\net_ethip_link.cpp
+	<string.h>
+	<NET_EthIP_Link.h>
+	<connection_stack/CIP_Common.h>
+
+1482089402 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\tcpip_link\net_ethip_interface.cpp
+	<string.h>
+	<ciptypes.h>
+	"NET_EthIP_Interface.h"
+	<winsock.h>
+	<connection_stack/CIP_Common.h>
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_connection.cpp
+	<trace.h>
+	<NET_Connection.h>
+
+1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_networkhandler.cpp
+	<utils/UTIL_Endianconv.h>
+	<NET_NetworkHandler.h>
+	<trace.h>
+	<./ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
+	<winsock.h>
+
+1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_explicitconnection.cpp
+	<Opener_ExplicitConnection.h>
+
+1482085686 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_interface.cpp
+	<Opener_Interface.h>
+	<NET_NetworkHandler.h>
+
+1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_ioconnection.cpp
+	<Opener_IOConnection.h>
+
+1482089428 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\random.cpp
+	"random.h"
+
+1481079375 c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\random.h
+	<stdint.h>
+
+1482089439 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\util_endianconv.cpp
+	"UTIL_Endianconv.h"
+	<string.h>
+
+1482089445 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\xorshiftrandom.cpp
+	"xorshiftrandom.h"
+
+1478396785 c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\xorshiftrandom.h
+	<stdint.h>
+

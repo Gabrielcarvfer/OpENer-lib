@@ -4,18 +4,18 @@
  *
  ******************************************************************************/
 
-#include "CIP_Connection.h"
+#include <CIP_Connection.h>
 #include <cstring>
-#include "CIP_Class3Connection.h"
-#include "../CIP_Identity.h"
-#include "CIP_IOConnection.h"
-#include "../../utils/UTIL_Endianconv.h"
-#include "../../trace.h"
+#include <CIP_Class3Connection.h>
+#include <CIP_Identity.h>
+#include <CIP_IOConnection.h>
+#include <utils/UTIL_Endianconv.h>
+#include <trace.h>
 
 #ifdef WIN32
-#include "winsock.h"
+#include <winsock.h>
 #else
-#include "arpa/inet"
+#include <arpa/inet>
 #endif
 
 #define CIP_CONN_TYPE_MASK 0x6000 /**< Bit mask filter on bit 13 & 14 */

@@ -1,11 +1,12 @@
-#include "../../trace.h"
-#include "CIP_ClassInstance.h"
-#include "../connection_stack/CIP_Common.h"
-#include "CIP_Attribute.h"
-#include "../../opener_user_conf.h"
+#include <trace.h>
+#include <CIP_ClassInstance.h>
+#include <connection_stack/CIP_Common.h>
+#include <CIP_Attribute.h>
+#include <opener_user_conf.h>
 #include <utility>
 
 //Methods
+/*
 template <typename T>
 CIP_ClassInstance<T>::CIP_ClassInstance()
 {
@@ -23,7 +24,7 @@ CIP_ClassInstance<T>::~CIP_ClassInstance()
 {
     instancesNum--;
 }
-
+*/
 template <typename T>
 void CIP_ClassInstance<T>::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
 {

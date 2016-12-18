@@ -5,7 +5,7 @@
 #ifndef NET_ENCAPSULATION_H
 #define NET_ENCAPSULATION_H
 
-#include "../ciptypes.h"
+#include <ciptypes.h>
 
 typedef struct encapsulation_data
 {

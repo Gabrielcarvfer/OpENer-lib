@@ -5,7 +5,7 @@
 #ifndef OPENER_CIP_SERVICES_H
 #define OPENER_CIP_SERVICES_H
 
-#include "../ciptypes.h"
+#include <ciptypes.h>
 
 class CIP_Service
 {

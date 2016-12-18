@@ -6,7 +6,7 @@
 #ifndef OPENER_ENET_ENDIANCONV_H_
 #define OPENER_ENET_ENDIANCONV_H_
 
-#include "../../../typedefs.h"
+#include <typedefs.h>
 
 /** @brief Encapsulate the sockaddr information as necessary for the Common Packet Format data items
  *

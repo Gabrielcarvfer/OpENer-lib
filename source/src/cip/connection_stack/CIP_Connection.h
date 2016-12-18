@@ -8,19 +8,19 @@
 
 
 #include <map>
-#include "../ciptypes.h"
-#include "../CIP_CommonPacket.h"
-#include "../class_stack/CIP_ClassInstance.h"
-#include "../class_stack/CIP_Template.h"
-#include "../network_stack/NET_Connection.h"
-#include "../../Opener_Interface.h"
-#include "../../typedefs.h"
-#include "../CIP_Assembly.h"
+#include <ciptypes.h>
+#include <CIP_CommonPacket.h>
+#include <CIP_Template.h>
+#include <CIP_Template.h>
+#include <NET_Connection.h>
+#include <Opener_Interface.h>
+#include <typedefs.h>
+#include <CIP_Assembly.h>
 
 
 class CIP_Connection;
 
-class CIP_Connection :  public CIP_ClassInstance<CIP_Connection>, public CIP_Template<CIP_Connection>
+class CIP_Connection :   public CIP_Template<CIP_Connection>
 {
 
 public:

@@ -1,11 +1,11 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
-#include "CIP_MessageRouter.h"
-#include "../connection_stack/CIP_Common.h"
-#include "../../trace.h"
+#include <CIP_MessageRouter.h>
+#include <connection_stack/CIP_Common.h>
+#include <trace.h>
 
 
 CipStatus CIP_MessageRouter::CipMessageRouterInit()
@@ -30,7 +30,7 @@ CipStatus CIP_MessageRouter::CipMessageRouterInit()
                                                        1, /* # of instances
                                         "message router", /* class name
                                                        1  /* revision
-                              ); 
+                              );
 */
 
 
@@ -38,34 +38,33 @@ CipStatus CIP_MessageRouter::CipMessageRouterInit()
     g_message_router_response.reserved = 0;
 
     // set reply buffer, using a fixed buffer (about 100 bytes)
-    g_message_router_response.data = g_message_data_reply_buffer; 
+    g_message_router_response.data = g_message_data_reply_buffer;
 
     return kCipStatusOk;
 }
-/*
-CIP_ClassInstance* CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
+
+void * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
 {
     // for each entry in list
-    for(auto ptr : message_router_registered_classes) 
+    /*for(auto ptr : message_router_registered_classes)
     {
       // return registration node if it matches class ID
       if (*ptr->class_id == class_id)
         return ptr;
-    } 
+    }
+*/
+    return 0;
+}
 
-    return 0;  
-}*/
-
-CipStatus CIP_MessageRouter::RegisterCIPClass(CIP_ClassInstance* CIP_ClassInstance)
+CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance)
 {
-    /*
-    ret = message_router_registered_classes.insert(message_router_registered_classes.count(), CIP_ClassInstance);
+    //message_router_registered_classes.insert(message_router_registered_classes.size(), CIP_ClassInstance);
 
-    if (ret::second)
+    //if (ret::second)
         return kCipStatusOk;
-    else
-        return kCipStatusError;
-        */
+    //else
+        //return kCipStatusError;
+
 }
 
 CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
@@ -80,7 +79,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     nStatus = CreateMessageRouterRequestStructure(data, data_length, &g_message_router_request);
 
     if ( kCipErrorSuccess != nStatus )
-    { 
+    {
         OPENER_TRACE_ERR("notifyMR: error from createMRRequeststructure\n");
 
         g_message_router_response.general_status = nStatus;
@@ -88,14 +87,14 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
         g_message_router_response.reserved = 0;
         g_message_router_response.data_length = 0;
         g_message_router_response.reply_service = (0x80 | g_message_router_request.service);
-    } 
-    else 
+    }
+    else
     {
         /* forward request to appropriate Object if it is registered*/
-        CIP_ClassInstance* registered_object;
+        CIP_MessageRouter* registered_object;
 
-        registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
-        if (registered_object == 0) 
+        //registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
+        if (registered_object == 0)
         {
             OPENER_TRACE_ERR(
                 "notifyMR: sending CIP_ERROR_OBJECT_DOES_NOT_EXIST reply, class id 0x%x is not registered\n",
@@ -106,8 +105,8 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
             g_message_router_response.reserved = 0;
             g_message_router_response.data_length = 0;
             g_message_router_response.reply_service = (CipUsint)(0x80 | g_message_router_request.service);
-        } 
-        else 
+        }
+        else
         {
             /* call notify function from Object with ClassID (gMRRequest.RequestPath.ClassID)
             object will or will not make an reply into gMRResponse*/
@@ -147,7 +146,7 @@ CipError CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, 
 
     number_of_decoded_bytes = CIP_Common::DecodePaddedEPath( &(message_router_request->request_path), &data );
 
-    if (number_of_decoded_bytes < 0) 
+    if (number_of_decoded_bytes < 0)
     {
         return kCipErrorPathSegmentError;
     }
@@ -164,7 +163,7 @@ CipError CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, 
 void CIP_MessageRouter::DeleteAllClasses(void)
 {
     /*TODO: fix
-    while (message_router_registered_classes.size() != 0) 
+    while (message_router_registered_classes.size() != 0)
     {
         for (auto class_instances_set : CIP_ClassInstance::CIP_Object_set)
         {
@@ -195,7 +194,7 @@ void CIP_MessageRouter::DeleteAllClasses(void)
             {
                 delete services;
             }
-            
+
             //Remove main class and instances set
             CIP_ClassInstance::CIP_Class_set.erase(class_id);
             instances_classes_set.erase(class_id);

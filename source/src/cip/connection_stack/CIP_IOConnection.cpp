@@ -5,19 +5,19 @@
  ******************************************************************************/
 
 #include <string.h>
-#include "../CIP_CommonPacket.h"
+#include <CIP_CommonPacket.h>
 
-#include "CIP_IOConnection.h"
-#include "../appcontype.h"
-#include "CIP_Common.h"
-#include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
-#include "../../utils/UTIL_Endianconv.h"
-#include "../network_stack/NET_NetworkHandler.h"
-#include "../../trace.h"
+#include <CIP_IOConnection.h>
+#include <appcontype.h>
+#include <CIP_Common.h>
+#include <ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
+#include <utils/UTIL_Endianconv.h>
+#include <NET_NetworkHandler.h>
+#include <trace.h>
 
 
 #ifdef WIN32
-#include <winsock2.h>
+#include <winsock.h>
 #else
 #endif
 
@@ -358,7 +358,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
     ((struct sockaddr_in*)(netConn->remote_address))->sin_family = AF_INET;
     ((struct sockaddr_in*)(netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
-    ((struct sockaddr_in*)(netConn->remote_address))->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = g_multicast_configuration.starting_multicast_address;
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
     cpf_data->address_info_item[j].sin_family = htons(AF_INET);
 
@@ -403,7 +403,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
         // we are using an unused item initialize it with the default multicast address
         cpf_data->address_info_item[j].sin_family = htons(AF_INET);
         cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
-        cpf_data->address_info_item[j].sin_addr = g_multicast_configuration.starting_multicast_address;
+        cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
         memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
         cpf_data->address_info_item[j].length = 16;
     }

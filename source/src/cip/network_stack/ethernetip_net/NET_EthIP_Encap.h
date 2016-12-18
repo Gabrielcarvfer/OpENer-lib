@@ -10,9 +10,9 @@
 
 #define ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE (ENCAPSULATION_HEADER_LENGTH + 39 + sizeof(OPENER_DEVICE_NAME)) /* currently we only have the size of an encapsulation message */
 
-#include "../../../typedefs.h"
-#include "../../../opener_user_conf.h"
-#include "../NET_Encapsulation.h"
+#include <typedefs.h>
+#include <opener_user_conf.h>
+#include <NET_Encapsulation.h>
 
 /** @file encap.h
  * @brief This file contains the public interface of the encapsulation layer
@@ -21,6 +21,11 @@
 /**  @defgroup ENCAP OpENer Ethernet encapsulation layer
  * The Ethernet encapsulation layer handles provides the abstraction between the Ethernet and the CIP layer.
  */
+
+typedef enum {
+    kSessionStatusInvalid = -1,
+    kSessionStatusValid = 0
+} SessionStatus;
 
 class NET_EthIP_Encap
 {
@@ -99,7 +104,8 @@ public:
  * over after we're done here
  * @return length of reply that need to be sent back
  */
-    static int HandleReceivedExplictUdpData (int socket, struct sockaddr_in* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
+    static int HandleReceivedExplictUdpData (int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
+
 
 private:
     static const int kSupportedProtocolVersion = 1; /**< Supported Encapsulation protocol version */
@@ -111,10 +117,7 @@ private:
     static const int kListIdentityDefaultDelayTime = 2000; /**< Default delay time for List Identity response */
     static const int kListIdentityMinimumDelayTime = 500; /**< Minimum delay time for List Identity response */
 
-    typedef enum {
-        kSessionStatusInvalid = -1,
-        kSessionStatusValid = 0
-    } SessionStatus;
+
 
     static const int kSenderContextSize = 8; /**< size of sender context in encapsulation header*/
 

@@ -6,7 +6,7 @@
 #ifndef OPENER_ENDIANCONV_H_
 #define OPENER_ENDIANCONV_H_
 
-#include "../typedefs.h"
+#include <typedefs.h>
 
 /** @file endianconv.h
  * @brief Responsible for Endianess conversion

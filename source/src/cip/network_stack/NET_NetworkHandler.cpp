@@ -10,17 +10,17 @@
  *
  */
 
-#include "../../utils/UTIL_Endianconv.h"
-#include "NET_NetworkHandler.h"
+#include <utils/UTIL_Endianconv.h>
+#include <NET_NetworkHandler.h>
 
-#include "../../trace.h"
-#include "../network_stack/ethernetip_net/tcpip_link/ciptcpipinterface.h"
+#include <trace.h>
+#include <./ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
 
 #ifdef WIN32
-    #include <winsock2.h>
-    #include <ws2tcpip.h>
-#else
+    #include <winsock.h>
     typedef unsigned long socklen_t;
+#else
+
 #endif
 
 
@@ -86,7 +86,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
     my_address = new struct sockaddr_in();
     my_address->sin_family = AF_INET;
     my_address->sin_port = htons(kOpenerEthernetPort);
-    my_address->sin_addr.s_addr = interface_configuration_.ip_address;
+    my_address->sin_addr.s_addr = NET_EthIP_Interface::interface_configuration_.ip_address;
 
     // bind the new socket to port 0xAF12 (CIP)
     if (netStats[tcp_listener]->BindSocket(NET_Connection::kOriginatorAddress, (struct sockaddr *) my_address) == -1)
@@ -554,12 +554,12 @@ int NET_NetworkHandler::CreateUdpSocket(UdpCommuncationDirection communication_d
     else
     {
         // we have a producing udp socket
-        if (socket_data_in->sin_addr.s_addr == g_multicast_configuration.starting_multicast_address)
+        if (socket_data_in->sin_addr.s_addr == NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address)
         {
-            if (1 != g_time_to_live_value)
+            if (1 != NET_EthIP_Interface::g_time_to_live_value)
             {
                 // we need to set a TTL value for the socket
-                if (setsockopt(new_socket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&g_time_to_live_value, sizeof(g_time_to_live_value)) < 0)
+                if (setsockopt(new_socket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&NET_EthIP_Interface::g_time_to_live_value, sizeof(NET_EthIP_Interface::g_time_to_live_value)) < 0)
                 {
                     OPENER_TRACE_ERR("networkhandler: could not set the TTL to: %d, error: %s\n", g_time_to_live_value, strerror(errno));
                     return kEipInvalidSocket;

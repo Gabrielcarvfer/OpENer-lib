@@ -4,8 +4,8 @@
 #ifndef OPENER_CIPDEVICENETLINK_H_
 #define OPENER_CIPDEVICENETLINK_H_
 
-#include ".././../ciptypes.h"
-#include "../../../typedefs.h"
+#include <./ciptypes.h>
+#include <typedefs.h>
 
 
 /* public functions */

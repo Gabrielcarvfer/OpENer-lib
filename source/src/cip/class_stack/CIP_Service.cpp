@@ -2,7 +2,7 @@
 // Created by gabriel on 11/11/2016.
 //
 
-#include "CIP_Service.h"
+#include <CIP_Service.h>
 
 CIP_Service::CIP_Service(CipUsint service_number, CipServiceFunction* service_function, std::string name)
 {
