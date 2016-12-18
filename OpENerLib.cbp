@@ -12,7 +12,9 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++11" />
 					<Add option="-g" />
+					<Add option="-DWIN32" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -31,8 +33,82 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add directory="source/src" />
+			<Add directory="source/src/cip" />
+			<Add directory="source/src/cip/class_stack" />
+			<Add directory="source/src/cip/network_stack" />
+			<Add directory="source/src/cip/connection_stack" />
+			<Add directory="source/src/cip/network_stack/ethernetip_net" />
+			<Add directory="source/src/cip/network_stack/devicenet_net" />
+			<Add directory="source/src/cip/network_stack/ethernetip_net/tcpip_link" />
+			<Add directory="source/src/utils" />
 		</Compiler>
 		<Unit filename="main.cpp" />
+		<Unit filename="source/src/Opener_ExplicitConnection.cpp" />
+		<Unit filename="source/src/Opener_ExplicitConnection.h" />
+		<Unit filename="source/src/Opener_IOConnection.cpp" />
+		<Unit filename="source/src/Opener_IOConnection.h" />
+		<Unit filename="source/src/Opener_Interface.cpp" />
+		<Unit filename="source/src/Opener_Interface.h" />
+		<Unit filename="source/src/cip/CIP_Assembly.cpp" />
+		<Unit filename="source/src/cip/CIP_Assembly.h" />
+		<Unit filename="source/src/cip/CIP_CommonPacket.cpp" />
+		<Unit filename="source/src/cip/CIP_CommonPacket.h" />
+		<Unit filename="source/src/cip/CIP_Identity.cpp" />
+		<Unit filename="source/src/cip/CIP_Identity.h" />
+		<Unit filename="source/src/cip/appcontype.cpp" />
+		<Unit filename="source/src/cip/appcontype.h" />
+		<Unit filename="source/src/cip/ciperror.h" />
+		<Unit filename="source/src/cip/ciptypes.h" />
+		<Unit filename="source/src/cip/class_stack/CIP_Attribute.cpp" />
+		<Unit filename="source/src/cip/class_stack/CIP_Attribute.h" />
+		<Unit filename="source/src/cip/class_stack/CIP_Service.cpp" />
+		<Unit filename="source/src/cip/class_stack/CIP_Service.h" />
+		<Unit filename="source/src/cip/class_stack/CIP_Template.cpp" />
+		<Unit filename="source/src/cip/class_stack/CIP_Template.h" />
+		<Unit filename="source/src/cip/connection_stack/CIP_Class3Connection.cpp" />
+		<Unit filename="source/src/cip/connection_stack/CIP_Class3Connection.h" />
+		<Unit filename="source/src/cip/connection_stack/CIP_Common.cpp" />
+		<Unit filename="source/src/cip/connection_stack/CIP_Common.h" />
+		<Unit filename="source/src/cip/connection_stack/CIP_Connection.cpp" />
+		<Unit filename="source/src/cip/connection_stack/CIP_Connection.h" />
+		<Unit filename="source/src/cip/connection_stack/CIP_IOConnection.cpp" />
+		<Unit filename="source/src/cip/connection_stack/CIP_IOConnection.h" />
+		<Unit filename="source/src/cip/connection_stack/CIP_MessageRouter.cpp" />
+		<Unit filename="source/src/cip/connection_stack/CIP_MessageRouter.h" />
+		<Unit filename="source/src/cip/network_stack/NET_Connection.cpp" />
+		<Unit filename="source/src/cip/network_stack/NET_Connection.h" />
+		<Unit filename="source/src/cip/network_stack/NET_Encapsulation.h" />
+		<Unit filename="source/src/cip/network_stack/NET_NetworkHandler.cpp" />
+		<Unit filename="source/src/cip/network_stack/NET_NetworkHandler.h" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/NET_DeviceNetEncapsulation.cpp" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/NET_DeviceNetEncapsulation.h" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/NET_DeviceNetLink.cpp" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/NET_DeviceNetLink.h" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/NET_DeviceNetProtocol.cpp" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/NET_DeviceNetProtocol.h" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/can_link/NET_CanInterface.cpp" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/can_link/NET_CanInterface.h" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/dnet_conn_objects.cpp" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/tombrady/DEVNET.CPP" />
+		<Unit filename="source/src/cip/network_stack/devicenet_net/tombrady/DEVNET.H" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/NET_EthIP_Encap.cpp" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/NET_EthIP_Encap.h" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/NET_EthIP_Link.cpp" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/NET_EthIP_Link.h" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/eip_endianconv.cpp" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/eip_endianconv.h" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/tcpip_link/NET_EthIP_Interface.cpp" />
+		<Unit filename="source/src/cip/network_stack/ethernetip_net/tcpip_link/NET_EthIP_Interface.h" />
+		<Unit filename="source/src/opener_user_conf.h" />
+		<Unit filename="source/src/trace.h" />
+		<Unit filename="source/src/typedefs.h" />
+		<Unit filename="source/src/utils/UTIL_Endianconv.cpp" />
+		<Unit filename="source/src/utils/UTIL_Endianconv.h" />
+		<Unit filename="source/src/utils/random.cpp" />
+		<Unit filename="source/src/utils/random.h" />
+		<Unit filename="source/src/utils/xorshiftrandom.cpp" />
+		<Unit filename="source/src/utils/xorshiftrandom.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

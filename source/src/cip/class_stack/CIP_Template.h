@@ -13,7 +13,7 @@
 #include <CIP_Attribute.h>
 #include <CIP_Service.h>
 
-template <typename T>
+template <class T>
 class CIP_Template
 {
     public:
@@ -24,7 +24,9 @@ class CIP_Template
         static bool AddClassInstance(T* instance, CipUdint position);
         static bool RemoveClassInstance(T* instance);
         static bool RemoveClassInstance(CipUdint position);
-        public:
+
+        CIP_Template<T>();
+        ~CIP_Template<T>();
         /*
         CIP_ClassInstance();
         ~CIP_ClassInstance ();

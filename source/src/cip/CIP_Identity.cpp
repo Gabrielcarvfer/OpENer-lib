@@ -152,9 +152,10 @@ CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest *m
     switch(service)
     {
         case kReset:
-            this->Reset(msg_router_request, msg_router_response);
+            return this->Reset(msg_router_request, msg_router_response);
             break;
         default:
+            return kCipStatusError;
             break;
     }
 }

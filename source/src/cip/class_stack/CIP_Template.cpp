@@ -3,8 +3,28 @@
 //
 
 #include <CIP_Template.h>
+#include <trace.h>
+#include <connection_stack/CIP_Common.h>
+#include <CIP_Attribute.h>
+#include <opener_user_conf.h>
+#include <utility>
 
-template <typename T>
+
+template <class T>
+CIP_Template<T>::CIP_Template()
+{
+
+
+}
+
+template <class T>
+CIP_Template<T>::~CIP_Template()
+{
+
+
+}
+
+template <class T>
 T * CIP_Template<T>::GetInstance(CipUdint instance_number)
 {
     if (CIP_Template<T>::object_Set.size() >= instance_number)
@@ -13,25 +33,25 @@ T * CIP_Template<T>::GetInstance(CipUdint instance_number)
         return NULL;
 }
 
-template <typename T>
+template <class T>
 T * CIP_Template<T>::GetClass()
 {
     GetInstance(0);
 }
 
-template <typename T>
+template <class T>
 CipUdint CIP_Template<T>::GetNumberOfInstances()
 {
     return CIP_Template<T>::object_Set.size();
 }
 
-template <typename T>
+template <class T>
 CipUdint CIP_Template<T>::GetInstanceNumber(T * instance)
 {
     return std::distance(CIP_Template<T>::object_Set.begin(), CIP_Template<T>::object_Set.find(instance) );
 }
 
-template <typename T>
+template <class T>
 bool CIP_Template<T>::AddClassInstance(T* instance, CipUdint position)
 {
     CIP_Template<T>::object_Set.emplace(position,instance);
@@ -39,7 +59,7 @@ bool CIP_Template<T>::AddClassInstance(T* instance, CipUdint position)
     return (it != CIP_Template<T>::object_Set.end());
 }
 
-template <typename T>
+template <class T>
 bool CIP_Template<T>::RemoveClassInstance(T* instance)
 {
     for (auto it = CIP_Template<T>::object_Set.begin(); it != CIP_Template<T>::object_Set.end(); it++)
@@ -53,7 +73,7 @@ bool CIP_Template<T>::RemoveClassInstance(T* instance)
     return false;
 }
 
-template <typename T>
+template <class T>
 bool CIP_Template<T>::RemoveClassInstance(CipUdint position)
 {
     if ( CIP_Template<T>::object_Set.find(position) != CIP_Template<T>::object_Set.end() )
@@ -67,16 +87,9 @@ bool CIP_Template<T>::RemoveClassInstance(CipUdint position)
     }
 }
 
-#include <trace.h>
-#include <CIP_Template.h>
-#include <connection_stack/CIP_Common.h>
-#include <CIP_Attribute.h>
-#include <opener_user_conf.h>
-#include <utility>
-
 //Methods
 /*
-template <typename T>
+template <class T>
 CIP_Template<T>::CIP_Template()
 {
     id = instancesNum;
@@ -88,13 +101,13 @@ CIP_Template<T>::CIP_Template()
     }
 }
 
-template <typename T>
+template <class T>
 CIP_Template<T>::~CIP_Template()
 {
     instancesNum--;
 }
 */
-template <typename T>
+template <class T>
 void CIP_Template<T>::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
 {
     auto it = this->attributes.find(attribute_number);
@@ -116,7 +129,7 @@ void CIP_Template<T>::InsertAttribute(CipUint attribute_number, CipUsint cip_typ
     /* trying to insert too many attributes*/
 }
 
-/*template <typename T>
+/*template <class T>
 void CIP_Template::InsertService(CipUsint service_number, CipServiceFunction * service_function, std::string service_name)
 {
     auto it = this->services.find(service_number);
@@ -137,7 +150,7 @@ void CIP_Template::InsertService(CipUsint service_number, CipServiceFunction * s
     // adding more services than were declared is a no-no
 }*/
 
-template <typename T>
+template <class T>
 CIP_Attribute* CIP_Template<T>::GetCipAttribute(CipUint attribute_number)
 {
     if (this->attributes.find(attribute_number) == this->attributes.end ())
@@ -155,7 +168,7 @@ CIP_Attribute* CIP_Template<T>::GetCipAttribute(CipUint attribute_number)
 }
 
 /* TODO: this needs to check for buffer overflow*/
-template <typename T>
+template <class T>
 CipStatus CIP_Template<T>::GetAttributeSingle(CipMessageRouterRequest* message_router_request,
     CipMessageRouterResponse* message_router_response)
 {
@@ -209,7 +222,7 @@ CipStatus CIP_Template<T>::GetAttributeSingle(CipMessageRouterRequest* message_r
     return kCipStatusOkSend;
 }
 
-template <typename T>CipStatus CIP_Template<T>::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+template <class T>CipStatus CIP_Template<T>::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     int i, j;
     CipUsint* reply;

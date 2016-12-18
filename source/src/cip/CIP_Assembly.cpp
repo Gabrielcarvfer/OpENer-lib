@@ -12,14 +12,14 @@
 
 CIP_Assembly::CIP_Assembly()
 {
-    this->id = CIP_Assembly::GetNumberOfInstances();
+    this->id = GetNumberOfInstances();
     //TODO:Fix to emplace in the first empty slot instead of appending
-    CIP_Assembly::AddClassInstance(this, this->id);
+    AddClassInstance(this, this->id);
 }
 
 CIP_Assembly::~CIP_Assembly()
 {
-    CIP_Assembly::RemoveClassInstance(this);
+    RemoveClassInstance(this);
 }
 
 // create the CIP Assembly object with zero instances
@@ -195,3 +195,5 @@ CipStatus CIP_Assembly::InstanceServices(int service, CipMessageRouterRequest* m
         return kCipStatusError;
     }
 }
+
+template class CIP_Template<CIP_Assembly>;

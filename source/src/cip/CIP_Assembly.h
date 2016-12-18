@@ -11,6 +11,7 @@
 #include <CIP_Template.h>
 #include <CIP_Template.h>
 
+
 class CIP_Assembly;
 
 class CIP_Assembly : public CIP_Template<CIP_Assembly>
@@ -18,7 +19,7 @@ class CIP_Assembly : public CIP_Template<CIP_Assembly>
     private:
     int id;
     public:
-		CIP_Assembly();
+        CIP_Assembly();
         CIP_Assembly(CipByte* data, CipUint data_length);
 		~CIP_Assembly ();
 

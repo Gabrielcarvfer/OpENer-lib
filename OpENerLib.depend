@@ -61,7 +61,7 @@
 1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\devicenet_net\net_devicenetencapsulation.h
 	<typedefs.h>
 
-1482090167 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_template.h
+1482092490 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_template.h
 	<ciptypes.h>
 	<map>
 	<typedefs.h>
@@ -79,7 +79,7 @@
 	<arpa/inet.h>
 	<sys/select.h>
 
-1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.h
+1482092803 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.h
 	<ciptypes.h>
 	<typedefs.h>
 	<CIP_Template.h>
@@ -98,7 +98,7 @@
 	<connection_stack/CIP_Connection.h>
 	<ciptypes.h>
 
-1482090196 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.cpp
+1482091480 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.cpp
 	<cstring>
 	<stdlib.h>
 	<CIP_Assembly.h>
@@ -136,10 +136,11 @@
 1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\eip_endianconv.h
 	<typedefs.h>
 
-1482090531 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_identity.cpp
+1482091064 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_identity.cpp
 	<CIP_Identity.h>
 	<Opener_Interface.h>
 	<opener_user_conf.h>
+	<ports/POSIX/sample_application/opener_user_conf.h>
 
 1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_identity.h
 	<ciptypes.h>
@@ -161,10 +162,9 @@
 1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_service.cpp
 	<CIP_Service.h>
 
-1482090167 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_template.cpp
+1482092506 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_template.cpp
 	<CIP_Template.h>
 	<trace.h>
-	<CIP_Template.h>
 	<connection_stack/CIP_Common.h>
 	<CIP_Attribute.h>
 	<opener_user_conf.h>
