@@ -23,6 +23,8 @@ uint32_t RandomGen::get_next_rand()
     switch(this->randGenerator)
     {
         case (XORShift):
+            return 1;
             break;
     }
+    return 0;
 }

@@ -29,7 +29,6 @@
 /**
  * @brief NET_Connection abstracts sockets (EthernetIP/TCPIP and DeviceNet/CAN) from CIP Connection
  */
-class NET_Connection;
 
 class NET_Connection
 {

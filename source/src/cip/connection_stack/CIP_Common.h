@@ -11,7 +11,7 @@
  */
 #include <ciptypes.h>
 #include <typedefs.h>
-#include <CIP_Template.h>
+#include <CIP_Object.h>
 #include <array>
 #include <map>
 

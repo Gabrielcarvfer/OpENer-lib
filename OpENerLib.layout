@@ -2,84 +2,9 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="source\src\cip\class_stack\CIP_Template.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3855" topLine="137" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\CIP_Assembly.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="420" topLine="4" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\network_stack\devicenet_net\can_link\NET_CanInterface.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="31" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="main.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="243" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\CIP_Identity.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="767" topLine="22" />
-		</Cursor>
-	</File>
-	<File name="source\src\utils\UTIL_Endianconv.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="30" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\connection_stack\CIP_Common.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="436" topLine="9" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\connection_stack\CIP_Connection.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="410" topLine="2" />
-		</Cursor>
-	</File>
-	<File name="source\src\utils\xorshiftrandom.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="114" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\connection_stack\CIP_MessageRouter.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3301" topLine="83" />
-		</Cursor>
-	</File>
-	<File name="source\src\utils\random.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="100" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\connection_stack\CIP_Common.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="471" topLine="4" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\CIP_Identity.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="378" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\connection_stack\CIP_Connection.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="509" topLine="7" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\CIP_Assembly.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="378" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="source\src\cip\connection_stack\CIP_MessageRouter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="390" topLine="1" />
+			<Cursor1 position="650" topLine="12" />
 		</Cursor>
 	</File>
 	<File name="source\src\Opener_Interface.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -92,9 +17,89 @@
 			<Cursor1 position="386" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="source\src\cip\CIP_Appcontype.cpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="592" topLine="11" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\connection_stack\CIP_Common.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="471" topLine="4" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\connection_stack\CIP_Connection.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8709" topLine="204" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\connection_stack\CIP_Connection.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="41893" topLine="893" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\CIP_Appcontype.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6498" topLine="119" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\connection_stack\CIP_IOConnection.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1340" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\network_stack\NET_NetworkHandler.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="22905" topLine="593" />
+		</Cursor>
+	</File>
+	<File name="source\src\opener_user_conf.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1941" topLine="43" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\CIP_Identity.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5282" topLine="139" />
+		</Cursor>
+	</File>
+	<File name="source\src\utils\UTIL_Endianconv.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="30" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\connection_stack\CIP_Common.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="436" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="source\src\utils\xorshiftrandom.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="114" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="source\src\Opener_Interface.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3591" topLine="129" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\connection_stack\CIP_MessageRouter.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3301" topLine="83" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\connection_stack\CIP_MessageRouter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="390" topLine="1" />
+		</Cursor>
+	</File>
 	<File name="source\src\cip\network_stack\ethernetip_net\tcpip_link\NET_EthIP_Interface.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="445" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\CIP_Identity.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="378" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="source\src\cip\network_stack\ethernetip_net\tcpip_link\NET_EthIP_Interface.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -102,9 +107,24 @@
 			<Cursor1 position="317" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="source\src\cip\class_stack\CIP_Template.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="source\src\cip\CIP_Assembly.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="191" topLine="0" />
+			<Cursor1 position="387" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\network_stack\devicenet_net\can_link\NET_CanInterface.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="31" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="source\src\cip\CIP_Assembly.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="378" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="source\src\utils\random.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="487" topLine="7" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

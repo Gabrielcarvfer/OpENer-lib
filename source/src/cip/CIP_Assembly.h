@@ -8,13 +8,10 @@
 
 #include <ciptypes.h>
 #include <typedefs.h>
-#include <CIP_Template.h>
-#include <CIP_Template.h>
+#include <CIP_Object.h>
+#include <CIP_Object.h>
 
-
-class CIP_Assembly;
-
-class CIP_Assembly : public CIP_Template<CIP_Assembly>
+class CIP_Assembly : public CIP_Object
 {
     private:
     int id;

@@ -11,13 +11,13 @@
  *
  */
 
-#include <CIP_Template.h>
+#include <CIP_Object.h>
 #include <ciptypes.h>
 #include <typedefs.h>
 
 class NET_EthIP_Interface;
 
-class NET_EthIP_Interface : public CIP_Template<NET_EthIP_Interface>
+class NET_EthIP_Interface : public CIP_Object
 {
 public:
 /** @brief Multicast Configuration struct, called Mcast config

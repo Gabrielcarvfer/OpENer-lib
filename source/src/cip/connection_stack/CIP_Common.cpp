@@ -8,7 +8,7 @@
 #include <CIP_Common.h>
 
 #include <CIP_CommonPacket.h>
-#include <appcontype.h>
+#include <CIP_Appcontype.h>
 #include <NET_EthIP_Link.h>
 #include <CIP_Identity.h>
 #include <CIP_MessageRouter.h>
@@ -49,7 +49,8 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
 void CIP_Common::ShutdownCipStack (void)
 {
     /* First close all connections */
-    CloseAllConnections ();
+    CIP_Appcontype::CloseAllConnections ();
+
     /* Than free the sockets of currently active encapsulation sessions */
     EncapsulationShutDown ();
     /*clean the data needed for the assembly object's attribute 3*/

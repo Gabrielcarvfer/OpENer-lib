@@ -22,14 +22,20 @@ endmacro(opener_platform_support ARGS)
 # Adds common Include directories     #
 ####################################### 
 macro(opener_common_includes)
-  set( SRC_DIR "${PROJECT_SOURCE_DIR}/src" )
-  set( CIP_SRC_DIR "${SRC_DIR}/cip" )
-  set( ENET_ENCAP_SRC_DIR "${SRC_DIR}/enet_encap" )
-  set( PORTS_SRC_DIR "${SRC_DIR}/ports")
-  set( UTILS_SRC_DIR "${SRC_DIR}/utils")
-
-  include_directories( ${PROJECT_SOURCE_DIR} ${SRC_DIR} ${CIP_SRC_DIR} ${ENET_ENCAP_SRC_DIR} ${PORTS_SRC_DIR} ${UTILS_SRC_DIR} ${OpENer_CIP_OBJECTS_DIR} )
+  HEADER_DIRECTORIES(includes)
+  include_directories(${includes})
 endmacro(opener_common_includes)
+
+MACRO(HEADER_DIRECTORIES return_list)
+  FILE(GLOB_RECURSE new_list ${PROJECT_SOURCE_DIR}/*.h)
+  SET(dir_list "")
+  FOREACH(file_path ${new_list})
+    GET_FILENAME_COMPONENT(dir_path ${file_path} PATH)
+    SET(dir_list ${dir_list} ${dir_path})
+  ENDFOREACH()
+  LIST(REMOVE_DUPLICATES dir_list)
+  SET(${return_list} ${dir_list})
+ENDMACRO()
 
 MACRO(opener_add_cip_object NAME DESCRIPTION)
   set(OpENer_CIP_OBJECT_${NAME} OFF CACHE BOOL "${DESCRIPTION}")

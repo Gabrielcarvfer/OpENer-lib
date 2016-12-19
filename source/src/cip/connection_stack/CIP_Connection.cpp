@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
- * All rights reserved. 
+ * All rights reserved.
  *
  ******************************************************************************/
 
@@ -182,7 +182,7 @@ CipStatus CIP_Connection::ForwardOpen (CipMessageRouterRequest *message_router_r
     connection_timeout_multiplier = *message_router_request->data++;
     message_router_request->data += 3; // reserved
     // the requested packet interval parameter needs to be a multiple of TIMERTICK from the header file
-    OPENER_TRACE_INFO("ForwardOpen: ConConnID %"PRIu32", ProdConnID %"PRIu32", ConnSerNo %u\n", consumed_connection_id, produced_connection_id, connection_serial_number);
+    OPENER_TRACE_INFO("ForwardOpen: ConConnID %" PRIu32 ", ProdConnID %" PRIu32 ", ConnSerNo %u\n", consumed_connection_id, produced_connection_id, connection_serial_number);
 
     o_to_t_requested_packet_interval = UTIL_Endianconv::GetDintFromMessage (&message_router_request->data);
 
@@ -315,7 +315,7 @@ CipStatus CIP_Connection::ForwardClose (CipMessageRouterRequest *message_router_
 
     for (int i = 0; i < active_connections_set.size (); i++)
     {
-        connection_object = active_connections_set[i];
+        connection_object = (CIP_Connection*)active_connections_set[i];
         /* this check should not be necessary as only established connections should be in the active connection list */
         if ((connection_object->state == kConnectionStateEstablished) || (connection_object->state == kConnectionStateTimedOut))
         {
@@ -356,7 +356,7 @@ CipStatus CIP_Connection::ManageConnections (MilliSeconds elapsed_time)
 
     for (int i = 0; i < active_connections_set.size (); i++)
     {
-        connection_object = active_connections_set[i];
+        connection_object = (CIP_Connection*)active_connections_set[i];
 
         if (connection_object->state == kConnectionStateEstablished)
         {
@@ -597,7 +597,7 @@ CIP_Connection *CIP_Connection::GetConnectedObject (CipUdint connection_id)
 
     for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
-        active_connection_object_list_item = active_connections_set[i];
+        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
 
         if (active_connection_object_list_item->state == kConnectionStateEstablished)
         {
@@ -614,7 +614,7 @@ CIP_Connection *CIP_Connection::GetConnectedOutputAssembly (CipUdint output_asse
 
     for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
-        active_connection_object_list_item = active_connections_set[i];
+        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
 
         if (active_connection_object_list_item->state == kConnectionStateEstablished)
         {
@@ -630,7 +630,7 @@ CIP_Connection *CIP_Connection::CheckForExistingConnection (CIP_Connection *conn
     CIP_Connection *active_connection_object_list_item;
     for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
-        active_connection_object_list_item = active_connections_set[i];
+        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
 
         if (active_connection_object_list_item->state == kConnectionStateEstablished)
         {
@@ -824,7 +824,7 @@ CipUsint CIP_Connection::ParseConnectionPath (CipMessageRouterRequest *message_r
         {
             // store the configuration ID for later checking in the application connection types
             connection_path.connection_point[2] = GetPaddedLogicalPath (&message);
-            OPENER_TRACE_INFO("Configuration instance id %"PRId32"\n", connection_path.connection_point[2]);
+            OPENER_TRACE_INFO("Configuration instance id %" PRId32 "\n", connection_path.connection_point[2]);
             //todo: fix this -> if (NULL == connection_path.connection_point[2])
             {
                 // according to the test tool we should respond with this extended error code
@@ -902,7 +902,7 @@ CipUsint CIP_Connection::ParseConnectionPath (CipMessageRouterRequest *message_r
                 {
                     // InstanceNR
                     connection_path.connection_point[i] = GetPaddedLogicalPath (&message);
-                    OPENER_TRACE_INFO("connection point %"PRIu32"\n", connection_path.connection_point[i]);
+                    OPENER_TRACE_INFO("connection point %" PRIu32 "\n", connection_path.connection_point[i]);
                     if (0 == connection_path.connection_point[i])
                     {
                         *extended_error = kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
@@ -981,14 +981,14 @@ void CIP_Connection::CloseConnection ()
     RemoveFromActiveConnections ();
 }
 
-void CIP_Connection::CopyConnectionData (CIP_Connection *pa_pstDst, CIP_Connection *pa_pstSrc)
+void CIP_Connection::CopyConnectionData (const CIP_Connection *pa_pstDst,const  CIP_Connection *pa_pstSrc)
 {
-    memcpy (pa_pstDst, pa_pstSrc, sizeof (CIP_Connection));
+    memcpy ((CIP_Connection*)pa_pstDst, pa_pstSrc, sizeof (CIP_Connection));
 }
 
-void CIP_Connection::AddNewActiveConnection (CIP_Connection *pa_pstConn)
+void CIP_Connection::AddNewActiveConnection (const CIP_Connection *pa_pstConn)
 {
-    pa_pstConn->state = kConnectionStateEstablished;
+   ((CIP_Connection*)pa_pstConn)->state = kConnectionStateEstablished;
 }
 
 void CIP_Connection::RemoveFromActiveConnections ()
@@ -1005,7 +1005,7 @@ CipBool CIP_Connection::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)
 
     for (int i = 0; i < active_connections_set.size (); i++)
     {
-        pstRunner = active_connections_set[i];
+        pstRunner = (CIP_Connection*)active_connections_set[i];
         if (pa_nInstanceNr == pstRunner->connection_path.connection_point[0])
         {
             bRetVal = (CipBool)true;
@@ -1024,7 +1024,7 @@ CipStatus CIP_Connection::TriggerConnections (CipUdint pa_unOutputAssembly, CipU
 
     for (int i = 0; i < active_connections_set.size (); i++)
     {
-        pstRunner = active_connections_set[i];
+        pstRunner = (CIP_Connection*)active_connections_set[i];
 
         if ((pa_unOutputAssembly == pstRunner->connection_path.connection_point[0]) &&
             (pa_unInputAssembly == pstRunner->connection_path.connection_point[1]))

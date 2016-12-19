@@ -9,7 +9,7 @@
 
 #include <ciptypes.h>
 #include <typedefs.h>
-#include <CIP_Template.h>
+#include <CIP_Object.h>
 #include <map>
 
 
@@ -19,9 +19,7 @@
  *  by assembleLinearMsg.
  */
 
-class CIP_MessageRouter;
-
-class CIP_MessageRouter : public CIP_Template<CIP_MessageRouter>
+class CIP_MessageRouter : public CIP_Object
 {
     public:
             static CipMessageRouterRequest g_message_router_request;

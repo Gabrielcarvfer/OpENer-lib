@@ -602,20 +602,20 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
     {
 
         // do this at the beginning as the close function may can make the entry invalid
-        connection_object_iterator = CIP_Connection::active_connections_set[i];
+        connection_object_iterator = (CIP_Connection*)CIP_Connection::active_connections_set[i];
 
         if ((-1 != current_connection_object->netConn->GetSocketHandle(/*todo:kUdpCommuncationDirectionConsuming*/) && (CheckSocketSet( current_connection_object->netConn->GetSocketHandle (/*todo:kUdpCommuncationDirectionConsuming*/)))))
         {
             from_address_length = sizeof(from_address);
             int received_size = recvfrom(current_connection_object->netConn->GetSocketHandle(/*kUdpCommuncationDirectionConsuming*/), (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0, (struct sockaddr*)&from_address, (int*)&from_address_length);
-            if (0 == received_size) 
+            if (0 == received_size)
             {
                 OPENER_TRACE_STATE("connection closed by client\n");
                 current_connection_object->CloseConnection ();
                 continue;
             }
 
-            if (0 > received_size) 
+            if (0 > received_size)
             {
                 OPENER_TRACE_ERR("networkhandler: error on recv: %s\n", strerror(errno));
                 current_connection_object->CloseConnection ();

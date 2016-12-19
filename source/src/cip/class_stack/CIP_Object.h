@@ -2,8 +2,8 @@
 // Created by gabriel on 18/11/2016.
 //
 
-#ifndef OPENER_CIP_TEMPLATE_H
-#define OPENER_CIP_TEMPLATE_H
+#ifndef OPENER_CIP_OBJECT_H
+#define OPENER_CIP_OBJECT_H
 
 #include <ciptypes.h>
 #include <map>
@@ -13,20 +13,19 @@
 #include <CIP_Attribute.h>
 #include <CIP_Service.h>
 
-template <class T>
-class CIP_Template
+class CIP_Object
 {
     public:
-        static T * GetInstance(CipUdint instance_number);
-        static T * GetClass();
+        static const CIP_Object * GetInstance(CipUdint instance_number);
+        static const CIP_Object * GetClass();
         static CipUdint GetNumberOfInstances();
-        static CipUdint GetInstanceNumber(T * instance);
-        static bool AddClassInstance(T* instance, CipUdint position);
-        static bool RemoveClassInstance(T* instance);
+        static CipUdint GetInstanceNumber(const CIP_Object * instance);
+        static bool AddClassInstance(CIP_Object * instance, CipUdint position);
+        static bool RemoveClassInstance(CIP_Object * instance);
         static bool RemoveClassInstance(CipUdint position);
 
-        CIP_Template<T>();
-        ~CIP_Template<T>();
+        CIP_Object();
+        ~CIP_Object();
         /*
         CIP_ClassInstance();
         ~CIP_ClassInstance ();
@@ -125,7 +124,7 @@ class CIP_Template
      * @return length of data stream >0 .. success
      *              0 .. no reply to send
      */
-    CipStatus GetAttributeAll(CipMessageRouterRequest* message_router_request,CipMessageRouterResponse* message_router_response);
+    CipStatus GetAttributeAll(CipMessageRouterRequest * message_router_request,CipMessageRouterResponse* message_router_response);
 
 
     /** @brief Generic implementation of the GetAttributeSingle CIP service
@@ -138,15 +137,15 @@ class CIP_Template
      * @return status  >0 .. success
      *          -1 .. requested attribute not available
      */
-    CipStatus GetAttributeSingle(CipMessageRouterRequest* message_router_request,CipMessageRouterResponse* message_router_response);
+    CipStatus GetAttributeSingle(CipMessageRouterRequest * message_router_request,CipMessageRouterResponse* message_router_response);
     /* type definition of CIP service structure */
 
-    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request,CipMessageRouterResponse* msg_router_response);
+    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response);
 
     protected:
         //Instance stuff
         int id;
-        static T* class_ptr;
+        static CIP_Object * class_ptr;
 
         //Class stuff
         static int instancesNum;
@@ -157,8 +156,8 @@ class CIP_Template
         static int instanceServicesNum;
         static CipUdint get_all_class_attributes_mask;
         static CipUdint get_all_instance_attributes_mask;
-        static std::map<CipUdint, T*> object_Set;
+        static std::map<CipUdint, const CIP_Object *> object_Set;
 };
 
 
-#endif //OPENER_CIP_TEMPLATES_H
+#endif //OPENER_CIP_OBJECT_H

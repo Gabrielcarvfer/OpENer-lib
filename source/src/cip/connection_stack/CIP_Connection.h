@@ -10,17 +10,14 @@
 #include <map>
 #include <ciptypes.h>
 #include <CIP_CommonPacket.h>
-#include <CIP_Template.h>
-#include <CIP_Template.h>
+#include <CIP_Object.h>
+#include <CIP_Object.h>
 #include <NET_Connection.h>
 #include <Opener_Interface.h>
 #include <typedefs.h>
 #include <CIP_Assembly.h>
 
-
-class CIP_Connection;
-
-class CIP_Connection :   public CIP_Template<CIP_Connection>
+class CIP_Connection :   public CIP_Object
 {
 
 public:
@@ -171,7 +168,7 @@ public:
     static CIP_Connection* GetConnectedOutputAssembly(CipUdint output_assembly_id);
 
     // Copy the given connection data from pa_pstSrc to pa_pstDst
-    static void CopyConnectionData(CIP_Connection* destination, CIP_Connection* source);
+    static void CopyConnectionData(const CIP_Connection* destination, const CIP_Connection* source);
 
     /** @brief Close the given connection
      *
@@ -202,13 +199,13 @@ public:
      *
      * @param connection_object pointer to the connection object to be added.
      */
-   static void AddNewActiveConnection(CIP_Connection* connection_object);
+   static void AddNewActiveConnection(const CIP_Connection* connection_object);
 
     /* TODO: Missing documentation */
     void RemoveFromActiveConnections();
 
 
-    static std::map<CipUdint, CIP_Connection *> active_connections_set;
+    static std::map<CipUdint, const CIP_Connection *> active_connections_set;
 
     /** List holding information on the object classes and open/close function
      * pointers to which connections may be established.
@@ -268,10 +265,10 @@ public:
     CipConnectionPath connection_path; // padded EPATH
     LinkObject link_object;
 
-    CIP_Assembly* consuming_instance;
+    const CIP_Object * consuming_instance;
     /*S_CIP_CM_Object *p_stConsumingCMObject; */
 
-    CIP_Assembly* producing_instance;
+    const CIP_Object * producing_instance;
     /*S_CIP_CM_Object *p_stProducingCMObject; */
 
     /* the EIP level sequence Count for Class 0/1 Producing Connections may have a different

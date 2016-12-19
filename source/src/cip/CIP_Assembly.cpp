@@ -43,13 +43,13 @@ void CIP_Assembly::ShutdownAssemblies(void)
     if (CIP_Assembly::GetClass() != NULL)
     {
         CIP_Attribute* attribute;
-        CIP_Assembly* instance;
+        const CIP_Object* instance;
 
         for(unsigned int i = 1; i <= GetNumberOfInstances(); i++)
         {
             instance = GetInstance(i);
 
-            attribute = instance->GetCipAttribute(3);
+            attribute = ((CIP_Object*)instance)->GetCipAttribute(3);
             if (NULL != attribute)
             {
                 //delete[] (attribute->getData());
@@ -196,4 +196,3 @@ CipStatus CIP_Assembly::InstanceServices(int service, CipMessageRouterRequest* m
     }
 }
 
-template class CIP_Template<CIP_Assembly>;

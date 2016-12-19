@@ -2,11 +2,11 @@
 1482089123 source:c:\users\gabriel\desktop\cip\toc-opener\main.cpp
 	<Opener_Interface.h>
 
-1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_interface.h
+1482102212 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_interface.h
 	<cassert>
 	<ciperror.h>
 	<ciptypes.h>
-	<CIP_Template.h>
+	<CIP_Object.h>
 	<typedefs.h>
 	<connection_stack/CIP_Connection.h>
 	<Opener_IOConnection.h>
@@ -30,12 +30,12 @@
 1482085404 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_service.h
 	<ciptypes.h>
 
-1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_connection.h
+1482111493 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_connection.h
 	<map>
 	<ciptypes.h>
 	<CIP_CommonPacket.h>
-	<CIP_Template.h>
-	<CIP_Template.h>
+	<CIP_Object.h>
+	<CIP_Object.h>
 	<NET_Connection.h>
 	<Opener_Interface.h>
 	<typedefs.h>
@@ -69,7 +69,7 @@
 	<CIP_Attribute.h>
 	<CIP_Service.h>
 
-1482085404 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_connection.h
+1482102500 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_connection.h
 	<map>
 	<ciptypes.h>
 	<winsock.h>
@@ -79,26 +79,26 @@
 	<arpa/inet.h>
 	<sys/select.h>
 
-1482092803 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.h
+1482102500 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.h
 	<ciptypes.h>
 	<typedefs.h>
-	<CIP_Template.h>
-	<CIP_Template.h>
+	<CIP_Object.h>
+	<CIP_Object.h>
 
 1478922947 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_ioconnection.h
 
 1478922976 c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_explicitconnection.h
 
-1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\appcontype.cpp
+1482109627 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\appcontype.cpp
 	<appcontype.h>
 	<opener_user_conf.h>
 	<cstring>
 
-1482085550 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\appcontype.h
+1482109317 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\appcontype.h
 	<connection_stack/CIP_Connection.h>
 	<ciptypes.h>
 
-1482091480 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.cpp
+1482107316 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_assembly.cpp
 	<cstring>
 	<stdlib.h>
 	<CIP_Assembly.h>
@@ -117,17 +117,17 @@
 	<opener_user_conf.h>
 	<trace.h>
 
-1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_common.h
+1482102212 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_common.h
 	<ciptypes.h>
 	<typedefs.h>
-	<CIP_Template.h>
+	<CIP_Object.h>
 	<array>
 	<map>
 
-1482090298 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_messagerouter.h
+1482102500 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_messagerouter.h
 	<ciptypes.h>
 	<typedefs.h>
-	<CIP_Template.h>
+	<CIP_Object.h>
 	<map>
 
 1482085672 c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\util_endianconv.h
@@ -142,11 +142,11 @@
 	<opener_user_conf.h>
 	<ports/POSIX/sample_application/opener_user_conf.h>
 
-1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_identity.h
+1482102500 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_identity.h
 	<ciptypes.h>
 	<typedefs.h>
-	<CIP_Template.h>
-	<CIP_Template.h>
+	<CIP_Object.h>
+	<CIP_Object.h>
 
 1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_attribute.cpp
 	<CIP_Attribute.h>
@@ -179,11 +179,11 @@
 	<Opener_Interface.h>
 	<opener_user_conf.h>
 
-1482090409 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_common.cpp
+1482111170 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_common.cpp
 	<string.h>
 	<CIP_Common.h>
 	<CIP_CommonPacket.h>
-	<appcontype.h>
+	<CIP_Appcontype.h>
 	<NET_EthIP_Link.h>
 	<CIP_Identity.h>
 	<CIP_MessageRouter.h>
@@ -192,17 +192,17 @@
 	<trace.h>
 	<opener_user_conf.h>
 
-1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\net_ethip_link.h
+1482102500 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\net_ethip_link.h
 	<ciptypes.h>
 	<typedefs.h>
-	<CIP_Template.h>
+	<CIP_Object.h>
 
-1482090353 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\tcpip_link\net_ethip_interface.h
-	<CIP_Template.h>
+1482102500 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\ethernetip_net\tcpip_link\net_ethip_interface.h
+	<CIP_Object.h>
 	<ciptypes.h>
 	<typedefs.h>
 
-1482085715 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_connection.cpp
+1482112136 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_connection.cpp
 	<CIP_Connection.h>
 	<cstring>
 	<CIP_Class3Connection.h>
@@ -219,11 +219,11 @@
 	<CIP_CommonPacket.h>
 	<Opener_Interface.h>
 
-1482085686 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_ioconnection.cpp
+1482111333 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\connection_stack\cip_ioconnection.cpp
 	<string.h>
 	<CIP_CommonPacket.h>
 	<CIP_IOConnection.h>
-	<appcontype.h>
+	<CIP_Appcontype.h>
 	<CIP_Common.h>
 	<ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
 	<utils/UTIL_Endianconv.h>
@@ -319,7 +319,7 @@
 	<trace.h>
 	<NET_Connection.h>
 
-1482085672 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_networkhandler.cpp
+1482110170 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\network_stack\net_networkhandler.cpp
 	<utils/UTIL_Endianconv.h>
 	<NET_NetworkHandler.h>
 	<trace.h>
@@ -336,7 +336,7 @@
 1482085550 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\opener_ioconnection.cpp
 	<Opener_IOConnection.h>
 
-1482089428 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\random.cpp
+1482111530 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\random.cpp
 	"random.h"
 
 1481079375 c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\random.h
@@ -351,4 +351,30 @@
 
 1478396785 c:\users\gabriel\desktop\cip\toc-opener\source\src\utils\xorshiftrandom.h
 	<stdint.h>
+
+1482106856 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_object.h
+	<ciptypes.h>
+	<map>
+	<typedefs.h>
+	<string>
+	<CIP_Attribute.h>
+	<CIP_Service.h>
+
+1482113204 c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_appcontype.h
+	<CIP_Connection.h>
+	<ciptypes.h>
+	<opener_user_conf.h>
+
+1482111016 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\cip_appcontype.cpp
+	<CIP_Appcontype.h>
+	<opener_user_conf.h>
+	<cstring>
+
+1482102931 source:c:\users\gabriel\desktop\cip\toc-opener\source\src\cip\class_stack\cip_object.cpp
+	<CIP_Object.h>
+	<trace.h>
+	<connection_stack/CIP_Common.h>
+	<CIP_Attribute.h>
+	<opener_user_conf.h>
+	<utility>
 

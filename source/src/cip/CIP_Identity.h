@@ -8,12 +8,12 @@
 
 #include <ciptypes.h>
 #include <typedefs.h>
-#include <CIP_Template.h>
-#include <CIP_Template.h>
+#include <CIP_Object.h>
+#include <CIP_Object.h>
 
 class CIP_Identity;
 
-class CIP_Identity : public CIP_Template<CIP_Identity>
+class CIP_Identity : public CIP_Object
 {
 public:
 /* global public variables */

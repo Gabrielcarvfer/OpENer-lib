@@ -9,7 +9,7 @@
 #include <cassert>
 #include <ciperror.h>
 #include <ciptypes.h>
-#include <CIP_Template.h>
+#include <CIP_Object.h>
 #include <typedefs.h>
 #include <connection_stack/CIP_Connection.h>
 #include <Opener_IOConnection.h>

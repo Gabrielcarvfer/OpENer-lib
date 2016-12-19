@@ -8,11 +8,9 @@
 
 #include <ciptypes.h>
 #include <typedefs.h>
-#include <CIP_Template.h>
+#include <CIP_Object.h>
 
-class NET_EthIP_Link;
-
-class NET_EthIP_Link : public CIP_Template<NET_EthIP_Link>
+class NET_EthIP_Link : public CIP_Object
 {
 public:
     /** @brief Initialize the Ethernet Link Objects data

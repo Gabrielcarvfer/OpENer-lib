@@ -6,10 +6,14 @@
 #ifndef OPENER_APPCONTYPE_H_
 #define OPENER_APPCONTYPE_H_
 
-#include <connection_stack/CIP_Connection.h>
+#include <CIP_Connection.h>
 #include <ciptypes.h>
+#include <opener_user_conf.h>
 
-void InitializeIoConnectionData(void);
+class CIP_Appcontype
+{
+public:
+    static void InitializeIoConnectionData (void);
 
 /** @brief check if for the given connection data received in a forward_open request
  *  a suitable connection is available.
@@ -24,7 +28,7 @@ void InitializeIoConnectionData(void);
  *          data given in pa_pstConnData.
  *        - on error: NULL
  */
-CIP_Connection* GetIoConnectionForConnectionData(CIP_Connection* connection_object, CipUint* extended_error);
+    static const CIP_Connection *GetIoConnectionForConnectionData (const CIP_Connection *connection_object, CipUint *extended_error);
 
 /** @brief Check if there exists already an exclusive owner or listen only connection
  *         which produces the input assembly.
@@ -32,7 +36,7 @@ CIP_Connection* GetIoConnectionForConnectionData(CIP_Connection* connection_obje
  *  @param input_point the Input point to be produced
  *  @return if a connection could be found a pointer to this connection if not NULL
  */
-CIP_Connection* GetExistingProducerMulticastConnection(CipUdint input_point);
+    static const CIP_Connection *GetExistingProducerMulticastConnection (CipUdint input_point);
 
 /** @brief check if there exists an producing multicast exclusive owner or
  * listen only connection that should produce the same input but is not in charge
@@ -42,7 +46,7 @@ CIP_Connection* GetExistingProducerMulticastConnection(CipUdint input_point);
  * @return if a connection could be found the pointer to this connection
  *      otherwise NULL.
  */
-CIP_Connection* GetNextNonControlMasterConnection(CipUdint input_point);
+    static const CIP_Connection *GetNextNonControlMasterConnection (CipUdint input_point);
 
 /** @brief Close all connection producing the same input and have the same type
  * (i.e., listen only or input only).
@@ -50,14 +54,14 @@ CIP_Connection* GetNextNonControlMasterConnection(CipUdint input_point);
  * @param input_point  the input point
  * @param instance_type the connection application type
  */
-void CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_Connection::ConnectionType instance_type);
+    static void CloseAllConnectionsForInputWithSameType (CipUdint input_point, CIP_Connection::ConnectionType instance_type);
 
 /**@ brief close all open connections.
  *
  * For I/O connections the sockets will be freed. The sockets for explicit
  * connections are handled by the encapsulation layer, and freed there.
  */
-void CloseAllConnections(void);
+    static void CloseAllConnections (void);
 
 /** @brief Check if there is an established connection that uses the same
  * config point.
@@ -65,7 +69,7 @@ void CloseAllConnections(void);
  * @param config_point The configuration point
  * @return true if connection was found, otherwise false
  */
-CipBool ConnectionWithSameConfigPointExists(CipUdint config_point);
+    static CipBool ConnectionWithSameConfigPointExists (CipUdint config_point);
 
 /* @brief Configures the connection point for an exclusive owner connection.
 *
@@ -79,7 +83,9 @@ CipBool ConnectionWithSameConfigPointExists(CipUdint config_point);
 * @param configuration_assembly_id ID of the configuration point to be used for
 * this connection
 */
-void ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number, unsigned int output_assembly_id, unsigned int input_assembly_id, unsigned int configuration_assembly_id);
+    static void ConfigureExclusiveOwnerConnectionPoint (unsigned int connection_number, unsigned int output_assembly_id,
+                                                 unsigned int input_assembly_id,
+                                                 unsigned int configuration_assembly_id);
 
 
 /* @brief Configures the connection point for an input only connection.
@@ -94,7 +100,8 @@ void ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number, unsi
  * @param configuration_assembly_id ID of the configuration point to be used for
  *this connection
  */
-void ConfigureInputOnlyConnectionPoint(unsigned int connection_number, unsigned int output_assembly_id, unsigned int input_assembly_id, unsigned int configuration_assembly_id);
+    static void ConfigureInputOnlyConnectionPoint (unsigned int connection_number, unsigned int output_assembly_id,
+                                            unsigned int input_assembly_id, unsigned int configuration_assembly_id);
 
 /* @brief Configures the connection point for a listen only connection.
  *
@@ -108,6 +115,43 @@ void ConfigureInputOnlyConnectionPoint(unsigned int connection_number, unsigned 
  * @param configuration_assembly_id ID of the configuration point to be used for
  * this connection
  */
-void ConfigureListenOnlyConnectionPoint(unsigned int connection_number, unsigned int output_assembly_id, unsigned int input_assembly_id, unsigned int configuration_assembly_id);
+    static void ConfigureListenOnlyConnectionPoint (unsigned int connection_number, unsigned int output_assembly_id,
+                                             unsigned int input_assembly_id, unsigned int configuration_assembly_id);
 
+
+    typedef struct {
+        unsigned int output_assembly; /**< the O-to-T point for the connection */
+        unsigned int input_assembly; /**< the T-to-O point for the connection */
+        unsigned int config_assembly; /**< the config point for the connection */
+        CIP_Connection *connection_data; /**< the connection data, only one connection is allowed per O-to-T point*/
+    } ExclusiveOwnerConnection;
+
+    typedef struct {
+        unsigned int output_assembly; /**< the O-to-T point for the connection */
+        unsigned int input_assembly; /**< the T-to-O point for the connection */
+        unsigned int config_assembly; /**< the config point for the connection */
+        CIP_Connection *connection_data;//[OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH]; /*< the connection data */
+    } InputOnlyConnection;
+
+    typedef struct {
+        unsigned int output_assembly; /**< the O-to-T point for the connection */
+        unsigned int input_assembly; /**< the T-to-O point for the connection */
+        unsigned int config_assembly; /**< the config point for the connection */
+        CIP_Connection *connection_data;//[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]; /**< the connection data */
+    } ListenOnlyConnection;
+
+    static ExclusiveOwnerConnection *g_exlusive_owner_connections;
+
+    static InputOnlyConnection *g_input_only_connections;
+
+    static ListenOnlyConnection *g_listen_only_connections;
+
+private:
+
+    static const CIP_Connection* GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error);
+
+    static const CIP_Connection* GetInputOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error);
+
+    static const CIP_Connection* GetListenOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error);
+};
 #endif

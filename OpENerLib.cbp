@@ -4,14 +4,15 @@
 	<Project>
 		<Option title="OpENerLib" />
 		<Option pch_mode="2" />
-		<Option compiler="gcc" />
+		<Option compiler="clang" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/OpENerLib" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="clang" />
 				<Compiler>
+					<Add option="-Weffc++" />
 					<Add option="-std=c++11" />
 					<Add option="-g" />
 					<Add option="-DWIN32" />
@@ -21,7 +22,7 @@
 				<Option output="bin/Release/OpENerLib" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
-				<Option compiler="gcc" />
+				<Option compiler="clang" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
@@ -32,6 +33,7 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-fexceptions" />
 			<Add directory="source/src" />
 			<Add directory="source/src/cip" />
@@ -50,22 +52,22 @@
 		<Unit filename="source/src/Opener_IOConnection.h" />
 		<Unit filename="source/src/Opener_Interface.cpp" />
 		<Unit filename="source/src/Opener_Interface.h" />
+		<Unit filename="source/src/cip/CIP_Appcontype.cpp" />
+		<Unit filename="source/src/cip/CIP_Appcontype.h" />
 		<Unit filename="source/src/cip/CIP_Assembly.cpp" />
 		<Unit filename="source/src/cip/CIP_Assembly.h" />
 		<Unit filename="source/src/cip/CIP_CommonPacket.cpp" />
 		<Unit filename="source/src/cip/CIP_CommonPacket.h" />
 		<Unit filename="source/src/cip/CIP_Identity.cpp" />
 		<Unit filename="source/src/cip/CIP_Identity.h" />
-		<Unit filename="source/src/cip/appcontype.cpp" />
-		<Unit filename="source/src/cip/appcontype.h" />
 		<Unit filename="source/src/cip/ciperror.h" />
 		<Unit filename="source/src/cip/ciptypes.h" />
 		<Unit filename="source/src/cip/class_stack/CIP_Attribute.cpp" />
 		<Unit filename="source/src/cip/class_stack/CIP_Attribute.h" />
+		<Unit filename="source/src/cip/class_stack/CIP_Object.cpp" />
+		<Unit filename="source/src/cip/class_stack/CIP_Object.h" />
 		<Unit filename="source/src/cip/class_stack/CIP_Service.cpp" />
 		<Unit filename="source/src/cip/class_stack/CIP_Service.h" />
-		<Unit filename="source/src/cip/class_stack/CIP_Template.cpp" />
-		<Unit filename="source/src/cip/class_stack/CIP_Template.h" />
 		<Unit filename="source/src/cip/connection_stack/CIP_Class3Connection.cpp" />
 		<Unit filename="source/src/cip/connection_stack/CIP_Class3Connection.h" />
 		<Unit filename="source/src/cip/connection_stack/CIP_Common.cpp" />

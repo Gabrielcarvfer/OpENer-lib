@@ -8,7 +8,7 @@
 #include <CIP_CommonPacket.h>
 
 #include <CIP_IOConnection.h>
-#include <appcontype.h>
+#include <CIP_Appcontype.h>
 #include <CIP_Common.h>
 #include <ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
 #include <utils/UTIL_Endianconv.h>
@@ -34,14 +34,14 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
     // currently we allow I/O connections only to assembly objects
     // we don't need to check for zero as this is handled in the connection path parsing
-    CIP_Assembly* assembly_class = CIP_Assembly::GetClass();
-    CIP_Assembly* instance = NULL;
+    const CIP_Object* assembly_class = CIP_Assembly::GetClass();
+    const CIP_Object* instance = NULL;
 
-   GetIoConnectionForConnectionData(this, extended_error);
+   CIP_Appcontype::GetIoConnectionForConnectionData(this, extended_error);
 
-    if (NULL == this)
+    //if (NULL == this)
     {
-        return (CipStatus) kCipErrorConnectionFailure;
+        //return (CipStatus) kCipErrorConnectionFailure;
     }
 
     // TODO: add check for transport type trigger
@@ -113,7 +113,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                 consumed_connection_path.instance_number = connection_path.connection_point[0];
                 consumed_connection_path.attribute_number = 3;
 
-                attribute = instance->GetCipAttribute (3);
+                attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
                 OPENER_ASSERT(attribute != NULL);
                 // an assembly object should always have an attribute 3
                 data_size = consumed_connection_size;
@@ -162,7 +162,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                 produced_connection_path.instance_number = connection_path.connection_point[producing_index];
                 produced_connection_path.attribute_number = 3;
 
-                attribute = instance->GetCipAttribute (3);
+                attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
                 OPENER_ASSERT(attribute != NULL);
                 // an assembly object should always have an attribute 3
                 data_size = produced_connection_size;
@@ -202,7 +202,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (NULL != g_config_data_buffer)
         {
             // config data has been sent with this forward open request
-            *extended_error = HandleConfigData(assembly_class);
+            *extended_error = HandleConfigData((CIP_Assembly*)assembly_class);
             if (0 != *extended_error)
             {
                 return (CipStatus) kCipErrorConnectionFailure;
@@ -231,17 +231,17 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
  */
 CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
-    //static EIP_UINT16 nUDPPort = 2222; //TODO think on improving the udp port assigment for point to point connections 
+    //static EIP_UINT16 nUDPPort = 2222; //TODO think on improving the udp port assigment for point to point connections
     int j = 0;
     struct sockaddr_in addr;
     int socket;
 
     if (cpf_data->address_info_item[0].type_id == 0)
-    { 
-        // it is not used yet 
+    {
+        // it is not used yet
         j = 0;
-    } 
-    else if (cpf_data->address_info_item[1].type_id == 0) 
+    }
+    else if (cpf_data->address_info_item[1].type_id == 0)
     {
         j = 1;
     }
@@ -311,7 +311,7 @@ CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket
 
 CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
-    CIP_Connection* existing_connection_object = GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
+    CIP_Connection* existing_connection_object = (CIP_Connection*)CIP_Appcontype::GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
     int j;
 
     if (NULL == existing_connection_object)
@@ -446,11 +446,11 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
 CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
 {
     CipUint connection_manager_status = 0;
-    CIP_Assembly* config_instance = CIP_Assembly::GetClass();
+    const CIP_Object* config_instance = CIP_Assembly::GetClass();
 
     if (0 != g_config_data_length)
     {
-        if (ConnectionWithSameConfigPointExists(connection_path.connection_point[2]))
+        if (CIP_Appcontype::ConnectionWithSameConfigPointExists(connection_path.connection_point[2]))
         {
             // there is a connected connection with the same config point
             // we have to have the same data as already present in the config point
@@ -493,7 +493,7 @@ void CIP_IOConnection::CloseIoConnection()
     {
         if ((CIP_Connection::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
         {
-            CIP_Connection* next_non_control_master_connection = GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+            CIP_Connection* next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
             if (NULL != next_non_control_master_connection)
             {
                 next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
@@ -509,7 +509,7 @@ void CIP_IOConnection::CloseIoConnection()
             else
             {
                 // this was the last master connection close all listen only connections listening on the port
-                CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
             }
         }
     }
@@ -527,14 +527,14 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
         switch (instance_type)
         {
             case CIP_Connection::kConnectionTypeIoExclusiveOwner:
-                CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
-                CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
                 break;
             case CIP_Connection::kConnectionTypeIoInputOnly:
                 if (kEipInvalidSocket != netConn->GetSocketHandle ())
                 {
                     // we are the controlling input only connection find a new controller
-                    next_non_control_master_connection = GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+                    next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
                     if (NULL != next_non_control_master_connection)
                     {
                         next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
@@ -544,7 +544,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
                     else
                     {
                         //this was the last master connection close all listen only connections listening on the port
-                        CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                        CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
                     }
                 }
                 break;
@@ -571,14 +571,14 @@ CipStatus CIP_IOConnection::SendConnectedData()
 
     /* assembleCPFData */
     cpf_data->item_count = 2;
-    if ((transport_type_class_trigger & 0x0F) != 0) 
-    { 
-        // use Sequenced Address Items if not Connection Class 0 
+    if ((transport_type_class_trigger & 0x0F) != 0)
+    {
+        // use Sequenced Address Items if not Connection Class 0
         cpf_data->address_item.type_id = CIP_CommonPacket::kCipItemIdSequencedAddressItem;
         cpf_data->address_item.length = 8;
         cpf_data->address_item.data.sequence_number = eip_level_sequence_count_producing;
     }
-    else 
+    else
     {
         cpf_data->address_item.type_id = CIP_CommonPacket::kCipItemIdConnectionAddress;
         cpf_data->address_item.length = 4;
@@ -587,7 +587,7 @@ CipStatus CIP_IOConnection::SendConnectedData()
 
     cpf_data->data_item.type_id = CIP_CommonPacket::kCipItemIdConnectedDataItem;
 
-    CipByteArray* producing_instance_attributes = (CipByteArray*)producing_instance->attributes[0]->getData();
+    CipByteArray* producing_instance_attributes = (CipByteArray*)(((CIP_Object*)producing_instance)->attributes[0]->getData());
     cpf_data->data_item.length = 0;
 
     //todo: verify data before sending
