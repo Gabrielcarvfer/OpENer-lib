@@ -14,9 +14,7 @@
 #include "../../../../class_stack/CIP_Object.hpp"
 #include "../../../../ciptypes.hpp"
 
-class NET_EthIP_Interface;
-
-class NET_EthIP_Interface : public CIP_Object
+class NET_EthIP_Interface : public CIP_Object<NET_EthIP_Interface>
 {
 public:
 /** @brief Multicast Configuration struct, called Mcast config

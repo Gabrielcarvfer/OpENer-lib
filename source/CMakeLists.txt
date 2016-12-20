@@ -88,6 +88,6 @@ opener_common_includes()
 add_subdirectory( src )
 
 if(WIN32)
-  add_executable(OpENerMain ports/WIN32/main.cpp)# ${OPENER_SRC})
+  add_executable(OpENerMain src/main.cpp)# ${OPENER_SRC})
   target_link_libraries(OpENerMain OpENer)
 endif()

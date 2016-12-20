@@ -25,7 +25,9 @@ typedef struct {
     OpenConnectionFunction open_connection_function;
 } ConnectionManagementHandling;
 
-class CIP_Connection :   public CIP_Object
+
+
+class CIP_Connection :   public CIP_Object<CIP_Connection>
 {
 
 public:

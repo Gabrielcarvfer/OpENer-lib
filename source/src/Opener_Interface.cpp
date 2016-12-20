@@ -14,9 +14,6 @@ std::map<CipUdint, Opener_ExplicitConnection*> Opener_Interface::Explicit_Connec
 //Methods
 bool Opener_Interface::Opener_Initialize()
 {
-    IO_Connection_set.clear();
-    Explicit_Connection_set.clear();
-    
     g_end_stack = 0;
     CipUint unique_connection_id;
 

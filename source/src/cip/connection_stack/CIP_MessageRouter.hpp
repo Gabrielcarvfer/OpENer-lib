@@ -18,7 +18,7 @@
  *  by assembleLinearMsg.
  */
 
-class CIP_MessageRouter : public CIP_Object
+class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 {
     public:
             static CipMessageRouterRequest g_message_router_request;

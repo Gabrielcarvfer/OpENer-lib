@@ -12,15 +12,16 @@
 #include "CIP_Attribute.hpp"
 #include "CIP_Service.hpp"
 
+template <class T>
 class CIP_Object
 {
     public:
-        static const CIP_Object * GetInstance(CipUdint instance_number);
-        static const CIP_Object * GetClass();
+        static const T * GetInstance(CipUdint instance_number);
+        static const T * GetClass();
         static CipUdint GetNumberOfInstances();
-        static CipDint GetInstanceNumber(const CIP_Object * instance);
-        static bool AddClassInstance(CIP_Object * instance, CipUdint position);
-        static bool RemoveClassInstance(CIP_Object * instance);
+        static CipDint GetInstanceNumber(const T * instance);
+        static bool AddClassInstance(T * instance, CipUdint position);
+        static bool RemoveClassInstance(T * instance);
         static bool RemoveClassInstance(CipUdint position);
 
         CIP_Object();
@@ -140,7 +141,7 @@ class CIP_Object
     protected:
         //Instance stuff
         int id;
-        static CIP_Object * class_ptr;
+        static T * class_ptr;
 
         //Class stuff
         static int instancesNum;
@@ -151,8 +152,8 @@ class CIP_Object
         static int instanceServicesNum;
         static CipUdint get_all_class_attributes_mask;
         static CipUdint get_all_instance_attributes_mask;
-        static std::map<CipUdint, const CIP_Object *> object_Set;
+        static std::map<CipUdint, const T *> object_Set;
 };
 
-
+#include "CIP_Object_impl.hpp"
 #endif //OPENER_CIP_OBJECT_H

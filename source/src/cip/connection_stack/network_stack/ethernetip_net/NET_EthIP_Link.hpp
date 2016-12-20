@@ -10,7 +10,7 @@
 #include "../../../class_stack/CIP_Object.hpp"
 #include "tcpip_link/NET_EthIP_Interface.hpp"
 
-class NET_EthIP_Link : public CIP_Object
+class NET_EthIP_Link : public CIP_Object<NET_EthIP_Link>
 {
 public:
     /** @brief Initialize the Ethernet Link Objects data

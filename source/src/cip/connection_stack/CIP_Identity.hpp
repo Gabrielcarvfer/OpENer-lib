@@ -9,9 +9,7 @@
 #include "../ciptypes.hpp"
 #include "../class_stack/CIP_Object.hpp"
 
-class CIP_Identity;
-
-class CIP_Identity : public CIP_Object
+class CIP_Identity : public CIP_Object<CIP_Identity>
 {
 public:
 /* global public variables */

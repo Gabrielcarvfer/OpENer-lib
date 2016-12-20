@@ -11,7 +11,7 @@
 #include "ciptypes.hpp"
 #include "../opener_user_conf.hpp"
 
-class CIP_Appcontype : public CIP_Object
+class CIP_Appcontype : public CIP_Object<CIP_Appcontype>
 {
 public:
     static void InitializeIoConnectionData (void);

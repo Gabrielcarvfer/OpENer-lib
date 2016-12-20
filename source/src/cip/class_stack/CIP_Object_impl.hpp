@@ -2,7 +2,7 @@
 // Created by gabriel on 18/11/2016.
 //
 
-#include "CIP_Object.hpp"
+//#include "CIP_Object.hpp"
 #include "../../trace.hpp"
 #include "../CIP_Common.hpp"
 #include "CIP_Attribute.hpp"
@@ -10,35 +10,37 @@
 #include <utility>
 
 //Static variables
-CipUdint CIP_Object::class_id;
-std::string CIP_Object::class_name;
-CipUint CIP_Object::revision;
-CIP_Object * CIP_Object::class_ptr;
-int CIP_Object::instancesNum;
-int CIP_Object::classAttributesNum;
-int CIP_Object::instanceAttributesNum;
-int CIP_Object::maxNumOfInstances;
-int CIP_Object::classServicesNum;
-int CIP_Object::instanceServicesNum;
-CipUdint CIP_Object::get_all_class_attributes_mask;
-CipUdint CIP_Object::get_all_instance_attributes_mask;
-std::map<CipUdint, const CIP_Object *> CIP_Object::object_Set;
+template<class T> CipUdint        CIP_Object<T>::class_id;
+template<class T> std::string     CIP_Object<T>::class_name;
+template<class T> CipUint         CIP_Object<T>::revision;
+template<class T> T*              CIP_Object<T>::class_ptr;
+template<class T> int             CIP_Object<T>::instancesNum;
+template<class T> int             CIP_Object<T>::classAttributesNum;
+template<class T> int             CIP_Object<T>::instanceAttributesNum;
+template<class T> int             CIP_Object<T>::maxNumOfInstances;
+template<class T> int             CIP_Object<T>::classServicesNum;
+template<class T> int             CIP_Object<T>::instanceServicesNum;
+template<class T> CipUdint        CIP_Object<T>::get_all_class_attributes_mask;
+template<class T> CipUdint        CIP_Object<T>::get_all_instance_attributes_mask;
+template<class T> std::map<CipUdint, const T *> CIP_Object<T>::object_Set;
 
 //Methods
-CIP_Object::CIP_Object()
+
+template <class T>
+CIP_Object<T>::CIP_Object()
 {
   id = instancesNum;
   instancesNum++;
 }
 
-
-CIP_Object::~CIP_Object()
+template <class T>
+CIP_Object<T>::~CIP_Object()
 {
 
 }
 
-
-const CIP_Object * CIP_Object::GetInstance(CipUdint instance_number)
+template <class T>
+const T * CIP_Object<T>::GetInstance(CipUdint instance_number)
 {
     if (object_Set.size() >= instance_number)
         return object_Set[instance_number];
@@ -46,20 +48,20 @@ const CIP_Object * CIP_Object::GetInstance(CipUdint instance_number)
         return nullptr;
 }
 
-
-const CIP_Object * CIP_Object::GetClass()
+template <class T>
+const T  * CIP_Object<T>::GetClass()
 {
     return GetInstance(0);
 }
 
-
-CipUdint CIP_Object::GetNumberOfInstances()
+template <class T>
+CipUdint CIP_Object<T>::GetNumberOfInstances()
 {
     return object_Set.size();
 }
 
-
-CipDint CIP_Object::GetInstanceNumber(const CIP_Object * instance)
+template <class T>
+CipDint CIP_Object<T>::GetInstanceNumber(const T  * instance)
 {
     for (auto it = object_Set.begin(); it != object_Set.end(); it++)
     {
@@ -72,16 +74,16 @@ CipDint CIP_Object::GetInstanceNumber(const CIP_Object * instance)
     return -1;
 }
 
-
-bool CIP_Object::AddClassInstance(CIP_Object * instance, CipUdint position)
+template <class T>
+bool CIP_Object<T>::AddClassInstance(T  * instance, CipUdint position)
 {
     object_Set.emplace(position,instance);
     auto it = object_Set.find(position);
     return (it != object_Set.end());
 }
 
-
-bool CIP_Object::RemoveClassInstance(CIP_Object * instance)
+template <class T>
+bool CIP_Object<T>::RemoveClassInstance(T  * instance)
 {
     for (auto it = object_Set.begin(); it != object_Set.end(); it++)
     {
@@ -94,8 +96,8 @@ bool CIP_Object::RemoveClassInstance(CIP_Object * instance)
     return false;
 }
 
-
-bool CIP_Object::RemoveClassInstance(CipUdint position)
+template <class T>
+bool CIP_Object<T>::RemoveClassInstance(CipUdint position)
 {
     if ( object_Set.find(position) != object_Set.end() )
     {
@@ -109,27 +111,8 @@ bool CIP_Object::RemoveClassInstance(CipUdint position)
 }
 
 //Methods
-/*
-
-CIP_Object::CIP_Object()
-{
-    id = instancesNum;
-    instancesNum++;
-
-    if (id == 0)
-    {
-        class_ptr = this;
-    }
-}
-
-
-CIP_Object::CIP_Object
-{
-    instancesNum--;
-}
-*/
-
-void CIP_Object::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
+template <class T>
+void CIP_Object<T>::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
 {
     auto it = this->attributes.find(attribute_number);
 
@@ -151,6 +134,7 @@ void CIP_Object::InsertAttribute(CipUint attribute_number, CipUsint cip_type, vo
 }
 
 /*
+ * template <class T>
 void CIP_Object::InsertService(CipUsint service_number, CipServiceFunction * service_function, std::string service_name)
 {
     auto it = this->services.find(service_number);
@@ -171,8 +155,8 @@ void CIP_Object::InsertService(CipUsint service_number, CipServiceFunction * ser
     // adding more services than were declared is a no-no
 }*/
 
-
-CIP_Attribute* CIP_Object::GetCipAttribute(CipUint attribute_number)
+template <class T>
+CIP_Attribute* CIP_Object<T>::GetCipAttribute(CipUint attribute_number)
 {
     if (this->attributes.find(attribute_number) == this->attributes.end ())
     {
@@ -189,8 +173,8 @@ CIP_Attribute* CIP_Object::GetCipAttribute(CipUint attribute_number)
 }
 
 /* TODO: this needs to check for buffer overflow*/
-
-CipStatus CIP_Object::GetAttributeSingle(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+template <class T>
+CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     // Mask for filtering get-ability
     CipByte get_mask;
@@ -233,8 +217,7 @@ CipStatus CIP_Object::GetAttributeSingle(CipMessageRouterRequest* message_router
                 //TODO:build an alternative
                 //BeforeAssemblyDataSend(this);
             }
-
-            message_router_response->data_length = CIP_Common::EncodeData(attribute->getType(), attribute->getData(), &message);
+            //message_router_response->data_length = (CipInt)CIP_Common::EncodeData(attribute->getType(), attribute->getData(), &message);
             message_router_response->general_status = kCipErrorSuccess;
         }
     }
@@ -242,7 +225,8 @@ CipStatus CIP_Object::GetAttributeSingle(CipMessageRouterRequest* message_router
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_Object::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+template <class T>
+CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     int i, j;
     CipOctet* reply;

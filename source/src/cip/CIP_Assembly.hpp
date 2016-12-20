@@ -9,7 +9,7 @@
 #include "ciptypes.hpp"
 #include "class_stack/CIP_Object.hpp"
 
-class CIP_Assembly : public CIP_Object
+class CIP_Assembly : public CIP_Object<CIP_Assembly>
 {
     public:
         CIP_Assembly();

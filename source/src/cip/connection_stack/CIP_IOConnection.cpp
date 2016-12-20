@@ -41,7 +41,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
     // currently we allow I/O connections only to assembly objects
     // we don't need to check for zero as this is handled in the connection path parsing
-    const CIP_Object* assembly_class = CIP_Assembly::GetClass();
+    const CIP_Object<CIP_Assembly>* assembly_class = CIP_Assembly::GetClass();
     const CIP_Object* instance = NULL;
 
    CIP_Appcontype::GetIoConnectionForConnectionData(this, extended_error);
@@ -109,7 +109,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (originator_to_target_connection_type != 0)
         {
             //setup consumer side
-            if (0 != (instance = CIP_Assembly::GetInstance (connection_path.connection_point[0])))
+            if (0 != (instance = (const CIP_Object<CIP_Connection>*) CIP_Assembly::GetInstance (connection_path.connection_point[0])))
             {
                 // consuming Connection Point is present
                 consuming_instance = instance;
@@ -159,7 +159,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (target_to_originator_connection_type != 0)
         {
             //setup producer side
-            if (0 != (instance = CIP_Assembly::GetInstance(connection_path.connection_point[producing_index])))
+            if (0 != (instance = (const CIP_Object<CIP_Connection>*) CIP_Assembly::GetInstance(connection_path.connection_point[producing_index])))
             {
                 producing_instance = instance;
 
@@ -453,7 +453,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
 CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
 {
     CipUint connection_manager_status = 0;
-    const CIP_Object* config_instance = CIP_Assembly::GetClass();
+    const CIP_Object* config_instance = (const CIP_Object<CIP_Connection>*)CIP_Assembly::GetClass();
 
     if (0 != g_config_data_length)
     {
