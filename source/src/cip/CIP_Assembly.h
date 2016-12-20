@@ -13,8 +13,6 @@
 
 class CIP_Assembly : public CIP_Object
 {
-    private:
-    int id;
     public:
         CIP_Assembly();
         CIP_Assembly(CipByte* data, CipUint data_length);

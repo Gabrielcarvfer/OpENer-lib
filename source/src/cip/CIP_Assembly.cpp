@@ -12,9 +12,9 @@
 
 CIP_Assembly::CIP_Assembly()
 {
-    this->id = GetNumberOfInstances();
+    id = GetNumberOfInstances();
     //TODO:Fix to emplace in the first empty slot instead of appending
-    AddClassInstance(this, this->id);
+    AddClassInstance(this, id);
 }
 
 CIP_Assembly::~CIP_Assembly()

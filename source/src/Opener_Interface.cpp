@@ -4,7 +4,7 @@
 
 #include <Opener_Interface.h>
 #include <NET_NetworkHandler.h>
-
+#include <CIP_Common.h>
 
 bool Opener_Interface::Opener_Initialize()
 {
@@ -164,10 +164,10 @@ void Opener_Interface::SetDeviceStatus(CipUint device_status)
 
 void Opener_Interface::CipStackInit(CipUint unique_connection_id)
 {
-
+    CIP_Common::CipStackInit (unique_connection_id);
 }
 
 void Opener_Interface::ShutdownCipStack(void)
 {
-
+    CIP_Common::ShutdownCipStack ();
 }

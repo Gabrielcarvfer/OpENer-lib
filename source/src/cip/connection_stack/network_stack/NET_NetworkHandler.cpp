@@ -14,7 +14,8 @@
 #include <NET_NetworkHandler.h>
 
 #include <trace.h>
-#include <./ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
+#include <NET_EthIP_Interface.h>
+#include <NET_Connection.h>
 
 #ifdef WIN32
     #include <winsock.h>
@@ -85,7 +86,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
     struct sockaddr_in *my_address;
     my_address = new struct sockaddr_in();
     my_address->sin_family = AF_INET;
-    my_address->sin_port = htons(kOpenerEthernetPort);
+    my_address->sin_port = NET_Connection::endian_htons(kOpenerEthernetPort);
     my_address->sin_addr.s_addr = NET_EthIP_Interface::interface_configuration_.ip_address;
 
     // bind the new socket to port 0xAF12 (CIP)
@@ -104,8 +105,8 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
     struct sockaddr_in *global_broadcast_address;
     global_broadcast_address = new struct sockaddr_in();
     global_broadcast_address->sin_family = AF_INET;
-    global_broadcast_address->sin_port = htons(kOpenerEthernetPort);
-    global_broadcast_address->sin_addr.s_addr = htonl(INADDR_ANY);
+    global_broadcast_address->sin_port = NET_Connection::endian_htons(kOpenerEthernetPort);
+    global_broadcast_address->sin_addr.s_addr = NET_Connection::endian_htonl(INADDR_ANY);
 
     // enable the UDP socket to receive broadcast messages
     if ( netStats[udp_global_bcast_listener]->SetSocketOpt (SOL_SOCKET, SO_BROADCAST, set_socket_option) < 0)

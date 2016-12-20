@@ -4,16 +4,16 @@
  *
  *****************************************************************************/
 #include <string.h>
+#include <cstring>
 #include <ciptypes.h>
-#include "NET_EthIP_Interface.h"
+#include <NET_EthIP_Interface.h>
 #include <winsock.h>
-#include <connection_stack/CIP_Common.h>
+#include <CIP_Common.h>
+#include <NET_Connection.h>
 
 #define CIP_ETHERNETLINK_CLASS_CODE 0xF6
 
-CipStatus NET_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,
-    const char* subnet_mask,
-    const char* gateway)
+CipStatus NET_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)
 {
 
     interface_configuration_.ip_address = inet_addr(ip_address);
@@ -21,7 +21,7 @@ CipStatus NET_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,
     interface_configuration_.gateway = inet_addr(gateway);
 
     // calculate the CIP multicast address. The multicast address is calculated, not input
-    CipUdint host_id = ntohl(interface_configuration_.ip_address) & ~ntohl(interface_configuration_.network_mask); // see CIP spec 3-5.3 for multicast address algorithm
+    CipUdint host_id = NET_Connection::endian_ntohl(interface_configuration_.ip_address) & ~NET_Connection::endian_ntohl(interface_configuration_.network_mask); // see CIP spec 3-5.3 for multicast address algorithm
     host_id -= 1;
     host_id &= 0x3ff;
 

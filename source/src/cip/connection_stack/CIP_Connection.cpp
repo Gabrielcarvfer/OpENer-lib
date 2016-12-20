@@ -9,7 +9,8 @@
 #include <CIP_Class3Connection.h>
 #include <CIP_Identity.h>
 #include <CIP_IOConnection.h>
-#include <utils/UTIL_Endianconv.h>
+#include <UTIL_Endianconv.h>
+#include <CIP_Appcontype.h>
 #include <trace.h>
 
 #ifdef WIN32
@@ -26,16 +27,6 @@ const int g_kForwardOpenHeaderLength = 36; /**< the length in bytes of the forwa
 #define EQLOGICALPATH(x, y) (((x)&0xfc) == (y))
 
 static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_SPECIFIC_CONNECTABLE_OBJECTS;
-
-CIP_Connection::CIP_Connection (struct sockaddr *originator_address, struct sockaddr *remote_address)
-{
-    netConn = new NET_Connection(originator_address, remote_address);
-}
-
-CIP_Connection::~CIP_Connection ()
-{
-    delete (netConn);
-}
 
 /** @brief gets the padded logical path TODO: enhance documentation
  * @param logical_path_segment TheLogical Path Segment
@@ -80,7 +71,7 @@ CipUdint CIP_Connection::GetConnectionId (void)
 CipStatus CIP_Connection::ConnectionManagerInit (CipUint unique_connection_id)
 {
     CIP_Class3conn::InitializeClass3ConnectionData ();
-    CIP_IOConnection::InitializeIOConnectionData ();
+    CIP_Appcontype::InitializeIoConnectionData ();
 
     class_id = kCipConnectionManagerClassCode;
     get_all_class_attributes_mask = 0xC6;
@@ -313,7 +304,7 @@ CipStatus CIP_Connection::ForwardClose (CipMessageRouterRequest *message_router_
 
     OPENER_TRACE_INFO("ForwardClose: ConnSerNo %d\n", connection_serial_number);
 
-    for (int i = 0; i < active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < active_connections_set.size(); i++)
     {
         connection_object = (CIP_Connection*)active_connections_set[i];
         /* this check should not be necessary as only established connections should be in the active connection list */
@@ -335,6 +326,25 @@ CipStatus CIP_Connection::ForwardClose (CipMessageRouterRequest *message_router_
     return AssembleForwardCloseResponse (connection_serial_number, originator_vendor_id, originator_serial_number, message_router_request, message_router_response, connection_status);
 }
 
+ConnectionManagementHandling* CIP_Connection::GetConnMgmEntry(CipUdint class_id)
+{
+    int i;
+    ConnectionManagementHandling *pstRetVal;
+
+    pstRetVal = NULL;
+
+    for (i = 0; i < g_kNumberOfConnectableObjects; ++i)
+    {
+        if (class_id == g_astConnMgmList[i].class_id)
+        {
+            pstRetVal = &(g_astConnMgmList[i]);
+            break;
+        }
+    }
+    return pstRetVal;
+}
+
+
 /* TODO: Not implemented */
 CipStatus CIP_Connection::GetConnectionOwner (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
 {
@@ -352,18 +362,16 @@ CipStatus CIP_Connection::ManageConnections (MilliSeconds elapsed_time)
 
     /*Inform application that it can execute */
     //todo:HandleApplication ();
-    ManageEncapsulationMessages (elapsed_time);
+    NET_EthIP_Encap::ManageEncapsulationMessages (elapsed_time);
 
-    for (int i = 0; i < active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < active_connections_set.size (); i++)
     {
         connection_object = (CIP_Connection*)active_connections_set[i];
 
         if (connection_object->state == kConnectionStateEstablished)
         {
-            if ((0 != connection_object->consuming_instance) ||
-                // we have a consuming connection check inactivity watchdog timer
-                (connection_object->transport_type_class_trigger &
-                 0x80)) // all sever connections have to maintain an inactivity watchdog timer
+            // we have a consuming connection check inactivity watchdog timer or all sever connections have to maintain an inactivity watchdog timer
+            if ((0 != connection_object->consuming_instance) ||  (connection_object->transport_type_class_trigger & 0x80))
             {
                 connection_object->inactivity_watchdog_timer -= elapsed_time;
                 if (connection_object->inactivity_watchdog_timer <= 0)
@@ -595,7 +603,7 @@ CIP_Connection *CIP_Connection::GetConnectedObject (CipUdint connection_id)
 {
     CIP_Connection *active_connection_object_list_item;;
 
-    for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
         active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
 
@@ -612,7 +620,7 @@ CIP_Connection *CIP_Connection::GetConnectedOutputAssembly (CipUdint output_asse
 {
     CIP_Connection *active_connection_object_list_item;
 
-    for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
         active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
 
@@ -628,7 +636,7 @@ CIP_Connection *CIP_Connection::GetConnectedOutputAssembly (CipUdint output_asse
 CIP_Connection *CIP_Connection::CheckForExistingConnection (CIP_Connection *connection_object)
 {
     CIP_Connection *active_connection_object_list_item;
-    for (int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < CIP_Connection::active_connections_set.size (); i++)
     {
         active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
 
@@ -1003,7 +1011,7 @@ CipBool CIP_Connection::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)
 
     CIP_Connection *pstRunner;
 
-    for (int i = 0; i < active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < active_connections_set.size (); i++)
     {
         pstRunner = (CIP_Connection*)active_connections_set[i];
         if (pa_nInstanceNr == pstRunner->connection_path.connection_point[0])
@@ -1049,16 +1057,21 @@ CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest*
         switch(service)
         {
             case kForwardOpen:
+		return ForwardOpen(message_router_request, message_router_response);
                 break;
             case kForwardClose:
+		return ForwardClose(message_router_request, message_router_response);
                 break;
             case kGetConnectionOwner:
+                return GetConnectionOwner(message_router_request, message_router_response);
                 break;
+            default:
+              return kCipStatusError;
         }
     }
     //Instance services
     else
     {
-
+	return kCipStatusError;
     }
 }

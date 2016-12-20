@@ -4,7 +4,7 @@
  *  Created on: Dec 16, 2013
  *      Author: mmm
  */
-
+/*
 #include <CppUTest/TestHarness.h>
 #include <stdint.h>
 
@@ -25,3 +25,4 @@ TEST(RandomClass, CreateXOrShiftObject)
     POINTERS_EQUAL(SetXorShiftSeed, pRandom->set_seed);
     POINTERS_EQUAL(NextXorShiftUint32, pRandom->get_next_uint32);
 }
+*/

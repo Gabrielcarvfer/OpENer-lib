@@ -250,7 +250,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     //addr.in_port = htons(nUDPPort++);
-    addr.sin_port = htons(kOpenerEipIoUdpPort);
+    addr.sin_port = NET_Connection::endian_htons(kOpenerEipIoUdpPort);
 
     // the address is only needed for bind used if consuming
     netConn->SetSocketHandle (NET_NetworkHandler::CreateUdpSocket(kUdpCommuncationDirectionConsuming, (struct sockaddr*)&addr));
@@ -269,7 +269,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
     //TODO should we add our own address here?
     cpf_data->address_info_item[j].sin_addr = addr.sin_addr.s_addr;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
-    cpf_data->address_info_item[j].sin_family = htons(AF_INET);
+    cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
 
     return kCipStatusOk;
 }
@@ -277,7 +277,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
 CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
     int socket;
-    in_port_t port = htons(kOpenerEipIoUdpPort); /* the default port to be used if no port information is part of the forward open request */
+    in_port_t port = NET_Connection::endian_htons(kOpenerEipIoUdpPort); /* the default port to be used if no port information is part of the forward open request */
 
     if (CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator == cpf_data->address_info_item[0].type_id)
     {
@@ -357,10 +357,10 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     cpf_data->address_info_item[j].length = 16;
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
     ((struct sockaddr_in*)(netConn->remote_address))->sin_family = AF_INET;
-    ((struct sockaddr_in*)(netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons(kOpenerEipIoUdpPort);
     ((struct sockaddr_in*)(netConn->remote_address))->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
-    cpf_data->address_info_item[j].sin_family = htons(AF_INET);
+    cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
 
     return kCipStatusOk;
 }
@@ -401,14 +401,14 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
     if (0 == cpf_data->address_info_item[j].type_id)
     {
         // we are using an unused item initialize it with the default multicast address
-        cpf_data->address_info_item[j].sin_family = htons(AF_INET);
-        cpf_data->address_info_item[j].sin_port = htons(kOpenerEipIoUdpPort);
+        cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
+        cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons(kOpenerEipIoUdpPort);
         cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
         memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
         cpf_data->address_info_item[j].length = 16;
     }
 
-    if (htons(AF_INET) != cpf_data->address_info_item[j].sin_family)
+    if (NET_Connection::endian_htons(AF_INET) != cpf_data->address_info_item[j].sin_family)
     {
         OPENER_TRACE_ERR("Sockaddr Info Item with wrong sin family value recieved\n");
         return kCipStatusError;
@@ -416,7 +416,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
 
     /* allocate an unused sockaddr struct to use */
     struct sockaddr_in *socket_address = new struct sockaddr_in();
-    socket_address->sin_family = ntohs(cpf_data->address_info_item[j].sin_family);
+    socket_address->sin_family = NET_Connection::endian_ntohs(cpf_data->address_info_item[j].sin_family);
     socket_address->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr;
     socket_address->sin_port = cpf_data->address_info_item[j].sin_port;
 

@@ -15,7 +15,7 @@ candump vcan0
 */
 
 
-#include "source/src/dnet_encap/dnet_prot.h"
+#include <dnet_prot.h>
 
 
 int soc;

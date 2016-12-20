@@ -17,25 +17,31 @@
 #include <typedefs.h>
 #include <CIP_Assembly.h>
 
+class CIP_Connection;
+
+typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
+typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
+
+typedef struct {
+    CipUdint class_id;
+    OpenConnectionFunction open_connection_function;
+} ConnectionManagementHandling;
+
 class CIP_Connection :   public CIP_Object
 {
 
 public:
     CIP_Connection();
-    ~CIP_Connection();
+    virtual ~CIP_Connection();
     CipMessageRouterRequest g_message_router_request;
     CipMessageRouterResponse g_message_router_response;
     CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
     NET_Connection * netConn;
 
-    typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
-    typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
 
-    typedef struct {
-        CipUdint class_id;
-        OpenConnectionFunction open_connection_function;
-    } ConnectionManagementHandling;
+
+
     /**
  * @brief Sets the routing type of a connection, either
  * - Point-to-point connections (unicast)

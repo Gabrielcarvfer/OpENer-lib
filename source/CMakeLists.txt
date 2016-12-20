@@ -91,5 +91,5 @@ add_subdirectory( src )
 
 if(WIN32)
   add_executable(OpENerMain ports/WIN32/main.cpp)# ${OPENER_SRC})
-  target_link_libraries(OpENerMain OpENer)# OpENer_CIP OpENer_CLASS OpENer_UTILS OpENer_CONN OpENer_NET CIP_NET_ETHIP)
+  target_link_libraries(OpENerMain OpENer)
 endif()

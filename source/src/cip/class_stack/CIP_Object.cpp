@@ -13,14 +13,13 @@
 
 CIP_Object::CIP_Object()
 {
-
-
+  id = instancesNum;
+  instancesNum++;
 }
 
 
 CIP_Object::~CIP_Object()
 {
-
 
 }
 

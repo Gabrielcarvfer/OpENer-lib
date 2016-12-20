@@ -25,11 +25,7 @@ class CIP_Object
         static bool RemoveClassInstance(CipUdint position);
 
         CIP_Object();
-        ~CIP_Object();
-        /*
-        CIP_ClassInstance();
-        ~CIP_ClassInstance ();
-         */
+        virtual ~CIP_Object();
 
         static CipUdint class_id;
         static std::string class_name;

@@ -6,11 +6,12 @@
 #ifndef OPENER_APPCONTYPE_H_
 #define OPENER_APPCONTYPE_H_
 
+#include <CIP_Object.h>
 #include <CIP_Connection.h>
 #include <ciptypes.h>
 #include <opener_user_conf.h>
 
-class CIP_Appcontype
+class CIP_Appcontype : public CIP_Object
 {
 public:
     static void InitializeIoConnectionData (void);
@@ -140,13 +141,15 @@ public:
         CIP_Connection *connection_data;//[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]; /**< the connection data */
     } ListenOnlyConnection;
 
+
+
+private:
+
     static ExclusiveOwnerConnection *g_exlusive_owner_connections;
 
     static InputOnlyConnection *g_input_only_connections;
 
     static ListenOnlyConnection *g_listen_only_connections;
-
-private:
 
     static const CIP_Connection* GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error);
 

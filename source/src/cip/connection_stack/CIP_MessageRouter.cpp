@@ -21,15 +21,15 @@ CipStatus CIP_MessageRouter::CipMessageRouterInit()
     revision = 1;
     class_name = "message router";
     /*message_router = CIP_ClassInstance(kCipMessageRouterClassCode, / class ID
-                                                       0, /* # of class attributes
-                                              0xffffffff, /* class getAttributeAll mask
-                                                       0, /* # of class services
-                                                       0, /* # of instance attributes
-                                              0xffffffff, /* instance getAttributeAll mask
-                                                       0, /* # of instance services
-                                                       1, /* # of instances
-                                        "message router", /* class name
-                                                       1  /* revision
+                                                       0, // # of class attributes
+                                              0xffffffff, // class getAttributeAll mask
+                                                       0, // # of class services
+                                                       0, // # of instance attributes
+                                              0xffffffff, // instance getAttributeAll mask
+                                                       0, // # of instance services
+                                                       1, // # of instances
+                                        "message router", // class name
+                                                       1  // revision
                               );
 */
 

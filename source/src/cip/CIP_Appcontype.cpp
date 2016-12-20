@@ -211,7 +211,7 @@ const CIP_Connection* CIP_Appcontype::GetExistingProducerMulticastConnection(Cip
         {
             if ((input_point == producer_multicast_connection->connection_path.connection_point[1])
                 && (CIP_Connection::kRoutingTypeMulticastConnection == (producer_multicast_connection->t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection))
-                && (kEipInvalidSocket!= producer_multicast_connection->netConn->GetSocketHandle()));//todo:kUdpCommuncationDirectionProducing)))
+                && (kEipInvalidSocket!= producer_multicast_connection->netConn->GetSocketHandle()))//todo:kUdpCommuncationDirectionProducing)))
             {
                 /* we have a connection that produces the same input assembly,
          * is a multicast producer and manages the connection.
@@ -273,7 +273,7 @@ void CIP_Appcontype::CloseAllConnectionsForInputWithSameType(CipUdint input_poin
 void CIP_Appcontype::CloseAllConnections(void)
 {
     const  CIP_Connection* connection;
-    for(int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+    for(unsigned int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
         connection = CIP_Connection::active_connections_set[i];
         /*FIXME check if m_pfCloseFunc would be suitable*/
@@ -287,7 +287,7 @@ void CIP_Appcontype::CloseAllConnections(void)
 CipBool CIP_Appcontype::ConnectionWithSameConfigPointExists(CipUdint config_point)
 {
     CIP_Connection* connection;
-    for(int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+    for(unsigned int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
     {
         connection = (CIP_Connection*)CIP_Connection::active_connections_set[i];
 
@@ -304,14 +304,14 @@ void CIP_Appcontype::InitializeIoConnectionData(void)
 
 
     g_input_only_connections = new InputOnlyConnection[OPENER_CIP_NUM_INPUT_ONLY_CONNS]();
-    for (int i = 0; i < OPENER_CIP_NUM_INPUT_ONLY_CONNS; i++)
+    /*for (int i = 0; i < OPENER_CIP_NUM_INPUT_ONLY_CONNS; i++)
     {
         g_input_only_connections[i].connection_data = new CIP_Connection[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]();
-    }
+    }*/
 
     g_listen_only_connections = new ListenOnlyConnection[OPENER_CIP_NUM_LISTEN_ONLY_CONNS]();
-    for (int i = 0; i < OPENER_CIP_NUM_LISTEN_ONLY_CONNS; i++)
+    /*for (int i = 0; i < OPENER_CIP_NUM_LISTEN_ONLY_CONNS; i++)
     {
         g_listen_only_connections[i].connection_data = new CIP_Connection[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]();
-    }
+    }*/
 }

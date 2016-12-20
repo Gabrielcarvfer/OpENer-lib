@@ -42,7 +42,7 @@ int main(int argc, char* arg[])
 
     //exp_conn->receive_message();
 
-    Opener_Interface::Opener_RemoveExplicitConnection (exp_conn_handle);
+    //Opener_Interface::Opener_RemoveExplicitConnection (exp_conn_handle);
 
 
     //

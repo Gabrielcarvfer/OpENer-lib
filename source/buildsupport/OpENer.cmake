@@ -49,9 +49,13 @@ MACRO(opener_add_cip_object NAME DESCRIPTION)
   endif(NOT OpENer_CIP_OBJECT_${NAME})
 ENDMACRO(opener_add_cip_object)
 
+
 #######################################
 # Creates options for trace level     #
-####################################### 
+#######################################
+
+
+
 macro(createTraceLevelOptions)
   add_definitions( -DOPENER_WITH_TRACES )
   set( TRACE_LEVEL 0 )

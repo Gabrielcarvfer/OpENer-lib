@@ -20,7 +20,7 @@
 void CIP_Common::CipStackInit (CipUint unique_connection_id)
 {
     CipStatus eip_status;
-    EncapsulationInit ();
+    NET_EthIP_Encap::EncapsulationInit ();
 
     /* The message router is the first CIP object be initialized!!! */
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();
@@ -52,7 +52,8 @@ void CIP_Common::ShutdownCipStack (void)
     CIP_Appcontype::CloseAllConnections ();
 
     /* Than free the sockets of currently active encapsulation sessions */
-    EncapsulationShutDown ();
+    NET_EthIP_Encap::EncapsulationShutDown ();
+
     /*clean the data needed for the assembly object's attribute 3*/
     CIP_Assembly::ShutdownAssemblies ();
 

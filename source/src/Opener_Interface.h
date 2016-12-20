@@ -11,7 +11,7 @@
 #include <ciptypes.h>
 #include <CIP_Object.h>
 #include <typedefs.h>
-#include <connection_stack/CIP_Connection.h>
+#include <CIP_Connection.h>
 #include <Opener_IOConnection.h>
 #include <Opener_ExplicitConnection.h>
 
