@@ -4,9 +4,9 @@
  *
  ******************************************************************************/
 
-#include <string.h>
+#include <cstring>
 
-#include <CIP_Class3Connection.h>
+#include "CIP_Class3Connection.hpp"
 
 
 

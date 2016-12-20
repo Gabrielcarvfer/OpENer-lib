@@ -1,6 +1,6 @@
 
-#include "UTIL_Endianconv.h"
-#include <string.h>
+#include "NET_Endianconv.hpp"
+#include <cstring>
 
 
 /* THESE ROUTINES MODIFY THE BUFFER POINTER*/
@@ -10,7 +10,7 @@
  *   @param buffer pointer where data should be read.
  *   @return EIP_UINT8 data value
  */
-CipUsint UTIL_Endianconv::GetSintFromMessage(CipUsint** buffer)
+CipUsint NET_Endianconv::GetSintFromMessage(CipUsint** buffer)
 {
     unsigned char* buffer_address = (unsigned char*)*buffer;
     CipUint data = buffer_address[0];
@@ -25,7 +25,7 @@ CipUsint UTIL_Endianconv::GetSintFromMessage(CipUsint** buffer)
  *   @param buffer pointer where data should be reed.
  *   @return EIP_UINT16 data value
  */
-CipUint UTIL_Endianconv::GetIntFromMessage(CipUsint** buffer)
+CipUint NET_Endianconv::GetIntFromMessage(CipUsint** buffer)
 {
     unsigned char* buffer_address = (unsigned char*)*buffer;
     CipUint data = buffer_address[0] | buffer_address[1] << 8;
@@ -38,7 +38,7 @@ CipUint UTIL_Endianconv::GetIntFromMessage(CipUsint** buffer)
  *   @param buffer pointer where data should be reed.
  *   @return EIP_UNÍT32 value
  */
-CipUdint UTIL_Endianconv::GetDintFromMessage(CipUsint** buffer)
+CipUdint NET_Endianconv::GetDintFromMessage(CipUsint** buffer)
 {
     unsigned char* p = (unsigned char*)*buffer;
     CipUdint data = p[0] | p[1] << 8 | p[2] << 16 | p[3] << 24;
@@ -51,7 +51,7 @@ CipUdint UTIL_Endianconv::GetDintFromMessage(CipUsint** buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int UTIL_Endianconv::AddSintToMessage(CipUsint data, CipUsint** buffer)
+int NET_Endianconv::AddSintToMessage(CipUsint data, CipUsint** buffer)
 {
     unsigned char* p = (unsigned char*)*buffer;
 
@@ -65,7 +65,7 @@ int UTIL_Endianconv::AddSintToMessage(CipUsint data, CipUsint** buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int UTIL_Endianconv::AddIntToMessage(CipUint data, CipUsint** buffer)
+int NET_Endianconv::AddIntToMessage(CipUint data, CipUsint** buffer)
 {
     unsigned char* p = (unsigned char*)*buffer;
 
@@ -80,7 +80,7 @@ int UTIL_Endianconv::AddIntToMessage(CipUint data, CipUsint** buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int UTIL_Endianconv::AddDintToMessage(CipUdint data, CipUsint** buffer)
+int NET_Endianconv::AddDintToMessage(CipUdint data, CipUsint** buffer)
 {
     unsigned char* p = (unsigned char*)*buffer;
 
@@ -144,7 +144,7 @@ int UTIL_Endianconv::AddLintToMessage(CipUlint data, CipUsint** buffer)
  * Detects Endianess of the platform and sets global variable g_nOpENerPlatformEndianess accordingly,
  * whereas 0 equals little endian and 1 equals big endian
  */
-void UTIL_Endianconv::DetermineEndianess()
+void NET_Endianconv::DetermineEndianess()
 {
     g_opener_platform_endianess = kOpenerEndianessUnknown;
     int i = 1;
@@ -164,23 +164,23 @@ void UTIL_Endianconv::DetermineEndianess()
  *
  * @return 0 equals little endian and 1 equals big endian
  */
-int UTIL_Endianconv::GetEndianess()
+int NET_Endianconv::GetEndianess()
 {
     return g_opener_platform_endianess;
 }
 
-void UTIL_Endianconv::MoveMessageNOctets(int amount_of_bytes_moved, CipOctet** message_runner)
+void NET_Endianconv::MoveMessageNOctets(int amount_of_bytes_moved, CipOctet** message_runner)
 {
     (*message_runner) += amount_of_bytes_moved;
 }
 
-int UTIL_Endianconv::FillNextNMessageOctetsWith(CipOctet value, unsigned int amount_of_bytes_written, CipOctet** message)
+int NET_Endianconv::FillNextNMessageOctetsWith(CipOctet value, unsigned int amount_of_bytes_written, CipOctet** message)
 {
     memset(*message, value, amount_of_bytes_written);
     return amount_of_bytes_written;
 }
 
-int UTIL_Endianconv::FillNextNMessageOctetsWithValueAndMoveToNextPosition(CipOctet value, unsigned int amount_of_filled_bytes, CipOctet** message)
+int NET_Endianconv::FillNextNMessageOctetsWithValueAndMoveToNextPosition(CipOctet value, unsigned int amount_of_filled_bytes, CipOctet** message)
 {
     FillNextNMessageOctetsWith(value, amount_of_filled_bytes, message);
     MoveMessageNOctets(amount_of_filled_bytes, message);

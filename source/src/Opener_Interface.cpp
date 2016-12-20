@@ -2,12 +2,15 @@
 // Created by gabriel on 11/11/2016.
 //
 
-#include <Opener_Interface.h>
-#include <NET_NetworkHandler.h>
-#include <CIP_Common.h>
+#include "Opener_Interface.hpp"
+#include "cip/connection_stack/network_stack/NET_NetworkHandler.hpp"
+#include "cip/CIP_Common.hpp"
 
 bool Opener_Interface::Opener_Initialize()
 {
+    IO_Connection_set.clear();
+    Explicit_Connection_set.clear();
+    
     g_end_stack = 0;
     CipUint unique_connection_id;
 

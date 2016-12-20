@@ -10,19 +10,14 @@
  *
  */
 
-#include <utils/UTIL_Endianconv.h>
-#include <NET_NetworkHandler.h>
+#include "NET_Endianconv.hpp"
+#include "NET_NetworkHandler.hpp"
 
-#include <trace.h>
-#include <NET_EthIP_Interface.h>
-#include <NET_Connection.h>
+#include "../../../../trace.hpp"
+#include "ethernetip_net/tcpip_link/NET_EthIP_Interface.hpp"
+#include "NET_Connection.hpp"
 
-#ifdef WIN32
-    #include <winsock.h>
-    typedef unsigned long socklen_t;
-#else
-
-#endif
+#include "ethernetip_net/NET_EthIP_Includes.h"
 
 
 CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
@@ -422,7 +417,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
     // at this place EIP stores the data length
     CipUsint* read_buffer = &g_ethernet_communication_buffer[2];
     // -4 is for the 4 bytes we have already read
-    size_t data_size = UTIL_Endianconv::GetIntFromMessage(&read_buffer) + ENCAPSULATION_HEADER_LENGTH - 4;
+    size_t data_size = NET_Endianconv::GetIntFromMessage(&read_buffer) + ENCAPSULATION_HEADER_LENGTH - 4;
     // (NOTE this advances the buffer pointer)
 
     // TODO can this be handled in a better way?

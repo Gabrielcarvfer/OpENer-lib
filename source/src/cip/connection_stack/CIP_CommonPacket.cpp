@@ -3,14 +3,14 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#include <CIP_CommonPacket.h>
-#include <connection_stack/CIP_Common.h>
-#include <connection_stack/CIP_Connection.h>
-#include <connection_stack/CIP_MessageRouter.h>
-#include <utils/UTIL_Endianconv.h>
-#include <ethernetip_net/eip_endianconv.h>
-#include <opener_user_conf.h>
-#include <trace.h>
+#include "CIP_CommonPacket.hpp"
+#include "../CIP_Common.hpp"
+#include "CIP_Connection.hpp"
+#include "CIP_MessageRouter.hpp"
+#include "network_stack/NET_Endianconv.hpp"
+#include "network_stack/ethernetip_net/eip_endianconv.hpp"
+#include "../../opener_user_conf.hpp"
+#include "../../trace.hpp"
 
 
 
@@ -82,7 +82,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
                 {
                     // connected data item received
                     CipUsint* pnBuf = common_packet_data.data_item.data;
-                    common_packet_data.address_item.data.sequence_number = (CipUdint)UTIL_Endianconv::GetIntFromMessage(&pnBuf);
+                    common_packet_data.address_item.data.sequence_number = (CipUdint)NET_Endianconv::GetIntFromMessage(&pnBuf);
                     return_value = CIP_MessageRouter::NotifyMR(pnBuf, common_packet_data.data_item.length - 2);
 
                     if (return_value != kCipStatusError)
@@ -128,42 +128,42 @@ CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
     common_packet_format_data->address_info_item[1].type_id = 0;
 
     int length_count = 0;
-    common_packet_format_data->item_count = UTIL_Endianconv::GetIntFromMessage(&data);
+    common_packet_format_data->item_count = NET_Endianconv::GetIntFromMessage(&data);
     length_count += 2;
     if (common_packet_format_data->item_count >= 1)
     {
-        common_packet_format_data->address_item.type_id = UTIL_Endianconv::GetIntFromMessage(&data);
-        common_packet_format_data->address_item.length = UTIL_Endianconv::GetIntFromMessage(&data);
+        common_packet_format_data->address_item.type_id = NET_Endianconv::GetIntFromMessage(&data);
+        common_packet_format_data->address_item.length = NET_Endianconv::GetIntFromMessage(&data);
         length_count += 4;
         if (common_packet_format_data->address_item.length >= 4)
         {
-            common_packet_format_data->address_item.data.connection_identifier = UTIL_Endianconv::GetDintFromMessage(&data);
+            common_packet_format_data->address_item.data.connection_identifier = NET_Endianconv::GetDintFromMessage(&data);
             length_count += 4;
         }
         if (common_packet_format_data->address_item.length == 8)
         {
-            common_packet_format_data->address_item.data.sequence_number = UTIL_Endianconv::GetDintFromMessage(&data);
+            common_packet_format_data->address_item.data.sequence_number = NET_Endianconv::GetDintFromMessage(&data);
             length_count += 4;
         }
     }
     if (common_packet_format_data->item_count >= 2)
     {
-        common_packet_format_data->data_item.type_id = UTIL_Endianconv::GetIntFromMessage(&data);
-        common_packet_format_data->data_item.length = UTIL_Endianconv::GetIntFromMessage(&data);
+        common_packet_format_data->data_item.type_id = NET_Endianconv::GetIntFromMessage(&data);
+        common_packet_format_data->data_item.length = NET_Endianconv::GetIntFromMessage(&data);
         common_packet_format_data->data_item.data = data;
         data += common_packet_format_data->data_item.length;
         length_count += (4 + common_packet_format_data->data_item.length);
     }
     for (int j = 0; j < (common_packet_format_data->item_count - 2); j++) // TODO there needs to be a limit check here???
     {
-        common_packet_format_data->address_info_item[j].type_id = UTIL_Endianconv::GetIntFromMessage(&data);
+        common_packet_format_data->address_info_item[j].type_id = NET_Endianconv::GetIntFromMessage(&data);
         length_count += 2;
         if ((common_packet_format_data->address_info_item[j].type_id == kCipItemIdSocketAddressInfoOriginatorToTarget) || (common_packet_format_data->address_info_item[j].type_id == kCipItemIdSocketAddressInfoTargetToOriginator))
         {
-            common_packet_format_data->address_info_item[j].length = UTIL_Endianconv::GetIntFromMessage(&data);
-            common_packet_format_data->address_info_item[j].sin_family = UTIL_Endianconv::GetIntFromMessage(&data);
-            common_packet_format_data->address_info_item[j].sin_port = UTIL_Endianconv::GetIntFromMessage(&data);
-            common_packet_format_data->address_info_item[j].sin_addr = UTIL_Endianconv::GetDintFromMessage(&data);
+            common_packet_format_data->address_info_item[j].length = NET_Endianconv::GetIntFromMessage(&data);
+            common_packet_format_data->address_info_item[j].sin_family = NET_Endianconv::GetIntFromMessage(&data);
+            common_packet_format_data->address_info_item[j].sin_port = NET_Endianconv::GetIntFromMessage(&data);
+            common_packet_format_data->address_info_item[j].sin_addr = NET_Endianconv::GetDintFromMessage(&data);
             for (int i = 0; i < 8; i++)
             {
                 common_packet_format_data->address_info_item[j].nasin_zero[i] = *data;
@@ -217,8 +217,8 @@ CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
 int CIP_CommonPacket::EncodeNullAddressItem(CipUsint** message, int size)
 {
     // null address item -> address length set to 0
-    size += UTIL_Endianconv::AddIntToMessage(kCipItemIdNullAddress, message);
-    size += UTIL_Endianconv::AddIntToMessage(0, message);
+    size += NET_Endianconv::AddIntToMessage(kCipItemIdNullAddress, message);
+    size += NET_Endianconv::AddIntToMessage(0, message);
     return size;
 }
 
@@ -234,9 +234,9 @@ int CIP_CommonPacket::EncodeNullAddressItem(CipUsint** message, int size)
 int CIP_CommonPacket::EncodeConnectedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size)
 {
     // connected data item -> address length set to 4 and copy ConnectionIdentifier
-    size += UTIL_Endianconv::AddIntToMessage(kCipItemIdConnectionAddress, message);
-    size += UTIL_Endianconv::AddIntToMessage(4, message);
-    size += UTIL_Endianconv::AddDintToMessage(common_packet_format_data_item->address_item.data.connection_identifier, message);
+    size += NET_Endianconv::AddIntToMessage(kCipItemIdConnectionAddress, message);
+    size += NET_Endianconv::AddIntToMessage(4, message);
+    size += NET_Endianconv::AddDintToMessage(common_packet_format_data_item->address_item.data.connection_identifier, message);
     return size;
 }
 
@@ -246,10 +246,10 @@ int CIP_CommonPacket::EncodeConnectedAddressItem(CipUsint** message, PacketForma
 int CIP_CommonPacket::EncodeSequencedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size)
 {
     // sequenced address item -> address length set to 8 and copy ConnectionIdentifier and SequenceNumber
-    size += UTIL_Endianconv::AddIntToMessage(kCipItemIdSequencedAddressItem, message);
-    size += UTIL_Endianconv::AddIntToMessage(8, message);
-    size += UTIL_Endianconv::AddDintToMessage(common_packet_format_data_item->address_item.data.connection_identifier, message);
-    size += UTIL_Endianconv::AddDintToMessage(common_packet_format_data_item->address_item.data.sequence_number, message);
+    size += NET_Endianconv::AddIntToMessage(kCipItemIdSequencedAddressItem, message);
+    size += NET_Endianconv::AddIntToMessage(8, message);
+    size += NET_Endianconv::AddDintToMessage(common_packet_format_data_item->address_item.data.connection_identifier, message);
+    size += NET_Endianconv::AddDintToMessage(common_packet_format_data_item->address_item.data.sequence_number, message);
     return size;
 }
 
@@ -264,7 +264,7 @@ int CIP_CommonPacket::EncodeSequencedAddressItem(CipUsint** message, PacketForma
  */
 int CIP_CommonPacket::EncodeItemCount(PacketFormat* common_packet_format_data_item, CipUsint** message, int size)
 {
-    size += UTIL_Endianconv::AddIntToMessage(common_packet_format_data_item->item_count, message); // item count
+    size += NET_Endianconv::AddIntToMessage(common_packet_format_data_item->item_count, message); // item count
     return size;
 }
 
@@ -279,7 +279,7 @@ int CIP_CommonPacket::EncodeItemCount(PacketFormat* common_packet_format_data_it
  */
 int CIP_CommonPacket::EncodeDataItemType(PacketFormat* common_packet_format_data_item, CipUsint** message, int size)
 {
-    size += UTIL_Endianconv::AddIntToMessage(common_packet_format_data_item->data_item.type_id, message);
+    size += NET_Endianconv::AddIntToMessage(common_packet_format_data_item->data_item.type_id, message);
     return size;
 }
 
@@ -294,7 +294,7 @@ int CIP_CommonPacket::EncodeDataItemType(PacketFormat* common_packet_format_data
  */
 int CIP_CommonPacket::EncodeDataItemLength(PacketFormat* common_packet_format_data_item, CipUsint** message, int size)
 {
-    size += UTIL_Endianconv::AddIntToMessage(common_packet_format_data_item->data_item.length, message);
+    size += NET_Endianconv::AddIntToMessage(common_packet_format_data_item->data_item.length, message);
     return size;
 }
 
@@ -311,52 +311,52 @@ int CIP_CommonPacket::EncodeDataItemData(PacketFormat* common_packet_format_data
 {
     for (int i = 0; i < common_packet_format_data_item->data_item.length; i++)
     {
-        size += UTIL_Endianconv::AddSintToMessage(*(common_packet_format_data_item->data_item.data + i), message);
+        size += NET_Endianconv::AddSintToMessage(*(common_packet_format_data_item->data_item.data + i), message);
     }
     return size;
 }
 
 int CIP_CommonPacket::EncodeConnectedDataItemLength(CipMessageRouterResponse* message_router_response, CipUsint** message, int size)
 {
-    size += UTIL_Endianconv::AddIntToMessage((CipUint)(message_router_response->data_length + 4 + 2 + (2 * message_router_response->size_of_additional_status)), message);
+    size += NET_Endianconv::AddIntToMessage((CipUint)(message_router_response->data_length + 4 + 2 + (2 * message_router_response->size_of_additional_status)), message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeSequenceNumber(int size, const PacketFormat* common_packet_format_data_item, CipUsint** message)
 {
     // 2 bytes
-    size += UTIL_Endianconv::AddIntToMessage((CipUint)common_packet_format_data_item->address_item.data.sequence_number, message);
+    size += NET_Endianconv::AddIntToMessage((CipUint)common_packet_format_data_item->address_item.data.sequence_number, message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeReplyService(int size, CipUsint** message, CipMessageRouterResponse* message_router_response)
 {
-    size += UTIL_Endianconv::AddSintToMessage(message_router_response->reply_service, message);
+    size += NET_Endianconv::AddSintToMessage(message_router_response->reply_service, message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeReservedFieldOfLengthByte(int size, CipUsint** message, CipMessageRouterResponse* message_router_response)
 {
-    size += UTIL_Endianconv::AddSintToMessage(message_router_response->reserved, message);
+    size += NET_Endianconv::AddSintToMessage(message_router_response->reserved, message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeGeneralStatus(int size, CipUsint** message, CipMessageRouterResponse* message_router_response)
 {
-    size += UTIL_Endianconv::AddSintToMessage(message_router_response->general_status, message);
+    size += NET_Endianconv::AddSintToMessage(message_router_response->general_status, message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeExtendedStatusLength(int size, CipUsint** message, CipMessageRouterResponse* message_router_response)
 {
-    size += UTIL_Endianconv::AddSintToMessage(message_router_response->size_of_additional_status, message);
+    size += NET_Endianconv::AddSintToMessage(message_router_response->size_of_additional_status, message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeExtendedStatusDataItems(int size, CipMessageRouterResponse* message_router_response, CipUsint** message)
 {
     for (int i = 0; i < message_router_response->size_of_additional_status; i++)
-        size += UTIL_Endianconv::AddIntToMessage(message_router_response->additional_status[i], message);
+        size += NET_Endianconv::AddIntToMessage(message_router_response->additional_status[i], message);
 
     return size;
 }
@@ -372,7 +372,7 @@ int CIP_CommonPacket::EncodeExtendedStatus(int size, CipUsint** message, CipMess
 int CIP_CommonPacket::EncodeUnconnectedDataItemLength(int size, CipMessageRouterResponse* message_router_response, CipUsint** message)
 {
     // Unconnected Item
-    size += UTIL_Endianconv::AddIntToMessage((CipUint)(message_router_response->data_length + 4 + (2 * message_router_response->size_of_additional_status)), message);
+    size += NET_Endianconv::AddIntToMessage((CipUint)(message_router_response->data_length + 4 + (2 * message_router_response->size_of_additional_status)), message);
     return size;
 }
 
@@ -380,7 +380,7 @@ int CIP_CommonPacket::EncodeMessageRouterResponseData(int size, CipMessageRouter
 {
     for (int i = 0; i < message_router_response->data_length; i++)
     {
-        size += UTIL_Endianconv::AddSintToMessage((message_router_response->data)[i], &*message);
+        size += NET_Endianconv::AddSintToMessage((message_router_response->data)[i], &*message);
     }
     return size;
 }
@@ -388,14 +388,14 @@ int CIP_CommonPacket::EncodeMessageRouterResponseData(int size, CipMessageRouter
 int CIP_CommonPacket::EncodeSockaddrInfoItemTypeId(int size, int item_type, PacketFormat* common_packet_format_data_item, CipUsint** message)
 {
     OPENER_ASSERT(item_type == 0 || item_type == 1);
-    size += UTIL_Endianconv::AddIntToMessage(common_packet_format_data_item->address_info_item[item_type].type_id, message);
+    size += NET_Endianconv::AddIntToMessage(common_packet_format_data_item->address_info_item[item_type].type_id, message);
 
     return size;
 }
 
 int CIP_CommonPacket::EncodeSockaddrInfoLength(int size, int j, PacketFormat* common_packet_format_data_item, CipUsint** message)
 {
-    size += UTIL_Endianconv::AddIntToMessage(common_packet_format_data_item->address_info_item[j].length, message);
+    size += NET_Endianconv::AddIntToMessage(common_packet_format_data_item->address_info_item[j].length, message);
     return size;
 }
 
@@ -416,8 +416,8 @@ int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_ro
     if (message_router_response)
     {
         // add Interface Handle and Timeout = 0 -> only for SendRRData and SendUnitData necessary
-        UTIL_Endianconv::AddDintToMessage(0, &message);
-        UTIL_Endianconv::AddIntToMessage(0, &message);
+        NET_Endianconv::AddDintToMessage(0, &message);
+        NET_Endianconv::AddIntToMessage(0, &message);
         message_size += 6;
     }
 
@@ -493,7 +493,7 @@ int CIP_CommonPacket::AssembleLinearMessage(CipMessageRouterResponse* message_ro
 
                 message_size += EncapsulateIpAddress(common_packet_format_data_item->address_info_item[j].sin_port, common_packet_format_data_item->address_info_item[j].sin_addr, &message);
 
-                message_size += UTIL_Endianconv::FillNextNMessageOctetsWithValueAndMoveToNextPosition(0, 8, &message);
+                message_size += NET_Endianconv::FillNextNMessageOctetsWithValueAndMoveToNextPosition(0, 8, &message);
                 break;
             }
         }

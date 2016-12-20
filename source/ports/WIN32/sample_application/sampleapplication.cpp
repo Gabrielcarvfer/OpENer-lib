@@ -4,10 +4,10 @@
  *
  *****************************************************************************/
 /*
-#include <Opener_Interface.h>
-#include <CIP_Assembly.h>
-#include <malloc.h>
-#include <appcontype.h>
+#include "Opener_Interface.h>
+#include "CIP_Assembly.h>
+#include "malloc.h>
+#include "appcontype.h>
 
 #define DEMO_APP_INPUT_ASSEMBLY_NUM 100 //0x064
 #define DEMO_APP_OUTPUT_ASSEMBLY_NUM 150 //0x096

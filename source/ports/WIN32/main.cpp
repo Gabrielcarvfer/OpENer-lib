@@ -3,7 +3,7 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#include <Opener_Interface.h>
+#include "../../src/Opener_Interface.hpp"
 
 /******************************************************************************/
 int main(int argc, char* arg[])

@@ -6,10 +6,8 @@
 #ifndef OPENER_CIPIDENTITY_H_
 #define OPENER_CIPIDENTITY_H_
 
-#include <ciptypes.h>
-#include <typedefs.h>
-#include <CIP_Object.h>
-#include <CIP_Object.h>
+#include "../ciptypes.hpp"
+#include "../class_stack/CIP_Object.hpp"
 
 class CIP_Identity;
 

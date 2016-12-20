@@ -3,13 +3,11 @@
  * All rights reserved.
  *
  *****************************************************************************/
-#include <string.h>
 #include <cstring>
-#include <ciptypes.h>
-#include <NET_EthIP_Interface.h>
-#include <winsock.h>
-#include <CIP_Common.h>
-#include <NET_Connection.h>
+#include "../../../ciptypes.hpp"
+#include "NET_EthIP_Interface.hpp"
+#include "../../../CIP_Common.hpp"
+#include "../NET_Connection.hpp"
 
 #define CIP_ETHERNETLINK_CLASS_CODE 0xF6
 

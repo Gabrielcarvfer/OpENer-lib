@@ -15,15 +15,12 @@
 #define GENERIC_NETWORKHANDLER_H_
 
 
-#include <opener_user_conf.h>
-#include <typedefs.h>
-#include <connection_stack/CIP_Connection.h>
-#include <NET_Connection.h>
+#include "../../../opener_user_conf.hpp"
+#include "../../ciptypes.hpp"
+#include "../CIP_Connection.hpp"
+#include "NET_Connection.hpp"
 
-#ifdef WIN32
-#include <winsock.h>
-#else
-#endif
+#include "ethernetip_net/NET_EthIP_Includes.h"
 
 #define MAX_NO_OF_TCP_SOCKETS 10
 

@@ -10,11 +10,12 @@
  *
  * The public interface of the XOR shift pseudo-random number generator
  */
-#include <stdint.h>
+
 
 #ifndef OPENER_XORSHIFTRANDOM_H_
 #define OPENER_XORSHIFTRANDOM_H_
 
+#include <stdint.h>
 /**
  * @brief Sets the initial seed for the XOR shift pseudo-random algorithm
  * @param pa_nSeed The initial seed value

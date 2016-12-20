@@ -9,9 +9,8 @@
 /** @file cipcommon.h
  * Common CIP object interface
  */
-#include <ciptypes.h>
-#include <typedefs.h>
-#include <CIP_Object.h>
+#include "ciptypes.hpp"
+#include "class_stack/CIP_Object.hpp"
 #include <array>
 #include <map>
 

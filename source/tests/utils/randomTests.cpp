@@ -5,12 +5,12 @@
  *      Author: mmm
  */
 /*
-#include <CppUTest/TestHarness.h>
-#include <stdint.h>
+#include "CppUTest/TestHarness.h>
+#include "stdint.h>
 
 extern "C" {
-#include <random.h>
-#include <xorshiftrandom.h>
+#include "random.h>
+#include "xorshiftrandom.h>
 }
 
 TEST_GROUP(RandomClass){

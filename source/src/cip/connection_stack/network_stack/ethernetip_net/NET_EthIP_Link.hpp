@@ -6,9 +6,9 @@
 #ifndef OPENER_CIPETHERNETLINK_H_
 #define OPENER_CIPETHERNETLINK_H_
 
-#include <ciptypes.h>
-#include <typedefs.h>
-#include <CIP_Object.h>
+#include "../../../ciptypes.hpp"
+#include "../../../class_stack/CIP_Object.hpp"
+#include "tcpip_link/NET_EthIP_Interface.hpp"
 
 class NET_EthIP_Link : public CIP_Object
 {
@@ -16,6 +16,8 @@ public:
     /** @brief Initialize the Ethernet Link Objects data
     */
     static CipStatus CipEthernetLinkInit(void);
+    static CipStatus Shutdown();
+    NET_EthIP_Interface * associatedInterface;
 private:
     //Definitions
     typedef struct {
@@ -25,10 +27,11 @@ private:
     } CipEthernetLinkObject;
 
     //Methods
-    static void ConfigureMacAddress(const CipUsint* mac_address);
+    void ConfigureMacAddress(const CipUsint* mac_address);
 
     //Variables
-    static CipEthernetLinkObject g_ethernet_link;
+    CipEthernetLinkObject g_ethernet_link;
+
 };
 
 #endif /* OPENER_CIPETHERNETLINK_H_*/

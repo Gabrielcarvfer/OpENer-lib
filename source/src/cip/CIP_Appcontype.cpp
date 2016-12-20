@@ -3,8 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#include <CIP_Appcontype.h>
-#include <opener_user_conf.h>
+#include "CIP_Appcontype.hpp"
+#include "../opener_user_conf.hpp"
 #include <cstring>
 
 

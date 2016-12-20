@@ -11,9 +11,8 @@
  *
  */
 
-#include <CIP_Object.h>
-#include <ciptypes.h>
-#include <typedefs.h>
+#include "../../../../class_stack/CIP_Object.hpp"
+#include "../../../../ciptypes.hpp"
 
 class NET_EthIP_Interface;
 

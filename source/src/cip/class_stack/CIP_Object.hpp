@@ -5,13 +5,12 @@
 #ifndef OPENER_CIP_OBJECT_H
 #define OPENER_CIP_OBJECT_H
 
-#include <ciptypes.h>
+#include "../ciptypes.hpp"
 #include <map>
-#include <typedefs.h>
 #include <string>
 
-#include <CIP_Attribute.h>
-#include <CIP_Service.h>
+#include "CIP_Attribute.hpp"
+#include "CIP_Service.hpp"
 
 class CIP_Object
 {
@@ -19,7 +18,7 @@ class CIP_Object
         static const CIP_Object * GetInstance(CipUdint instance_number);
         static const CIP_Object * GetClass();
         static CipUdint GetNumberOfInstances();
-        static CipUdint GetInstanceNumber(const CIP_Object * instance);
+        static CipDint GetInstanceNumber(const CIP_Object * instance);
         static bool AddClassInstance(CIP_Object * instance, CipUdint position);
         static bool RemoveClassInstance(CIP_Object * instance);
         static bool RemoveClassInstance(CipUdint position);

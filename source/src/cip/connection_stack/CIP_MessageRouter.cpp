@@ -3,9 +3,9 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#include <CIP_MessageRouter.h>
-#include <connection_stack/CIP_Common.h>
-#include <trace.h>
+#include "CIP_MessageRouter.hpp"
+#include "../CIP_Common.hpp"
+#include "../../trace.hpp"
 
 
 CipStatus CIP_MessageRouter::CipMessageRouterInit()

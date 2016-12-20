@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Gabriel Ferreira (gabrielcarvfer)
  ******************************************************************************/
-#include <string.h>
+#include <cstring>
 
-#include <NET_DeviceNetLink.h>
+#include "NET_DeviceNetLink.h>
 
-#include <connection_stack/CIP_Common.h>
-#include <ciperror.h>
-#include <connection_stack/CIP_MessageRouter.h>
-//#include <endianconv.h>
-#include <Opener_Interface.h>
-#include <typedefs.h>
+#include "cip/CIP_Common.hpp"
+#include "ciperror.hpp"
+#include "connection_stack/CIP_MessageRouter.hpp"
+//#include "endianconv.h>
+#include "Opener_Interface.hpp"
+#include "typedefs.hpp"
 /*
 typedef struct {
     CipUsint mac_id;

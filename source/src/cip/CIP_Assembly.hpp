@@ -6,10 +6,8 @@
 #ifndef OPENER_CIPASSEMBLY_H_
 #define OPENER_CIPASSEMBLY_H_
 
-#include <ciptypes.h>
-#include <typedefs.h>
-#include <CIP_Object.h>
-#include <CIP_Object.h>
+#include "ciptypes.hpp"
+#include "class_stack/CIP_Object.hpp"
 
 class CIP_Assembly : public CIP_Object
 {

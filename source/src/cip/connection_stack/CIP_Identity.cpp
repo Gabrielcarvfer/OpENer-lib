@@ -24,14 +24,9 @@
  * --------------------
  */
 
-#include <CIP_Identity.h>
-#include <Opener_Interface.h>
-
-#ifdef WIN32
-#include <opener_user_conf.h>
-#else
-#include <ports/POSIX/sample_application/opener_user_conf.h>
-#endif
+#include "CIP_Identity.hpp"
+#include "../../Opener_Interface.hpp"
+#include "../../opener_user_conf.hpp"
 
 
 

@@ -4,14 +4,14 @@
  *
  ******************************************************************************/
 
-#include <CIP_Connection.h>
+#include "CIP_Connection.hpp"
 #include <cstring>
-#include <CIP_Class3Connection.h>
-#include <CIP_Identity.h>
-#include <CIP_IOConnection.h>
-#include <UTIL_Endianconv.h>
-#include <CIP_Appcontype.h>
-#include <trace.h>
+#include "CIP_Class3Connection.hpp"
+#include "CIP_Identity.hpp"
+#include "CIP_IOConnection.hpp"
+#include "network_stack/NET_Endianconv.hpp"
+#include "../CIP_Appcontype.hpp"
+#include "../../trace.hpp"
 
 #ifdef WIN32
 #include <winsock.h>
@@ -144,12 +144,12 @@ CipStatus CIP_Connection::ForwardOpen (CipMessageRouterRequest *message_router_r
     priority_timetick = *message_router_request->data++;
     timeout_ticks = *message_router_request->data++;
     // O_to_T netConn ID
-    consumed_connection_id = UTIL_Endianconv::GetDintFromMessage (&message_router_request->data);
+    consumed_connection_id = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
     // T_to_O netConn ID
-    produced_connection_id = UTIL_Endianconv::GetDintFromMessage (&message_router_request->data);
-    connection_serial_number = UTIL_Endianconv::GetIntFromMessage (&message_router_request->data);
-    originator_vendor_id = UTIL_Endianconv::GetIntFromMessage (&message_router_request->data);
-    originator_serial_number = UTIL_Endianconv::GetDintFromMessage (&message_router_request->data);
+    produced_connection_id = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
+    connection_serial_number = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
+    originator_vendor_id = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
+    originator_serial_number = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
 
     if ((NULL != CheckForExistingConnection (&g_dummy_connection_object)))
     {
@@ -175,10 +175,10 @@ CipStatus CIP_Connection::ForwardOpen (CipMessageRouterRequest *message_router_r
     // the requested packet interval parameter needs to be a multiple of TIMERTICK from the header file
     OPENER_TRACE_INFO("ForwardOpen: ConConnID %" PRIu32 ", ProdConnID %" PRIu32 ", ConnSerNo %u\n", consumed_connection_id, produced_connection_id, connection_serial_number);
 
-    o_to_t_requested_packet_interval = UTIL_Endianconv::GetDintFromMessage (&message_router_request->data);
+    o_to_t_requested_packet_interval = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
 
-    o_to_t_network_connection_parameter = UTIL_Endianconv::GetIntFromMessage (&message_router_request->data);
-    t_to_o_requested_packet_interval = UTIL_Endianconv::GetDintFromMessage (&message_router_request->data);
+    o_to_t_network_connection_parameter = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
+    t_to_o_requested_packet_interval = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
 
     CipUdint temp = t_to_o_requested_packet_interval % (kOpenerTimerTickInMilliSeconds * 1000);
     if (temp > 0)
@@ -186,7 +186,7 @@ CipStatus CIP_Connection::ForwardOpen (CipMessageRouterRequest *message_router_r
         t_to_o_requested_packet_interval = (CipUdint) (t_to_o_requested_packet_interval / (kOpenerTimerTickInMilliSeconds * 1000)) * (kOpenerTimerTickInMilliSeconds * 1000) + (kOpenerTimerTickInMilliSeconds * 1000);
     }
 
-    t_to_o_network_connection_parameter = UTIL_Endianconv::GetIntFromMessage (&message_router_request->data);
+    t_to_o_network_connection_parameter = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
 
     //check if Network connection parameters are ok
     if (CIP_CONN_TYPE_MASK == (o_to_t_network_connection_parameter & CIP_CONN_TYPE_MASK))
@@ -298,9 +298,9 @@ CipStatus CIP_Connection::ForwardClose (CipMessageRouterRequest *message_router_
 
     message_router_request->data += 2; // ignore Priority/Time_tick and Time-out_ticks
 
-    CipUint connection_serial_number = UTIL_Endianconv::GetIntFromMessage (&message_router_request->data);
-    CipUint originator_vendor_id = UTIL_Endianconv::GetIntFromMessage (&message_router_request->data);
-    CipUdint originator_serial_number = UTIL_Endianconv::GetDintFromMessage (&message_router_request->data);
+    CipUint connection_serial_number = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
+    CipUint originator_vendor_id = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
+    CipUdint originator_serial_number = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
 
     OPENER_TRACE_INFO("ForwardClose: ConnSerNo %d\n", connection_serial_number);
 
@@ -463,8 +463,8 @@ CipStatus CIP_Connection::AssembleForwardOpenResponse (CipMessageRouterResponse 
             }
         }
 
-        UTIL_Endianconv::AddDintToMessage (consumed_connection_id, &message);
-        UTIL_Endianconv::AddDintToMessage (produced_connection_id, &message);
+        NET_Endianconv::AddDintToMessage (consumed_connection_id, &message);
+        NET_Endianconv::AddDintToMessage (produced_connection_id, &message);
     }
     else
     {
@@ -514,15 +514,15 @@ CipStatus CIP_Connection::AssembleForwardOpenResponse (CipMessageRouterResponse 
         }
     }
 
-    UTIL_Endianconv::AddIntToMessage (connection_serial_number, &message);
-    UTIL_Endianconv::AddIntToMessage (originator_vendor_id, &message);
-    UTIL_Endianconv::AddDintToMessage (originator_serial_number, &message);
+    NET_Endianconv::AddIntToMessage (connection_serial_number, &message);
+    NET_Endianconv::AddIntToMessage (originator_vendor_id, &message);
+    NET_Endianconv::AddDintToMessage (originator_serial_number, &message);
 
     if (kCipErrorSuccess == general_status)
     {
         // set the actual packet rate to requested packet rate
-        UTIL_Endianconv::AddDintToMessage (o_to_t_requested_packet_interval, &message);
-        UTIL_Endianconv::AddDintToMessage (t_to_o_requested_packet_interval, &message);
+        NET_Endianconv::AddDintToMessage (o_to_t_requested_packet_interval, &message);
+        NET_Endianconv::AddDintToMessage (t_to_o_requested_packet_interval, &message);
     }
 
     *message = 0; // remaining path size - for routing devices relevant
@@ -571,9 +571,9 @@ CipStatus CIP_Connection::AssembleForwardCloseResponse (CipUint connection_seria
 
     AddNullAddressItem (common_data_packet_format_data);
 
-    UTIL_Endianconv::AddIntToMessage (connection_serial_number, &message);
-    UTIL_Endianconv::AddIntToMessage (originatior_vendor_id, &message);
-    UTIL_Endianconv::AddDintToMessage (originator_serial_number, &message);
+    NET_Endianconv::AddIntToMessage (connection_serial_number, &message);
+    NET_Endianconv::AddIntToMessage (originatior_vendor_id, &message);
+    NET_Endianconv::AddDintToMessage (originator_serial_number, &message);
 
     message_router_response->reply_service = (CipUsint)(0x80 | message_router_request->service);
     message_router_response->data_length = 10; // if there is no application specific data
@@ -766,9 +766,9 @@ CipUsint CIP_Connection::ParseConnectionPath (CipMessageRouterRequest *message_r
             electronic_key.segment_type = 0x34;
             message++;
             electronic_key.key_format = *message++;
-            electronic_key.key_data.vendor_id = UTIL_Endianconv::GetIntFromMessage (&message);
-            electronic_key.key_data.device_type = UTIL_Endianconv::GetIntFromMessage (&message);
-            electronic_key.key_data.product_code = UTIL_Endianconv::GetIntFromMessage (&message);
+            electronic_key.key_data.vendor_id = NET_Endianconv::GetIntFromMessage (&message);
+            electronic_key.key_data.device_type = NET_Endianconv::GetIntFromMessage (&message);
+            electronic_key.key_data.product_code = NET_Endianconv::GetIntFromMessage (&message);
             electronic_key.key_data.major_revision = *message++;
             electronic_key.key_data.minor_revision = *message++;
             remaining_path_size -= 5; //length of the electronic key

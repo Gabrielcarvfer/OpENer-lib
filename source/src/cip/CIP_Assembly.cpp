@@ -5,10 +5,10 @@
  ******************************************************************************/
 
 #include <cstring> /*needed for memcpy */
-#include <stdlib.h>
-#include <CIP_Assembly.h>
-#include <CIP_Connection.h>
-#include <trace.h>
+#include <cstdlib>
+#include "CIP_Assembly.hpp"
+#include "connection_stack/CIP_Connection.hpp"
+#include "../trace.hpp"
 
 CIP_Assembly::CIP_Assembly()
 {

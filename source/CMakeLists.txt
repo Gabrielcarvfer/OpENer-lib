@@ -11,7 +11,7 @@ project(OpENerMain CXX)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
 if (WIN32)
-    set(CMAKE_SHARED_LIBRARY_PREFIX "")
+    unset(CMAKE_LINK_LIBRARY_SUFFIX)
 endif ()
 #######################################
 # Project version                     #

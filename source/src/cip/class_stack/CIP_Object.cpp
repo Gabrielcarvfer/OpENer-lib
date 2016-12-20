@@ -2,11 +2,11 @@
 // Created by gabriel on 18/11/2016.
 //
 
-#include <CIP_Object.h>
-#include <trace.h>
-#include <connection_stack/CIP_Common.h>
-#include <CIP_Attribute.h>
-#include <opener_user_conf.h>
+#include "CIP_Object.hpp"
+#include "../../trace.hpp"
+#include "../CIP_Common.hpp"
+#include "CIP_Attribute.hpp"
+#include "../../opener_user_conf.hpp"
 #include <utility>
 
 
@@ -29,7 +29,7 @@ const CIP_Object * CIP_Object::GetInstance(CipUdint instance_number)
     if (object_Set.size() >= instance_number)
         return object_Set[instance_number];
     else
-        return NULL;
+        return nullptr;
 }
 
 
@@ -45,7 +45,7 @@ CipUdint CIP_Object::GetNumberOfInstances()
 }
 
 
-CipUdint CIP_Object::GetInstanceNumber(const CIP_Object * instance)
+CipDint CIP_Object::GetInstanceNumber(const CIP_Object * instance)
 {
     for (auto it = object_Set.begin(); it != object_Set.end(); it++)
     {

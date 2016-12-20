@@ -6,12 +6,12 @@
 #ifndef OPENER_ENDIANCONV_H_
 #define OPENER_ENDIANCONV_H_
 
-#include <typedefs.h>
+#include "../../../typedefs.hpp"
 
 /** @file endianconv.h
  * @brief Responsible for Endianess conversion
  */
-class UTIL_Endianconv
+class NET_Endianconv
 {
 public:
     typedef enum

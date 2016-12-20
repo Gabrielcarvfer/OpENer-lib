@@ -7,19 +7,10 @@
 
 #include <map>
 
-#include <ciptypes.h>
+#include "../../ciptypes.hpp"
 
 
-
-    #ifdef WIN32
-        #include <winsock.h>
-        #include <windows.h>
-    #else
-        #include <sys/sock.h>
-        #include <netinet/in.h>
-        #include <arpa/inet.h>
-        #include <sys/select.h>
-    #endif
+#include "ethernetip_net/NET_EthIP_Includes.h"
 
 
 

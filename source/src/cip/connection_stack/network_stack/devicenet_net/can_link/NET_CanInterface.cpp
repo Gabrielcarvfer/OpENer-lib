@@ -1,9 +1,9 @@
 #include "NET_CanInterface.h"
 /*
-#include <fcntl.h>
+#include "fcntl.h>
 #include <net/if.h>
 #include <stdio.h>
-#include <string.h>
+#include <cstring>
 #include <sys/ioctl.h>
 #include <linux/can/raw.h>
 

@@ -4,16 +4,16 @@
  *
  ******************************************************************************/
 
-#include <string.h>
-#include <CIP_CommonPacket.h>
+#include <cstring>
+#include "CIP_CommonPacket.hpp"
 
-#include <CIP_IOConnection.h>
-#include <CIP_Appcontype.h>
-#include <CIP_Common.h>
-#include <ethernetip_net/tcpip_link/NET_EthIP_Interface.h>
-#include <utils/UTIL_Endianconv.h>
-#include <NET_NetworkHandler.h>
-#include <trace.h>
+#include "CIP_IOConnection.hpp"
+#include "../CIP_Appcontype.hpp"
+#include "../CIP_Common.hpp"
+#include "network_stack/ethernetip_net/tcpip_link/NET_EthIP_Interface.hpp"
+#include "network_stack/NET_Endianconv.hpp"
+#include "network_stack/NET_NetworkHandler.hpp"
+#include "../../trace.hpp"
 
 
 #ifdef WIN32
@@ -617,17 +617,17 @@ CipStatus CIP_IOConnection::SendConnectedData()
     if ((transport_type_class_trigger & 0x0F) == 1)
     {
         cpf_data->data_item.length += 2;
-        UTIL_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
-        UTIL_Endianconv::AddIntToMessage(sequence_count_producing, &message_data_reply_buffer);
+        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
+        NET_Endianconv::AddIntToMessage(sequence_count_producing, &message_data_reply_buffer);
     }
     else
     {
-        UTIL_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
+        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
     }
 
     if (kOpenerProducedDataHasRunIdleHeader)
     {
-        UTIL_Endianconv::AddDintToMessage(g_run_idle_state, &(message_data_reply_buffer));
+        NET_Endianconv::AddDintToMessage(g_run_idle_state, &(message_data_reply_buffer));
     }
 
     memcpy(message_data_reply_buffer, producing_instance_attributes->data, producing_instance_attributes->length);
@@ -642,7 +642,7 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUi
     /* check class 1 sequence number*/
     if ((transport_type_class_trigger & 0x0F) == 1)
     {
-        CipUint sequence_buffer = UTIL_Endianconv::GetIntFromMessage(&(data));
+        CipUint sequence_buffer = NET_Endianconv::GetIntFromMessage(&(data));
         if (SEQ_LEQ16(sequence_buffer, sequence_count_consuming))
         {
             return kCipStatusOk; // no new data for the assembly
@@ -655,7 +655,7 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUi
         // we have no heartbeat connection
         if (kOpenerConsumedDataHasRunIdleHeader)
         {
-            CipUdint nRunIdleBuf = UTIL_Endianconv::GetDintFromMessage(&(data));
+            CipUdint nRunIdleBuf = NET_Endianconv::GetDintFromMessage(&(data));
             //todo: update idle state
             /*
             if (g_run_idle_state != nRunIdleBuf)

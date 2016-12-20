@@ -7,13 +7,13 @@
 #define OPENER_OPENER_INTERFACE_H
 
 #include <cassert>
-#include <ciperror.h>
-#include <ciptypes.h>
-#include <CIP_Object.h>
-#include <typedefs.h>
-#include <CIP_Connection.h>
-#include <Opener_IOConnection.h>
-#include <Opener_ExplicitConnection.h>
+#include "cip/ciperror.hpp"
+#include "cip/ciptypes.hpp"
+#include "cip/class_stack/CIP_Object.hpp"
+#include "typedefs.hpp"
+#include "cip/connection_stack/CIP_Connection.hpp"
+#include "Opener_IOConnection.hpp"
+#include "Opener_ExplicitConnection.hpp"
 
 /** @mainpage OpENer - Open Source EtherNet/IP(TM) Communication Stack
  *Documentation
@@ -535,7 +535,7 @@ class Opener_Interface
        */
     static int g_end_stack;
 
-    private:
+    protected:
         static std::map<CipUdint, Opener_IOConnection*> IO_Connection_set;
         static std::map<CipUdint, Opener_ExplicitConnection*> Explicit_Connection_set;
 

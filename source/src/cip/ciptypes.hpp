@@ -7,8 +7,8 @@
 #ifndef OPENER_CIPTYPES_H_
 #define OPENER_CIPTYPES_H_
 
-#include <typedefs.h>
-#include <ciperror.h>
+#include "../typedefs.hpp"
+#include "ciperror.hpp"
 #include <string>
 /** @brief Segment type Enum
  *

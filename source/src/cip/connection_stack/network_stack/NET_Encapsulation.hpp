@@ -5,7 +5,7 @@
 #ifndef NET_ENCAPSULATION_H
 #define NET_ENCAPSULATION_H
 
-#include <ciptypes.h>
+#include "../../ciptypes.hpp"
 
 typedef struct encapsulation_data
 {
@@ -28,6 +28,11 @@ typedef struct encapsulation_interface_information
     CipSint name_of_service[16];
 } EncapsulationInterfaceInformation;
 
-
+class NET_Encapsulation
+{
+public:
+    static CipStatus Initialize();
+    static CipStatus Shutdown();
+};
 
 #endif //NET_ENCAPSULATION_H

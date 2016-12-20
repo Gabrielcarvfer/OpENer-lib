@@ -1,5 +1,5 @@
-#include <trace.h>
-#include <NET_Connection.h>
+#include "../../../trace.hpp"
+#include "NET_Connection.hpp"
 
 void NET_Connection::InitSelects()
 {

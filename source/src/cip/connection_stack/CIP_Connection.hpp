@@ -8,14 +8,12 @@
 
 
 #include <map>
-#include <ciptypes.h>
-#include <CIP_CommonPacket.h>
-#include <CIP_Object.h>
-#include <CIP_Object.h>
-#include <NET_Connection.h>
-#include <Opener_Interface.h>
-#include <typedefs.h>
-#include <CIP_Assembly.h>
+#include "../ciptypes.hpp"
+#include "CIP_CommonPacket.hpp"
+#include "../class_stack/CIP_Object.hpp"
+#include "network_stack/NET_Connection.hpp"
+#include "../../Opener_Interface.hpp"
+#include "../CIP_Assembly.hpp"
 
 class CIP_Connection;
 

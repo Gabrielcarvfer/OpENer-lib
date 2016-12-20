@@ -3,36 +3,26 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#include <string.h>
-
-#include <CIP_Common.h>
-
-#include <CIP_CommonPacket.h>
-#include <CIP_Appcontype.h>
-#include <NET_EthIP_Link.h>
-#include <CIP_Identity.h>
-#include <CIP_MessageRouter.h>
-#include <NET_EthIP_Interface.h>
-#include <UTIL_Endianconv.h>
-#include <trace.h>
-#include <opener_user_conf.h>
+#include <cstring>
+#include "CIP_Common.hpp"
+#include "connection_stack/CIP_CommonPacket.hpp"
+#include "CIP_Appcontype.hpp"
+#include "connection_stack/CIP_Identity.hpp"
+#include "connection_stack/CIP_MessageRouter.hpp"
+#include "connection_stack/network_stack/NET_Endianconv.hpp"
+#include "../trace.hpp"
+#include "../opener_user_conf.hpp"
 
 void CIP_Common::CipStackInit (CipUint unique_connection_id)
 {
     CipStatus eip_status;
-    NET_EthIP_Encap::EncapsulationInit ();
+    NET_Encapsulation::Initialize ();
 
     /* The message router is the first CIP object be initialized!!! */
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
     eip_status = CIP_Identity::CipIdentityInit ();
-    OPENER_ASSERT(kCipStatusOk == eip_status);
-
-    eip_status = NET_EthIP_Interface::CipTcpIpInterfaceInit ();
-    OPENER_ASSERT(kCipStatusOk == eip_status);
-
-    eip_status = NET_EthIP_Link::CipEthernetLinkInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
     eip_status = CIP_Connection::ConnectionManagerInit (unique_connection_id);
@@ -51,13 +41,10 @@ void CIP_Common::ShutdownCipStack (void)
     /* First close all connections */
     CIP_Appcontype::CloseAllConnections ();
 
-    /* Than free the sockets of currently active encapsulation sessions */
-    NET_EthIP_Encap::EncapsulationShutDown ();
-
     /*clean the data needed for the assembly object's attribute 3*/
     CIP_Assembly::ShutdownAssemblies ();
 
-    NET_EthIP_Interface::ShutdownTcpIpInterface ();
+    NET_Encapsulation::Shutdown ();
 
     /*no clear all the instances and classes */
     CIP_MessageRouter::DeleteAllClasses ();
@@ -138,7 +125,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipInt):
         case (kCipUint):
         case (kCipWord):
-            UTIL_Endianconv::AddIntToMessage (*(CipUint *) (data), message);
+            NET_Endianconv::AddIntToMessage (*(CipUint *) (data), message);
             counter = 2;
             break;
 
@@ -146,7 +133,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipUdint):
         case (kCipDword):
         case (kCipReal):
-            UTIL_Endianconv::AddDintToMessage (*(CipUdint *) (data), message);
+            NET_Endianconv::AddDintToMessage (*(CipUdint *) (data), message);
             counter = 4;
             break;
 
@@ -169,7 +156,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         {
             CipString *string = (CipString *) data;
 
-            UTIL_Endianconv::AddIntToMessage (* &(string->length), message);
+            NET_Endianconv::AddIntToMessage (* &(string->length), message);
             memcpy (*message, string->string, string->length);
             *message += string->length;
 
@@ -230,11 +217,11 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         {
             /* TCP/IP attribute 5 */
             CipTcpIpNetworkInterfaceConfiguration *tcp_ip_network_interface_configuration = (CipTcpIpNetworkInterfaceConfiguration *) data;
-            UTIL_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->ip_address), message);
-            UTIL_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->network_mask), message);
-            UTIL_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->gateway), message);
-            UTIL_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->name_server), message);
-            UTIL_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->name_server_2), message);
+            NET_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->ip_address), message);
+            NET_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->network_mask), message);
+            NET_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->gateway), message);
+            NET_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->name_server), message);
+            NET_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->name_server_2), message);
             counter = 20;
             counter += EncodeData (kCipString, &(tcp_ip_network_interface_configuration->domain_name), message);
             break;
@@ -266,12 +253,12 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         {
             CipUint *internal_unit16_6 = (CipUint *) data;
 
-            UTIL_Endianconv::AddIntToMessage (internal_unit16_6[0], message);
-            UTIL_Endianconv::AddIntToMessage (internal_unit16_6[1], message);
-            UTIL_Endianconv::AddIntToMessage (internal_unit16_6[2], message);
-            UTIL_Endianconv::AddIntToMessage (internal_unit16_6[3], message);
-            UTIL_Endianconv::AddIntToMessage (internal_unit16_6[4], message);
-            UTIL_Endianconv::AddIntToMessage (internal_unit16_6[5], message);
+            NET_Endianconv::AddIntToMessage (internal_unit16_6[0], message);
+            NET_Endianconv::AddIntToMessage (internal_unit16_6[1], message);
+            NET_Endianconv::AddIntToMessage (internal_unit16_6[2], message);
+            NET_Endianconv::AddIntToMessage (internal_unit16_6[3], message);
+            NET_Endianconv::AddIntToMessage (internal_unit16_6[4], message);
+            NET_Endianconv::AddIntToMessage (internal_unit16_6[5], message);
             counter = 12;
             break;
         }
@@ -301,14 +288,14 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipInt):
         case (kCipUint):
         case (kCipWord):
-            (*(CipUint *) (data)) = UTIL_Endianconv::GetIntFromMessage (message);
+            (*(CipUint *) (data)) = NET_Endianconv::GetIntFromMessage (message);
             number_of_decoded_bytes = 2;
             break;
 
         case (kCipDint):
         case (kCipUdint):
         case (kCipDword):
-            (*(CipUdint *) (data)) = UTIL_Endianconv::GetDintFromMessage (message);
+            (*(CipUdint *) (data)) = NET_Endianconv::GetDintFromMessage (message);
             number_of_decoded_bytes = 4;
             break;
 
@@ -324,7 +311,7 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipString):
         {
             CipString *string = (CipString *) data;
-            string->length = UTIL_Endianconv::GetIntFromMessage (message);
+            string->length = NET_Endianconv::GetIntFromMessage (message);
             memcpy (string->string, *message, string->length);
             *message += string->length;
 
@@ -362,7 +349,7 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
 int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
 {
     unsigned int length = epath->path_size;
-    UTIL_Endianconv::AddIntToMessage (epath->path_size, message);
+    NET_Endianconv::AddIntToMessage (epath->path_size, message);
 
     if (epath->class_id < 256)
     {
@@ -378,7 +365,7 @@ int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
         ++(*message);
         **message = 0; /*pad byte */
         ++(*message);
-        UTIL_Endianconv::AddIntToMessage (epath->class_id, message);
+        NET_Endianconv::AddIntToMessage (epath->class_id, message);
         length -= 2;
     }
 
@@ -398,7 +385,7 @@ int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
             ++(*message);
             **message = 0; /*padd byte */
             ++(*message);
-            UTIL_Endianconv::AddIntToMessage (epath->instance_number, message);
+            NET_Endianconv::AddIntToMessage (epath->instance_number, message);
             length -= 2;
         }
 
@@ -418,7 +405,7 @@ int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
                 ++(*message);
                 **message = 0; /*pad byte */
                 ++(*message);
-                UTIL_Endianconv::AddIntToMessage (epath->attribute_number, message);
+                NET_Endianconv::AddIntToMessage (epath->attribute_number, message);
                 length -= 2;
             }
         }
@@ -458,7 +445,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeClassId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->class_id = UTIL_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->class_id = NET_Endianconv::GetIntFromMessage (&(message_runner));
                 number_of_decoded_elements++;
                 break;
 
@@ -471,7 +458,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeInstanceId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->instance_number = UTIL_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->instance_number = NET_Endianconv::GetIntFromMessage (&(message_runner));
                 number_of_decoded_elements++;
                 break;
 
@@ -484,7 +471,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeAttributeId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->attribute_number = UTIL_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->attribute_number = NET_Endianconv::GetIntFromMessage (&(message_runner));
                 number_of_decoded_elements++;
                 break;
 

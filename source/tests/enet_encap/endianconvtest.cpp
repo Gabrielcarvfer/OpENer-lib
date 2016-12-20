@@ -4,18 +4,18 @@
  *
  ******************************************************************************/
 
-#include <CppUTest/TestHarness.h>
-#include <stdint.h>
-#include <string.h>
+#include "CppUTest/TestHarness.h>
+#include "stdint.h>
+#include <cstring>
 
 extern "C" {
 
-#include <arpa/inet.h>
-#include <sys/socket.h>
+#include "arpa/inet.h>
+#include "sys/socket.h>
 
 #include "endianconv.h"
 
-#include "ciptypes.h"
+#include "ciptypes.hpp"
 }
 
 TEST_GROUP(EndianConversion){

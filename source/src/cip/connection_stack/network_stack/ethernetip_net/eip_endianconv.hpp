@@ -6,7 +6,7 @@
 #ifndef OPENER_ENET_ENDIANCONV_H_
 #define OPENER_ENET_ENDIANCONV_H_
 
-#include <typedefs.h>
+#include "../../../ciptypes.hpp"
 
 /** @brief Encapsulate the sockaddr information as necessary for the Common Packet Format data items
  *
@@ -16,7 +16,6 @@
  * @param address IP address of the socket, has to be provided in big-endian
  * @param communcation_buffer The message buffer for sending the message
  */
-int EncapsulateIpAddress(CipUint port, CipUdint address,
-    CipByte** communication_buffer);
+int EncapsulateIpAddress(CipUint port, CipUdint address, CipByte** communication_buffer);
 
 #endif /* OPENER_ENDIANCONV_H_ */
