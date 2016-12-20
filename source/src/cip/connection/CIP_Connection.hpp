@@ -10,8 +10,8 @@
 #include <map>
 #include "../ciptypes.hpp"
 #include "CIP_CommonPacket.hpp"
-#include "../class_stack/CIP_Object.hpp"
-#include "network_stack/NET_Connection.hpp"
+#include "../template/CIP_Object.hpp"
+#include "network/NET_Connection.hpp"
 #include "../../Opener_Interface.hpp"
 #include "../CIP_Assembly.hpp"
 

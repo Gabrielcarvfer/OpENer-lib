@@ -10,7 +10,7 @@
 #include "../../ciptypes.hpp"
 
 
-#include "ethernetip_net/NET_EthIP_Includes.h"
+#include "ethIP/NET_EthIP_Includes.h"
 
 #define INVALID_SOCKET_HANDLE -1
 #define INVALID_INPUTS -1

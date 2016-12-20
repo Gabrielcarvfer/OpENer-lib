@@ -20,7 +20,7 @@
 #include "../CIP_Connection.hpp"
 #include "NET_Connection.hpp"
 
-#include "ethernetip_net/NET_EthIP_Includes.h"
+#include "ethIP/NET_EthIP_Includes.h"
 
 #define MAX_NO_OF_TCP_SOCKETS 10
 

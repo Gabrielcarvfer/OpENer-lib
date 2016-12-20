@@ -9,9 +9,9 @@
 #include <cassert>
 #include "cip/ciperror.hpp"
 #include "cip/ciptypes.hpp"
-#include "cip/class_stack/CIP_Object.hpp"
+#include "cip/template/CIP_Object.hpp"
 #include "typedefs.hpp"
-#include "cip/connection_stack/CIP_Connection.hpp"
+#include "cip/connection/CIP_Connection.hpp"
 #include "Opener_IOConnection.hpp"
 #include "Opener_ExplicitConnection.hpp"
 

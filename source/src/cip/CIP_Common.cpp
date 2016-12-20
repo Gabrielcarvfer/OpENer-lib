@@ -6,11 +6,11 @@
 //Includes
 #include <cstring>
 #include "CIP_Common.hpp"
-#include "connection_stack/CIP_CommonPacket.hpp"
+#include "connection/CIP_CommonPacket.hpp"
 #include "CIP_Appcontype.hpp"
-#include "connection_stack/CIP_Identity.hpp"
-#include "connection_stack/CIP_MessageRouter.hpp"
-#include "connection_stack/network_stack/NET_Endianconv.hpp"
+#include "connection/CIP_Identity.hpp"
+#include "connection/CIP_MessageRouter.hpp"
+#include "connection/network/NET_Endianconv.hpp"
 #include "../trace.hpp"
 #include "../opener_user_conf.hpp"
 

@@ -9,7 +9,7 @@
 #include "CIP_Class3Connection.hpp"
 #include "CIP_Identity.hpp"
 #include "CIP_IOConnection.hpp"
-#include "network_stack/NET_Endianconv.hpp"
+#include "network/NET_Endianconv.hpp"
 #include "../CIP_Appcontype.hpp"
 #include "../../trace.hpp"
 

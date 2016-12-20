@@ -11,7 +11,7 @@
  *
  */
 
-#include "../../../../class_stack/CIP_Object.hpp"
+#include "../../../../template/CIP_Object.hpp"
 #include "../../../../ciptypes.hpp"
 
 class NET_EthIP_Interface : public CIP_Object<NET_EthIP_Interface>

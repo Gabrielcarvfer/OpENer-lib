@@ -10,9 +10,9 @@
 #include "CIP_IOConnection.hpp"
 #include "../CIP_Appcontype.hpp"
 #include "../CIP_Common.hpp"
-#include "network_stack/ethernetip_net/tcpip_link/NET_EthIP_Interface.hpp"
-#include "network_stack/NET_Endianconv.hpp"
-#include "network_stack/NET_NetworkHandler.hpp"
+#include "network/ethIP/tcpip/NET_EthIP_Interface.hpp"
+#include "network/NET_Endianconv.hpp"
+#include "network/NET_NetworkHandler.hpp"
 #include "../../trace.hpp"
 
 

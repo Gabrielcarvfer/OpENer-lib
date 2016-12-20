@@ -3,7 +3,7 @@
 //
 
 #include "Opener_Interface.hpp"
-#include "cip/connection_stack/network_stack/NET_NetworkHandler.hpp"
+#include "cip/connection/network/NET_NetworkHandler.hpp"
 #include "cip/CIP_Common.hpp"
 
 //Initialize static variables

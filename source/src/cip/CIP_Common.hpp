@@ -10,7 +10,7 @@
  * Common CIP object interface
  */
 #include "ciptypes.hpp"
-#include "class_stack/CIP_Object.hpp"
+#include "template/CIP_Object.hpp"
 #include <array>
 #include <map>
 

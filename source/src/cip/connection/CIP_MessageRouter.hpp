@@ -8,7 +8,7 @@
 
 
 #include "../ciptypes.hpp"
-#include "../class_stack/CIP_Object.hpp"
+#include "../template/CIP_Object.hpp"
 #include <map>
 
 

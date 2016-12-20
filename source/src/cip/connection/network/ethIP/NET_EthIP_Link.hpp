@@ -7,8 +7,8 @@
 #define OPENER_CIPETHERNETLINK_H_
 
 #include "../../../ciptypes.hpp"
-#include "../../../class_stack/CIP_Object.hpp"
-#include "tcpip_link/NET_EthIP_Interface.hpp"
+#include "../../../template/CIP_Object.hpp"
+#include "tcpip/NET_EthIP_Interface.hpp"
 
 class NET_EthIP_Link : public CIP_Object<NET_EthIP_Link>
 {

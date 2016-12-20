@@ -14,10 +14,10 @@
 #include "NET_NetworkHandler.hpp"
 
 #include "../../../../trace.hpp"
-#include "ethernetip_net/tcpip_link/NET_EthIP_Interface.hpp"
+#include "ethIP/tcpip/NET_EthIP_Interface.hpp"
 #include "NET_Connection.hpp"
 
-#include "ethernetip_net/NET_EthIP_Includes.h"
+#include "ethIP/NET_EthIP_Includes.h"
 
 //Static variables
 CipUsint        NET_NetworkHandler::g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE];

@@ -7,8 +7,8 @@
 #define OPENER_COMMONPACKETFORMAT_H_
 
 #include "../ciptypes.hpp"
-#include "network_stack/ethernetip_net/NET_EthIP_Encap.hpp"
-#include "network_stack/devicenet_net/NET_DeviceNetEncapsulation.h"
+#include "network/ethIP/NET_EthIP_Encap.hpp"
+#include "network/deviceNet/NET_DeviceNetEncapsulation.h"
 
 
 /** @ingroup ENCAP

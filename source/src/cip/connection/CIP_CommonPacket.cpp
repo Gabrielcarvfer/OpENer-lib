@@ -7,8 +7,8 @@
 #include "../CIP_Common.hpp"
 #include "CIP_Connection.hpp"
 #include "CIP_MessageRouter.hpp"
-#include "network_stack/NET_Endianconv.hpp"
-#include "network_stack/ethernetip_net/eip_endianconv.hpp"
+#include "network/NET_Endianconv.hpp"
+#include "network/ethIP/eip_endianconv.hpp"
 #include "../../opener_user_conf.hpp"
 #include "../../trace.hpp"
 
