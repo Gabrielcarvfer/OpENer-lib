@@ -3,6 +3,7 @@
  * All rights reserved.
  *
  ******************************************************************************/
+//Includes
 #include <cstring>
 #include "CIP_Common.hpp"
 #include "connection_stack/CIP_CommonPacket.hpp"
@@ -13,6 +14,10 @@
 #include "../trace.hpp"
 #include "../opener_user_conf.hpp"
 
+//Static variables
+std::map <CipUsint,CipByteArray*> CIP_Common::message_data_reply_buffer;
+
+//Methods
 void CIP_Common::CipStackInit (CipUint unique_connection_id)
 {
     CipStatus eip_status;

@@ -28,6 +28,18 @@ const int g_kForwardOpenHeaderLength = 36; /**< the length in bytes of the forwa
 
 static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_SPECIFIC_CONNECTABLE_OBJECTS;
 
+
+
+std::map<CipUdint, const CIP_Connection *> CIP_Connection::active_connections_set;
+
+std::map<CipUdint, ConnectionManagementHandling> CIP_Connection::g_astConnMgmList;
+
+CIP_Connection *CIP_Connection::g_dummy_connection_object = nullptr;
+
+CipUdint CIP_Connection::g_incarnation_id;
+
+
+
 /** @brief gets the padded logical path TODO: enhance documentation
  * @param logical_path_segment TheLogical Path Segment
  *
@@ -151,7 +163,7 @@ CipStatus CIP_Connection::ForwardOpen (CipMessageRouterRequest *message_router_r
     originator_vendor_id = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
     originator_serial_number = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
 
-    if ((NULL != CheckForExistingConnection (&g_dummy_connection_object)))
+    if ((NULL != CheckForExistingConnection (g_dummy_connection_object)))
     {
         // TODO this test is  incorrect, see CIP spec 3-5.5.2 re: duplicate forward open
         // it should probably be testing the connection type fields

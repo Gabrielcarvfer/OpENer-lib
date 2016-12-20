@@ -9,7 +9,7 @@
  *  @brief This file includes all functions of the network handler to reduce code duplication
  *
  */
-
+//Includes
 #include "NET_Endianconv.hpp"
 #include "NET_NetworkHandler.hpp"
 
@@ -19,7 +19,17 @@
 
 #include "ethernetip_net/NET_EthIP_Includes.h"
 
+//Static variables
+CipUsint        NET_NetworkHandler::g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE];
+int             NET_NetworkHandler::highest_socket_handle;
+int             NET_NetworkHandler::g_current_active_tcp_socket;
+struct timeval  NET_NetworkHandler::g_time_value;
+MilliSeconds    NET_NetworkHandler::g_actual_time;
+MilliSeconds    NET_NetworkHandler::g_last_time;
+MilliSeconds    NET_NetworkHandler::g_elapsed_time;
+NET_Connection *NET_NetworkHandler::netStats[3];
 
+//Methods
 CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
 {
     #ifdef WIN32

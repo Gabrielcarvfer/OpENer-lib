@@ -3,11 +3,20 @@
  * All rights reserved.
  *
  ******************************************************************************/
+
+//Includes
 #include "CIP_MessageRouter.hpp"
 #include "../CIP_Common.hpp"
 #include "../../trace.hpp"
 
+//Static variables
+CipMessageRouterRequest  CIP_MessageRouter::g_message_router_request;
+CipMessageRouterResponse CIP_MessageRouter::g_message_router_response;
 
+CipOctet CIP_MessageRouter::g_message_data_reply_buffer[100];
+
+
+//Methods
 CipStatus CIP_MessageRouter::CipMessageRouterInit()
 {
     classAttributesNum = 0;

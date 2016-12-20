@@ -12,9 +12,6 @@
 
 #include "ethernetip_net/NET_EthIP_Includes.h"
 
-
-
-
 #define INVALID_SOCKET_HANDLE -1
 #define INVALID_INPUTS -1
 /**
@@ -92,7 +89,7 @@ class NET_Connection
 
 
     private:
-        static fd_set select_set[2]; //0-master_socket 1-read_socket
+        static fd_set select_set[]; //0-master_socket 1-read_socket
 
         CipUdint type;
         CipUdint reuse;

@@ -87,7 +87,7 @@ class CIP_IOConnection : public CIP_Connection
 private:
 
         /*The port to be used per default for I/O messages on UDP.*/
-        const int kOpenerEipIoUdpPort = 0x08AE;
+        static const int kOpenerEipIoUdpPort;
 
         /* producing multicast connection have to consider the rules that apply for
          * application connection types.

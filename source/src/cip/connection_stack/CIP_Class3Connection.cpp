@@ -3,13 +3,15 @@
  * All rights reserved.
  *
  ******************************************************************************/
-
+//Includes
 #include <cstring>
 
 #include "CIP_Class3Connection.hpp"
 
+//Static variables
+CIP_Connection * CIP_Class3conn::g_explicit_connections[OPENER_CIP_NUM_EXPLICIT_CONNS];
 
-
+//Methods
 /**** Implementation ****/
 CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
 {

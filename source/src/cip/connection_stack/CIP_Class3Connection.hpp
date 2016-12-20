@@ -21,7 +21,7 @@ class CIP_Class3conn : public CIP_Connection
     /**** Global variables ****/
 
     /** @brief Array of the available explicit connections */
-       static CIP_Connection *g_explicit_connections[OPENER_CIP_NUM_EXPLICIT_CONNS];
+       static CIP_Connection *g_explicit_connections[];
 
     /** @brief Check if Class3 connection is available and if yes setup all data.
      *

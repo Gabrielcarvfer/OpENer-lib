@@ -73,12 +73,8 @@ private:
     //< #4 {< EIP_UINT16 (UINT) PathSize in 16 Bit chunks, < EIP_UINT16 ClassID, < EIP_UINT16 InstanceNr, < EIP_UINT16 AttributNr (not used as this is the EPATH the EthernetLink object)}
     static CipEpath physical_link_object_;
 
-
-
     /**< #6 Hostname*/
     static CipString hostname_;
-
-
 
     //Functions
     CipStatus GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);

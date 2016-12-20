@@ -135,7 +135,7 @@ class CIP_Object
     CipStatus GetAttributeSingle(CipMessageRouterRequest * message_router_request,CipMessageRouterResponse* message_router_response);
     /* type definition of CIP service structure */
 
-    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response);
+    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response)=0;
 
     protected:
         //Instance stuff

@@ -21,6 +21,13 @@
 #else
 #endif
 
+//Static variables
+const int CIP_IOConnection::kOpenerEipIoUdpPort = 0x08AE;
+CipUsint* CIP_IOConnection::g_config_data_buffer;
+unsigned int CIP_IOConnection::g_config_data_length;
+CipUdint CIP_IOConnection::g_run_idle_state;
+//Methods
+
 void CIP_IOConnection::InitializeIOConnectionData()
 {
     g_config_data_buffer = NULL;

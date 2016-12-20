@@ -1,6 +1,13 @@
+//Includes
+
 #include "../../../trace.hpp"
 #include "NET_Connection.hpp"
 
+//Static variables
+fd_set NET_Connection::select_set[2];
+std::map <int, NET_Connection*> NET_Connection::socket_to_conn_map;
+
+//Methods
 void NET_Connection::InitSelects()
 {
     // clear the master an temp sets

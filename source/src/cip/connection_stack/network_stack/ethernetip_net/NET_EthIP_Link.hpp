@@ -31,6 +31,7 @@ private:
 
     //Variables
     CipEthernetLinkObject g_ethernet_link;
+    CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response);
 
 };
 

@@ -43,3 +43,8 @@ CipStatus NET_EthIP_Link::Shutdown ()
 {
     NET_EthIP_Interface::ShutdownTcpIpInterface ();
 }
+
+CipStatus NET_EthIP_Link::InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response)
+{
+    return kCipStatusError;
+}

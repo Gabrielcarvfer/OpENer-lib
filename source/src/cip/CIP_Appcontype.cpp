@@ -7,7 +7,14 @@
 #include "../opener_user_conf.hpp"
 #include <cstring>
 
+//Static variables
+CIP_Appcontype::ExclusiveOwnerConnection * CIP_Appcontype::g_exlusive_owner_connections;
 
+CIP_Appcontype::InputOnlyConnection * CIP_Appcontype::g_input_only_connections;
+
+CIP_Appcontype::ListenOnlyConnection * CIP_Appcontype::g_listen_only_connections;
+
+//Methods
 
 void CIP_Appcontype::ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number,
     unsigned int output_assembly, unsigned int input_assembly, unsigned int config_assembly)

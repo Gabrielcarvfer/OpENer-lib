@@ -9,8 +9,22 @@
 #include "../../opener_user_conf.hpp"
 #include <utility>
 
+//Static variables
+CipUdint CIP_Object::class_id;
+std::string CIP_Object::class_name;
+CipUint CIP_Object::revision;
+CIP_Object * CIP_Object::class_ptr;
+int CIP_Object::instancesNum;
+int CIP_Object::classAttributesNum;
+int CIP_Object::instanceAttributesNum;
+int CIP_Object::maxNumOfInstances;
+int CIP_Object::classServicesNum;
+int CIP_Object::instanceServicesNum;
+CipUdint CIP_Object::get_all_class_attributes_mask;
+CipUdint CIP_Object::get_all_instance_attributes_mask;
+std::map<CipUdint, const CIP_Object *> CIP_Object::object_Set;
 
-
+//Methods
 CIP_Object::CIP_Object()
 {
   id = instancesNum;

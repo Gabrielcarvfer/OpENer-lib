@@ -3,14 +3,27 @@
  * All rights reserved.
  *
  *****************************************************************************/
+//Includes
 #include <cstring>
 #include "../../../ciptypes.hpp"
 #include "NET_EthIP_Interface.hpp"
 #include "../../../CIP_Common.hpp"
 #include "../NET_Connection.hpp"
 
+//Defines
 #define CIP_ETHERNETLINK_CLASS_CODE 0xF6
 
+//Static variables
+NET_EthIP_Interface::MulticastAddressConfiguration NET_EthIP_Interface::g_multicast_configuration;
+CipTcpIpNetworkInterfaceConfiguration NET_EthIP_Interface::interface_configuration_;
+CipUsint  NET_EthIP_Interface::g_time_to_live_value;
+CipDword  NET_EthIP_Interface::tcp_status_;
+CipDword  NET_EthIP_Interface::configuration_capability_;
+CipDword  NET_EthIP_Interface::configuration_control_;
+CipEpath  NET_EthIP_Interface::physical_link_object_;
+CipString NET_EthIP_Interface::hostname_;
+
+//Methods
 CipStatus NET_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)
 {
 

@@ -3,18 +3,31 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-
+//Includes
 #include <cstring>
 #include "NET_EthIP_Encap.hpp"
-#include "../../../CIP_Common.hpp"
-#include "../../CIP_Connection.hpp"
-#include "eip_endianconv.hpp"
-#include "../NET_NetworkHandler.hpp"
-#include "../../CIP_Identity.hpp"
 #include "NET_EthIP_Link.hpp"
+#include "eip_endianconv.hpp"
 #include "../NET_Endianconv.hpp"
+#include "../NET_NetworkHandler.hpp"
+#include "../../CIP_Connection.hpp"
+#include "../../CIP_Identity.hpp"
+#include "../../../CIP_Common.hpp"
+
+//Static variables
+const int NET_EthIP_Encap::kOpenerEthernetPort = 0xAF12;
+EncapsulationInterfaceInformation NET_EthIP_Encap::g_interface_information;
+int NET_EthIP_Encap::g_registered_sessions[OPENER_NUMBER_OF_SUPPORTED_SESSIONS];
+NET_EthIP_Encap::DelayedEncapsulationMessage NET_EthIP_Encap::g_delayed_encapsulation_messages[ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES];
+const int NET_EthIP_Encap::kSupportedProtocolVersion = 1; /**< Supported Encapsulation protocol version */
+const int NET_EthIP_Encap::kEncapsulationHeaderOptionsFlag = 0x00; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
+const int NET_EthIP_Encap::kEncapsulationHeaderSessionHandlePosition = 4; /**< the position of the session handle within the encapsulation header*/
+const int NET_EthIP_Encap::kListIdentityDefaultDelayTime = 2000; /**< Default delay time for List Identity response */
+const int NET_EthIP_Encap::kListIdentityMinimumDelayTime = 500; /**< Minimum delay time for List Identity response */
+const int NET_EthIP_Encap::kSenderContextSize = 8; /**< size of sender context in encapsulation header*/
 
 
+//Methods
 /*   @brief Initializes session list and interface information. */
 void NET_EthIP_Encap::EncapsulationInit(void)
 {

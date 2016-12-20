@@ -1,8 +1,11 @@
-
+//Includes
 #include "NET_Endianconv.hpp"
 #include <cstring>
 
+//Static variables
+NET_Endianconv::OpenerEndianess NET_Endianconv::g_opener_platform_endianess;
 
+//Methods
 /* THESE ROUTINES MODIFY THE BUFFER POINTER*/
 
 /**

@@ -217,7 +217,7 @@ public:
     static std::map<CipUdint, ConnectionManagementHandling> g_astConnMgmList;
 
     /** buffer connection object needed for forward open */
-    static CIP_Connection g_dummy_connection_object;
+    static CIP_Connection *g_dummy_connection_object;
 
     /** @brief Holds the connection ID's "incarnation ID" in the upper 16 bits */
     static CipUdint g_incarnation_id;

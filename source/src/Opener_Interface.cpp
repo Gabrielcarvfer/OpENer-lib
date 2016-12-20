@@ -6,6 +6,12 @@
 #include "cip/connection_stack/network_stack/NET_NetworkHandler.hpp"
 #include "cip/CIP_Common.hpp"
 
+//Initialize static variables
+int Opener_Interface::g_end_stack = 0;
+std::map<CipUdint, Opener_IOConnection*> Opener_Interface::IO_Connection_set;
+std::map<CipUdint, Opener_ExplicitConnection*> Opener_Interface::Explicit_Connection_set;
+
+//Methods
 bool Opener_Interface::Opener_Initialize()
 {
     IO_Connection_set.clear();

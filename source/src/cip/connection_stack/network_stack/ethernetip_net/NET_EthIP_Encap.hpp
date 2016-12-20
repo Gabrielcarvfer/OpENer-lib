@@ -35,7 +35,7 @@ public:
 #define ENCAPSULATION_HEADER_LENGTH 24
 
 /** @brief Ethernet/IP standard port */
-    static const int kOpenerEthernetPort = 0xAF12;
+    static const int kOpenerEthernetPort;
 
 /** @brief definition of status codes in encapsulation protocol
  * All other codes are either legacy codes, or reserved for future use
@@ -108,18 +108,18 @@ public:
 
 
 private:
-    static const int kSupportedProtocolVersion = 1; /**< Supported Encapsulation protocol version */
+    static const int kSupportedProtocolVersion; /**< Supported Encapsulation protocol version */
 
-    static const int kEncapsulationHeaderOptionsFlag = 0x00; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
+    static const int kEncapsulationHeaderOptionsFlag; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
 
-    static const int kEncapsulationHeaderSessionHandlePosition = 4; /**< the position of the session handle within the encapsulation header*/
+    static const int kEncapsulationHeaderSessionHandlePosition; /**< the position of the session handle within the encapsulation header*/
 
-    static const int kListIdentityDefaultDelayTime = 2000; /**< Default delay time for List Identity response */
-    static const int kListIdentityMinimumDelayTime = 500; /**< Minimum delay time for List Identity response */
+    static const int kListIdentityDefaultDelayTime; /**< Default delay time for List Identity response */
+    static const int kListIdentityMinimumDelayTime; /**< Minimum delay time for List Identity response */
 
 
 
-    static const int kSenderContextSize = 8; /**< size of sender context in encapsulation header*/
+    static const int kSenderContextSize; /**< size of sender context in encapsulation header*/
 
 /** @brief definition of known encapsulation commands */
     typedef enum {
@@ -153,9 +153,9 @@ private:
 
     static EncapsulationInterfaceInformation g_interface_information;
 
-    static int g_registered_sessions[OPENER_NUMBER_OF_SUPPORTED_SESSIONS];
+    static int g_registered_sessions[];
 
-    static DelayedEncapsulationMessage g_delayed_encapsulation_messages[ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES];
+    static DelayedEncapsulationMessage g_delayed_encapsulation_messages[];
 
 /*** private functions ***/
     static void HandleReceivedListServicesCommand(EncapsulationData* receive_data);

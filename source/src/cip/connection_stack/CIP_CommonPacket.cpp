@@ -12,7 +12,11 @@
 #include "../../opener_user_conf.hpp"
 #include "../../trace.hpp"
 
+//Static variables
+CIP_CommonPacket::PacketFormat CIP_CommonPacket::common_packet_data;
 
+
+//Methods
 
 int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, CipUsint* reply_buffer)
 {

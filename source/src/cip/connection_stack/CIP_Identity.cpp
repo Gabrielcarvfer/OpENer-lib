@@ -28,7 +28,16 @@
 #include "../../Opener_Interface.hpp"
 #include "../../opener_user_conf.hpp"
 
+//Static variables
+CipUint         CIP_Identity::vendor_id_;
+CipUint         CIP_Identity::device_type_;
+CipUint         CIP_Identity::product_code_;
+CipRevision     CIP_Identity::revision_;
+CipUint         CIP_Identity::status_;
+CipUdint        CIP_Identity::serial_number_;
+CipShortString  CIP_Identity::product_name_;
 
+//Methods
 
 /** Private functions, sets the devices serial number
  * @param serial_number The serial number of the device
