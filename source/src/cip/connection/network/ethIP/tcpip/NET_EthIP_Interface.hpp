@@ -55,6 +55,7 @@ public:
  * Currently we implement it non set-able and with the default value of 1.
  */
     static CipUsint g_time_to_live_value;
+    static CipStatus ScanInterfaces();
 
 private:
     CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response);

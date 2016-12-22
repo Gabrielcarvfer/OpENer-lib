@@ -7,8 +7,9 @@
 
 #ifdef WIN32
     #include <winsock.h>
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
     #include <windows.h>
-    typedef unsigned long socklen_t;
 #else
     #include <sys/sock.h>
     #include <netinet/in.h>
