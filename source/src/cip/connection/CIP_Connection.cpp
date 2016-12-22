@@ -11,11 +11,8 @@
 #include "CIP_IOConnection.hpp"
 #include "network/NET_Endianconv.hpp"
 #include "../CIP_Appcontype.hpp"
-#include "../../trace.hpp"
 
-#ifdef WIN32
-#include <winsock.h>
-#else
+#ifndef WIN32
 #include <arpa/inet>
 #endif
 
@@ -948,7 +945,7 @@ CipUsint CIP_Connection::ParseConnectionPath (CipMessageRouterRequest *message_r
                 {
                     case kDataSegmentTypeSimpleDataMessage:
                         // we have a simple data segment
-                        CIP_IOConnection::g_config_data_length = message[1] * 2; //data segments store length 16-bit word wise
+                        CIP_IOConnection::g_config_data_length = (unsigned int) (message[1] * 2); //data segments store length 16-bit word wise
                         CIP_IOConnection::g_config_data_buffer = &(message[2]);
                         remaining_path_size -= (CIP_IOConnection::g_config_data_length + 2);
                         message += (CIP_IOConnection::g_config_data_length + 2);
@@ -973,7 +970,7 @@ CipUsint CIP_Connection::ParseConnectionPath (CipMessageRouterRequest *message_r
                     default:
                         OPENER_TRACE_WARN("No data segment identifier found for the configuration data\n");
                         //offset in 16Bit words where within the connection path the error happend
-                        *extended_error = connection_path_size - remaining_path_size;
+                        *extended_error = (CipUint) (connection_path_size - remaining_path_size);
 
                         //status code for invalid segment type
                         return 0x04;
@@ -1014,7 +1011,7 @@ void CIP_Connection::AddNewActiveConnection (const CIP_Connection *pa_pstConn)
 void CIP_Connection::RemoveFromActiveConnections ()
 {
     state = kConnectionStateNonExistent;
-    active_connections_set.erase (id);
+    active_connections_set.erase ((const unsigned int &) id);
 }
 
 CipBool CIP_Connection::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)

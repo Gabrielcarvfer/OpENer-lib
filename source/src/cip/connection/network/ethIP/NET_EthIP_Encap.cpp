@@ -10,9 +10,7 @@
 #include "eip_endianconv.hpp"
 #include "../NET_Endianconv.hpp"
 #include "../NET_NetworkHandler.hpp"
-#include "../../CIP_Connection.hpp"
 #include "../../CIP_Identity.hpp"
-#include "../../../CIP_Common.hpp"
 
 //Static variables
 const int NET_EthIP_Encap::kOpenerEthernetPort = 0xAF12;
@@ -209,7 +207,7 @@ void NET_EthIP_Encap::HandleReceivedListServicesCommand(EncapsulationData* recei
 {
     CipUsint* communication_buffer = receive_data->current_communication_buffer_position;
 
-    receive_data->data_length = g_interface_information.length + 2;
+    receive_data->data_length = (CipUint) (g_interface_information.length + 2);
 
     /* copy Interface data to msg for sending */
     NET_Endianconv::AddIntToMessage(1, &communication_buffer);
@@ -234,7 +232,7 @@ void NET_EthIP_Encap::HandleReceivedListInterfacesCommand(EncapsulationData* rec
 
 void NET_EthIP_Encap::HandleReceivedListIdentityCommandTcp(EncapsulationData* receive_data)
 {
-    receive_data->data_length = EncapsulateListIdentyResponseMessage(receive_data->current_communication_buffer_position);
+    receive_data->data_length = (CipUint) EncapsulateListIdentyResponseMessage(receive_data->current_communication_buffer_position);
 }
 
 void NET_EthIP_Encap::HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_address, EncapsulationData* receive_data)
@@ -259,11 +257,11 @@ void NET_EthIP_Encap::HandleReceivedListIdentityCommandUdp(int socket, struct so
 
         memcpy(&(delayed_message_buffer->message[0]), receive_data->communication_buffer_start, ENCAPSULATION_HEADER_LENGTH);
 
-        delayed_message_buffer->message_size = EncapsulateListIdentyResponseMessage(
-            &(delayed_message_buffer->message[ENCAPSULATION_HEADER_LENGTH]));
+        delayed_message_buffer->message_size = (unsigned int) EncapsulateListIdentyResponseMessage(
+                    &(delayed_message_buffer->message[ENCAPSULATION_HEADER_LENGTH]));
 
         CipUsint* communication_buffer = delayed_message_buffer->message + 2;
-        NET_Endianconv::AddIntToMessage(delayed_message_buffer->message_size, &communication_buffer);
+        NET_Endianconv::AddIntToMessage((CipUint) delayed_message_buffer->message_size, &communication_buffer);
         delayed_message_buffer->message_size += ENCAPSULATION_HEADER_LENGTH;
     }
 }
@@ -278,9 +276,9 @@ int NET_EthIP_Encap::EncapsulateListIdentyResponseMessage(CipByte* const communi
     CipByte* id_length_buffer = communication_buffer_runner;
     communication_buffer_runner += 2; /*at this place the real length will be inserted below*/
 
-    NET_Endianconv::AddIntToMessage(kSupportedProtocolVersion, &communication_buffer_runner);
+    NET_Endianconv::AddIntToMessage((CipUint) kSupportedProtocolVersion, &communication_buffer_runner);
 
-    EncapsulateIpAddress(NET_Connection::endian_htons (kOpenerEthernetPort), NET_EthIP_Interface::interface_configuration_.ip_address, &communication_buffer_runner);
+    EncapsulateIpAddress(NET_Connection::endian_htons ((uint16_t) kOpenerEthernetPort), NET_EthIP_Interface::interface_configuration_.ip_address, &communication_buffer_runner);
 
     memset(communication_buffer_runner, 0, 8);
 
@@ -309,9 +307,9 @@ int NET_EthIP_Encap::EncapsulateListIdentyResponseMessage(CipByte* const communi
     *communication_buffer_runner++ = 0xFF;
 
     // the -2 is for not counting the length field
-    NET_Endianconv::AddIntToMessage(communication_buffer_runner - id_length_buffer - 2, &id_length_buffer);
+    NET_Endianconv::AddIntToMessage((CipUint) (communication_buffer_runner - id_length_buffer - 2), &id_length_buffer);
 
-    return communication_buffer_runner - communication_buffer;
+    return (int) (communication_buffer_runner - communication_buffer);
 }
 
 void NET_EthIP_Encap::DetermineDelayTime(CipByte* buffer_start,  DelayedEncapsulationMessage* delayed_message_buffer)
@@ -322,12 +320,12 @@ void NET_EthIP_Encap::DetermineDelayTime(CipByte* buffer_start,  DelayedEncapsul
 
     if (0 == maximum_delay_time)
     {
-        maximum_delay_time = kListIdentityDefaultDelayTime;
+        maximum_delay_time = (CipUint) kListIdentityDefaultDelayTime;
     }
     else if (kListIdentityMinimumDelayTime > maximum_delay_time)
     {
         // if maximum_delay_time is between 1 and 500ms set it to 500ms
-        maximum_delay_time = kListIdentityMinimumDelayTime;
+        maximum_delay_time = (CipUint) kListIdentityMinimumDelayTime;
     }
 
     // Sets delay time between 0 and maximum_delay_time
@@ -355,7 +353,7 @@ void NET_EthIP_Encap::HandleReceivedRegisterSessionCommand(int socket,
         for (int i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; ++i) {
             if (g_registered_sessions[i] == socket) {
                 /* the socket has already registered a session this is not allowed*/
-                receive_data->session_handle = i + 1; /*return the already assigned session back, the cip spec is not clear about this needs to be tested*/
+                receive_data->session_handle = (CipUdint) (i + 1); /*return the already assigned session back, the cip spec is not clear about this needs to be tested*/
                 receive_data->status = kEncapsulationProtocolInvalidCommand;
                 session_index = kSessionStatusInvalid;
                 receive_data_buffer = &receive_data->communication_buffer_start[kEncapsulationHeaderSessionHandlePosition];
@@ -373,7 +371,7 @@ void NET_EthIP_Encap::HandleReceivedRegisterSessionCommand(int socket,
             else
             { /* successful session registered */
                 g_registered_sessions[session_index] = socket; /* store associated socket */
-                receive_data->session_handle = session_index + 1;
+                receive_data->session_handle = (CipUdint) (session_index + 1);
                 receive_data->status = kEncapsulationProtocolSuccess;
                 receive_data_buffer = &receive_data->communication_buffer_start[kEncapsulationHeaderSessionHandlePosition];
                 NET_Endianconv::AddDintToMessage(receive_data->session_handle, &receive_data_buffer); /*EncapsulateData will not update the session handle so we have to do it here by hand*/
@@ -429,11 +427,11 @@ CipStatus NET_EthIP_Encap::HandleReceivedSendUnitDataCommand(EncapsulationData* 
 
         if (kSessionStatusValid == CheckRegisteredSessions(receive_data)) /* see if the EIP session is registered*/
         {
-            send_size = CIP_CommonPacket::NotifyConnectedCommonPacketFormat(receive_data, &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
+            send_size = (CipInt) CIP_CommonPacket::NotifyConnectedCommonPacketFormat(receive_data, &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
 
             if (0 < send_size)
             { /* need to send reply */
-                receive_data->data_length = send_size;
+                receive_data->data_length = (CipUint) send_size;
             }
             else
             {
@@ -469,12 +467,12 @@ CipStatus NET_EthIP_Encap::HandleReceivedSendRequestResponseDataCommand(
 
         if (kSessionStatusValid == CheckRegisteredSessions(receive_data)) /* see if the EIP session is registered*/
         {
-            send_size = CIP_CommonPacket::NotifyCommonPacketFormat(receive_data, &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
+            send_size = (CipInt) CIP_CommonPacket::NotifyCommonPacketFormat(receive_data, &receive_data->communication_buffer_start[ENCAPSULATION_HEADER_LENGTH]);
 
             if (send_size >= 0)
             {
                 // need to send reply
-                receive_data->data_length = send_size;
+                receive_data->data_length = (CipUint) send_size;
             }
             else
             {
@@ -527,7 +525,7 @@ CipInt NET_EthIP_Encap::CreateEncapsulationStructure(CipUsint* receive_buffer, i
     receive_buffer += kSenderContextSize;
     encapsulation_data->options = NET_Endianconv::GetDintFromMessage(&receive_buffer);
     encapsulation_data->current_communication_buffer_position = receive_buffer;
-    return (receive_buffer_length - ENCAPSULATION_HEADER_LENGTH - encapsulation_data->data_length);
+    return (CipInt) (receive_buffer_length - ENCAPSULATION_HEADER_LENGTH - encapsulation_data->data_length);
 }
 
 /** @brief Check if received package belongs to registered session.
@@ -584,7 +582,8 @@ void NET_EthIP_Encap::ManageEncapsulationMessages(MilliSeconds elapsed_time)
             if (0 > g_delayed_encapsulation_messages[i].time_out)
             {
                 // If delay is reached or passed, send the UDP message
-                NET_NetworkHandler::SendUdpData((struct sockaddr*)g_delayed_encapsulation_messages[i].receiver, g_delayed_encapsulation_messages[i].socket, &(g_delayed_encapsulation_messages[i].message[0]), g_delayed_encapsulation_messages[i].message_size);g_delayed_encapsulation_messages[i].socket = -1;
+                NET_NetworkHandler::SendUdpData((struct sockaddr*)g_delayed_encapsulation_messages[i].receiver, g_delayed_encapsulation_messages[i].socket, &(g_delayed_encapsulation_messages[i].message[0]),
+                                                (CipUint) g_delayed_encapsulation_messages[i].message_size);g_delayed_encapsulation_messages[i].socket = -1;
             }
         }
     }

@@ -75,7 +75,7 @@ int NET_Connection::InitSocket(CipUdint family, CipUdint type, CipUdint protocol
         // type: SOCK_STREAM,SOCK_RAW
         // protocol: IPPROTO_TCP,CAN_RAW
 
-        sock = socket(family, type, protocol);
+        sock = (int) socket(family, type, protocol);
         socket_to_conn_map.emplace (sock, this);
         return sock;
 }
@@ -85,7 +85,7 @@ int NET_Connection::SetSocketOpt(CipUdint type, CipUdint reuse, CipUdint val)
         this->type = type;
         this->reuse = reuse;
         this->val = val;
-        return setsockopt (sock, type, reuse, (char *) &val, sizeof (CipUdint));
+        return setsockopt ((SOCKET) sock, type, reuse, (char *) &val, sizeof (CipUdint));
 }
 
 int NET_Connection::BindSocket(int address_option, struct sockaddr * address)
@@ -101,12 +101,12 @@ int NET_Connection::BindSocket(int address_option, struct sockaddr * address)
         default:
             return INVALID_INPUTS;
     }
-    return bind(sock, address, sizeof(struct sockaddr));
+    return bind((SOCKET) sock, address, sizeof(struct sockaddr));
 }
 
 int NET_Connection::Listen(int max_num_connections)
 {
-    return listen(sock, max_num_connections);
+    return listen((SOCKET) sock, max_num_connections);
 }
 
 void NET_Connection::CloseSocket()
@@ -121,7 +121,7 @@ void NET_Connection::CloseSocket()
 #ifndef WIN32
                 shutdown(socket, SHUT_RDWR);
 #endif
-                closesocket (sock);
+                closesocket ((SOCKET) sock);
 
 
                 socket_to_conn_map.erase (sock);
@@ -143,23 +143,23 @@ int NET_Connection::SetSocketHandle(int socket_handle)
 
 int NET_Connection::SendData(void * data_ptr, CipUdint size)
 {
-    return send(sock, (char*)data_ptr, size, 0);
+    return send((SOCKET) sock, (char*)data_ptr, size, 0);
 }
 
 int NET_Connection::RecvData (void *data_ptr, CipUdint size)
 {
-    return recv(sock, (char*)data_ptr, size, 0);
+    return recv((SOCKET) sock, (char*)data_ptr, size, 0);
 }
 
 int NET_Connection::SendDataTo(void * data_ptr, CipUdint size, struct sockaddr * destination)
 {
-    return sendto(sock, (char*)data_ptr, size, 0, destination, sizeof(sockaddr*));
+    return sendto((SOCKET) sock, (char*)data_ptr, size, 0, destination, sizeof(sockaddr*));
 }
 
 int NET_Connection::RecvDataFrom (void *data_ptr, CipUdint size, struct sockaddr *source)
 {
     int size_sock = sizeof(sockaddr*);
-    return recvfrom(sock, (char*)data_ptr, size, 0, source, &size_sock);
+    return recvfrom((SOCKET) sock, (char*)data_ptr, size, 0, source, &size_sock);
 }
 
 uint32_t NET_Connection::endian_htonl(uint32_t hostlong)

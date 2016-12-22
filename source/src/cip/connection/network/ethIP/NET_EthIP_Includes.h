@@ -6,10 +6,10 @@
 #define OPENERMAIN_NET_ETHIP_INCLUDES_H
 
 #ifdef WIN32
-    #include <winsock.h>
     #include <winsock2.h>
-    #include <ws2tcpip.h>
     #include <windows.h>
+    #include <winsock.h>
+    #include <ws2tcpip.h>
 #else
     #include <sys/sock.h>
     #include <netinet/in.h>

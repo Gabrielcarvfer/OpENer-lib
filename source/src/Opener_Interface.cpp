@@ -68,7 +68,7 @@ bool Opener_Interface::Opener_Shutdown()
 //Open a new Explicit connection
 CipUdint Opener_Interface::Opener_CreateExplicitConnection()
 {
-    CipUdint handle = Explicit_Connection_set.size();
+    CipUdint handle = (CipUdint) Explicit_Connection_set.size();
     //Explicit_Connection_set.emplace(handle, new Opener_ExplicitConnection());
     return handle;
 }
@@ -88,7 +88,7 @@ void Opener_Interface::Opener_RemoveExplicitConnection(CipUdint handle)
 //Open a new IO connection
 CipUdint Opener_Interface::Opener_CreateIOConnection()
 {
-    CipUdint handle = IO_Connection_set.size();
+    CipUdint handle = (CipUdint) IO_Connection_set.size();
     //IO_Connection_set.emplace(handle, new Opener_IOConnection());
     return handle;
 }

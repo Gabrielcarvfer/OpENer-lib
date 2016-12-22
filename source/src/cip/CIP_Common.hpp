@@ -26,7 +26,7 @@ class CIP_Common
 		 */
 		static std::map <CipUsint,CipByteArray*> message_data_reply_buffer;
 
-		/** @brief Check if requested service present in class/instance and call appropriate service.
+    virtual /** @brief Check if requested service present in class/instance and call appropriate service.
 		 *
 		 * @param class class receiving the message
 		 * @param message_router_request request message
@@ -36,7 +36,7 @@ class CIP_Common
 		 *     - EIP_OK  ... no reply to send back
 		 *     - EIP_ERROR ... error
 		 */
-		CipStatus NotifyClass(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+		CipStatus NotifyClass(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)= 0;
 
 
 		/** @brief Decodes padded EPath

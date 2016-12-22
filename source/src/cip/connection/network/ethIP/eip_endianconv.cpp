@@ -9,15 +9,12 @@
 #include "../NET_Connection.hpp"
 #include "../NET_Endianconv.hpp"
 
-
-#include "NET_EthIP_Includes.h"
-
 int EncapsulateIpAddress(CipUint port, CipUdint address, CipByte** communication_buffer)
 {
     int size = 0;
     if (NET_Endianconv::kOpENerEndianessLittle == NET_Endianconv::g_opener_platform_endianess)
     {
-        size += NET_Endianconv::AddIntToMessage(NET_Connection::endian_htons (AF_INET), (CipUsint**)communication_buffer);
+        size += NET_Endianconv::AddIntToMessage(NET_Connection::endian_htons (AF_INET), communication_buffer);
         size += NET_Endianconv::AddIntToMessage(port, communication_buffer);
         size += NET_Endianconv::AddDintToMessage(address, communication_buffer);
 

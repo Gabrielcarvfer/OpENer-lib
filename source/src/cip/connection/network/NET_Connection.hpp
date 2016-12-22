@@ -6,10 +6,7 @@
 #define OPENER_NET_CONNECTION_H
 
 #include <map>
-
 #include "../../ciptypes.hpp"
-
-
 #include "ethIP/NET_EthIP_Includes.h"
 
 #define INVALID_SOCKET_HANDLE -1
@@ -96,7 +93,7 @@ class NET_Connection
         CipUdint direction;
         CipUdint val;
 
-        //private functions
+    //private functions
         int CheckHandle(int handle);
 };
 

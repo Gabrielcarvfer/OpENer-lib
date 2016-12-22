@@ -26,7 +26,6 @@
 
 #include "CIP_Identity.hpp"
 #include "../../Opener_Interface.hpp"
-#include "../../opener_user_conf.hpp"
 
 //Static variables
 CipUint         CIP_Identity::vendor_id_;
@@ -69,7 +68,7 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest* message_router_request, 
 
     eip_status = kCipStatusOkSend;
 
-    message_router_response->reply_service = (0x80 | message_router_request->service);
+    message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     message_router_response->size_of_additional_status = 0;
     message_router_response->general_status = kCipErrorSuccess;
 

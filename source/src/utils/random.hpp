@@ -19,7 +19,8 @@ class RandomGen
         uint32_t randGenerator;
     public:
         RandomGen(uint32_t seed, uint32_t randGenerator);
-        ~RandomGen();
+
+    virtual ~RandomGen() = 0;
 
         void set_seed(uint32_t seed);
         uint32_t get_next_rand();

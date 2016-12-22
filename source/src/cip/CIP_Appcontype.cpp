@@ -4,8 +4,6 @@
  *
  ******************************************************************************/
 #include "CIP_Appcontype.hpp"
-#include "../opener_user_conf.hpp"
-#include <cstring>
 
 //Static variables
 CIP_Appcontype::ExclusiveOwnerConnection * CIP_Appcontype::g_exlusive_owner_connections;
@@ -302,7 +300,7 @@ CipBool CIP_Appcontype::ConnectionWithSameConfigPointExists(CipUdint config_poin
             break;
         }
     }
-    return (NULL != connection);
+    return (CipBool) (NULL != connection);
 }
 
 void CIP_Appcontype::InitializeIoConnectionData(void)

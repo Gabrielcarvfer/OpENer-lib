@@ -8,13 +8,12 @@
 #include <cstdlib>
 #include "CIP_Assembly.hpp"
 #include "connection/CIP_Connection.hpp"
-#include "../trace.hpp"
 
 CIP_Assembly::CIP_Assembly()
 {
     id = GetNumberOfInstances();
     //TODO:Fix to emplace in the first empty slot instead of appending
-    AddClassInstance(this, id);
+    AddClassInstance(this, (CipUdint) id);
 }
 
 CIP_Assembly::~CIP_Assembly()
@@ -111,7 +110,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
     router_request_data = message_router_request->data;
 
     message_router_response->data_length = 0;
-    message_router_response->reply_service = (0x80 | message_router_request->service);
+    message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     message_router_response->general_status = kCipErrorAttributeNotSupported;
     message_router_response->size_of_additional_status = 0;
 
@@ -124,7 +123,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
             CipByteArray* data = (CipByteArray*)attribute->getData ();
 
             /* TODO: check for ATTRIBUTE_SET/GETABLE MASK */
-            if (true == CIP_Connection::IsConnectedOutputAssembly(GetInstanceNumber(this)))
+            if (true == CIP_Connection::IsConnectedOutputAssembly((CipUdint) GetInstanceNumber(this)))
             {
                 OPENER_TRACE_WARN("Assembly AssemblyAttributeSingle: received data for connected output assembly\n\r");
                 message_router_response->general_status = kCipErrorAttributeNotSetable;

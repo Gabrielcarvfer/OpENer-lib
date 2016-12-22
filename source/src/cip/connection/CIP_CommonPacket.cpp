@@ -9,8 +9,6 @@
 #include "CIP_MessageRouter.hpp"
 #include "network/NET_Endianconv.hpp"
 #include "network/ethIP/eip_endianconv.hpp"
-#include "../../opener_user_conf.hpp"
-#include "../../trace.hpp"
 
 //Static variables
 CIP_CommonPacket::PacketFormat CIP_CommonPacket::common_packet_data;

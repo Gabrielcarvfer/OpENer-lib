@@ -9,7 +9,8 @@
 class Opener_ExplicitConnection
 {
     Opener_ExplicitConnection() = delete;
-    ~Opener_ExplicitConnection ();
+
+    virtual ~Opener_ExplicitConnection () = 0;
 };
 
 

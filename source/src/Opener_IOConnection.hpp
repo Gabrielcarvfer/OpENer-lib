@@ -9,7 +9,8 @@
 class Opener_IOConnection
 {
     Opener_IOConnection() = delete;
-    ~Opener_IOConnection ();
+
+    virtual ~Opener_IOConnection () = 0;
 };
 
 

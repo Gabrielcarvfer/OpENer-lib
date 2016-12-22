@@ -15,10 +15,10 @@ NET_Endianconv::OpenerEndianess NET_Endianconv::g_opener_platform_endianess;
  */
 CipUsint NET_Endianconv::GetSintFromMessage(CipUsint** buffer)
 {
-    unsigned char* buffer_address = (unsigned char*)*buffer;
+    unsigned char* buffer_address = *buffer;
     CipUint data = buffer_address[0];
     *buffer += 1;
-    return data;
+    return (CipUsint) data;
 }
 
 /* little-endian-to-host unsigned 16 bit*/
@@ -30,7 +30,7 @@ CipUsint NET_Endianconv::GetSintFromMessage(CipUsint** buffer)
  */
 CipUint NET_Endianconv::GetIntFromMessage(CipUsint** buffer)
 {
-    unsigned char* buffer_address = (unsigned char*)*buffer;
+    unsigned char* buffer_address = *buffer;
     CipUint data = buffer_address[0] | buffer_address[1] << 8;
     *buffer += 2;
     return data;
@@ -43,7 +43,7 @@ CipUint NET_Endianconv::GetIntFromMessage(CipUsint** buffer)
  */
 CipUdint NET_Endianconv::GetDintFromMessage(CipUsint** buffer)
 {
-    unsigned char* p = (unsigned char*)*buffer;
+    unsigned char* p = *buffer;
     CipUdint data = p[0] | p[1] << 8 | p[2] << 16 | p[3] << 24;
     *buffer += 4;
     return data;
@@ -56,7 +56,7 @@ CipUdint NET_Endianconv::GetDintFromMessage(CipUsint** buffer)
  */
 int NET_Endianconv::AddSintToMessage(CipUsint data, CipUsint** buffer)
 {
-    unsigned char* p = (unsigned char*)*buffer;
+    unsigned char* p = *buffer;
 
     p[0] = (unsigned char)data;
     *buffer += 1;
@@ -70,7 +70,7 @@ int NET_Endianconv::AddSintToMessage(CipUsint data, CipUsint** buffer)
  */
 int NET_Endianconv::AddIntToMessage(CipUint data, CipUsint** buffer)
 {
-    unsigned char* p = (unsigned char*)*buffer;
+    unsigned char* p = *buffer;
 
     p[0] = (unsigned char)data;
     p[1] = (unsigned char)(data >> 8);
@@ -85,7 +85,7 @@ int NET_Endianconv::AddIntToMessage(CipUint data, CipUsint** buffer)
  */
 int NET_Endianconv::AddDintToMessage(CipUdint data, CipUsint** buffer)
 {
-    unsigned char* p = (unsigned char*)*buffer;
+    unsigned char* p = *buffer;
 
     p[0] = (unsigned char)data;
     p[1] = (unsigned char)(data >> 8);

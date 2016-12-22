@@ -5,21 +5,13 @@
  ******************************************************************************/
 
 #include <cstring>
-#include "CIP_CommonPacket.hpp"
 
-#include "CIP_IOConnection.hpp"
+#include "../../trace.hpp"
 #include "../CIP_Appcontype.hpp"
-#include "../CIP_Common.hpp"
-#include "network/ethIP/tcpip/NET_EthIP_Interface.hpp"
+#include "CIP_IOConnection.hpp"
 #include "network/NET_Endianconv.hpp"
 #include "network/NET_NetworkHandler.hpp"
-#include "../../trace.hpp"
-
-
-#ifdef WIN32
-#include <winsock.h>
-#else
-#endif
+#include "network/ethIP/tcpip/NET_EthIP_Interface.hpp"
 
 //Static variables
 const int CIP_IOConnection::kOpenerEipIoUdpPort = 0x08AE;
@@ -58,7 +50,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (256 == production_inhibit_time)
         {
             //there was no PIT segment in the connection path set PIT to one fourth of RPI
-            production_inhibit_time = ((CipUint)(t_to_o_requested_packet_interval) / 4000);
+            production_inhibit_time = (CipUint) ((CipUint)(t_to_o_requested_packet_interval) / 4000);
         }
         else
         {
@@ -116,8 +108,8 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
                 consumed_connection_path_length = 6;
                 consumed_connection_path.path_size = 6;
-                consumed_connection_path.class_id = connection_path.class_id;
-                consumed_connection_path.instance_number = connection_path.connection_point[0];
+                consumed_connection_path.class_id = (CipUint) connection_path.class_id;
+                consumed_connection_path.instance_number = (CipUint) connection_path.connection_point[0];
                 consumed_connection_path.attribute_number = 3;
 
                 attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
@@ -144,7 +136,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                 if (((CipByteArray*)attribute->getData())->length != data_size)
                 {
                     /*wrong connection size */
-                    correct_originator_to_target_size = ((CipByteArray*)attribute->getData())->length + diff_size;
+                    correct_originator_to_target_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
                     *extended_error = CIP_Connection::kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize;
                     return (CipStatus) kCipErrorConnectionFailure;
                 }
@@ -165,8 +157,8 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
                 produced_connection_path_length = 6;
                 produced_connection_path.path_size = 6;
-                produced_connection_path.class_id = connection_path.class_id;
-                produced_connection_path.instance_number = connection_path.connection_point[producing_index];
+                produced_connection_path.class_id = (CipUint) connection_path.class_id;
+                produced_connection_path.instance_number = (CipUint) connection_path.connection_point[producing_index];
                 produced_connection_path.attribute_number = 3;
 
                 attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
@@ -193,7 +185,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                 if (((CipByteArray*)attribute->getData())->length != data_size)
                 {
                     /*wrong connection size*/
-                    correct_target_to_originator_size = ((CipByteArray*)attribute->getData())->length + diff_size;
+                    correct_target_to_originator_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
                     *extended_error = CIP_Connection::kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize;
                     return (CipStatus) kCipErrorConnectionFailure;
                 }
@@ -257,7 +249,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     //addr.in_port = htons(nUDPPort++);
-    addr.sin_port = NET_Connection::endian_htons(kOpenerEipIoUdpPort);
+    addr.sin_port = NET_Connection::endian_htons((uint16_t) kOpenerEipIoUdpPort);
 
     // the address is only needed for bind used if consuming
     netConn->SetSocketHandle (NET_NetworkHandler::CreateUdpSocket(kUdpCommuncationDirectionConsuming, (struct sockaddr*)&addr));
@@ -284,7 +276,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
 CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
     int socket;
-    in_port_t port = NET_Connection::endian_htons(kOpenerEipIoUdpPort); /* the default port to be used if no port information is part of the forward open request */
+    in_port_t port = NET_Connection::endian_htons((uint16_t) kOpenerEipIoUdpPort); /* the default port to be used if no port information is part of the forward open request */
 
     if (CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator == cpf_data->address_info_item[0].type_id)
     {
@@ -364,7 +356,8 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     cpf_data->address_info_item[j].length = 16;
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
     ((struct sockaddr_in*)(netConn->remote_address))->sin_family = AF_INET;
-    ((struct sockaddr_in*)(netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons(kOpenerEipIoUdpPort);
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons(
+            (uint16_t) kOpenerEipIoUdpPort);
     ((struct sockaddr_in*)(netConn->remote_address))->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
     cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
@@ -409,7 +402,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
     {
         // we are using an unused item initialize it with the default multicast address
         cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
-        cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons(kOpenerEipIoUdpPort);
+        cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons((uint16_t) kOpenerEipIoUdpPort);
         cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
         memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
         cpf_data->address_info_item[j].length = 16;
@@ -423,7 +416,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
 
     /* allocate an unused sockaddr struct to use */
     struct sockaddr_in *socket_address = new struct sockaddr_in();
-    socket_address->sin_family = NET_Connection::endian_ntohs(cpf_data->address_info_item[j].sin_family);
+    socket_address->sin_family = NET_Connection::endian_ntohs((uint16_t) cpf_data->address_info_item[j].sin_family);
     socket_address->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr;
     socket_address->sin_port = cpf_data->address_info_item[j].sin_port;
 
@@ -611,7 +604,7 @@ CipStatus CIP_IOConnection::SendConnectedData()
     cpf_data->address_info_item[0].type_id = 0;
     cpf_data->address_info_item[1].type_id = 0;
 
-    reply_length = CIP_CommonPacket::AssembleIOMessage(cpf_data, (CipUsint*)CIP_Common::message_data_reply_buffer[0]);
+    reply_length = (CipUint) CIP_CommonPacket::AssembleIOMessage(cpf_data, (CipUsint*)CIP_Common::message_data_reply_buffer[0]);
 
     message_data_reply_buffer = (CipUsint*)CIP_Common::message_data_reply_buffer[reply_length - 2];
     cpf_data->data_item.length = producing_instance_attributes->length;

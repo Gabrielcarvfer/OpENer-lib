@@ -31,8 +31,16 @@ class CIP_Connection :   public CIP_Object<CIP_Connection>
 {
 
 public:
-    CIP_Connection();
-    virtual ~CIP_Connection();
+    CIP_Connection()
+    {
+
+    }
+
+    virtual ~CIP_Connection()
+    {
+
+    }
+
     CipMessageRouterRequest g_message_router_request;
     CipMessageRouterResponse g_message_router_response;
     CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
@@ -149,7 +157,10 @@ public:
     } LinkObject;
 
     static const int classCode = kCipConnectionManagerClassCode;
-    CIP_Connection (struct sockaddr *originator_address, struct sockaddr *remote_address);
+    CIP_Connection (struct sockaddr *originator_address, struct sockaddr *remote_address)
+    {
+
+    }
 
 
     /** @brief Initialize the data of the connection manager object
@@ -361,11 +372,18 @@ public:
 
     ConnectionManagementHandling* GetConnMgmEntry(CipUdint class_id);
 
-    void InitializeConnectionManagerData(void);
+    void InitializeConnectionManagerData(void)
+    {
+
+    }
 
     void AddNullAddressItem(CIP_CommonPacket::PacketFormat* common_data_packet_format_data);
 
-    static CipStatus AddConnectableObject(CipUdint pa_nClassId, OpenConnectionFunction pa_pfOpenFunc);
+    static CipStatus AddConnectableObject(CipUdint pa_nClassId, OpenConnectionFunction pa_pfOpenFunc)
+    {
+        return kCipStatusOk;
+    }
+
     static unsigned int GetPaddedLogicalPath(unsigned char** logical_path_segment);
 
     /** @ingroup CIP_API

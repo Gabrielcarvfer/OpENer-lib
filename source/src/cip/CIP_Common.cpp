@@ -11,8 +11,6 @@
 #include "connection/CIP_Identity.hpp"
 #include "connection/CIP_MessageRouter.hpp"
 #include "connection/network/NET_Endianconv.hpp"
-#include "../trace.hpp"
-#include "../opener_user_conf.hpp"
 
 //Static variables
 std::map <CipUsint,CipByteArray*> CIP_Common::message_data_reply_buffer;
@@ -443,7 +441,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
         {
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeClassId +
                  kLogicalSegmentLogicalFormatEightBitValue:
-                epath->class_id = *(CipUsint *) (message_runner + 1);
+                epath->class_id = * (message_runner + 1);
                 message_runner += 2;
                 break;
 
@@ -456,7 +454,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
 
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeInstanceId +
                  kLogicalSegmentLogicalFormatEightBitValue:
-                epath->instance_number = *(CipUsint *) (message_runner + 1);
+                epath->instance_number = * (message_runner + 1);
                 message_runner += 2;
                 break;
 
@@ -469,7 +467,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
 
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeAttributeId +
                  kLogicalSegmentLogicalFormatEightBitValue:
-                epath->attribute_number = *(CipUsint *) (message_runner + 1);
+                epath->attribute_number = * (message_runner + 1);
                 message_runner += 2;
                 break;
 

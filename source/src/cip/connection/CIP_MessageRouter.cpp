@@ -6,8 +6,6 @@
 
 //Includes
 #include "CIP_MessageRouter.hpp"
-#include "../CIP_Common.hpp"
-#include "../../trace.hpp"
 
 //Static variables
 CipMessageRouterRequest  CIP_MessageRouter::g_message_router_request;
@@ -85,7 +83,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
 
     OPENER_TRACE_INFO("notifyMR: routing unconnected message\n");
     /* error from create MR structure*/
-    nStatus = CreateMessageRouterRequestStructure(data, data_length, &g_message_router_request);
+    nStatus = CreateMessageRouterRequestStructure(data, (CipInt) data_length, &g_message_router_request);
 
     if ( kCipErrorSuccess != nStatus )
     {
@@ -95,7 +93,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
         g_message_router_response.size_of_additional_status = 0;
         g_message_router_response.reserved = 0;
         g_message_router_response.data_length = 0;
-        g_message_router_response.reply_service = (0x80 | g_message_router_request.service);
+        g_message_router_response.reply_service = (CipUsint) (0x80 | g_message_router_request.service);
     }
     else
     {
@@ -161,7 +159,7 @@ CipError CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, 
     }
 
     message_router_request->data = data;
-    message_router_request->data_length = data_length - number_of_decoded_bytes;
+    message_router_request->data_length = (CipInt) (data_length - number_of_decoded_bytes);
 
     if (message_router_request->data_length < 0)
         return kCipErrorPathSizeInvalid;

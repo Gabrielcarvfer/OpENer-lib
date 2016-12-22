@@ -7,9 +7,7 @@
 #include <cstring>
 #include "../../../ciptypes.hpp"
 #include "NET_EthIP_Interface.hpp"
-#include "../../../CIP_Common.hpp"
 #include "../NET_Connection.hpp"
-#include "../NET_EthIP_Includes.h"
 
 #ifdef WIN32
     #include <iostream>
@@ -68,7 +66,7 @@ void NET_EthIP_Interface::ConfigureDomainName(const char* domain_name)
         //CipFree(interface_configuration_.domain_name.string);
         delete[] interface_configuration_.domain_name.string;
     }
-    interface_configuration_.domain_name.length = strlen(domain_name);
+    interface_configuration_.domain_name.length = (CipUint) strlen(domain_name);
     if (interface_configuration_.domain_name.length)
     {
         interface_configuration_.domain_name.string = new CipByte[interface_configuration_.domain_name.length+1]();//(CipByte*)CipCalloc(interface_configuration_.domain_name.length + 1, sizeof(EipInt8));
@@ -89,7 +87,7 @@ void NET_EthIP_Interface::ConfigureHostName(const char* hostname)
 
         //CipFree(hostname_.string);
     }
-    hostname_.length = strlen(hostname);
+    hostname_.length = (CipUint) strlen(hostname);
     if (hostname_.length)
     {
         hostname_.string = new CipByte[hostname_.length+1]();//(CipByte*)CipCalloc(hostname_.length + 1, sizeof(CipByte));
@@ -120,7 +118,7 @@ CipStatus NET_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* me
 
     message_router_response->size_of_additional_status = 0;
     message_router_response->data_length = 0;
-    message_router_response->reply_service = (0x80 | message_router_request->service);
+    message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     return kCipStatusOkSend;
 }
 
@@ -194,7 +192,7 @@ CipStatus NET_EthIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
 
     if (9 == message_router_request->request_path.attribute_number) { // attribute 9 can not be easily handled with the default mechanism therefore we will do it by hand
         message_router_response->data_length = 0;
-        message_router_response->reply_service = (0x80 | message_router_request->service);
+        message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
         message_router_response->general_status = kCipErrorSuccess;
         message_router_response->size_of_additional_status = 0;
 
@@ -226,7 +224,7 @@ CipStatus NET_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
         // only return attributes that are flagged as being part of GetAttributeALl
         if (attribute_number < 32 && (this->get_all_instance_attributes_mask & 1 << attribute_number))
         {
-            message_router_request->request_path.attribute_number = attribute_number;
+            message_router_request->request_path.attribute_number = (CipUint) attribute_number;
 
             if (8 == attribute_number)
             {
@@ -244,7 +242,7 @@ CipStatus NET_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
         }
         attribute++;
     }
-    message_router_response->data_length = message_router_response->data - response;
+    message_router_response->data_length = (CipInt) (message_router_response->data - response);
     message_router_response->data = response;
 
     return kCipStatusOkSend;
@@ -336,9 +334,6 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
 
 #ifdef WIN32
 //Windows version based on Silver Moon ( m00n.silv3r@gmail.com ) : http://www.binarytides.com/get-mac-address-from-ip-in-winsock/
-#define MAX_ADAPTER_NAME_LENGTH 256
-#define MAX_ADAPTER_DESCRIPTION_LENGTH 128
-#define MAX_ADAPTER_ADDRESS_LENGTH 8
 
 //Functions
     void loadiphlpapi();
@@ -440,11 +435,11 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
             strcpy(&((*interface_ptr)[i].ipv4.netmask)[0], inet_ntoa(InterfaceList[i].iiNetmask.AddressIn.sin_addr));
 
             u_long nFlags = InterfaceList[i].iiFlags;
-            (*interface_ptr)[i].up = nFlags & IFF_UP;
-            (*interface_ptr)[i].p2p = nFlags & IFF_POINTTOPOINT;
-            (*interface_ptr)[i].loopback = nFlags & IFF_LOOPBACK;
-            (*interface_ptr)[i].bcast = nFlags & IFF_BROADCAST;
-            (*interface_ptr)[i].mcast = nFlags & IFF_MULTICAST;
+            (*interface_ptr)[i].up = (bool) (nFlags & IFF_UP);
+            (*interface_ptr)[i].p2p = (bool) (nFlags & IFF_POINTTOPOINT);
+            (*interface_ptr)[i].loopback = (bool) (nFlags & IFF_LOOPBACK);
+            (*interface_ptr)[i].bcast = (bool) (nFlags & IFF_BROADCAST);
+            (*interface_ptr)[i].mcast = (bool) (nFlags & IFF_MULTICAST);
         }
 
 
