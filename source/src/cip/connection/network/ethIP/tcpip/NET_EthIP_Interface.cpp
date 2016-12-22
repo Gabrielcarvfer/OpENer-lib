@@ -279,15 +279,59 @@ CipStatus NET_EthIP_Interface::InstanceServices(int service, CipMessageRouterReq
     }
     return returnValue;
 }
-int GetInterfacesList();
+
+//Function scans for network interfaces and list them
+//Function scans for network interfaces and list them
+typedef struct {
+    char ip[16];//15
+    char netmask[16];//15
+    char bcast_ip[16];//15
+
+} ipv4_interface;
+
+typedef struct {
+    char ip[46];//45
+    char netmask[46];//45
+    char bcast_ip[46];//45
+} ipv6_interface;
+
+typedef struct {
+    bool v4;
+    char mac[18];
+    bool up;
+    bool p2p;
+    bool loopback;
+    bool bcast;
+    bool mcast;
+    union
+    {
+        ipv4_interface ipv4;
+        ipv6_interface ipv6;
+    };
+} ip_interface;
+
+int GetInterfacesList(ip_interface **interface_ptr);
 
 //Scan for avaible tcpip interfaces
 CipStatus NET_EthIP_Interface::ScanInterfaces()
 {
+    ip_interface ** interfaces = (ip_interface**)calloc(1,sizeof(ip_interface*));
+
     //Get interfaces list
-    GetInterfacesList();
+    int numInterfaces = 0;
+    numInterfaces = GetInterfacesList(interfaces);
+
+    int i;
+    for(i = 0; i < numInterfaces; i++)
+    {
+        //Search for an NET_EthIP_Interface object with same MAC address, if it exists, update info, if not, create a new object
+        //(*interfaces)[i].mac
+    }
 
     //Turn data list into NET_EthIP_Interface objects, checking before if the interface is already registered
+
+    delete[] *interfaces;
+    free(interfaces);
 }
 
 #ifdef WIN32
@@ -296,11 +340,9 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
 #define MAX_ADAPTER_DESCRIPTION_LENGTH 128
 #define MAX_ADAPTER_ADDRESS_LENGTH 8
 
-
-
 //Functions
     void loadiphlpapi();
-    DWORD GetMacAddress(unsigned char * , struct in_addr );
+    DWORD GetMacAddress(char * , struct in_addr );
 
 //Loads from Iphlpapi.dll
     typedef DWORD (WINAPI* psendarp)(struct in_addr DestIP, struct in_addr SrcIP, PULONG pMacAddr, PULONG PhyAddrLen );
@@ -329,7 +371,7 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
 /*
     Get the mac address of a given ip
 */
-    DWORD GetMacAddress(unsigned char *mac , struct in_addr destip)
+    DWORD GetMacAddress(char *mac , struct in_addr destip)
     {
         DWORD ret;
         struct in_addr srcip;
@@ -346,14 +388,12 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
         if(PhyAddrLen)
         {
             BYTE *bMacAddr = (BYTE *) & MacAddr;
-            for (i = 0; i < (int) PhyAddrLen; i++)
-            {
-                mac[i] = (char)bMacAddr[i];
-            }
+            sprintf(mac, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",(char)bMacAddr[0], (char)bMacAddr[1], (char)bMacAddr[2], (char)bMacAddr[3], (char)bMacAddr[4], (char)bMacAddr[5]);
+
         }
         return ret;
     }
-    int GetInterfacesList()
+    int GetInterfacesList(ip_interface **interface_ptr)
     {
         WSADATA WinsockData;
         if (WSAStartup(MAKEWORD(2, 2), &WinsockData) != 0)
@@ -378,51 +418,44 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
         }
 
         int nNumInterfaces = nBytesReturned / sizeof(INTERFACE_INFO);
-        std::cout << "There are " << nNumInterfaces << " interfaces:" << std::endl;
-
-        unsigned char mac[6];
-        struct in_addr srcip;
 
         loadiphlpapi();
 
+        *interface_ptr = new ip_interface[nNumInterfaces]();
         for (int i = 0; i < nNumInterfaces; ++i)
         {
+            //Mark tcp/ip interface version
+            (*interface_ptr)[i].v4 = true; //only ipv4 for now
 
-            std::cout << std::endl;
+            //Copy ip address
+            strcpy(&((*interface_ptr)[i].ipv4.ip)[0], inet_ntoa(InterfaceList[i].iiAddress.AddressIn.sin_addr));
 
-            sockaddr_in *pAddress;
-            pAddress = (sockaddr_in *) & (InterfaceList[i].iiAddress);
-            std::cout << " " << inet_ntoa(pAddress->sin_addr);
-            srcip.s_addr = inet_addr(inet_ntoa(pAddress->sin_addr));
-            GetMacAddress(mac , srcip);
-            printf("Selected device has mac address : %.2X-%.2X-%.2X-%.2X-%.2X-%.2X",mac[0],mac[1],mac[2],mac[3],mac[4],mac[5]);
-            pAddress = (sockaddr_in *) & (InterfaceList[i].iiBroadcastAddress);
-            std::cout << " has bcast " << inet_ntoa(pAddress->sin_addr);
-            pAddress = (sockaddr_in *) & (InterfaceList[i].iiNetmask);
-            std::cout << " and netmask " << inet_ntoa(pAddress->sin_addr) << std::endl;
+            //Copy MAC address
+            GetMacAddress((*interface_ptr)[i].mac , InterfaceList[i].iiAddress.AddressIn.sin_addr);
 
+            //Copy broadcast ip
+            strcpy(&((*interface_ptr)[i].ipv4.bcast_ip)[0], inet_ntoa(InterfaceList[i].iiBroadcastAddress.AddressIn.sin_addr));
 
-            std::cout << " Iface is ";
+            //Copy netmask
+            strcpy(&((*interface_ptr)[i].ipv4.netmask)[0], inet_ntoa(InterfaceList[i].iiNetmask.AddressIn.sin_addr));
+
             u_long nFlags = InterfaceList[i].iiFlags;
-            std::cout << ((nFlags & IFF_UP) ? "up" : "down");
-            std::cout << ((nFlags & IFF_POINTTOPOINT) ? ", is point-to-point" : "");
-            std::cout << ((nFlags & IFF_LOOPBACK) ? ", is a loopback iface" : "");
-            std::cout << ", and can do: ";
-            std::cout << ((nFlags & IFF_BROADCAST) ? "bcast " : " ");
-            std::cout << ((nFlags & IFF_MULTICAST) ? "multicast ": " ");
-            std::cout << std::endl;
-
+            (*interface_ptr)[i].up = nFlags & IFF_UP;
+            (*interface_ptr)[i].p2p = nFlags & IFF_POINTTOPOINT;
+            (*interface_ptr)[i].loopback = nFlags & IFF_LOOPBACK;
+            (*interface_ptr)[i].bcast = nFlags & IFF_BROADCAST;
+            (*interface_ptr)[i].mcast = nFlags & IFF_MULTICAST;
         }
 
+
         WSACleanup();
-        return 0;
+        return nNumInterfaces;
     }
 #else
-
-    int GetInterfacesList()
+int GetInterfacesList(ip_interface **interface_ptr)
 {
     struct ifaddrs *ifaddr, *ifa;
-    int family, s, n;
+    int family, s, i;
     char host[NI_MAXHOST];
 
     if (getifaddrs(&ifaddr) == -1)
@@ -433,33 +466,22 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
 
     /* Walk through linked list, maintaining head pointer so we
        can free list later */
-
-    for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++)
+    for (ifa = ifaddr, i = 0; ifa != NULL; ifa = ifa->ifa_next, i++)
     {
         if (ifa->ifa_addr == NULL)
             continue;
+    }
 
-        family = ifa->ifa_addr->sa_family;
+    *interface_ptr = new ip_interface[i]();
 
-        /* Display interface name and family (including symbolic
-           form of the latter for the common families) */
+    for (ifa = ifaddr, i = 0; ifa != NULL; ifa = ifa->ifa_next, i++)
+    {
+        if (ifa->ifa_addr == NULL || ((family = ifa->ifa_addr->sa_family) != AF_INET)
+            continue;
 
-        printf(
-               "%-8s %s (%d)\n",
-               ifa->ifa_name,
-               (family == AF_PACKET) ? "AF_PACKET" :
-               (family == AF_INET) ? "AF_INET" :
-               (family == AF_INET6) ? "AF_INET6" : "???",
-               family
-               );
-
-        /* For an AF_INET* interface address, display the address */
-
-        if (family == AF_INET || family == AF_INET6)
-        {
             s = getnameinfo(
                             ifa->ifa_addr,
-                            (family == AF_INET) ? sizeof(struct sockaddr_in) :sizeof(struct sockaddr_in6),
+                            sizeof(struct sockaddr_in),
                             host,
                             NI_MAXHOST,
                             NULL,
@@ -468,25 +490,56 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
                             );
             if (s != 0)
             {
-                printf("getnameinfo() failed: %s\n", gai_strerror(s));
+                //printf("getnameinfo() failed: %s\n", gai_strerror(s));
                 exit(EXIT_FAILURE);
             }
 
-            printf("\t\taddress: <%s>\n", host);
+            int fd;
+            unsigned char *mac_ptr = NULL;
+            char mac[18];
+            struct ifreq ifr;
 
-        }
-        else if (family == AF_PACKET && ifa->ifa_data != NULL)
-        {
-            struct rtnl_link_stats *stats = ifa->ifa_data;
+            memset(&ifr, 0, sizeof(ifr));
+            memset(&mac[0],0,13);
 
-            printf("\t\ttx_packets = %10u; rx_packets = %10u\n"
-                   "\t\ttx_bytes   = %10u; rx_bytes   = %10u\n",
-                   stats->tx_packets, stats->rx_packets,
-                   stats->tx_bytes, stats->rx_bytes);
-        }
+            fd = socket(AF_INET, SOCK_DGRAM, 0);
+
+            ifr.ifr_addr.sa_family = AF_INET;
+            strncpy(ifr.ifr_name , ifa->ifa_name , IFNAMSIZ-1);
+
+            ioctl(fd, SIOCGIFHWADDR, &ifr);
+            mac_ptr = (unsigned char *)ifr.ifr_hwaddr.sa_data;
+            sprintf(&mac[0], "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X", mac_ptr[0], mac_ptr[1], mac_ptr[2], mac_ptr[3], mac_ptr[4], mac_ptr[5]);
+
+            printf("%s\t%s\tmac:<%s>\taddress: <%s>\n", ifa->ifa_name, "AF_INET", mac, host);
+
+            //Mark tcp/ip interface version
+        (*interface_ptr)[i].v4 = true;
+
+        //Copy ip address
+        strcpy(&((*interface_ptr)[i].ipv4.ip)[0], host);
+
+        //Copy MAC address
+        strcpy(&((*interface_ptr)[i].mac)[0], mac);
+
+        //Copy broadcast ip
+        strcpy(&((*interface_ptr)[i].ipv4.bcast_ip)[0], inet_ntoa(ifa->ifu_broadaddr));
+
+        //Copy netmask
+        strcpy(&((*interface_ptr)[i].ipv4.netmask)[0], inet_ntoa(ifa->ifa_netmask));
+
+        //Copy flags
+        u_long nFlags = ifr.ifr_flags;
+        (*interface_ptr)[i].up = nFlags & IFF_UP;
+        (*interface_ptr)[i].p2p = nFlags & IFF_POINTTOPOINT;
+        (*interface_ptr)[i].loopback = nFlags & IFF_LOOPBACK;
+        (*interface_ptr)[i].bcast = nFlags & IFF_BROADCAST;
+        (*interface_ptr)[i].mcast = nFlags & IFF_MULTICAST;
+
+
     }
 
     freeifaddrs(ifaddr);
-    return EXIT_SUCCESS;
+    return i;
 }
 #endif
