@@ -3,7 +3,7 @@
 #include <cstring>
 
 //Static variables
-NET_Endianconv::OpenerEndianess NET_Endianconv::g_opener_platform_endianess;
+NET_Endianconv::OpENerEndianess NET_Endianconv::g_opENer_platform_endianess;
 
 //Methods
 /* THESE ROUTINES MODIFY THE BUFFER POINTER*/
@@ -149,16 +149,16 @@ int UTIL_Endianconv::AddLintToMessage(CipUlint data, CipUsint** buffer)
  */
 void NET_Endianconv::DetermineEndianess()
 {
-    g_opener_platform_endianess = kOpenerEndianessUnknown;
+    g_opENer_platform_endianess = kOpENerEndianessUnknown;
     int i = 1;
     char* p = (char*)&i;
     if (p[0] == 1)
     {
-        g_opener_platform_endianess = kOpENerEndianessLittle;
+        g_opENer_platform_endianess = kOpENerEndianessLittle;
     }
     else
     {
-        g_opener_platform_endianess = kOpENerEndianessBig;
+        g_opENer_platform_endianess = kOpENerEndianessBig;
     }
 }
 
@@ -169,7 +169,7 @@ void NET_Endianconv::DetermineEndianess()
  */
 int NET_Endianconv::GetEndianess()
 {
-    return g_opener_platform_endianess;
+    return g_opENer_platform_endianess;
 }
 
 void NET_Endianconv::MoveMessageNOctets(int amount_of_bytes_moved, CipOctet** message_runner)

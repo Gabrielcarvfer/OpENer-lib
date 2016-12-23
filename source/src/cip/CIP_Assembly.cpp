@@ -97,7 +97,7 @@ CipStatus CIP_Assembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipU
         /* call the application that new data arrived */
     }
 
-    return kCipStatusOk;//TODO:Opener_Interface::AfterAssemblyDataReceived(this);
+    return kCipStatusOk;//TODO:OpENer_Interface::AfterAssemblyDataReceived(this);
 }
 
 CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* message_router_request,
@@ -146,7 +146,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
                     {
                         memcpy(data->data, router_request_data, data->length);
 
-                        if (kCipStatusError)//Opener_Interface::AfterAssemblyDataReceived(instance) != kCipStatusOk)
+                        if (kCipStatusError)//OpENer_Interface::AfterAssemblyDataReceived(instance) != kCipStatusOk)
                         {
                             /* punt early without updating the status... though I don't know
                * how much this helps us here, as the attribute's data has already

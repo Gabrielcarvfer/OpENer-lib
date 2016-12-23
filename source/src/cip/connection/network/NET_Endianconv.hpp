@@ -16,10 +16,10 @@ class NET_Endianconv
 public:
     typedef enum
     {
-        kOpenerEndianessUnknown = -1, kOpENerEndianessLittle = 0, kOpENerEndianessBig = 1
-    } OpenerEndianess;
+        kOpENerEndianessUnknown = -1, kOpENerEndianessLittle = 0, kOpENerEndianessBig = 1
+    } OpENerEndianess;
 
-    static OpenerEndianess g_opener_platform_endianess;
+    static OpENerEndianess g_opENer_platform_endianess;
 
 /** @ingroup ENCAP
  *   @brief Reads EIP_UINT8 from *buffer and converts little endian to host.

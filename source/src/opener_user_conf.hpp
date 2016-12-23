@@ -89,17 +89,17 @@ typedef unsigned short in_port_t;
 
 /** @brief  The time in ms of the timer used in this implementations
  */
-static const int kOpenerTimerTickInMilliSeconds = 10;
+static const int kOpENerTimerTickInMilliSeconds = 10;
 
 /** @brief Define if RUN IDLE data is sent with consumed data
 */
-static const int kOpenerConsumedDataHasRunIdleHeader = 1;
+static const int kOpENerConsumedDataHasRunIdleHeader = 1;
 
 /** @brief Define if RUN IDLE data is to be sent with produced data
 *
 * Per default we don't send run idle headers with produced data
 */
-static const int kOpenerProducedDataHasRunIdleHeader = 0;
+static const int kOpENerProducedDataHasRunIdleHeader = 0;
 
 #ifdef OPENER_WITH_TRACES
 /* If we have tracing enabled provide print tracing macro */

@@ -87,7 +87,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
     struct sockaddr_in *my_address;
     my_address = new struct sockaddr_in();
     my_address->sin_family = AF_INET;
-    my_address->sin_port = NET_Connection::endian_htons(kOpenerEthernetPort);
+    my_address->sin_port = NET_Connection::endian_htons(kOpENerEthernetPort);
     my_address->sin_addr.s_addr = NET_EthIP_Interface::interface_configuration_.ip_address;
 
     // bind the new socket to port 0xAF12 (CIP)
@@ -106,7 +106,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
     struct sockaddr_in *global_broadcast_address;
     global_broadcast_address = new struct sockaddr_in();
     global_broadcast_address->sin_family = AF_INET;
-    global_broadcast_address->sin_port = NET_Connection::endian_htons(kOpenerEthernetPort);
+    global_broadcast_address->sin_port = NET_Connection::endian_htons(kOpENerEthernetPort);
     global_broadcast_address->sin_addr.s_addr = NET_Connection::endian_htonl(INADDR_ANY);
 
     // enable the UDP socket to receive broadcast messages
@@ -201,7 +201,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
     NET_Connection::SelectCopy();
 
     g_time_value.tv_sec = 0;
-    g_time_value.tv_usec = (g_elapsed_time < kOpenerTimerTickInMilliSeconds ? kOpenerTimerTickInMilliSeconds - g_elapsed_time : 0) * 1000; // 10 ms
+    g_time_value.tv_usec = (g_elapsed_time < kOpENerTimerTickInMilliSeconds ? kOpENerTimerTickInMilliSeconds - g_elapsed_time : 0) * 1000; // 10 ms
 
     int ready_socket = NET_Connection::SelectSelect(highest_socket_handle + 1, NET_Connection::kReadSet, &g_time_value);
 
@@ -247,7 +247,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
 
     // check if we had been not able to update the connection manager for several OPENER_TIMER_TICK.
     // This should compensate the jitter of the windows timer
-    if (g_elapsed_time >= kOpenerTimerTickInMilliSeconds)
+    if (g_elapsed_time >= kOpENerTimerTickInMilliSeconds)
     {
         /* call manage_connections() in connection manager every OPENER_TIMER_TICK ms */
         CIP_Connection::ManageConnections(g_elapsed_time);

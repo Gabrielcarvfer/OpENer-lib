@@ -6,11 +6,11 @@
 #define OPENER_OPENER_EXPLICITCONNECTION_H
 
 
-class Opener_ExplicitConnection
+class OpENer_ExplicitConnection
 {
-    Opener_ExplicitConnection() = delete;
+    OpENer_ExplicitConnection() = delete;
 
-    virtual ~Opener_ExplicitConnection () = 0;
+    virtual ~OpENer_ExplicitConnection () = 0;
 };
 
 

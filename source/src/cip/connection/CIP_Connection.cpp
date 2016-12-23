@@ -189,10 +189,10 @@ CipStatus CIP_Connection::ForwardOpen (CipMessageRouterRequest *message_router_r
     o_to_t_network_connection_parameter = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
     t_to_o_requested_packet_interval = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
 
-    CipUdint temp = t_to_o_requested_packet_interval % (kOpenerTimerTickInMilliSeconds * 1000);
+    CipUdint temp = t_to_o_requested_packet_interval % (kOpENerTimerTickInMilliSeconds * 1000);
     if (temp > 0)
     {
-        t_to_o_requested_packet_interval = (CipUdint) (t_to_o_requested_packet_interval / (kOpenerTimerTickInMilliSeconds * 1000)) * (kOpenerTimerTickInMilliSeconds * 1000) + (kOpenerTimerTickInMilliSeconds * 1000);
+        t_to_o_requested_packet_interval = (CipUdint) (t_to_o_requested_packet_interval / (kOpENerTimerTickInMilliSeconds * 1000)) * (kOpENerTimerTickInMilliSeconds * 1000) + (kOpENerTimerTickInMilliSeconds * 1000);
     }
 
     t_to_o_network_connection_parameter = NET_Endianconv::GetIntFromMessage (&message_router_request->data);

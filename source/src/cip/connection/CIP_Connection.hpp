@@ -12,7 +12,7 @@
 #include "CIP_CommonPacket.hpp"
 #include "../template/CIP_Object.hpp"
 #include "network/NET_Connection.hpp"
-#include "../../Opener_Interface.hpp"
+#include "../../OpENer_Interface.hpp"
 #include "../CIP_Assembly.hpp"
 
 class CIP_Connection;

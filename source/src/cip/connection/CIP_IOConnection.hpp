@@ -44,7 +44,7 @@
 #include "../CIP_Assembly.hpp"
 #include "CIP_Connection.hpp"
 #include "CIP_CommonPacket.hpp"
-#include "../../Opener_Interface.hpp"
+#include "../../OpENer_Interface.hpp"
 
 class CIP_IOConnection : public CIP_Connection
 {
@@ -87,7 +87,7 @@ class CIP_IOConnection : public CIP_Connection
 private:
 
         /*The port to be used per default for I/O messages on UDP.*/
-        static const int kOpenerEipIoUdpPort;
+        static const int kOpENerEipIoUdpPort;
 
         /* producing multicast connection have to consider the rules that apply for
          * application connection types.

@@ -6,14 +6,20 @@
 #ifndef OPENER_OPENER_INTERFACE_H
 #define OPENER_OPENER_INTERFACE_H
 
+//#define USETHREAD
+
 #include <cassert>
 #include "cip/ciperror.hpp"
 #include "cip/ciptypes.hpp"
 #include "cip/template/CIP_Object.hpp"
 #include "typedefs.hpp"
 #include "cip/connection/CIP_Connection.hpp"
-#include "Opener_IOConnection.hpp"
-#include "Opener_ExplicitConnection.hpp"
+#include "OpENer_IOConnection.hpp"
+#include "OpENer_ExplicitConnection.hpp"
+
+#ifdef USETHREAD
+#include <thread>
+#endif
 
 /** @mainpage OpENer - Open Source EtherNet/IP(TM) Communication Stack
  *Documentation
@@ -48,10 +54,10 @@
  *   -# Directly in the shell
  *       -# Go into the bin/pc directory
  *       -# Invoke make
- *       -# For invoking opener type:\n
- *          ./opener ipaddress subnetmask gateway domainname hostaddress
+ *       -# For invoking opENer type:\n
+ *          ./opENer ipaddress subnetmask gateway domainname hostaddress
  * macaddress\n
- *          e.g., ./opener 192.168.0.2 255.255.255.0 192.168.0.1 test.com
+ *          e.g., ./opENer 192.168.0.2 255.255.255.0 192.168.0.1 test.com
  * testdevice 00 15 C5 BF D0 87
  *   -# Within Eclipse
  *       -# Import the project
@@ -70,12 +76,12 @@
  * @page porting Porting OpENer
  * @section gen_config_section General Stack Configuration
  * The general stack properties have to be defined prior to building your
- * production. This is done by providing a file called opener_user_conf.h. An
+ * production. This is done by providing a file called opENer_user_conf.h. An
  * example file can be found in the src/ports/platform-pc directory. The
  * documentation of the example file for the necessary configuration options:
- * opener_user_conf.h
+ * opENer_user_conf.h
  *
- * @copydoc opener_user_conf.h
+ * @copydoc opENer_user_conf.h
  *
  * @section startup_sec Startup Sequence
  * During startup of your EtherNet/IP(TM) device the following steps have to be
@@ -100,7 +106,7 @@
  *       - void setDeviceSerialNumber(EIP_UINT32 serial_number)
  *   -# Initialize OpENer: \n
  *      With the function CipStackInit(EIP_UINT16 unique_connection_id) the
- *      internal data structures of opener are correctly setup. After this
+ *      internal data structures of opENer are correctly setup. After this
  *      step own CIP objects and Assembly objects instances may be created. For
  *      your convenience we provide the call-back function
  *      ApplicationInitialization. This call back function is called when the
@@ -163,7 +169,7 @@
  * In order to make OpENer more platform independent and in order to inform the
  * application on certain state changes and actions within the stack a set of
  * call-back functions is provided. These call-back functions are declared in
- * the file Opener_Interface.h and have to be implemented by the application specific
+ * the file OpENer_Interface.h and have to be implemented by the application specific
  * code. An overview and explanation of OpENer's call-back API may be found in
  * the module @ref CIP_CALLBACK_API.
  *
@@ -196,32 +202,32 @@
  *
  */
 
-class Opener_Interface
+class OpENer_Interface
 {
 
     public:
-        //Initialize or shutdown Opener CIP stack
-        static bool Opener_Initialize();
+        //Initialize or shutdown OpENer CIP stack
+        static bool OpENer_Initialize();
 
         /******************************************************************************/
         /*!\brief Signal handler function for ending stack execution
          *
          * @param pa_nSig the signal we received
          */
-        static bool Opener_Shutdown();
+        static bool OpENer_Shutdown();
 
         //Services provided
         //Explicit connections return an object so that you can send data you want, to whom you want and desired network
-        static CipUdint Opener_CreateExplicitConnection();
-        static void Opener_RemoveExplicitConnection(CipUdint handle);
+        static CipUdint OpENer_CreateExplicitConnection();
+        static void OpENer_RemoveExplicitConnection(CipUdint handle);
 
         //Implicit connections receive a pointer and block size, plus whom you want to send and desired network
-        static CipUdint Opener_CreateIOConnection();
-        static void Opener_RemoveIOConnection(CipUdint handle);
+        static CipUdint OpENer_CreateIOConnection();
+        static void OpENer_RemoveIOConnection(CipUdint handle);
 
         //Get pointers to use
-        static Opener_IOConnection * GetOpenerIOConnection(CipUdint handle);
-        static Opener_ExplicitConnection * GetOpenerExplicitConnection(CipUdint handle);
+        static OpENer_IOConnection * GetOpENerIOConnection(CipUdint handle);
+        static OpENer_ExplicitConnection * GetOpENerExplicitConnection(CipUdint handle);
 
         static CipStatus AfterDataReceived(void *);
 
@@ -535,9 +541,22 @@ class Opener_Interface
        */
     static int g_end_stack;
 
+    //Execute everything needed to make library work and then go back to the main program/or run in a thread
+    static void OpENerWorker();
+#ifndef USETHREAD
+    static bool alarmRang;
+#endif
     protected:
-        static std::map<CipUdint, Opener_IOConnection*> IO_Connection_set;
-        static std::map<CipUdint, Opener_ExplicitConnection*> Explicit_Connection_set;
+        static std::map<CipUdint, OpENer_IOConnection*> IO_Connection_set;
+        static std::map<CipUdint, OpENer_ExplicitConnection*> Explicit_Connection_set;
+
+#ifdef USETHREAD
+        static std::thread *workerThread;
+        static bool OpENer_active;
+#else
+    static void alarmRinging();
+#endif
+
 
 
 };

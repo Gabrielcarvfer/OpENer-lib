@@ -12,7 +12,7 @@
 int EncapsulateIpAddress(CipUint port, CipUdint address, CipByte** communication_buffer)
 {
     int size = 0;
-    if (NET_Endianconv::kOpENerEndianessLittle == NET_Endianconv::g_opener_platform_endianess)
+    if (NET_Endianconv::kOpENerEndianessLittle == NET_Endianconv::g_opENer_platform_endianess)
     {
         size += NET_Endianconv::AddIntToMessage(NET_Connection::endian_htons (AF_INET), communication_buffer);
         size += NET_Endianconv::AddIntToMessage(port, communication_buffer);
@@ -21,7 +21,7 @@ int EncapsulateIpAddress(CipUint port, CipUdint address, CipByte** communication
     }
     else
     {
-        if (NET_Endianconv::kOpENerEndianessBig == NET_Endianconv::g_opener_platform_endianess)
+        if (NET_Endianconv::kOpENerEndianessBig == NET_Endianconv::g_opENer_platform_endianess)
         {
             (*communication_buffer)[0] = (unsigned char)(AF_INET >> 8);
             (*communication_buffer)[1] = (unsigned char)AF_INET;

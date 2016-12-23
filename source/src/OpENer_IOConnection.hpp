@@ -6,11 +6,11 @@
 #define OPENER_OPENER_IOCONNECTION_H
 
 
-class Opener_IOConnection
+class OpENer_IOConnection
 {
-    Opener_IOConnection() = delete;
+    OpENer_IOConnection() = delete;
 
-    virtual ~Opener_IOConnection () = 0;
+    virtual ~OpENer_IOConnection () = 0;
 };
 
 

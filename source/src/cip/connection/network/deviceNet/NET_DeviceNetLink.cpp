@@ -9,7 +9,7 @@
 #include "ciperror.hpp"
 #include "connection/CIP_MessageRouter.hpp"
 //#include "endianconv.h>
-#include "Opener_Interface.hpp"
+#include "OpENer_Interface.hpp"
 #include "typedefs.hpp"
 /*
 typedef struct {

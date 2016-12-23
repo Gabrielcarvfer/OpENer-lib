@@ -14,7 +14,7 @@
 #include "network/ethIP/tcpip/NET_EthIP_Interface.hpp"
 
 //Static variables
-const int CIP_IOConnection::kOpenerEipIoUdpPort = 0x08AE;
+const int CIP_IOConnection::kOpENerEipIoUdpPort = 0x08AE;
 CipUsint* CIP_IOConnection::g_config_data_buffer;
 unsigned int CIP_IOConnection::g_config_data_length;
 CipUdint CIP_IOConnection::g_run_idle_state;
@@ -126,7 +126,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                     diff_size += 2;
                 }
 
-                if ((kOpenerConsumedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
+                if ((kOpENerConsumedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
                 {
                     // we only have an run idle header if it is not an heartbeat connection
                     data_size -= 4; // remove the 4 bytes needed for run/idle header
@@ -175,7 +175,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                     diff_size += 2;
                 }
 
-                if ((kOpenerProducedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
+                if ((kOpENerProducedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
                 {
                     // we only have an run idle header if it is not an heartbeat connection
                     data_size -= 4; // remove the 4 bytes needed for run/idle header
@@ -249,7 +249,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = INADDR_ANY;
     //addr.in_port = htons(nUDPPort++);
-    addr.sin_port = NET_Connection::endian_htons((uint16_t) kOpenerEipIoUdpPort);
+    addr.sin_port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort);
 
     // the address is only needed for bind used if consuming
     netConn->SetSocketHandle (NET_NetworkHandler::CreateUdpSocket(kUdpCommuncationDirectionConsuming, (struct sockaddr*)&addr));
@@ -276,7 +276,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
 CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
     int socket;
-    in_port_t port = NET_Connection::endian_htons((uint16_t) kOpenerEipIoUdpPort); /* the default port to be used if no port information is part of the forward open request */
+    in_port_t port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort); /* the default port to be used if no port information is part of the forward open request */
 
     if (CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator == cpf_data->address_info_item[0].type_id)
     {
@@ -357,7 +357,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
     ((struct sockaddr_in*)(netConn->remote_address))->sin_family = AF_INET;
     ((struct sockaddr_in*)(netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons(
-            (uint16_t) kOpenerEipIoUdpPort);
+            (uint16_t) kOpENerEipIoUdpPort);
     ((struct sockaddr_in*)(netConn->remote_address))->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
     cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
@@ -402,7 +402,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
     {
         // we are using an unused item initialize it with the default multicast address
         cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
-        cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons((uint16_t) kOpenerEipIoUdpPort);
+        cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort);
         cpf_data->address_info_item[j].sin_addr = NET_EthIP_Interface::g_multicast_configuration.starting_multicast_address;
         memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
         cpf_data->address_info_item[j].length = 16;
@@ -609,7 +609,7 @@ CipStatus CIP_IOConnection::SendConnectedData()
     message_data_reply_buffer = (CipUsint*)CIP_Common::message_data_reply_buffer[reply_length - 2];
     cpf_data->data_item.length = producing_instance_attributes->length;
 
-    if (kOpenerProducedDataHasRunIdleHeader)
+    if (kOpENerProducedDataHasRunIdleHeader)
     {
         cpf_data->data_item.length += 4;
     }
@@ -625,7 +625,7 @@ CipStatus CIP_IOConnection::SendConnectedData()
         NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
     }
 
-    if (kOpenerProducedDataHasRunIdleHeader)
+    if (kOpENerProducedDataHasRunIdleHeader)
     {
         NET_Endianconv::AddDintToMessage(g_run_idle_state, &(message_data_reply_buffer));
     }
@@ -653,7 +653,7 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUi
 
     if (data_length > 0) {
         // we have no heartbeat connection
-        if (kOpenerConsumedDataHasRunIdleHeader)
+        if (kOpENerConsumedDataHasRunIdleHeader)
         {
             CipUdint nRunIdleBuf = NET_Endianconv::GetDintFromMessage(&(data));
             //todo: update idle state

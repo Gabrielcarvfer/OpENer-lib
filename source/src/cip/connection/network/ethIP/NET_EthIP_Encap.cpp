@@ -13,7 +13,7 @@
 #include "../../CIP_Identity.hpp"
 
 //Static variables
-const int NET_EthIP_Encap::kOpenerEthernetPort = 0xAF12;
+const int NET_EthIP_Encap::kOpENerEthernetPort = 0xAF12;
 EncapsulationInterfaceInformation NET_EthIP_Encap::g_interface_information;
 int NET_EthIP_Encap::g_registered_sessions[OPENER_NUMBER_OF_SUPPORTED_SESSIONS];
 NET_EthIP_Encap::DelayedEncapsulationMessage NET_EthIP_Encap::g_delayed_encapsulation_messages[ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES];
@@ -278,7 +278,7 @@ int NET_EthIP_Encap::EncapsulateListIdentyResponseMessage(CipByte* const communi
 
     NET_Endianconv::AddIntToMessage((CipUint) kSupportedProtocolVersion, &communication_buffer_runner);
 
-    EncapsulateIpAddress(NET_Connection::endian_htons ((uint16_t) kOpenerEthernetPort), NET_EthIP_Interface::interface_configuration_.ip_address, &communication_buffer_runner);
+    EncapsulateIpAddress(NET_Connection::endian_htons ((uint16_t) kOpENerEthernetPort), NET_EthIP_Interface::interface_configuration_.ip_address, &communication_buffer_runner);
 
     memset(communication_buffer_runner, 0, 8);
 
