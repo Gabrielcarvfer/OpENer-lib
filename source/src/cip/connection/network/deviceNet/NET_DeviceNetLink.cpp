@@ -3,15 +3,15 @@
  ******************************************************************************/
 #include <cstring>
 
-#include "NET_DeviceNetLink.h>
-
+#include "NET_DeviceNetLink.h"
+ /*
 #include "cip/CIP_Common.hpp"
 #include "ciperror.hpp"
 #include "connection/CIP_MessageRouter.hpp"
 //#include "endianconv.h>
 #include "OpENer_Interface.hpp"
 #include "typedefs.hpp"
-/*
+
 typedef struct {
     CipUsint mac_id;
     CipUsint baud_rate;

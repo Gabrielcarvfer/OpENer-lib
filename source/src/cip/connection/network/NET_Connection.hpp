@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 30/11/2016.
+// @author Gabriel Ferreira (gabrielcarvfer)
 //
 
 #ifndef OPENER_NET_CONNECTION_H

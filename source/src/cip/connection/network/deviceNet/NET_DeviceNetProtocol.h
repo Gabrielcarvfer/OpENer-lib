@@ -1,6 +1,10 @@
+//
+// @author Gabriel Ferreira (gabrielcarvfer)
+//
+#include <cstdint>
 
-/*
-enum dnet_object_error_codes {
+typedef enum
+{
     //When Allocate_master/Slave_conn_set is received
     //but Slave already allocated connection to another master
     connection_set_allocation_conflict = 1,
@@ -16,16 +20,17 @@ enum dnet_object_error_codes {
 
     //Resource required	to use groups 1 and 2 is unavailable
     resource_unavailable = 4
-};
+}kDeviceNetErrorCodes;
 
-enum dnet_message_ids {
+typedef enum 
+{
     //
 	//	Abreviations meaning
 	//	Prefixes				Infixes						Sufixes
 	//	slv_ = slave			_cyc_ = cyclic				_res = response
 	//	mstr_ = master  		_st8chng_ = state change	_req = request
 	//	g2only_ = only G2   	_mcast_ = multicast			_cmd = command
-															_ack = acknowledge 
+	//														_ack = acknowledge 
 
 
     //Group 1
@@ -48,7 +53,7 @@ enum dnet_message_ids {
     //Group 3
 
     //Group 4
-};
+}kDeviceNetMessageId;
 
-int dnet_identifier_group_check(__u32* can_id);
-int dnet_identifier_group_match(struct can_frame* frame_rd);*/
+int dnet_identifier_group_check(uint32_t* can_id);
+int dnet_identifier_group_match(struct can_frame* frame_rd);

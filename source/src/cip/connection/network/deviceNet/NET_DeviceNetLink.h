@@ -1,11 +1,10 @@
-/*******************************************************************************
- * Gabriel Ferreira (gabrielcarvfer)
- ******************************************************************************/
+//
+// @author Gabriel Ferreira (gabrielcarvfer)
+//
 #ifndef OPENER_CIPDEVICENETLINK_H_
 #define OPENER_CIPDEVICENETLINK_H_
 
-#include "ciptypes.hpp"
-#include "typedefs.hpp"
+#include "../../../ciptypes.hpp"
 
 
 /* public functions */
