@@ -7,22 +7,26 @@ int dnet_identifier_group_check(uint32_t* can_id)
 {
 
     //Check if identifier matches with Message Group 1
-    if (*can_id <= 0x3ff) {
+    if (*can_id <= 0x3ff) 
+	{
         return 1;
     }
 
     //Check if identifier matches with Message Group 2
-    if (*can_id <= 0x5ff) {
+    if (*can_id <= 0x5ff) 
+	{
         return 2;
     }
 
     //Check if identifier matches with Message Group 3
-    if (*can_id <= 0x7bf) {
+    if (*can_id <= 0x7bf)
+	{
         return 3;
     }
 
     //Check if identifier matches with Message Group 4
-    if (*can_id <= 0x7cf) {
+    if (*can_id <= 0x7cf) 
+	{
         return 4;
     }
 

@@ -11,13 +11,15 @@ set( OPENER_SRC OpENer_ExplicitConnection.cpp OpENer_IOConnection.cpp OpENer_Int
 
 add_library( OpENer STATIC ${OPENER_SRC})# ${CIP_SRC} ${UTILS_SRC} )
 
-target_link_libraries(OpENer OpENer_CIP OpENer_UTILS)
+
 
 if(WIN32)
   if(MINGW)
-	target_link_libraries(OpENer OpENer_CIP OpENer_UTILS winmm)
+	target_link_libraries(OpENer OpENer_CIP OpENer_UTILS CIP_Objects winmm)
   else ()
 	add_definitions(-DVSTUDIO)
-	target_link_libraries(OpENer OpENer_CIP OpENer_UTILS)
+	target_link_libraries(OpENer OpENer_CIP OpENer_UTILS CIP_Objects)
   endif()
+else()
+	target_link_libraries(OpENer OpENer_CIP OpENer_UTILS CIP_Objects)
 endif()
