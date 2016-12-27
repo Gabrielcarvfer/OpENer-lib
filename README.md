@@ -1,60 +1,43 @@
-OpENer Version whatever
-====================
-
+OpENer-Lib Version 0.1
+======================
 
 *ITS NOT WORKING YET*
 ---------------------
 
-The current objectives are to port OpENer to C++, reduce code coupling and add support to DeviceNET (using Linux's SocketCAN).
+Welcome to OpENer-lib!
+---------------------
 
-Please don't be mad if I removed the original header of some files or their spin-offs while working on the code. After it's ready I'm going to fix everything.
+OpENer-lib is a library based on OpENer (https://github.com/EIPStackGroup/OpENer) that implements the Common Industrial Protocol&trade;.
+It supports (or will support) multiple I/O and explicit connections; includes objects and services to make EtherNet/IP&trade; and DeviceNet&trade;
+compliant products defined in ODVA's specifications (http://www.odva.org).
 
+OpENer-lib objects are to port the OpENer to C++, reduce code coupling, add support to DeviceNET (using Linux's SocketCAN), 
+increase maintainability and readability.
 
-
-
-
-Old Readme from https://github.com/EIPStackGroup/OpENer and https://github.com/timoc/toc-opener
-OpENer Version 1.2.0
-====================
-
-Welcome to OpENer!
-------------------
-
-OpENer is an EtherNet/IP&trade; stack for I/O adapter devices; supports multiple 
-I/O and explicit connections; includes objects and services to make EtherNet/IP&trade;-
-compliant products defined in THE ETHERNET/IP SPECIFICATION and published by 
-ODVA (http://www.odva.org).
 
 Requirements:
 -------------
-OpENer has been developed to be highly portable. The default version targets PCs
-with a POSIX operating system and a BSD-socket network interface. To test this 
-version we recommend a Linux PC or Windows with Cygwin (http://www.cygwin.com) 
-installed. You will need to have the following installed:
+OpENer-lib has been developed to be portable, readable and easy to modify.
+The default version targets PCs with a POSIX operating system and a BSD-socket network interface. 
+To test this version we recommend a PC with Linux or Windows installed.
+You will need to have the following installed:
 
 * CMake
-* gcc
+* gcc/mingw/clang/visual c++
 * make
 * binutils 
  
-for normal building. These should be installed on most Linux installations and
-are part of the development packages of Cygwin.
+for normal building. 
 
-If you want to run the unit tests you will also have to download CppUTest via
-https://github.com/cpputest/cpputest
+For the development, its recommended to use an IDE that supports CMAKE based projects, like Visual Studio 2017 or Jetbrains CLion.
 
-For the development itself we recommend the use of Eclipse with the CDT plugin 
-(http://www.eclipse.org).
+For configuring the project we recommend the use of a CMake GUI (e.g.,the cmake-gui oackage on Linux)
 
-For configuring the project we recommend the use of a CMake GUI (e.g.,the 
-cmake-gui oackage on Linux)
-
-Compile for POSIX:
+Compiling:
 ----------------
 1. Directly in the shell:
-	1. Go into the bin/posix directory
-	2. For a standard configuration invoke setup_posix.sh, otherwise start
- cmake (GUI or shell application) and configure your project
+	1. Go into the source directory
+	2. For a standard configuration invoke cmake (GUI or shell application) and configure your project
 	3. Invoke make
 	4. For invoking opener type:
 
@@ -62,19 +45,11 @@ Compile for POSIX:
 
 		e.g. ./opener 192.168.0.2 255.255.255.0 192.168.0.1 test.com testdevice 00 15 C5 BF D0 87
  
-2. Within Eclipse
-	1. For a standard configuration invoke setup_posix.sh, otherwise start
- cmake (GUI or shell application) and configure your project
-	2. Import the project
-	3. Go to the bin/win32 folder in the make targets view
-	4. Choose all from the make targets
-	5. The resulting executable will be in the directory /bin/posix or the
-directoy you have choosen via CMake
+2. Within Visual Studio or CLion
+	1. Open the source folder as a project
+	2. Set OpENer to be built than build
+	3. The resulting library will be in the directory /bin or the directoy you have choosen via CMake
 
-Compile for Windows XP/7/8:
----------------------------
-1. Invoke setup_windows.bat or configure via CMake
-2. Open Visual Studio solution in bin/win32
 
 Directory structure:
 --------------------
@@ -84,25 +59,14 @@ Directory structure:
 - source
 	- src ... the production source code
 		- cip ... the CIP layer of the stack
-		- cip_objects ... additional CIP objects
-		- enet_encap ... the Ethernet encapsulation layer
-		- ports ... the platform specific code
+			- template ... the CIP object/instance, CIP Attributes and CIP Services templates/classes
+			- connection ... the connection layer of CIP (platform agnostic)
+				- network ... the network layer of CIP (platform aware)
+					- deviceNet ... the deviceNet&trade; object and support
+						- can_link ... platform dependant implementation of SocketCAN calls
+					- ethIP ... the Ethernet/IP&trade; object and support
+						- tcpip ... platform dependant implementation of TCP/IP calls
 		- utils ... utility functions
 	- tests ... the test source code
 		- utils ... tests for utility functions
-
-Documentation:
---------------
-The documentation of the functions of OpENer is part of the source code. The source 
-packages contain the generated documentation in the directory doc/api_doc. If you 
-use the GIT version you will need the program Doxygen for generating the HTML 
-documentation. You can generate the documentation by invoking doxygen from the 
-command line in the opener main directory.
-
-Porting OpENer:
----------------
-For porting OpENer to new platforms please see the porting section in the 
-Doxygen documentation.
-
-
 
