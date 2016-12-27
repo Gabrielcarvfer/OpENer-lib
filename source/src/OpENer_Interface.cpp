@@ -6,6 +6,14 @@
 #include "cip/connection/network/NET_NetworkHandler.hpp"
 #include "cip/CIP_Common.hpp"
 
+#ifdef WIN32
+	#include <windows.h>
+	#ifdef VSTUDIO
+		#pragma comment(lib, "winmm.lib")
+	#endif
+#else
+#endif
+
 //Initialize static variables
 int OpENer_Interface::g_end_stack = 0;
 std::map<CipUdint, OpENer_IOConnection*> OpENer_Interface::IO_Connection_set;
@@ -101,8 +109,10 @@ void OpENer_Interface::OpENerWorker()
 #else
     //Set a alarm to the smaller interval of refresh that connections are configured, so that we don't loose data
     alarmRang = false;
+
     #ifdef WIN32
-        timeSetEvent(smallerInterval, smallerInterval, alarmRinging, NULL, TIME_ONESHOT);
+        DWORD_PTR ptr;
+        timeSetEvent(smallerInterval, smallerInterval, (LPTIMECALLBACK)alarmRinging, ptr, TIME_ONESHOT);
     #else
         alarm(smallerInterval);
     #endif
@@ -110,7 +120,15 @@ void OpENer_Interface::OpENerWorker()
 }
 
 #ifndef USETHREAD
-void OpENer_Interface::alarmRinging()
+    #ifdef WIN32
+    void OpENer_Interface::alarmRinging(UINT      uTimerID,
+                                        UINT      uMsg,
+                                        DWORD_PTR dwUser,
+                                        DWORD_PTR dw1,
+                                        DWORD_PTR dw2)
+    #else
+    void OpENer_Interface::alarmRinging()
+    #endif
 {
 
     alarmRang = true;
@@ -178,22 +196,22 @@ OpENer_ExplicitConnection * OpENer_Interface::GetOpENerExplicitConnection(CipUdi
 
 CipStatus OpENer_Interface::ResetDevice()
 {
-
+	return kCipStatusOk;
 }
 
 CipStatus OpENer_Interface::ResetDeviceToInitialConfiguration()
 {
-
+	return kCipStatusOk;
 }
 
 CipStatus OpENer_Interface::AfterDataReceived(void *)
 {
-
+	return kCipStatusOk;
 }
 
 CipStatus OpENer_Interface::ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask, const char* gateway_address)
 {
-
+	return kCipStatusOk;
 }
 
 void OpENer_Interface::ConfigureMacAddress(const CipUsint* mac_address)

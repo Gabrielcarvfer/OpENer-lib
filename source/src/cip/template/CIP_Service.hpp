@@ -17,7 +17,7 @@ class CIP_Service
 
         //Functions avaiable
         CipUsint getNumber();
-        CipServiceFunction getService();
+        //CipServiceFunction getService();
         std::string getName();
 
     private:

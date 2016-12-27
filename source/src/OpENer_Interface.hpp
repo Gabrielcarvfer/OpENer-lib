@@ -21,6 +21,8 @@
 #include <thread>
 #endif
 
+
+
 /** @mainpage OpENer - Open Source EtherNet/IP(TM) Communication Stack
  *Documentation
  *
@@ -554,7 +556,11 @@ class OpENer_Interface
         static std::thread *workerThread;
         static bool OpENer_active;
 #else
-    static void alarmRinging();
+    #ifdef WIN32
+        static void alarmRinging(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
+    #else
+        static void OpENer_Interface::alarmRinging();
+    #endif
 #endif
 
 

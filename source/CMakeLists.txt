@@ -7,7 +7,8 @@ cmake_minimum_required( VERSION 2.8.9 )
 # Project name                        #
 #######################################
 project(OpENerMain CXX)
-
+add_definitions(-std=c++11)
+add_definitions(-DWIN32)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
 unset(CMAKE_LINK_LIBRARY_SUFFIX)
@@ -86,8 +87,5 @@ opener_common_includes()
 
 
 add_subdirectory( src )
-
-if(WIN32)
-  add_executable(OpENerMain src/main.cpp)# ${OPENER_SRC})
-  target_link_libraries(OpENerMain OpENer)
-endif()
+add_executable(OpENerMain src/main.cpp)
+target_link_libraries(OpENerMain OpENer)

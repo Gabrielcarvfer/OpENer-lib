@@ -13,6 +13,10 @@
     #include <iostream>
     #include <iphlpapi.h>
     #include <strstream>
+	#ifdef VSTUDIO
+		#pragma comment(lib, "Ws2_32.lib")
+		#pragma comment(lib, "iphlpapi.lib")
+	#endif
 #else
     #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
     #include <arpa/inet.h>
@@ -330,6 +334,7 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
 
     delete[] *interfaces;
     free(interfaces);
+	return kCipStatusOk;
 }
 
 #ifdef WIN32

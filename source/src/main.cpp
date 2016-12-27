@@ -54,6 +54,10 @@ int main(int argc, char* arg[])
             OpENer_Interface::OpENerWorker();
         }
         #endif
+
+        //Check if ending command arrived from network
+        if (OpENer_Interface::g_end_stack)
+            working = false;
     }
     //
     // Before exiting, close all open connections, free memory and finish program
