@@ -1,0 +1,49 @@
+;PALASM Design Description
+
+;---------------------------------- Declaration Segment ------------
+TITLE    DeviceNet Board PAL
+PATTERN  A
+REVISION 1.0
+AUTHOR   Jim Brady
+COMPANY  Brady Engineering
+DATE     July 4, 1998
+
+CHIP  DEVNET  PAL22V10
+
+;----------------------- PIN Declarations ---------------------------------
+PIN  1          A19             COMB            ;INPUT
+PIN  2          A18             COMB            ;INPUT       
+PIN  3          A17             COMB            ;INPUT       
+PIN  4          A16             COMB            ;INPUT       
+PIN  5          A15             COMB            ;INPUT       
+PIN  6          A14             COMB            ;INPUT       
+PIN  7          A13             COMB            ;INPUT       
+PIN  8          A12             COMB            ;INPUT       
+PIN  9          AEN             COMB            ;INPUT       
+PIN  10         MEMW            COMB            ;INPUT       
+PIN  11         MEMR            COMB            ;INPUT       
+PIN  12         GND                       
+PIN  13         RESET           COMB            ;INPUT
+PIN  14         NC 
+PIN  15         NC 
+PIN  16         NC 
+PIN  17         NC
+PIN  18         NC
+PIN  19         /RST            COMB            ;OUTPUT: RESET NOT
+PIN  20         /MATCH          COMB            ;OUTPUT: ADDRESS = A0000 
+PIN  21         RW              COMB            ;OUTPUT: RW LINE TO 82527       
+PIN  22         /CS2            COMB            ;OUTPUT: CS TO 82C55       
+PIN  23         /CS1            COMB            ;OUTPUT: CS TO 82527       
+PIN  24         VCC                           
+
+;----------------------- Boolean Equation Segment ------------------------
+EQUATIONS
+MATCH = A19 * /A18 * A17 * /A16 * /A15 * /A14 * /A13 * /A12 * /AEN * /RESET
+CS1 = MATCH * /(MEMW * MEMR)
+CS2 = A19 * /A18 * A17 * /A16 * /A15 * /A14 * /A13 * A12 * /AEN * /RESET
+RW =  /MEMR + (MEMW * RW)
+RST = RESET
+;----------------------- Simulation Segment ------------------------------
+SIMULATION
+
+;-------------------------------------------------------------------------
