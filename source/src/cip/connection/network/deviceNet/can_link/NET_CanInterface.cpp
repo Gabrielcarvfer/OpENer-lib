@@ -1,4 +1,4 @@
-#include "NET_CanInterface.h"
+#include "NET_CanInterface.hpp"
 
 #ifdef WIN32
 	#include <windows.h>
@@ -49,14 +49,14 @@ NET_CanInterface::~NET_CanInterface()
 		return 1;
 	}
 
-	int NET_CanInterface::send_port(struct can_frame *frame)
+	int NET_CanInterface::send_frame(struct can_frame *frame)
 	{
 		LPDWORD written = NULL;
 		WriteFile(soc, frame, sizeof(struct can_frame), written, NULL);
 		return (int)*written;
 	}
 
-	void NET_CanInterface::read_port(struct can_frame * frame_rd, int *recvBytes)
+	void NET_CanInterface::read_frame(struct can_frame * frame_rd, int *recvBytes)
 	{
 		ReadFile(soc, frame_rd, sizeof(struct can_frame), (LPDWORD)recvBytes, NULL);
 	}
@@ -92,7 +92,7 @@ NET_CanInterface::~NET_CanInterface()
 		}
 		return 0;
 	}
-	int NET_CanInterface::send_port(struct can_frame *frame)
+	int NET_CanInterface::send_frame(struct can_frame *frame)
 	{
 		int retval;
 		retval = write(soc, frame, sizeof(struct can_frame));
@@ -106,7 +106,7 @@ NET_CanInterface::~NET_CanInterface()
 		}
 	}
 
-	void NET_CanInterface::read_port(struct can_frame * frame_rd, int *recvBytes)
+	void NET_CanInterface::read_frame(struct can_frame * frame_rd, int *recvBytes)
 	{
 		//struct can_frame frame_rd;
 		//int recvbytes = 0;
@@ -147,12 +147,37 @@ NET_CanInterface::~NET_CanInterface()
 	{
 		
 	}
-	int NET_CanInterface::send_port(struct can_frame *frame)
+	int NET_CanInterface::send_frame(struct can_frame *frame)
 	{
-		
+		if (io_message)
+		{
+			//Intel 82527
+			#define CAN_BASE 0xA000
+			#define MESSAGE7_OFFSET 0x50
+			#define CONTROL0_OFFSET 0x00
+			#define CONTROL1_OFFSET 0x01
+			#define MESS_CONF 0x06
+
+			RmtPnd = 1; //RemoteFramePendingFlag 1 if requested but not answered yet 0 if no waiting remote request 
+			NewDat = 2; //NewDataFlag 1 if changed 0 if not changed
+
+						//MessageConfigurationReg
+						//length(4b)+direction(1b)+extended id(1b)+reserved(2b)
+			MessConf = length << 4 | 0x08;
+
+			/*
+			// load io poll response into can chip object #9
+			for (i = 0; i < length; i++)  					// load CAN data
+			{
+			pokeb(CAN_BASE, (0x57 + i), response[i]);
+			}
+			pokeb(CAN_BASE, 0x56, ((length << 4) | 0x08));	// load config register
+			pokeb(CAN_BASE, 0x51, 0x66);      				// set transmit request
+			*/
+		}
 	}
 
-	void NET_CanInterface::read_port(struct can_frame * frame_rd, int *recvBytes)
+	void NET_CanInterface::read_frame(struct can_frame * frame_rd, int *recvBytes)
 	{
 		
 	}

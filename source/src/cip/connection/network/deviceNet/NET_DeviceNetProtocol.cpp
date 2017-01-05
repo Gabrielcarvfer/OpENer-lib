@@ -1,5 +1,5 @@
-#include "NET_DeviceNetProtocol.h"
-#include "can_link/NET_CanInterface.h"
+#include "NET_DeviceNetProtocol.hpp"
+#include "can_link/NET_CanInterface.hpp"
 //
 //	Get datagram group from CAN identifier
 //
@@ -114,18 +114,9 @@ int NET_DeviceNetProtocol::dnet_identifier_group_match(struct can_frame* frame_r
 #define  SEND_ACK							0x02
 #define  ACK_TIMEOUT						0x03
 #define	ACK_ERROR						0x04
-
-
-
 #define OK						1
 
-// define connection states
-#define NON_EXISTENT						0x00
-#define CONFIGURING						0x01
-#define WAITING_FOR						0x02
-#define ESTABLISHED						0x03
-#define TIMED_OUT							0x04
-#define DEFERRED							0x05
+
 
 // Define Instance IDs and TIMER numbers
 #define  EXPLICIT							0x01
@@ -327,21 +318,22 @@ int NET_DeviceNetProtocol::io_consume_message(char request[])
 		return NO_RESPONSE;
 }
 
+void NET_DeviceNetProtocol::enframe_and_send(char message[])
+{
+
+	struct can_frame frame;
+	UCHAR length = message[LENGTH];
+	memcpy(&(frame.data),message, length);
+	frame.can_dlc = length;
+	frame.can_id = *id;
+
+	associated_interface->send_frame(&frame);
+}
 void NET_DeviceNetProtocol::io_produce_message(char response[])
 {
-	UCHAR length, bytes_left, i, fragment_count, ack_status;
-	static UCHAR copy[BUFSIZE];
-
-	length = response[LENGTH];
-
-	// load io poll response into can chip object #9
-	for (i = 0; i < length; i++)  						// load CAN data
-	{
-		//pokeb(CAN_BASE, (0x57 + i), response[i]);
-	}
-	//pokeb(CAN_BASE, 0x56, ((length << 4) | 0x08));	// load config register
-	//pokeb(CAN_BASE, 0x51, 0x66);      					// set transmit request
+	enframe_and_send(response);
 }
+
 
 void NET_DeviceNetProtocol::explicit_produce_message(char response[])
 {
@@ -355,14 +347,7 @@ void NET_DeviceNetProtocol::explicit_produce_message(char response[])
 		ack_timeout_counter++;
 		if (ack_timeout_counter == 1)
 		{
-			// Load last explicit fragment send again
-			length = copy[LENGTH];
-			for (i = 0; i < length; i++)  						// load data into CAN
-			{
-				//pokeb(CAN_BASE, (0x67 + i), copy[i]);
-			}
-			//pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config resister
-			//pokeb(CAN_BASE, 0x61, 0x66);      					// set transmit request
+			enframe_and_send(response);
 			global_timer[ACK_WAIT] = 20;
 
 		}
@@ -481,13 +466,7 @@ void NET_DeviceNetProtocol::explicit_produce_message(char response[])
 
 	else if (length <= 8)		// Send complete Explicit message
 	{
-		// load explicit response into can chip object #3
-		for (i = 0; i < length; i++)  						// load data into CAN
-		{
-			//pokeb(CAN_BASE, (0x67 + i), response[i]);
-		}
-		//pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config resister
-		//pokeb(CAN_BASE, 0x61, 0x66);      					// set transmit request
+		enframe_and_send(response);
 	}
 
 

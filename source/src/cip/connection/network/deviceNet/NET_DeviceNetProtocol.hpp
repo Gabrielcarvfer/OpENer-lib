@@ -5,6 +5,7 @@
 #define NET_DEVICENETPROTOCOL_H
 
 #include <cstdint>
+#include "../../../ciptypes.hpp"
 
 class NET_DeviceNetProtocol
 {
@@ -28,6 +29,17 @@ public:
 		resource_unavailable = 4
 	}kDeviceNetErrorCodes;
 private:
+	typedef enum
+	{
+		NON_EXISTENT, SEND_DUPLICATE_MAC_REQ, WAIT_DUPLICATE_MAC_REQ, COMM_FAULT, ON_LINE
+	}DeviceNetStates;
+	// define connection states
+	#define NON_EXISTENT						0x00
+	#define CONFIGURING						0x01
+	#define WAITING_FOR						0x02
+	#define ESTABLISHED						0x03
+	#define TIMED_OUT							0x04
+	#define DEFERRED							0x05
 	typedef enum
 	{
 		//
@@ -66,9 +78,11 @@ private:
 	static int dnet_identifier_group_match(struct can_frame* frame_rd);
 	static int global_timer[10];
 
+	CipUsint * id;
+
 	//instances stuff
 	#define BUFSIZE				80    			// size of message buffers
-	char state;
+	DeviceNetStates state;
 	char rcve_index, xmit_index;
 	char my_rcve_fragment_count, my_xmit_fragment_count;
 	int produced_conxn_size, consumed_conxn_size;
@@ -81,7 +95,21 @@ public:
 	void explicit_produce_message(char response[]);
 	int io_consume_message(char request[]);
 	int explicit_consume_message(char request[]);
+	void enframe_and_send(char message[]);
 	NET_CanInterface * associated_interface;
+
+	typedef enum {
+		S0 = NET_CanInterface::S4,//125k
+		S1 = NET_CanInterface::S5,//250k
+		S2 = NET_CanInterface::S6 //500k
+	}kDeviceNETBaudRate;
+
+	NET_DeviceNetProtocol(CipUsint * id = NULL, char state = NON_EXISTENT)
+	{
+		id = id;
+		state = state;
+	};
+	~NET_DeviceNetProtocol() {};
 
 };
 
