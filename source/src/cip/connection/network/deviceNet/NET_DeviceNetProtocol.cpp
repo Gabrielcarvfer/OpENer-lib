@@ -3,7 +3,7 @@
 //
 //	Get datagram group from CAN identifier
 //
-int dnet_identifier_group_check(uint32_t* can_id)
+int NET_DeviceNetProtocol::dnet_identifier_group_check(uint32_t* can_id)
 {
 
     //Check if identifier matches with Message Group 1
@@ -37,7 +37,7 @@ int dnet_identifier_group_check(uint32_t* can_id)
 //
 //	Get info from CAN identifier based on Group ID
 //
-int dnet_identifier_group_match(struct can_frame* frame_rd)
+int NET_DeviceNetProtocol::dnet_identifier_group_match(struct can_frame* frame_rd)
 {
     kDeviceNetMessageId msg_id;
     int mac;
@@ -67,7 +67,6 @@ int dnet_identifier_group_match(struct can_frame* frame_rd)
     switch (msg_id) 
 	{
 		case (slv_mcast_poll_res):
-
 			break;
 		case (slv_st8chng_or_cyc):
 			break;
@@ -98,4 +97,426 @@ int dnet_identifier_group_match(struct can_frame* frame_rd)
     }
     //printf("dnet_identifier -> msg_id = %d source_mac = %d\n", msg_id, mac);
 	return 0;
+}
+
+#define NO_RESPONSE			0
+#define LENGTH 				BUFSIZE - 1		// this location holds length of message
+#define MESSAGE_TAG			BUFSIZE - 2    // this location holds a message tag
+
+//Define message fragment values
+#define  FIRST_FRAG						0x00
+#define  MIDDLE_FRAG						0x40
+#define  LAST_FRAG						0x80
+#define  ACK_FRAG							0xC0
+
+// define message tags which can be used to identify message
+#define  RECEIVED_ACK					0x01
+#define  SEND_ACK							0x02
+#define  ACK_TIMEOUT						0x03
+#define	ACK_ERROR						0x04
+
+
+
+#define OK						1
+
+// define connection states
+#define NON_EXISTENT						0x00
+#define CONFIGURING						0x01
+#define WAITING_FOR						0x02
+#define ESTABLISHED						0x03
+#define TIMED_OUT							0x04
+#define DEFERRED							0x05
+
+// Define Instance IDs and TIMER numbers
+#define  EXPLICIT							0x01
+#define  IO_POLL							0x02
+#define  BIT_STROBE						0x03
+#define  COS_CYCLIC						0x04
+#define  ACK_WAIT							0x05
+#define  UPDATE							0x06
+
+
+int NET_DeviceNetProtocol::explicit_consume_message(char request[])
+{
+	UCHAR i, length, fragment_count, fragment_type, fragment_flg;
+	UCHAR temp_buffer[BUFSIZE];
+
+	if (state = DEFERRED)
+		state = ESTABLISHED;
+	if (state != ESTABLISHED)
+		return NO_RESPONSE;
+
+	// From this point on we are dealing with an Explicit message
+	// If it is not fragmented, reset frag counters to initial state
+	// and process the current incoming message.
+	if ((request[0] & 0x80) == 0)
+	{
+		rcve_index = 0;
+		xmit_index = 0;
+		my_rcve_fragment_count = 0;
+		my_xmit_fragment_count = 0;
+		ack_timeout_counter = 0;
+		global_timer[ACK_WAIT] = 0;
+		return OK;
+	}
+
+	// At this point we are dealing with either an explicit fragment
+	// or an ACK to an explicit message we sent earlier
+	fragment_type = request[1] & 0xC0;
+	fragment_count = request[1] & 0x3F;
+	length = request[LENGTH];
+
+
+	switch (fragment_type)
+	{
+	case ACK_FRAG:
+		// Received an ack from the master to an explicit fragment I sent earlier
+		// Send the request to the link producer along with a tag so it knows
+		// what do do with the message
+		request[MESSAGE_TAG] = RECEIVED_ACK;
+		explicit_produce_message(request);
+		break;
+
+
+	case FIRST_FRAG:
+		if (fragment_count != 0)
+		{
+			// Reset fragment counters to initial state and drop fragment
+			rcve_index = 0;
+			my_rcve_fragment_count = 0;
+			return NO_RESPONSE;
+		}
+
+		// get rid of any existing fragments and process first fragment
+		rcve_index = 0;
+		my_rcve_fragment_count = 0;
+		memset(rcve_fragment_buf, 0, BUFSIZE);
+		rcve_fragment_buf[rcve_index] = request[0] & 0x7F; // remove fragment flag
+		rcve_index++;
+		for (i = 2; i < length; i++)      // do not copy fragment info
+		{
+			rcve_fragment_buf[rcve_index] = request[i];
+			rcve_index++;
+		}
+
+		// Check to see if Master has exceeded byte count limit
+		if (rcve_index > consumed_conxn_size)
+		{
+			rcve_index = 0;                       // reset fragment counters
+			my_rcve_fragment_count = 0;
+			request[MESSAGE_TAG] = ACK_ERROR;
+			explicit_produce_message(request);
+		}
+		else  // fragment checked out OK so send ACK
+		{
+			request[MESSAGE_TAG] = SEND_ACK;
+			explicit_produce_message(request);
+			my_rcve_fragment_count++;
+		}
+		break;
+
+
+
+	case MIDDLE_FRAG:
+		if (my_rcve_fragment_count == 0) 
+			return NO_RESPONSE;  // just drop fragment
+
+															  // See if Master has sent the same fragment again.  If so just send ACK
+		if (fragment_count == (my_rcve_fragment_count - 1))
+		{
+			request[MESSAGE_TAG] = SEND_ACK;
+			explicit_produce_message(request);
+		}
+		// See if received fragment count does not agree with my count
+		// If so, reset to beginning
+		else if (fragment_count != my_rcve_fragment_count)
+		{
+			rcve_index = 0;
+			my_rcve_fragment_count = 0;
+		}
+
+		else  // Fragment was validated so process it
+		{
+			// Copy the fragment to reassembly buffer, omit first 2 bytes
+			for (i = 2; i < length; i++)
+			{
+				rcve_fragment_buf[rcve_index] = request[i];
+				rcve_index++;
+			}
+			// Check to see if Master has exceeded byte count limit
+			if (rcve_index > consumed_conxn_size)
+			{
+				rcve_index = 0;
+				my_rcve_fragment_count = 0;
+				request[MESSAGE_TAG] = ACK_ERROR;
+				explicit_produce_message(request);
+			}
+			else  // send good ACK back to Master
+			{
+				request[MESSAGE_TAG] = SEND_ACK;
+				explicit_produce_message(request);
+				my_rcve_fragment_count++;
+			}
+		}
+		break;
+
+
+
+	case LAST_FRAG:
+		if (my_rcve_fragment_count == 0)
+		{
+			return NO_RESPONSE;  // just drop fragment
+
+		}
+		// See if received fragment count does not agree with my count
+		// If so, reset to beginning
+		else if (fragment_count != my_rcve_fragment_count)
+		{
+			rcve_index = 0;
+			my_rcve_fragment_count = 0;
+		}
+		else  // Fragment was validated, so process it
+		{
+			// Copy the fragment to reassembly buffer, omit first 2 bytes
+			for (i = 2; i < length; i++)
+			{
+				rcve_fragment_buf[rcve_index] = request[i];
+				rcve_index++;
+			}
+
+			// Check to see if Master has exceeded byte count limit
+			if (rcve_index > consumed_conxn_size)
+			{
+				rcve_index = 0;
+				my_rcve_fragment_count = 0;
+				memset(rcve_fragment_buf, 0, BUFSIZE);
+				request[MESSAGE_TAG] = ACK_ERROR;
+				explicit_produce_message(request);
+			}
+			else  // Fragment was OK, send ACK and reset everything
+			{
+				request[MESSAGE_TAG] = SEND_ACK;
+				explicit_produce_message(request);
+				// We are done receiving a fragmented explicit message
+				// Copy from temporary buffer back to request buffer
+				// and process complete Explicit message
+				memcpy(request, rcve_fragment_buf, BUFSIZE);
+				request[LENGTH] = rcve_index;
+				rcve_index = 0;
+				my_rcve_fragment_count = 0;
+				memset(rcve_fragment_buf, 0, BUFSIZE);
+				return OK;
+			}
+		}
+		break;
+
+
+	default:
+		break;
+	}
+
+	return NO_RESPONSE;
+}
+
+int NET_DeviceNetProtocol::io_consume_message(char request[])
+{
+	// The Master should not send me any data in I/O message
+	if (request[LENGTH] == 0) 
+		return OK;
+	else 
+		return NO_RESPONSE;
+}
+
+void NET_DeviceNetProtocol::io_produce_message(char response[])
+{
+	UCHAR length, bytes_left, i, fragment_count, ack_status;
+	static UCHAR copy[BUFSIZE];
+
+	length = response[LENGTH];
+
+	// load io poll response into can chip object #9
+	for (i = 0; i < length; i++)  						// load CAN data
+	{
+		//pokeb(CAN_BASE, (0x57 + i), response[i]);
+	}
+	//pokeb(CAN_BASE, 0x56, ((length << 4) | 0x08));	// load config register
+	//pokeb(CAN_BASE, 0x51, 0x66);      					// set transmit request
+}
+
+void NET_DeviceNetProtocol::explicit_produce_message(char response[])
+{
+	UCHAR length, bytes_left, i, fragment_count, ack_status;
+	static UCHAR copy[BUFSIZE];
+
+	length = response[LENGTH];
+
+	if (response[MESSAGE_TAG] == ACK_TIMEOUT)
+	{
+		ack_timeout_counter++;
+		if (ack_timeout_counter == 1)
+		{
+			// Load last explicit fragment send again
+			length = copy[LENGTH];
+			for (i = 0; i < length; i++)  						// load data into CAN
+			{
+				//pokeb(CAN_BASE, (0x67 + i), copy[i]);
+			}
+			//pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config resister
+			//pokeb(CAN_BASE, 0x61, 0x66);      					// set transmit request
+			global_timer[ACK_WAIT] = 20;
+
+		}
+		if (ack_timeout_counter == 2)
+		{
+			// abort trying to send fragmented message
+			xmit_index = 0;
+			my_xmit_fragment_count = 0;
+			ack_timeout_counter = 0;
+			global_timer[ACK_WAIT] = 0;
+		}
+	}
+
+
+	else if (response[MESSAGE_TAG] == RECEIVED_ACK)
+	{
+		fragment_count = response[1] & 0x3F;
+		ack_status = response[2];
+		if (my_xmit_fragment_count == fragment_count)
+		{
+			// If Master returned a bad ACK status, reset everything
+			// and abort the attempt to send message
+			if (ack_status != 0)
+			{
+				xmit_index = 0;
+				my_xmit_fragment_count = 0;
+				ack_timeout_counter = 0;
+				global_timer[ACK_WAIT] = 0;
+			}
+
+			// Master's ACK was OK, so send next fragment unless we were done sending
+			// Keep a copy of what we are sending
+			else
+			{
+				if (xmit_index >= xmit_fragment_buf[LENGTH])
+				{
+					// got ACK to out final fragment so reset everything
+					xmit_index = 0;
+					my_xmit_fragment_count = 0;
+					ack_timeout_counter = 0;
+					global_timer[ACK_WAIT] = 0;
+				}
+				else
+				{
+					// Send another fragment
+					// Figure out how many bytes are left to send
+					bytes_left = xmit_fragment_buf[LENGTH] - xmit_index;
+					my_xmit_fragment_count++;
+					ack_timeout_counter = 0;
+					global_timer[ACK_WAIT] = 20;				// restart timer for 1 second
+																// Load the first byte of the fragment
+					copy[0] = response[0] | 0x80;
+					//pokeb(CAN_BASE, 0x67, copy[0]);
+					if (bytes_left > 6)			// this is a middle fragment
+					{
+						copy[1] = MIDDLE_FRAG | my_xmit_fragment_count;
+						//pokeb(CAN_BASE, 0x68, copy[1]);
+						length = 8;
+					}
+					else   							// this is the last fragment
+					{
+						copy[1] = LAST_FRAG | my_xmit_fragment_count;
+						//pokeb(CAN_BASE, 0x68, copy[1]);
+						length = bytes_left + 2;
+					}
+					// Put in actual data
+					for (i = 2; i < length; i++)  // put up to 6 more bytes in CAN chip
+					{
+						copy[i] = xmit_fragment_buf[xmit_index];
+						//pokeb(CAN_BASE, (0x67 + i), copy[i]);
+						xmit_index++;
+					}
+					copy[LENGTH] = length;
+					/*
+					pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config resister
+					pokeb(CAN_BASE, 0x61, 0x66);      // set msg object transmit request
+					*/
+				}
+			}
+		}
+	}
+
+
+	// Send this message in response to receiving an explicit fragment
+	// from the Master that the link comsumer has validated as OK
+	else if (response[MESSAGE_TAG] == SEND_ACK)
+	{
+		length = 3;												// This is a 3 byte message
+		/*
+		pokeb(CAN_BASE, 0x67, (response[0] | 0x80));
+		pokeb(CAN_BASE, 0x68, (response[1] | ACK_FRAG));
+		pokeb(CAN_BASE, 0x69, 0);								// ack status = OK
+		pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config resister
+		pokeb(CAN_BASE, 0x61, 0x66);      					// set transmit request
+		*/
+	}
+
+
+
+	// Send this message in response to receiving an explicit fragment
+	// from the Master that exceeded the byte count limit for the connection
+	else if (response[MESSAGE_TAG] == ACK_ERROR)
+	{
+		length = 3;												// This is a 3 byte message
+
+		/*
+		pokeb(CAN_BASE, 0x67, (response[0] | 0x80));
+		pokeb(CAN_BASE, 0x68, (response[1] | ACK_FRAG));
+		pokeb(CAN_BASE, 0x69, 1);								// ack status = TOO MUCH DATA
+		pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config register
+		pokeb(CAN_BASE, 0x61, 0x66);      					// set transmit request
+		*/
+	}
+
+
+
+	else if (length <= 8)		// Send complete Explicit message
+	{
+		// load explicit response into can chip object #3
+		for (i = 0; i < length; i++)  						// load data into CAN
+		{
+			//pokeb(CAN_BASE, (0x67 + i), response[i]);
+		}
+		//pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config resister
+		//pokeb(CAN_BASE, 0x61, 0x66);      					// set transmit request
+	}
+
+
+
+	else if (length > 8)       // Send first Explicit message fragment
+	{
+		// load explicit response into a buffer to keep around a while
+		memcpy(xmit_fragment_buf, response, BUFSIZE);
+		length = 8;
+		xmit_index = 0;
+		my_xmit_fragment_count = 0;
+		ack_timeout_counter = 0;
+		// Load first fragment into can chip object #3
+		copy[0] = response[0] | 0x80;
+		//pokeb(CAN_BASE, 0x67, copy[0]);
+		xmit_index++;
+		// Put in fragment info
+		copy[1] = FIRST_FRAG | my_xmit_fragment_count;
+		//pokeb(CAN_BASE, 0x68, copy[1]);
+		// Put in actual data
+		for (i = 2; i < 8; i++)  // put 6 more bytes in CAN chip
+		{
+			copy[i] = xmit_fragment_buf[xmit_index];
+			//pokeb(CAN_BASE, (0x67 + i), copy[i]);
+			xmit_index++;
+		}
+		copy[LENGTH] = length;
+		//pokeb(CAN_BASE, 0x66, ((length << 4) | 0x08));	// load config resister
+		//pokeb(CAN_BASE, 0x61, 0x66);      					// set msg object transmit request
+		global_timer[ACK_WAIT] = 20;							// start timer to wait for ack
+	}
 }

@@ -26,15 +26,6 @@ CipUdint NET_DeviceNET_Link::get_all_class_attributes_mask = 0xffffffff;
 CipUdint NET_DeviceNET_Link::get_all_instance_attributes_mask = 0xffffffff;
 
 //Methods
-void NET_DeviceNET_Link::ConfigureMacAddress(const CipUsint* mac_address)
-{
-    memcpy(&mac_id, mac_address,  sizeof(mac_id));
-}
-
-NET_DeviceNET_Link::NET_DeviceNET_Link()
-{
-
-}
 
 NET_DeviceNET_Link::~NET_DeviceNET_Link()
 {

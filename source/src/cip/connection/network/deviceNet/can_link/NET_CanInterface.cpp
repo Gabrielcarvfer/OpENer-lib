@@ -67,7 +67,7 @@ NET_CanInterface::~NET_CanInterface()
 		return 1;
 	}
 
-#else
+#elif __linux__
 	int NET_CanInterface::open_port(const char *port)
 	{
 		struct ifreq ifr;
@@ -141,5 +141,24 @@ NET_CanInterface::~NET_CanInterface()
 	{
 		close(soc);
 		return 0;
+	}
+#else EMBEDDED
+	int NET_CanInterface::open_port(const char *port)
+	{
+		
+	}
+	int NET_CanInterface::send_port(struct can_frame *frame)
+	{
+		
+	}
+
+	void NET_CanInterface::read_port(struct can_frame * frame_rd, int *recvBytes)
+	{
+		
+	}
+
+	int NET_CanInterface::close_port()
+	{
+		
 	}
 #endif

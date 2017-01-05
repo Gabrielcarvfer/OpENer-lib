@@ -2,8 +2,12 @@
 // @author Gabriel Ferreira (gabrielcarvfer)
 //
 
-#ifdef WIN32
-	#include <Windows.h>
+#if __linux__
+	#include <linux/can.h>
+#else
+	#ifdef WIN32
+		#include <Windows.h>
+	#endif
 	#include <cstdint>
 	#define CAN_MAX_DLEN 8
 	struct can_frame {
@@ -15,8 +19,6 @@
 		uint8_t    data[CAN_MAX_DLEN];
 	
 	};
-#else
-	#include <linux/can.h>
 #endif
 class NET_CanInterface
 {
