@@ -8,7 +8,9 @@
 	#include <stdio.h>
 	#include <cstring>
 	#include <sys/ioctl.h>
+	#include <linux/can.h>
 	#include <linux/can/raw.h>
+	#include <linux/can/error.h>
 #endif
 
 
@@ -72,12 +74,20 @@ NET_CanInterface::~NET_CanInterface()
 	{
 		struct ifreq ifr;
 		struct sockaddr_can addr;
+
 		// open socket
 		soc = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+
+		//Set error mask for error messages as can frames
+		can_err_mask_t err_mask = ( CAN_ERR_TX_TIMEOUT | CAN_ERR_BUSOFF );
+		setsockopt(soc, SOL_CAN_RAW, CAN_RAW_ERR_FILTER, &err_mask, sizeof(err_mask));
+
+		//Invalid socket
 		if(soc < 0)
 		{
 			return (-1);
 		}
+
 		addr.can_family = AF_CAN;
 		strcpy(ifr.ifr_name, port);
 		if (ioctl(soc, SIOCGIFINDEX, &ifr) < 0)
@@ -86,6 +96,8 @@ NET_CanInterface::~NET_CanInterface()
 		}
 		addr.can_ifindex = ifr.ifr_ifindex;
 		fcntl(soc, F_SETFL, O_NONBLOCK);
+
+		//Check if can bind socket to interface
 		if (bind(soc, (struct sockaddr *)&addr, sizeof(addr)) < 0)
 		{
 			return (-1);

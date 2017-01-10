@@ -99,6 +99,101 @@ int NET_DeviceNetProtocol::dnet_identifier_group_match(struct can_frame* frame_r
 	return 0;
 }
 
+void NET_DeviceNetProtocol::state_machine()
+{
+	switch (state)
+	{
+			//Comming from device power lost
+		case NON_EXISTENT:
+			//device power up
+			num_retries = 0;
+			state = SEND_DUPLICATE_MAC_REQ;
+			break;
+		case SEND_DUPLICATE_MAC_REQ:
+			if (PLACEHOLDER_transmit_dup_request())
+			{
+				if (quick_connect)
+				{
+					state = ON_LINE;
+				}
+				else
+				{
+					state = WAIT_DUPLICATE_MAC_REQ;
+				}
+			}
+			else
+			{
+				//If dupMacCheck req/resp received
+				//CAN bus-Off detected
+				//Network power offline
+				state = COMM_FAULT;
+			}
+			break;
+		case WAIT_DUPLICATE_MAC_REQ:
+			bool timeout = PLACEHOLDER_receive_msg(PLACEHOLDER_timerVal);
+			if (timeout)
+			{
+				num_retries++;
+			}
+			//If duplicate MAC is not received and can bus is offline
+			if (PLACEHOLDER_check_msg_4_dup() | PLACEHOLDER_check_can_bus_off())
+			{
+				state = COMM_FAULT;
+			}
+			//If duplicate MAC is not received and can is online
+			else
+			{
+				//In case retries num is equal one, then continue
+				if (num_retries == 1)
+				{
+					state = ON_LINE;
+				}
+				//Else, you keep checking and discarding messages
+				else
+				{
+					PLACEHOLDER_discard_msg();
+				}
+			}
+			break;
+		case COMM_FAULT:
+			PLACEHOLDER_comm_fault_request_msg_received();
+			//Manual intervention
+			//Comm_fault_request_message
+			//	change_mac_msg
+			//	change_mac_to_net_mac
+			//Network power restored
+			if (PLACEHOLDER_comm_fault_request() | PLACEHOLDER_check_network_power())
+			{
+				num_retries = 0;
+				state = SEND_DUPLICATE_MAC_REQ;
+			}
+			break;
+		case ON_LINE:
+			if (PLACEHOLDER_check_CAN_bus_off() & BOI == 1)
+			{
+				num_retries = 0;
+				state = SEND_DUPLICATE_MAC_REQ;
+			}
+			if (PLACEHOLDER_check_dup_resp_msg() | (PLACEHOLDER_check_can_bus_off() & BOI == 0))
+			{
+				state = COMM_FAULT;
+			}
+			if (PLACEHOLDER_check_dup_req_msg())
+				PLACEHOLDER_transmit_dup_mac_response();
+
+			if (quick_connect & timeout & num_retries == 0)
+			{
+				num_retries++;
+				PLACEHOLDER_transmit_mac_check_request_msg();
+			}
+
+			break;
+		default:
+			//Non-defined state
+	}
+}
+
+
 #define NO_RESPONSE			0
 #define LENGTH 				BUFSIZE - 1		// this location holds length of message
 #define MESSAGE_TAG			BUFSIZE - 2    // this location holds a message tag
@@ -132,10 +227,12 @@ int NET_DeviceNetProtocol::explicit_consume_message(char request[])
 	UCHAR i, length, fragment_count, fragment_type, fragment_flg;
 	UCHAR temp_buffer[BUFSIZE];
 
+	/*
 	if (state = DEFERRED)
 		state = ESTABLISHED;
 	if (state != ESTABLISHED)
 		return NO_RESPONSE;
+		*/
 
 	// From this point on we are dealing with an Explicit message
 	// If it is not fragmented, reset frag counters to initial state

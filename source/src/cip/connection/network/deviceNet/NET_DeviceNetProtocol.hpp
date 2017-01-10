@@ -33,8 +33,12 @@ private:
 	{
 		NON_EXISTENT, SEND_DUPLICATE_MAC_REQ, WAIT_DUPLICATE_MAC_REQ, COMM_FAULT, ON_LINE
 	}DeviceNetStates;
+	int num_retries;
+	bool quick_connect;
+	void state_machine();
+
 	// define connection states
-	#define NON_EXISTENT						0x00
+	//#define NON_EXISTENT						0x00
 	#define CONFIGURING						0x01
 	#define WAITING_FOR						0x02
 	#define ESTABLISHED						0x03
@@ -82,7 +86,7 @@ private:
 
 	//instances stuff
 	#define BUFSIZE				80    			// size of message buffers
-	DeviceNetStates state;
+	DeviceNetStates state = NON_EXISTENT;
 	char rcve_index, xmit_index;
 	char my_rcve_fragment_count, my_xmit_fragment_count;
 	int produced_conxn_size, consumed_conxn_size;
