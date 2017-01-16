@@ -6,7 +6,7 @@
 #include "../../trace.hpp"
 #include "../CIP_Common.hpp"
 #include "CIP_Attribute.hpp"
-#include "../../opENer_user_conf.hpp"
+#include "../../opener_user_conf.hpp"
 #include <utility>
 
 //Static variables

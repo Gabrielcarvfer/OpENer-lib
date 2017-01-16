@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include "../../../ciptypes.hpp"
+#include "./can_link/NET_CanInterface.hpp"
 
 class NET_DeviceNetProtocol
 {

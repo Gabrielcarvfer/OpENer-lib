@@ -1,6 +1,8 @@
 //
 // @author Gabriel Ferreira (gabrielcarvfer)
 //
+#ifndef NET_CANINTERFACE_H
+#define NET_CANINTERFACE_H
 
 #if __linux__
 	#include <linux/can.h>
@@ -45,7 +47,7 @@ class NET_CanInterface
 		typedef enum {
 			S0=10, S1=20, S2=50, S3=100, S4=125, 
 			S5=250,	S6=500,	S7=800,	S8=1000
-		}kCanBaudRate;
+		}kCanBaudRate; // All CAN supported speeds in kbits/s
 
     private:
 #ifdef WIN32
@@ -53,6 +55,9 @@ class NET_CanInterface
 		kCanBaudRate baudRate;
 #elif __linux__
         int soc;
+		int read_can_port;
 #elif EMBEDDED
 #endif
 };
+
+#endif //NET_CANINTERFACE_H

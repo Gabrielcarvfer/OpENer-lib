@@ -2,15 +2,16 @@
 
 #ifdef WIN32
 	#include <windows.h>
-#else
-	#include "fcntl.h>
+#elif __linux__
+	#include <fcntl.h>
 	#include <net/if.h>
 	#include <stdio.h>
 	#include <cstring>
 	#include <sys/ioctl.h>
-	#include <linux/can.h>
 	#include <linux/can/raw.h>
 	#include <linux/can/error.h>
+	#include <unistd.h>
+
 #endif
 
 
@@ -120,8 +121,9 @@ NET_CanInterface::~NET_CanInterface()
 
 	void NET_CanInterface::read_frame(struct can_frame * frame_rd, int *recvBytes)
 	{
+
 		//struct can_frame frame_rd;
-		//int recvbytes = 0;
+		int recvbytes = 0;
 		recvBytes = 0;
 		read_can_port = 1;
 		while(read_can_port)
@@ -154,7 +156,7 @@ NET_CanInterface::~NET_CanInterface()
 		close(soc);
 		return 0;
 	}
-#else EMBEDDED
+#elif EMBEDDED
 	int NET_CanInterface::open_port(const char *port)
 	{
 		
