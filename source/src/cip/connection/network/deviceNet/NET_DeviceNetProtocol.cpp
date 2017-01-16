@@ -1,3 +1,4 @@
+#include <cstring>
 #include "NET_DeviceNetProtocol.hpp"
 #include "can_link/NET_CanInterface.hpp"
 //
@@ -103,14 +104,14 @@ void NET_DeviceNetProtocol::state_machine()
 {
 	switch (state)
 	{
-			//Comming from device power lost
-		case NON_EXISTENT:
+        //Comming from device power lost
+		case (NON_EXISTENT):
 			//device power up
 			num_retries = 0;
 			state = SEND_DUPLICATE_MAC_REQ;
 			break;
-		case SEND_DUPLICATE_MAC_REQ:
-			if (PLACEHOLDER_transmit_dup_request())
+		case (SEND_DUPLICATE_MAC_REQ):
+			if (transmit_dup_request())
 			{
 				if (quick_connect)
 				{
@@ -129,14 +130,15 @@ void NET_DeviceNetProtocol::state_machine()
 				state = COMM_FAULT;
 			}
 			break;
-		case WAIT_DUPLICATE_MAC_REQ:
-			bool timeout = PLACEHOLDER_receive_msg(PLACEHOLDER_timerVal);
+		case (WAIT_DUPLICATE_MAC_REQ):
+			bool timeout;
+            timeout = receive_msg(timerVal);
 			if (timeout)
 			{
 				num_retries++;
 			}
 			//If duplicate MAC is not received and can bus is offline
-			if (PLACEHOLDER_check_msg_4_dup() | PLACEHOLDER_check_can_bus_off())
+			if (check_msg_4_dup() | check_can_bus_off())
 			{
 				state = COMM_FAULT;
 			}
@@ -151,45 +153,47 @@ void NET_DeviceNetProtocol::state_machine()
 				//Else, you keep checking and discarding messages
 				else
 				{
-					PLACEHOLDER_discard_msg();
+                    discard_msg();
 				}
 			}
 			break;
-		case COMM_FAULT:
-			PLACEHOLDER_comm_fault_request_msg_received();
+		case (COMM_FAULT):
+            comm_fault_request_msg_received();
 			//Manual intervention
 			//Comm_fault_request_message
 			//	change_mac_msg
 			//	change_mac_to_net_mac
 			//Network power restored
-			if (PLACEHOLDER_comm_fault_request() | PLACEHOLDER_check_network_power())
+			if (comm_fault_request() | check_network_power())
 			{
 				num_retries = 0;
 				state = SEND_DUPLICATE_MAC_REQ;
 			}
 			break;
-		case ON_LINE:
-			if (PLACEHOLDER_check_CAN_bus_off() & BOI == 1)
+		case (ON_LINE):
+			if (check_can_bus_off() & BOI == 1)
 			{
 				num_retries = 0;
 				state = SEND_DUPLICATE_MAC_REQ;
 			}
-			if (PLACEHOLDER_check_dup_resp_msg() | (PLACEHOLDER_check_can_bus_off() & BOI == 0))
+			if (check_dup_resp_msg() | (check_can_bus_off() & BOI == 0))
 			{
 				state = COMM_FAULT;
 			}
-			if (PLACEHOLDER_check_dup_req_msg())
-				PLACEHOLDER_transmit_dup_mac_response();
+			if (check_dup_req_msg())
+                transmit_dup_mac_response();
 
 			if (quick_connect & timeout & num_retries == 0)
 			{
 				num_retries++;
-				PLACEHOLDER_transmit_mac_check_request_msg();
+                transmit_mac_check_req_msg();
 			}
 
 			break;
 		default:
-			//Non-defined state
+			//Undefined state
+
+			break;
 	}
 }
 
@@ -224,8 +228,9 @@ void NET_DeviceNetProtocol::state_machine()
 
 int NET_DeviceNetProtocol::explicit_consume_message(char request[])
 {
-	UCHAR i, length, fragment_count, fragment_type, fragment_flg;
-	UCHAR temp_buffer[BUFSIZE];
+	char i, length, fragment_count, fragment_flg;
+    int fragment_type;
+	char temp_buffer[BUFSIZE];
 
 	/*
 	if (state = DEFERRED)
@@ -257,7 +262,7 @@ int NET_DeviceNetProtocol::explicit_consume_message(char request[])
 
 	switch (fragment_type)
 	{
-	case ACK_FRAG:
+	case (ACK_FRAG):
 		// Received an ack from the master to an explicit fragment I sent earlier
 		// Send the request to the link producer along with a tag so it knows
 		// what do do with the message
@@ -305,7 +310,7 @@ int NET_DeviceNetProtocol::explicit_consume_message(char request[])
 
 
 
-	case MIDDLE_FRAG:
+	case (MIDDLE_FRAG):
 		if (my_rcve_fragment_count == 0) 
 			return NO_RESPONSE;  // just drop fragment
 
@@ -350,7 +355,7 @@ int NET_DeviceNetProtocol::explicit_consume_message(char request[])
 
 
 
-	case LAST_FRAG:
+	case (LAST_FRAG):
 		if (my_rcve_fragment_count == 0)
 		{
 			return NO_RESPONSE;  // just drop fragment
@@ -419,7 +424,7 @@ void NET_DeviceNetProtocol::enframe_and_send(char message[])
 {
 
 	struct can_frame frame;
-	UCHAR length = message[LENGTH];
+	char length = message[LENGTH];
 	memcpy(&(frame.data),message, length);
 	frame.can_dlc = length;
 	frame.can_id = *id;
@@ -434,8 +439,8 @@ void NET_DeviceNetProtocol::io_produce_message(char response[])
 
 void NET_DeviceNetProtocol::explicit_produce_message(char response[])
 {
-	UCHAR length, bytes_left, i, fragment_count, ack_status;
-	static UCHAR copy[BUFSIZE];
+	char length, bytes_left, i, fragment_count, ack_status;
+	char copy[BUFSIZE];
 
 	length = response[LENGTH];
 
@@ -595,4 +600,65 @@ void NET_DeviceNetProtocol::explicit_produce_message(char response[])
 		//pokeb(CAN_BASE, 0x61, 0x66);      					// set msg object transmit request
 		global_timer[ACK_WAIT] = 20;							// start timer to wait for ack
 	}
+}
+
+
+bool NET_DeviceNetProtocol::transmit_dup_request()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::receive_msg(int PLACEHOLDER_timerVal)
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::check_msg_4_dup()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::check_can_bus_off()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::discard_msg()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::comm_fault_request_msg_received()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::comm_fault_request()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::check_network_power()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::check_dup_resp_msg()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::check_dup_req_msg()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::transmit_dup_mac_response()
+{
+    return false;
+}
+
+bool NET_DeviceNetProtocol::transmit_mac_check_req_msg()
+{
+    return false;
 }

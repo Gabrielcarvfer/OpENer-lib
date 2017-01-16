@@ -50,6 +50,7 @@ class NET_CanInterface
 		}kCanBaudRate; // All CAN supported speeds in kbits/s
 
     private:
+
 #ifdef WIN32
 		HANDLE soc;
 		kCanBaudRate baudRate;

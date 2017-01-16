@@ -3,7 +3,7 @@
 #######################################
 opENer_common_includes()
 
-add_subdirectory( cip_objects )
+#add_subdirectory( cip_objects )
 add_subdirectory( utils )
 add_subdirectory( cip )
 

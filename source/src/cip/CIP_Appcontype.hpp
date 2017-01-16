@@ -9,8 +9,9 @@
 #include "template/CIP_Object.hpp"
 #include "connection/CIP_Connection.hpp"
 #include "ciptypes.hpp"
-#include "../opENer_user_conf.hpp"
+#include "../opener_user_conf.hpp"
 
+class CIP_Appcontype;
 class CIP_Appcontype : public CIP_Object<CIP_Appcontype>
 {
 public:

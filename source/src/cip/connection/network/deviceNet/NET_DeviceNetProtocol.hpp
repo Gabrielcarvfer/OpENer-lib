@@ -38,6 +38,23 @@ private:
 	bool quick_connect;
 	void state_machine();
 
+    bool transmit_dup_request();
+    bool receive_msg(int PLACEHOLDER_timerVal);
+    int timerVal;
+    bool check_msg_4_dup();
+    bool check_can_bus_off();
+    bool discard_msg();
+    bool comm_fault_request_msg_received();
+    bool comm_fault_request();
+    bool check_network_power();
+    bool check_dup_resp_msg();
+    bool check_dup_req_msg();
+    bool transmit_dup_mac_response();
+    bool transmit_mac_check_req_msg();
+    int BOI;
+    
+    
+
 	// define connection states
 	//#define NON_EXISTENT						0x00
 	#define CONFIGURING						0x01

@@ -20,10 +20,10 @@
 #include "NET_DeviceNetLink.hpp"
  
 //Variables
-CipUdint NET_DeviceNET_Link::class_id = kCipDeviceNetLinkClassCode;
-std::string NET_DeviceNET_Link::class_name = "Devicenet Link";
-CipUdint NET_DeviceNET_Link::get_all_class_attributes_mask = 0xffffffff;
-CipUdint NET_DeviceNET_Link::get_all_instance_attributes_mask = 0xffffffff;
+//CipUdint NET_DeviceNET_Link::class_id = kCipDeviceNetLinkClassCode;
+//std::string NET_DeviceNET_Link::class_name = "Devicenet Link";
+//CipUdint NET_DeviceNET_Link::get_all_class_attributes_mask = 0xffffffff;
+//CipUdint NET_DeviceNET_Link::get_all_instance_attributes_mask = 0xffffffff;
 
 //Methods
 

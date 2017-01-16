@@ -10,11 +10,12 @@
     #include <windows.h>
     #include <winsock.h>
     #include <ws2tcpip.h>
-#else
-    #include <sys/sock.h>
+#elif __linux__
+    #include <sys/socket.h>
     #include <netinet/in.h>
     #include <arpa/inet.h>
     #include <sys/select.h>
+    #include <bits/socket.h>
 #endif
 
 

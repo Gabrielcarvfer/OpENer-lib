@@ -10,8 +10,6 @@
 
 
 
-class NET_DeviceNET_Link;
-
 class NET_DeviceNET_Link : public CIP_Object<NET_DeviceNET_Link>
 {
 	NET_DeviceNET_Link

@@ -8,6 +8,7 @@
 #include "eip_endianconv.hpp"
 #include "../NET_Connection.hpp"
 #include "../NET_Endianconv.hpp"
+#include "NET_EthIP_Includes.h"
 
 int EncapsulateIpAddress(CipUint port, CipUdint address, CipByte** communication_buffer)
 {

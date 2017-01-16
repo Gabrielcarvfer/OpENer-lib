@@ -17,7 +17,7 @@
 		#pragma comment(lib, "Ws2_32.lib")
 		#pragma comment(lib, "iphlpapi.lib")
 	#endif
-#else
+#elif __linux__
     #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
     #include <arpa/inet.h>
     #include <sys/socket.h>
@@ -27,6 +27,9 @@
     #include <stdlib.h>
     #include <unistd.h>
     #include <linux/if_link.h>
+    #include <net/if.h>
+    #include <sys/ioctl.h>
+
 #endif
 
 //Defines
@@ -451,7 +454,7 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
         WSACleanup();
         return nNumInterfaces;
     }
-#else
+#elif __linux__
 int GetInterfacesList(ip_interface **interface_ptr)
 {
     struct ifaddrs *ifaddr, *ifa;
@@ -476,7 +479,7 @@ int GetInterfacesList(ip_interface **interface_ptr)
 
     for (ifa = ifaddr, i = 0; ifa != NULL; ifa = ifa->ifa_next, i++)
     {
-        if (ifa->ifa_addr == NULL || ((family = ifa->ifa_addr->sa_family) != AF_INET)
+        if (ifa->ifa_addr == NULL || ((family = ifa->ifa_addr->sa_family) != AF_INET))
             continue;
 
             s = getnameinfo(
@@ -523,18 +526,18 @@ int GetInterfacesList(ip_interface **interface_ptr)
         strcpy(&((*interface_ptr)[i].mac)[0], mac);
 
         //Copy broadcast ip
-        strcpy(&((*interface_ptr)[i].ipv4.bcast_ip)[0], inet_ntoa(ifa->ifu_broadaddr));
+        strcpy(&((*interface_ptr)[i].ipv4.bcast_ip)[0], inet_ntoa((sock_addr*)ifa->ifa_ifu.ifu_broadaddr));
 
         //Copy netmask
         strcpy(&((*interface_ptr)[i].ipv4.netmask)[0], inet_ntoa(ifa->ifa_netmask));
 
         //Copy flags
-        u_long nFlags = ifr.ifr_flags;
-        (*interface_ptr)[i].up = nFlags & IFF_UP;
-        (*interface_ptr)[i].p2p = nFlags & IFF_POINTTOPOINT;
-        (*interface_ptr)[i].loopback = nFlags & IFF_LOOPBACK;
-        (*interface_ptr)[i].bcast = nFlags & IFF_BROADCAST;
-        (*interface_ptr)[i].mcast = nFlags & IFF_MULTICAST;
+        u_long nFlags = (u_long) ifr.ifr_flags;
+        (*interface_ptr)[i].up       = (bool) nFlags & IFF_UP;
+        (*interface_ptr)[i].p2p      = (bool) nFlags & IFF_POINTTOPOINT;
+        (*interface_ptr)[i].loopback = (bool) nFlags & IFF_LOOPBACK;
+        (*interface_ptr)[i].bcast    = (bool) nFlags & IFF_BROADCAST;
+        (*interface_ptr)[i].mcast    = (bool) nFlags & IFF_MULTICAST;
 
 
     }
