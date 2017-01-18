@@ -9,6 +9,7 @@
 //#define USETHREAD
 
 #include <cassert>
+#include <signal.h>
 #include "cip/ciperror.hpp"
 #include "cip/ciptypes.hpp"
 #include "cip/template/CIP_Object.hpp"
@@ -558,8 +559,8 @@ class OpENer_Interface
 #else
     #ifdef WIN32
         static void alarmRinging(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
-    #else
-        static void OpENer_Interface::alarmRinging();
+    #elif __linux__
+        static void alarmRinging(int signal);
     #endif
 #endif
 

@@ -18,15 +18,8 @@
 		#pragma comment(lib, "iphlpapi.lib")
 	#endif
 #elif __linux__
-    #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
-    #include <arpa/inet.h>
-    #include <sys/socket.h>
     #include <netdb.h>
     #include <ifaddrs.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <unistd.h>
-    #include <linux/if_link.h>
     #include <net/if.h>
     #include <sys/ioctl.h>
 
@@ -526,15 +519,15 @@ int GetInterfacesList(ip_interface **interface_ptr)
         strcpy(&((*interface_ptr)[i].mac)[0], mac);
 
         //Copy broadcast ip
-        strcpy(&((*interface_ptr)[i].ipv4.bcast_ip)[0], inet_ntoa((sock_addr*)ifa->ifa_ifu.ifu_broadaddr));
+        inet_ntop( AF_INET, ifa->ifa_ifu.ifu_broadaddr, &((*interface_ptr)[i].ipv4.bcast_ip)[0], INET_ADDRSTRLEN);
 
         //Copy netmask
-        strcpy(&((*interface_ptr)[i].ipv4.netmask)[0], inet_ntoa(ifa->ifa_netmask));
+        inet_ntop( AF_INET,ifa->ifa_netmask, &((*interface_ptr)[i].ipv4.netmask)[0], INET_ADDRSTRLEN);
 
         //Copy flags
         u_long nFlags = (u_long) ifr.ifr_flags;
         (*interface_ptr)[i].up       = (bool) nFlags & IFF_UP;
-        (*interface_ptr)[i].p2p      = (bool) nFlags & IFF_POINTTOPOINT;
+        (*interface_ptr)[i].p2p      = (bool) nFlags & IFF_POINTOPOINT;
         (*interface_ptr)[i].loopback = (bool) nFlags & IFF_LOOPBACK;
         (*interface_ptr)[i].bcast    = (bool) nFlags & IFF_BROADCAST;
         (*interface_ptr)[i].mcast    = (bool) nFlags & IFF_MULTICAST;

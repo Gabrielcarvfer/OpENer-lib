@@ -2,7 +2,7 @@
 #include "CIP_Analog_Input_Point.hpp"
 
 //Variables
-CipUdint CIP_AnalogInputPoint::class_id = 0x0A;
+//CipUdint CIP_AnalogInputPoint::class_id = 0x0A;
 
 //Methods
 

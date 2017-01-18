@@ -23,9 +23,8 @@ std::map<CipUdint, OpENer_ExplicitConnection*> OpENer_Interface::Explicit_Connec
     std::thread * OpENer_Interface::workerThread;
     bool OpENer_Interface::OpENer_active;
 #else
-    #ifndef WIN32
+    #ifdef __linux__
         #include <unistd.h>
-        #include <signal.h>
     #endif
     bool OpENer_Interface::alarmRang = false;
 #endif
@@ -127,7 +126,7 @@ void OpENer_Interface::OpENerWorker()
                                         DWORD_PTR dw1,
                                         DWORD_PTR dw2)
     #else
-    void OpENer_Interface::alarmRinging()
+    void OpENer_Interface::alarmRinging(int signal)
     #endif
 {
 

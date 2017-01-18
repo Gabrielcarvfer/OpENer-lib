@@ -12,9 +12,6 @@
 #include "network/NET_Endianconv.hpp"
 #include "../CIP_Appcontype.hpp"
 
-#ifndef WIN32
-#include <arpa/inet>
-#endif
 
 #define CIP_CONN_TYPE_MASK 0x6000 /**< Bit mask filter on bit 13 & 14 */
 

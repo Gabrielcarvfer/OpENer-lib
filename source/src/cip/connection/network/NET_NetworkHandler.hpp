@@ -15,7 +15,7 @@
 #define GENERIC_NETWORKHANDLER_H_
 
 
-#include "../../../opENer_user_conf.hpp"
+#include "../../../opener_user_conf.hpp"
 #include "../../ciptypes.hpp"
 #include "../CIP_Connection.hpp"
 #include "NET_Connection.hpp"

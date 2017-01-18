@@ -11,6 +11,7 @@
  */
 
 //Includes
+#include <cmath>
 #include "NET_Endianconv.hpp"
 #include "NET_NetworkHandler.hpp"
 #include "ethIP/tcpip/NET_EthIP_Interface.hpp"
@@ -178,7 +179,7 @@ void NET_NetworkHandler::CheckAndHandleTcpListenerSocket(void)
     {
         OPENER_TRACE_INFO("networkhandler: new TCP connection\n");
 
-        new_socket = (int) accept((SOCKET) netStats[tcp_listener]->GetSocketHandle(), NULL, NULL);
+        new_socket = accept(netStats[tcp_listener]->GetSocketHandle(), NULL, NULL);
         if (new_socket == -1)
         {
             OPENER_TRACE_ERR("networkhandler: error on accept: %s\n", strerror(errno));
@@ -228,14 +229,14 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
 
         for (int socket = 0; socket <= highest_socket_handle; socket++)
         {
-            if (CheckSocketSet(socket))
+            if (CheckSocketSet)
             {
                 // if it is still checked it is a TCP receive
                 if (kCipStatusError == HandleDataOnTcpSocket(socket)) // if error
                 {
                     //todo: move to CIP_Connection
-                    // CloseSocket(socket);
-                    // CloseSession(socket); // clean up session and close the socket
+                    // CloseSocket;
+                    // CloseSession; // clean up session and close the socket
                 }
             }
         }
@@ -380,7 +381,7 @@ void NET_NetworkHandler::CheckAndHandleUdpUnicastSocket(void)
 CipStatus NET_NetworkHandler::SendUdpData(struct sockaddr* address, int socket, CipUsint* data, CipUint data_length)
 {
 
-    int sent_length = sendto((SOCKET) socket, (char*)data, data_length, 0, address, sizeof(struct sockaddr));
+    int sent_length = sendto(socket, (char*)data, data_length, 0, address, sizeof(struct sockaddr));
 
     if (sent_length < 0)
     {
@@ -410,7 +411,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
 
     /*Check how many data is here -- read the first four bytes from the connection */
     /*TODO we may have to set the socket to a non blocking socket */
-    long number_of_read_bytes = recv((SOCKET) socket, (char*)g_ethernet_communication_buffer, 4, 0);
+    long number_of_read_bytes = recv( socket, (char*)g_ethernet_communication_buffer, 4, 0);
 
     if (number_of_read_bytes == 0)
     {
@@ -437,7 +438,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
         // Currently we will drop the whole packet
         do
         {
-            number_of_read_bytes = recv((SOCKET) socket, (char*)&g_ethernet_communication_buffer[0], data_sent, 0);
+            number_of_read_bytes = recv( socket, (char*)&g_ethernet_communication_buffer[0], data_sent, 0);
 
             if (number_of_read_bytes == 0) /* got error or connection closed by client */
             {
@@ -458,7 +459,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
         return kCipStatusOk;
     }
 
-    number_of_read_bytes = recv((SOCKET) socket, (char*) &g_ethernet_communication_buffer[4], (int) data_size, 0);
+    number_of_read_bytes = recv(socket, (char*) &g_ethernet_communication_buffer[4], (int) data_size, 0);
 
     if (number_of_read_bytes == 0) /* got error or connection closed by client */
     {
@@ -494,7 +495,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
         {
             OPENER_TRACE_INFO("reply sent:\n");
 
-            data_sent = send((SOCKET) socket, (char*)&g_ethernet_communication_buffer[0], number_of_read_bytes, 0);
+            data_sent = send( socket, (char*)&g_ethernet_communication_buffer[0], number_of_read_bytes, 0);
             if (data_sent != number_of_read_bytes)
             {
                 OPENER_TRACE_WARN("TCP response was not fully sent\n");
@@ -543,13 +544,13 @@ int NET_NetworkHandler::CreateUdpSocket(UdpCommuncationDirection communication_d
     if (communication_direction == kUdpCommuncationDirectionConsuming)
     {
         int option_value = 1;
-        if (setsockopt((SOCKET) new_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&option_value, sizeof(option_value)) == -1) {
+        if (setsockopt( new_socket, SOL_SOCKET, SO_REUSEADDR, (char*)&option_value, sizeof(option_value)) == -1) {
             OPENER_TRACE_ERR("error setting socket option SO_REUSEADDR on consuming udp socket\n");
             return kCipStatusError;
         }
 
         /* bind is only for consuming necessary */
-        if ((bind((SOCKET) new_socket, socket_data, sizeof(struct sockaddr))) == -1)
+        if ((bind( new_socket, socket_data, sizeof(struct sockaddr))) == -1)
         {
             OPENER_TRACE_ERR("error on bind udp: %s\n", strerror(errno));
             return kEipInvalidSocket;
@@ -565,7 +566,7 @@ int NET_NetworkHandler::CreateUdpSocket(UdpCommuncationDirection communication_d
             if (1 != NET_EthIP_Interface::g_time_to_live_value)
             {
                 // we need to set a TTL value for the socket
-                if (setsockopt((SOCKET) new_socket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&NET_EthIP_Interface::g_time_to_live_value, sizeof(NET_EthIP_Interface::g_time_to_live_value)) < 0)
+                if (setsockopt( new_socket, IPPROTO_IP, IP_MULTICAST_TTL, (char*)&NET_EthIP_Interface::g_time_to_live_value, sizeof(NET_EthIP_Interface::g_time_to_live_value)) < 0)
                 {
                     OPENER_TRACE_ERR("networkhandler: could not set the TTL to: %d, error: %s\n", g_time_to_live_value, strerror(errno));
                     return kEipInvalidSocket;
@@ -577,7 +578,7 @@ int NET_NetworkHandler::CreateUdpSocket(UdpCommuncationDirection communication_d
     if ((communication_direction == kUdpCommuncationDirectionConsuming) || (0 == socket_data_in->sin_addr.s_addr))
     {
         /* we have a peer to peer producer or a consuming connection*/
-        if (getpeername((SOCKET) g_current_active_tcp_socket, (struct sockaddr*)&peer_address, &peer_address_length) < 0)
+        if (getpeername( g_current_active_tcp_socket, (struct sockaddr*)&peer_address, &peer_address_length) < 0)
         {
             OPENER_TRACE_ERR("networkhandler: could not get peername: %s\n", strerror(errno));
             return kEipInvalidSocket;
@@ -614,7 +615,7 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
         {
             from_address_length = sizeof(from_address);
             int received_size = recvfrom(
-                    (SOCKET) current_connection_object->netConn->GetSocketHandle(/*kUdpCommuncationDirectionConsuming*/), (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0, (struct sockaddr*)&from_address, &from_address_length);
+                     current_connection_object->netConn->GetSocketHandle(/*kUdpCommuncationDirectionConsuming*/), (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0, (struct sockaddr*)&from_address, &from_address_length);
             if (0 == received_size)
             {
                 OPENER_TRACE_STATE("connection closed by client\n");
@@ -652,13 +653,19 @@ int NET_NetworkHandler::GetMaxSocket(int socket1, int socket2, int socket3, int 
 
 MicroSeconds NET_NetworkHandler::GetMicroSeconds()
 {
-    LARGE_INTEGER performance_counter;
-    LARGE_INTEGER performance_frequency;
+    uint64_t performance_counter;
+    uint64_t performance_frequency;
 
+#ifdef WIN32
     QueryPerformanceCounter(&performance_counter);
     QueryPerformanceFrequency(&performance_frequency);
+    return (MicroSeconds)(performance_counter * 1000000LL / performance_frequency);
 
-    return (MicroSeconds)(performance_counter.QuadPart * 1000000LL / performance_frequency.QuadPart);
+#elif __linux__
+    struct timespec spec;
+    clock_gettime(CLOCK_REALTIME, &spec);
+    return (MicroSeconds)round(spec.tv_nsec / 1.0e3);
+#endif
 }
 
 MilliSeconds NET_NetworkHandler::GetMilliSeconds(void)
