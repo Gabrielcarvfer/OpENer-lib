@@ -39,7 +39,7 @@ private:
 	void state_machine();
 
     bool transmit_dup_request();
-    bool receive_msg(int PLACEHOLDER_timerVal);
+    bool receive_msg(int timerVal);
     int timerVal;
     bool check_msg_4_dup();
     bool check_can_bus_off();

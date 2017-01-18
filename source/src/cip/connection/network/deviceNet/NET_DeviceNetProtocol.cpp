@@ -603,12 +603,217 @@ void NET_DeviceNetProtocol::explicit_produce_message(char response[])
 }
 
 
+
+//Messages format
+
+//Acknowledge fragment (Explicit message only, after receiving each fragment
+/*
+ *             Contents
+ * Byte   |7     |6      |5     |4    |3    |2    |1     |0     |
+ * 0      |frag  |xid    |mac_id
+ * 1      |fragment_type |fragment_count
+ * 2      |ack_status
+ *
+ * Ack Status (0 = OK, 1 = exceeded receiver data limit, 2-FF reserved)
+ * Fragmented (1 = true, 0 = false)
+ * XID a.k.a. transaction ID ()
+ * Fragment type (3 = explicit fragment)
+ *
+ */
+char * ack_explicit_fragment(int mac_id, int xid, int fragment_count, int ack_status)
+{
+    char * msg = new char[3]();
+
+    int fragment_type = 3;
+    int fragmented = 1;
+
+    //First byte
+    msg[0] |= 0x03F & mac_id;
+    msg[0] |= 0x040 & xid << 6;
+    msg[0] |= 0x080 & fragmented << 7;
+
+    //Second byte
+
+    msg[1] |= 0x03F & fragment_count;
+    msg[1] |= 0x0B0 & fragment_type;
+
+    //Third byte
+    msg[2] = ack_status;
+
+    return msg;
+}
+
+//Open Explicit connection request
+/*
+ *             Contents
+ * Byte   |7     |6      |5     |4    |3    |2    |1     |0     |
+ * 0      |frag  |xid    |mac_id
+ * 1      |RR    |service_code
+ * 2      |request_message_body_format
+ * 3      |group_select         |source_msg_id
+ *
+ * Fragmented (1 = true, 0 = false)
+ * XID a.k.a. transaction ID ()
+ * RR a.k.a. (0 = request, 1 = response)
+ * Service code (4B = open explicit messaging connection service)
+ * Request message body format (
+ *                              DevNet XbitClassId/YbitInstanceID
+ *                              0 = DevNet 8/8
+ *                              1 = DevNet 8/16
+ *                              2 = DevNet 16/16
+ *                              3 = DevNet = 16/8
+ *                              4 = CIP Path (Packed EPATH, variable size)
+ *                              5-F = reserved
+ *                              )
+ * Group select (
+ *               0 = msg_group1, 1 = msg_group2,
+ *               2 = reserved, 3 = msg_group3,
+ *               4-E = reserved, F = reserved for ping
+ *               )
+ *
+ * Source Message ID (depends on group. 1 = ignored/set zero, 0 or 3 = msg_id client allocated from group 1 or 3 msg_id pool)
+ */
+char * open_explicit_conn_req(int mac_id, int xid, int req_msg_body_format, int source_msg_id, int group_select)
+{
+    char * msg = new char[4]();
+
+    int fragmented = 0;
+    int service_code = 0x04B;
+    int RR = 0;
+
+    //First byte
+    msg[0] |= 0x03F & mac_id;
+    msg[0] |= 0x040 & (xid << 6);
+    msg[0] |= 0x080 & (fragmented << 7);
+
+    //Second byte
+    msg[1] |= 0x07F & service_code;
+    msg[1] |= 0x080 & (RR << 7);
+
+    //Third byte
+    msg[2] |= 0x00F & req_msg_body_format;
+
+    //Fourth byte
+    msg[3] |= 0x00F & source_msg_id;
+    msg[3] |= 0x0F0 & (group_select << 4);
+
+    return msg;
+}
+
+//Open Explicit connection success response
+/*
+ *             Contents
+ * Byte   |7     |6      |5     |4    |3    |2    |1     |0     |
+ * 0      |frag  |xid    |mac_id
+ * 1      |RR    |service_code
+ * 2      |request_message_body_format
+ * 3      |destination_msg_id   |source_msg_id
+ * 4      |connection_instance_id (first half)
+ * 5      |connection_instance_id (second half)
+ *
+ * Fragmented (1 = true, 0 = false)
+ * XID a.k.a. transaction ID ()
+ * RR a.k.a. (0 = request, 1 = response)
+ * Service code (4B = open explicit conn request)
+ * Request message body format (
+ *                              DevNet XbitClassId/YbitInstanceID
+ *                              0 = DevNet 8/8
+ *                              1 = DevNet 8/16
+ *                              2 = DevNet 16/16
+ *                              3 = DevNet = 16/8
+ *                              4 = CIP Path (Packed EPATH, variable size)
+ *                              5-F = reserved
+ *                              )
+ * Destination Message ID (depends on request group, 1 = used by client, this value was allocated in group 2, 0 or 3 ignore and set zero)
+ * Source Message ID (depends on group. 1 = ignored/set zero, 0 or 3 = msg_id client allocated from group 1 or 3 msg_id pool)
+ * Connection Instance ID (8LSB + 8MSB)
+ */
+
+char * open_explicit_conn_resp(int mac_id, int xid, int actual_msg_body_format, int source_msg_id, int dest_msg_id, int conn_instance_id)
+{
+    char * msg = new char[6]();
+
+    int fragmented = 0;
+    int service_code = 0x04B;
+    int RR = 0;
+
+    //First byte
+    msg[0] |= 0x03F & mac_id;
+    msg[0] |= 0x040 & (xid << 6);
+    msg[0] |= 0x080 & (fragmented << 7);
+
+    //Second byte
+    msg[1] |= 0x07F & service_code;
+    msg[1] |= 0x080 & (RR << 7);
+
+    //Third byte
+    msg[2] |= 0x00F & actual_msg_body_format;
+
+    //Fourth byte
+    msg[3] |= 0x00F & source_msg_id;
+    msg[3] |= 0x0F0 & (dest_msg_id << 4);
+
+    //Fifth byte
+    msg[4] = (char) (0x0FF & conn_instance_id);
+
+    //Sixth byte
+    msg[5] = (char) ((0x0FF00 & conn_instance_id) >> 8);
+
+
+    return msg;
+}
+
+//Close connection request
+/*
+ *             Contents
+ * Byte   |7     |6      |5     |4    |3    |2    |1     |0     |
+ * 0      |frag  |xid    |mac_id
+ * 1      |RR    |service_code
+ * 2      |connection_instance_id(first half)
+ * 3      |connection_instance_id(second half)
+ *
+ * Fragmented (1 = true, 0 = false)
+ * XID a.k.a. transaction ID ()
+ * RR a.k.a. (0 = request, 1 = response)
+ * Service code (4B = open explicit conn request)
+ * Connection Instance ID (8LSB + 8MSB)
+ *
+ */
+char * close_conn_req(int mac_id, int xid, int conn_instance_id)
+{
+    char * msg = new char[4]();
+
+    int fragmented = 0;
+    int service_code = 0x04C;
+    int RR = 0;
+
+    //First byte
+    msg[0] |= 0x03F & mac_id;
+    msg[0] |= 0x040 & (xid << 6);
+    msg[0] |= 0x080 & (fragmented << 7);
+
+    //Second byte
+    msg[1] |= 0x07F & service_code;
+    msg[1] |= 0x080 & (RR << 7);
+
+    //Third byte
+    msg[2] = (char) (0x0FF & conn_instance_id);
+
+    //Fourth byte
+    msg[3] = (char) ((0x0FF00 & conn_instance_id) >> 8);
+
+
+    return msg;
+}
+
+
+//Actions of state machine
 bool NET_DeviceNetProtocol::transmit_dup_request()
 {
     return false;
 }
 
-bool NET_DeviceNetProtocol::receive_msg(int PLACEHOLDER_timerVal)
+bool NET_DeviceNetProtocol::receive_msg(int timerVal)
 {
     return false;
 }
