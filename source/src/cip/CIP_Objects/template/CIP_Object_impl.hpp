@@ -1,12 +1,13 @@
 //
 // Created by gabriel on 18/11/2016.
 //
+#ifndef CIP_OBJECT_IMPL_H
+#define CIP_OBJECT_IMPL_H
 
-//#include "CIP_Object.hpp"
-#include "../../trace.hpp"
-#include "../CIP_Common.hpp"
+#include "../../../trace.hpp"
+#include "../../CIP_Common.hpp"
 #include "CIP_Attribute.hpp"
-#include "../../opener_user_conf.hpp"
+#include "../../../opener_user_conf.hpp"
 #include <utility>
 
 //Static variables
@@ -284,3 +285,4 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router
     return kCipStatusOk; /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
 }
 
+#endif

@@ -6,18 +6,18 @@
 #ifndef OPENER_CIPETHERNETLINK_H_
 #define OPENER_CIPETHERNETLINK_H_
 
-#include "../../../ciptypes.hpp"
-#include "../../../template/CIP_Object.hpp"
-#include "tcpip/NET_EthIP_Interface.hpp"
+#include "../../ciptypes.hpp"
+#include "../template/CIP_Object.hpp"
+#include "../CIP_00F5_TCPIP_Interface/CIP_EthIP_Interface.hpp"
 
-class NET_EthIP_Link : public CIP_Object<NET_EthIP_Link>
+class CIP_EthIP_Link : public CIP_Object<CIP_EthIP_Link>
 {
 public:
     /** @brief Initialize the Ethernet Link Objects data
     */
     static CipStatus CipEthernetLinkInit(void);
     static CipStatus Shutdown();
-    NET_EthIP_Interface * associatedInterface;
+    CIP_EthIP_Interface * associatedInterface;
 private:
     //Definitions
     typedef struct {

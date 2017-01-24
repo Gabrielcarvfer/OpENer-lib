@@ -8,12 +8,12 @@
 
 
 #include <map>
-#include "../ciptypes.hpp"
-#include "CIP_CommonPacket.hpp"
+#include "../../ciptypes.hpp"
+#include "../../connection/CIP_CommonPacket.hpp"
 #include "../template/CIP_Object.hpp"
-#include "network/NET_Connection.hpp"
-#include "../../OpENer_Interface.hpp"
-#include "../CIP_Assembly.hpp"
+#include "../../connection/network/NET_Connection.hpp"
+#include "../../../OpENer_Interface.hpp"
+#include "../CIP_0004_Assembly/CIP_Assembly.hpp"
 
 class CIP_Connection;
 

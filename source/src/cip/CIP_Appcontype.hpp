@@ -6,8 +6,8 @@
 #ifndef OPENER_APPCONTYPE_H_
 #define OPENER_APPCONTYPE_H_
 
-#include "template/CIP_Object.hpp"
-#include "connection/CIP_Connection.hpp"
+#include "CIP_Objects/template/CIP_Object.hpp"
+#include "CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
 #include "ciptypes.hpp"
 #include "../opener_user_conf.hpp"
 

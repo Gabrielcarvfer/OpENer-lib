@@ -7,7 +7,7 @@
 #include <cstring> /*needed for memcpy */
 #include <cstdlib>
 #include "CIP_Assembly.hpp"
-#include "connection/CIP_Connection.hpp"
+#include "../CIP_0006_ConnectionManager/CIP_Connection.hpp"
 
 CIP_Assembly::CIP_Assembly()
 {

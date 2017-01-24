@@ -7,7 +7,7 @@
 #define OPENER_CIPMESSAGEROUTER_H_
 
 
-#include "../ciptypes.hpp"
+#include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
 #include <map>
 

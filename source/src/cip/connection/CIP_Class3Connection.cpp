@@ -5,14 +5,12 @@
  ******************************************************************************/
 //Includes
 #include <cstring>
-
 #include "CIP_Class3Connection.hpp"
 
 //Static variables
 CIP_Connection * CIP_Class3conn::g_explicit_connections[OPENER_CIP_NUM_EXPLICIT_CONNS];
 
 //Methods
-/**** Implementation ****/
 CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
 {
     CipStatus eip_status = kCipStatusOk;
@@ -38,9 +36,9 @@ CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
         explicit_connection->instance_type = CIP_Connection::kConnectionTypeExplicit;
         explicit_connection->netConn->SetSocketHandle (kEipInvalidSocket);
         /* set the connection call backs */
-        //explicit_connection->connection_close_function = CIP_CIP_Connection::RemoveFromActiveConnections;
+        //explicit_connection->connection_close_function = CIP_Connection::RemoveFromActiveConnections;
         /* explicit connection have to be closed on time out*/
-        //explicit_connection->connection_timeout_function = CIP_CIP_Connection::RemoveFromActiveConnections;
+        //explicit_connection->connection_timeout_function = CIP_Connection::RemoveFromActiveConnections;
 
         CIP_Connection::AddNewActiveConnection(explicit_connection);
     }

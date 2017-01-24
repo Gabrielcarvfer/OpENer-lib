@@ -1,6 +1,6 @@
 opENer_common_includes()
 
-set( CIP_NET_ETHIP_SRC NET_EthIP_Encap.cpp eip_endianconv.cpp NET_EthIP_Link.cpp tcpip/NET_EthIP_Interface.cpp)
+set( CIP_NET_ETHIP_SRC NET_EthIP_Encap.cpp eip_endianconv.cpp ../../../CIP_Objects/CIP_00F6_EthernetLink/CIP_EthIP_Link.cpp ../../../CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_EthIP_Interface.cpp)
 add_library( CIP_NET_ETHIP STATIC ${CIP_NET_ETHIP_SRC})
 
 if(WIN32)

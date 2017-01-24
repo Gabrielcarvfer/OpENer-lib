@@ -712,8 +712,8 @@ char * open_explicit_conn_req(int mac_id, int xid, int req_msg_body_format, int 
  * 5      |connection_instance_id (second half)
  *
  * Fragmented (1 = true, 0 = false)
- * XID a.k.a. transaction ID ()
- * RR a.k.a. (0 = request, 1 = response)
+ * XID a.k.a. transaction ID (meaningless if sent message dont expect response, server just echoes client)
+ * RR a.k.a. request or response (0 = request, 1 = response)
  * Service code (4B = open explicit conn request)
  * Request message body format (
  *                              DevNet XbitClassId/YbitInstanceID
@@ -806,6 +806,42 @@ char * close_conn_req(int mac_id, int xid, int conn_instance_id)
     return msg;
 }
 
+
+//Close connection request
+/*
+ *             Contents
+ * Byte   |7     |6      |5     |4    |3    |2    |1     |0     |
+ * 0      |frag  |xid    |mac_id
+ * 1      |RR    |service_code
+ * 2      |connection_instance_id(first half)
+ * 3      |connection_instance_id(second half)
+ *
+ * Fragmented (1 = true, 0 = false)
+ * XID a.k.a. transaction ID ()
+ * RR a.k.a. (0 = request, 1 = response)
+ * Service code (4B = open explicit conn request)
+ * Connection Instance ID (8LSB + 8MSB)
+ *
+ */
+char * close_conn_resp(int mac_id, int xid)
+{
+    char * msg = new char[4]();
+
+    int fragmented = 0;
+    int service_code = 0x04C;
+    int RR = 1;
+
+    //First byte
+    msg[0] |= 0x03F & mac_id;
+    msg[0] |= 0x040 & (xid << 6);
+    msg[0] |= 0x080 & (fragmented << 7);
+
+    //Second byte
+    msg[1] |= 0x07F & service_code;
+    msg[1] |= 0x080 & (RR << 7);
+
+    return msg;
+}
 
 //Actions of state machine
 bool NET_DeviceNetProtocol::transmit_dup_request()

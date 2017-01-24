@@ -11,7 +11,7 @@
  *  @brief CIP Class 3 connection
  */
 
-#include "CIP_Connection.hpp"
+#include "../CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
 #include "../../OpENer_Interface.hpp"
 #include "../../opener_user_conf.hpp"
 

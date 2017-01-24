@@ -6,7 +6,7 @@
 #ifndef OPENER_CIPIDENTITY_H_
 #define OPENER_CIPIDENTITY_H_
 
-#include "../ciptypes.hpp"
+#include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
 
 class CIP_Identity : public CIP_Object<CIP_Identity>

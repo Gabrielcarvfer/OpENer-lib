@@ -5,7 +5,7 @@
 #ifndef OPENER_CIP_OBJECT_H
 #define OPENER_CIP_OBJECT_H
 
-#include "../ciptypes.hpp"
+#include "../../ciptypes.hpp"
 #include <map>
 #include <string>
 

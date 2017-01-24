@@ -5,7 +5,7 @@
 #ifndef OPENER_CIP_ATTRIBUTE_H
 #define OPENER_CIP_ATTRIBUTE_H
 
-#include "../ciptypes.hpp"
+#include "../../ciptypes.hpp"
 
 class CIP_Attribute
 {

@@ -25,7 +25,7 @@
  */
 
 #include "CIP_Identity.hpp"
-#include "../../OpENer_Interface.hpp"
+#include "../../../OpENer_Interface.hpp"
 
 //Static variables
 CipUint         CIP_Identity::vendor_id_;

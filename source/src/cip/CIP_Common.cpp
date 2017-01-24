@@ -8,9 +8,11 @@
 #include "CIP_Common.hpp"
 #include "connection/CIP_CommonPacket.hpp"
 #include "CIP_Appcontype.hpp"
-#include "connection/CIP_Identity.hpp"
-#include "connection/CIP_MessageRouter.hpp"
 #include "connection/network/NET_Endianconv.hpp"
+#include "CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
+#include "CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
+#include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
+#include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
 
 //Static variables
 std::map <CipUsint,CipByteArray*> CIP_Common::message_data_reply_buffer;

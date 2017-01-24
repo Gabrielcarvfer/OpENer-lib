@@ -4,8 +4,8 @@
 #ifndef OPENER_CIPDEVICENETLINK_H_
 #define OPENER_CIPDEVICENETLINK_H_
 
-#include "../../../template/CIP_Object.hpp"
-#include "../../../ciptypes.hpp"
+#include "../template/CIP_Object.hpp"
+#include "../../ciptypes.hpp"
 #include "NET_DeviceNetProtocol.hpp"
 
 

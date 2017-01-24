@@ -6,11 +6,11 @@
 
 #include "CIP_Connection.hpp"
 #include <cstring>
-#include "CIP_Class3Connection.hpp"
-#include "CIP_Identity.hpp"
-#include "CIP_IOConnection.hpp"
-#include "network/NET_Endianconv.hpp"
-#include "../CIP_Appcontype.hpp"
+#include "../../connection/CIP_Class3Connection.hpp"
+#include "../CIP_0001_Identity/CIP_Identity.hpp"
+#include "../../connection/CIP_IOConnection.hpp"
+#include "../../connection/network/NET_Endianconv.hpp"
+#include "../../CIP_Appcontype.hpp"
 
 
 #define CIP_CONN_TYPE_MASK 0x6000 /**< Bit mask filter on bit 13 & 14 */

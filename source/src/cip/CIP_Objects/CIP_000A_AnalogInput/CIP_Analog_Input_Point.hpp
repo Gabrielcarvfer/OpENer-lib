@@ -13,8 +13,10 @@
 // Instance Attributes supported:   Value, Status, Data Type
 // Instance Services supported:     Get Attribute Single
 
-#include "template/CIP_Object.hpp"
 
+
+
+#include "../template/CIP_Object.hpp"
 
 class CIP_AnalogInputPoint;
 

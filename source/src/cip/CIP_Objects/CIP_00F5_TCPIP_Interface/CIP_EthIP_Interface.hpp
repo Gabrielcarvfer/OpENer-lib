@@ -11,10 +11,10 @@
  *
  */
 
-#include "../../../../template/CIP_Object.hpp"
-#include "../../../../ciptypes.hpp"
+#include "../template/CIP_Object.hpp"
+#include "../../ciptypes.hpp"
 
-class NET_EthIP_Interface : public CIP_Object<NET_EthIP_Interface>
+class CIP_EthIP_Interface : public CIP_Object<CIP_EthIP_Interface>
 {
 public:
 /** @brief Multicast Configuration struct, called Mcast config

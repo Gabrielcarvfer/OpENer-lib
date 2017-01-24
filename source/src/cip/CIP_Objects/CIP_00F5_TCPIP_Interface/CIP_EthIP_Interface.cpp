@@ -5,9 +5,9 @@
  *****************************************************************************/
 //Includes
 #include <cstring>
-#include "../../../ciptypes.hpp"
-#include "NET_EthIP_Interface.hpp"
-#include "../NET_Connection.hpp"
+#include "../../ciptypes.hpp"
+#include "CIP_EthIP_Interface.hpp"
+#include "../../connection/network/NET_Connection.hpp"
 
 #ifdef WIN32
     #include <iostream>
@@ -29,17 +29,17 @@
 #define CIP_ETHERNETLINK_CLASS_CODE 0xF6
 
 //Static variables
-NET_EthIP_Interface::MulticastAddressConfiguration NET_EthIP_Interface::g_multicast_configuration;
-CipTcpIpNetworkInterfaceConfiguration NET_EthIP_Interface::interface_configuration_;
-CipUsint  NET_EthIP_Interface::g_time_to_live_value;
-CipDword  NET_EthIP_Interface::tcp_status_;
-CipDword  NET_EthIP_Interface::configuration_capability_;
-CipDword  NET_EthIP_Interface::configuration_control_;
-CipEpath  NET_EthIP_Interface::physical_link_object_;
-CipString NET_EthIP_Interface::hostname_;
+CIP_EthIP_Interface::MulticastAddressConfiguration CIP_EthIP_Interface::g_multicast_configuration;
+CipTcpIpNetworkInterfaceConfiguration CIP_EthIP_Interface::interface_configuration_;
+CipUsint  CIP_EthIP_Interface::g_time_to_live_value;
+CipDword  CIP_EthIP_Interface::tcp_status_;
+CipDword  CIP_EthIP_Interface::configuration_capability_;
+CipDword  CIP_EthIP_Interface::configuration_control_;
+CipEpath  CIP_EthIP_Interface::physical_link_object_;
+CipString CIP_EthIP_Interface::hostname_;
 
 //Methods
-CipStatus NET_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)
+CipStatus CIP_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)
 {
 
     interface_configuration_.ip_address = inet_addr(ip_address);
@@ -56,7 +56,7 @@ CipStatus NET_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,
     return kCipStatusOk;
 }
 
-void NET_EthIP_Interface::ConfigureDomainName(const char* domain_name)
+void CIP_EthIP_Interface::ConfigureDomainName(const char* domain_name)
 {
     if (NULL != interface_configuration_.domain_name.string)
     {
@@ -78,7 +78,7 @@ void NET_EthIP_Interface::ConfigureDomainName(const char* domain_name)
     }
 }
 
-void NET_EthIP_Interface::ConfigureHostName(const char* hostname)
+void CIP_EthIP_Interface::ConfigureHostName(const char* hostname)
 {
     if (NULL != hostname_.string)
     {
@@ -99,7 +99,7 @@ void NET_EthIP_Interface::ConfigureHostName(const char* hostname)
     }
 }
 
-CipStatus NET_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
 
@@ -122,9 +122,9 @@ CipStatus NET_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* me
     return kCipStatusOkSend;
 }
 
-CipStatus NET_EthIP_Interface::CipTcpIpInterfaceInit()
+CipStatus CIP_EthIP_Interface::CipTcpIpInterfaceInit()
 {
-    NET_EthIP_Interface* instance;
+    CIP_EthIP_Interface* instance;
 
     if (instancesNum == 0)
     {
@@ -147,7 +147,7 @@ CipStatus NET_EthIP_Interface::CipTcpIpInterfaceInit()
         };
         g_time_to_live_value = 1;
 
-        instance = new NET_EthIP_Interface();
+        instance = new CIP_EthIP_Interface();
 
         instance->InsertAttribute(1, kCipDword, (void*)&tcp_status_, kGetableSingleAndAll);
         instance->InsertAttribute(2, kCipDword, (void*)&configuration_capability_, kGetableSingleAndAll);
@@ -167,7 +167,7 @@ CipStatus NET_EthIP_Interface::CipTcpIpInterfaceInit()
     return kCipStatusOk;
 }
 
-void NET_EthIP_Interface::ShutdownTcpIpInterface(void)
+void CIP_EthIP_Interface::ShutdownTcpIpInterface(void)
 {
     //Only free the resources if they are initialized
     if (NULL != hostname_.string)
@@ -184,7 +184,7 @@ void NET_EthIP_Interface::ShutdownTcpIpInterface(void)
     }
 }
 
-CipStatus NET_EthIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_EthIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
 
     CipStatus status = kCipStatusOkSend;
@@ -211,7 +211,7 @@ CipStatus NET_EthIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
     return status;
 }
 
-CipStatus NET_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
 
     CipUsint* response = message_router_response->data; // pointer into the reply
@@ -248,7 +248,7 @@ CipStatus NET_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
     return kCipStatusOkSend;
 }
 
-CipStatus NET_EthIP_Interface::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_EthIP_Interface::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
 {
     CipStatus returnValue;
     //Class services
@@ -311,7 +311,7 @@ typedef struct {
 int GetInterfacesList(ip_interface **interface_ptr);
 
 //Scan for avaible tcpip interfaces
-CipStatus NET_EthIP_Interface::ScanInterfaces()
+CipStatus CIP_EthIP_Interface::ScanInterfaces()
 {
     ip_interface ** interfaces = (ip_interface**)calloc(1,sizeof(ip_interface*));
 
@@ -322,11 +322,11 @@ CipStatus NET_EthIP_Interface::ScanInterfaces()
     int i;
     for(i = 0; i < numInterfaces; i++)
     {
-        //Search for an NET_EthIP_Interface object with same MAC address, if it exists, update info, if not, create a new object
+        //Search for an CIP_EthIP_Interface object with same MAC address, if it exists, update info, if not, create a new object
         //(*interfaces)[i].mac
     }
 
-    //Turn data list into NET_EthIP_Interface objects, checking before if the interface is already registered
+    //Turn data list into CIP_EthIP_Interface objects, checking before if the interface is already registered
 
     delete[] *interfaces;
     free(interfaces);

@@ -17,7 +17,7 @@
 
 //Includes
 #include <cstring>
-#include "NET_DeviceNetLink.hpp"
+#include "CIP_DeviceNetLink.hpp"
  
 //Variables
 //CipUdint NET_DeviceNET_Link::class_id = kCipDeviceNetLinkClassCode;

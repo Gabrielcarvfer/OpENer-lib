@@ -27,6 +27,7 @@ CipStatus CIP_MessageRouter::CipMessageRouterInit()
 
     revision = 1;
     class_name = "message router";
+    class_id = kCipMessageRouterClassCode;
     /*message_router = CIP_ClassInstance(kCipMessageRouterClassCode, / class ID
                                                        0, // # of class attributes
                                               0xffffffff, // class getAttributeAll mask

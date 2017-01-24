@@ -12,9 +12,9 @@
 #include <signal.h>
 #include "cip/ciperror.hpp"
 #include "cip/ciptypes.hpp"
-#include "cip/template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object.hpp"
 #include "typedefs.hpp"
-#include "cip/connection/CIP_Connection.hpp"
+#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
 #include "OpENer_IOConnection.hpp"
 #include "OpENer_ExplicitConnection.hpp"
 
