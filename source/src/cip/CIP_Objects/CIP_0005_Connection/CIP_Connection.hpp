@@ -62,7 +62,7 @@ public:
     ConnectionState state;
     ConnectionType type;
     static CipStatus Init();
-    CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
+    CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response);
 
     //Class services
     static CipStatus Create();
