@@ -232,7 +232,7 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
 {
     //static EIP_UINT16 nUDPPort = 2222; //TODO think on improving the udp port assigment for point to point connections
     int j = 0;
-    struct sockaddr_in addr;
+    struct sockaddr_in *addr = new struct sockaddr_in();
     int socket;
 
     if (cpf_data->address_info_item[0].type_id == 0)
@@ -246,10 +246,10 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
     }
 
     ///todo: create UDP socket only with CIP_Connectio
-    addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = INADDR_ANY;
+    addr->sin_family = AF_INET;
+    addr->sin_addr.s_addr = INADDR_ANY;
     //addr.in_port = htons(nUDPPort++);
-    addr.sin_port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort);
+    addr->sin_port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort);
 
     // the address is only needed for bind used if consuming
     netConn->SetSocketHandle (NET_NetworkHandler::CreateUdpSocket(kUdpCommuncationDirectionConsuming, (struct sockaddr*)&addr));
@@ -259,14 +259,14 @@ CipStatus CIP_IOConnection::OpenConsumingPointToPointConnection(CIP_CommonPacket
         return kCipStatusError;
     }
 
-    netConn->originator_address = (struct sockaddr *)&addr; // store the address of the originator for packet scanning
+    netConn->originator_address = (struct sockaddr *)addr; // store the address of the originator for packet scanning
 
     cpf_data->address_info_item[j].length = 16;
     cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget;
 
-    cpf_data->address_info_item[j].sin_port = addr.sin_port;
+    cpf_data->address_info_item[j].sin_port = addr->sin_port;
     //TODO should we add our own address here?
-    cpf_data->address_info_item[j].sin_addr = addr.sin_addr.s_addr;
+    cpf_data->address_info_item[j].sin_addr = addr->sin_addr.s_addr;
     memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
     cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
 

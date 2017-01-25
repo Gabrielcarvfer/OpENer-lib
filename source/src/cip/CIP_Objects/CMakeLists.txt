@@ -10,11 +10,12 @@ add_subdirectory(CIP_000A_AnalogInput)
 add_subdirectory(CIP_00F5_TCPIP_Interface)
 add_subdirectory(CIP_00F6_EthernetLink)
 
-add_library( CIP_Objects STATIC)
+set(CIP_OBJECTS_SRC ./template/CIP_Object.hpp )
+
+add_library(CIP_Objects STATIC ${CIP_OBJECTS_SRC})
 
 target_link_libraries(
         CIP_Objects
-        CIP_CLASS
         CIP_CLASS0001_IDENTITY
         CIP_CLASS0002_MSGROUTER
         CIP_CLASS0003_DEVICENET
@@ -23,4 +24,5 @@ target_link_libraries(
         CIP_CLASS000A_ANALOGINPUT
         CIP_CLASS00F5_TCPIPINTERFACE
         CIP_CLASS00F6_ETHERNETLINK
+        CIP_CLASS
         )

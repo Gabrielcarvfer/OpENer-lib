@@ -94,7 +94,7 @@ class NET_Connection
         CipUdint val;
 
     //private functions
-        int CheckHandle(int handle);
+        //int CheckHandle(int handle);
 };
 
 

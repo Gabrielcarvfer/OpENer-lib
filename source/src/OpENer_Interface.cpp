@@ -110,7 +110,7 @@ void OpENer_Interface::OpENerWorker()
     alarmRang = false;
 
     #ifdef WIN32
-        DWORD_PTR ptr;
+        DWORD_PTR ptr = NULL;
         timeSetEvent(smallerInterval, smallerInterval, (LPTIMECALLBACK)alarmRinging, ptr, TIME_ONESHOT);
     #else
         alarm(smallerInterval);

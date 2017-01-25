@@ -27,7 +27,7 @@ macro(opener_common_includes)
 endmacro(opener_common_includes)
 
 MACRO(HEADER_DIRECTORIES return_list)
-  FILE(GLOB_RECURSE new_list ${PROJECT_SOURCE_DIR}/*.h)
+  FILE(GLOB_RECURSE new_list ${PROJECT_SOURCE_DIR}/*.hpp)
   SET(dir_list "")
   FOREACH(file_path ${new_list})
     GET_FILENAME_COMPONENT(dir_path ${file_path} PATH)

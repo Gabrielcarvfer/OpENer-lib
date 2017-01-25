@@ -653,13 +653,14 @@ int NET_NetworkHandler::GetMaxSocket(int socket1, int socket2, int socket3, int 
 
 MicroSeconds NET_NetworkHandler::GetMicroSeconds()
 {
-    uint64_t performance_counter;
-    uint64_t performance_frequency;
-
 #ifdef WIN32
+    LARGE_INTEGER performance_counter;
+    LARGE_INTEGER performance_frequency;
+
+
     QueryPerformanceCounter(&performance_counter);
     QueryPerformanceFrequency(&performance_frequency);
-    return (MicroSeconds)(performance_counter * 1000000LL / performance_frequency);
+    return (MicroSeconds)(performance_counter.QuadPart * 1000000.0 / performance_frequency.QuadPart);
 
 #elif __linux__
     struct timespec spec;

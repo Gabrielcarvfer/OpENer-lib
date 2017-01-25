@@ -280,7 +280,6 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router
             }
             return kCipStatusOkSend;
         }
-        service++;
     }
     return kCipStatusOk; /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
 }

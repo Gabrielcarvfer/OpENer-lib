@@ -25,6 +25,8 @@ uint32_t RandomGen::get_next_rand()
         case (XORShift):
             return 1;
             break;
+        default:
+            break;
     }
     return 0;
 }

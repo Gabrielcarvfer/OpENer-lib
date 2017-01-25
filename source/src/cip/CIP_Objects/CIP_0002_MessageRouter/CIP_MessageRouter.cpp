@@ -99,7 +99,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     else
     {
         /* forward request to appropriate Object if it is registered*/
-        CIP_MessageRouter* registered_object;
+        CIP_MessageRouter* registered_object = NULL;
 
         //registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
         if (registered_object == 0)

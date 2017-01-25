@@ -240,7 +240,6 @@ CipStatus CIP_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
             }
             message_router_response->data += message_router_response->data_length;
         }
-        attribute++;
     }
     message_router_response->data_length = (CipInt) (message_router_response->data - response);
     message_router_response->data = response;
