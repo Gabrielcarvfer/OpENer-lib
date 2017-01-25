@@ -2,7 +2,8 @@
 // Created by gabriel on 25/01/17.
 //
 
-#include "CIP_Connection.h"
+#include <typedefs.hpp>
+#include "CIP_Connection.hpp"
 
 CipStatus CIP_Connection::Init()
 {
@@ -33,7 +34,100 @@ CipStatus CIP_Connection::Init()
     //Class services
 }
 
+//Class services
+CipStatus CIP_Connection::Create()
+{
 
+}
+
+CipStatus CIP_Connection::Delete()
+{
+
+}
+
+CipStatus CIP_Connection::Reset()
+{
+
+}
+
+CipStatus CIP_Connection::FindNextInstance()
+{
+
+}
+
+CipStatus CIP_Connection::GetAttributeSingle()
+{
+
+}
+
+//Instance services
+CipStatus CIP_Connection::Bind(ConnectionHandles connHandle)
+{
+    CipStatus status;
+    if (GetInstance(connHandle.handle[0]) == nullptr & GetInstance(connHandle.handle[1]) == nullptr)
+    {
+        //if both connections exist, then
+        //check if there are resources to bound
+        if ()
+        {
+            if (GetInstance(connHandle.handle[0])->state == kConnectionStateEstablished & GetInstance(connHandle.handle[1])->state == kConnectionStateEstablished)
+            {
+                if (connHandle.handle[0] != connHandle.handle[1])
+                {
+                    //check if one or both instances are not dynamically created I/O conn
+                    if ()
+                    {
+                        //check if connections are ccreated internaly and device prevent bind
+                        if ()
+                        {
+                            status.status=kCipStatusOk;
+                            return status;
+                        }
+                        //Device prevent binding
+                        status.extended_status = 0x02;
+                        status.status = 0xD0;
+                        return status;
+                    }
+                    //At least one connection is not dynamically created
+                    status.extended_status = 0x01;
+                    status.status = 0xD0;
+                    return status;
+                }
+                //Both connections are the same
+                status.extended_status = 0x01;
+                status.status = kCipErrorInvalidParameter;
+                return status;
+            }
+            //Both instances exist, but at least one is not in Established state
+            status.extended_status = 0x01;
+            status.status = kCipErrorObjectStateConflict;
+            return status;
+        }
+        //Class or instance out of resources to bind
+        status.extended_status = 0x02;
+        status.status = kCipErrorResourceUnavailable;
+        return status;
+    }
+    //One or both connections dont exist
+    status.extended_status = 0x01;
+    status.status = kCipErrorResourceUnavailable;
+    return status;
+}
+
+CipStatus CIP_Connection::ProducingLookup()
+{
+
+}
+
+CipStatus CIP_Connection::SafetyClose()
+{
+
+}
+
+CipStatus CIP_Connection::SafetyOpen()
+{
+
+}
 
 CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
 {

@@ -111,50 +111,8 @@ public:
 #define SEQ_LEQ16(a, b) ((short)((a) - (b)) <= 0)
 #define SEQ_GEQ16(a, b) ((short)((a) - (b)) >= 0)
 
-/** @brief States of a connection */
-    typedef enum {
-        kConnectionStateNonExistent = 0,
-        kConnectionStateConfiguring = 1,
-        kConnectionStateWaitingForConnectionId = 2 /**< only used in DeviceNet */,
-        kConnectionStateEstablished = 3,
-        kConnectionStateTimedOut = 4,
-        kConnectionStateDeferredDelete = 5 /**< only used in DeviceNet */,
-        kConnectionStateClosing
-    } ConnectionState;
 
-/** @brief instance_type attributes */
-    typedef enum {
-        kConnectionTypeExplicit = 0,
-        kConnectionTypeIoExclusiveOwner = 0x01,
-        kConnectionTypeIoInputOnly = 0x11,
-        kConnectionTypeIoListenOnly = 0x21
-    } ConnectionType;
 
-/** @brief Possible values for the watch dog time out action of a connection */
-    typedef enum {
-        kWatchdogTimeoutActionTransitionToTimedOut = 0, /**< , invalid for explicit message connections */
-        kWatchdogTimeoutActionAutoDelete = 1, /**< Default for explicit message connections,
-   default for I/O connections on EIP */
-        kWatchdogTimeoutActionAutoReset = 2, /**< Invalid for explicit message connections */
-        kWatchdogTimeoutActionDeferredDelete = 3 /**< Only valid for DeviceNet, invalid for I/O connections */
-    } WatchdogTimeoutAction;
-
-    typedef struct {
-        ConnectionState state;
-        CipUint connection_id;
-        /*TODO think if this is needed anymore
-     TCMReceiveDataFunc m_ptfuncReceiveData; */
-    } LinkConsumer;
-
-    typedef struct {
-        ConnectionState state;
-        CipUint connection_id;
-    } LinkProducer;
-
-    typedef struct {
-        LinkConsumer consumer;
-        LinkProducer producer;
-    } LinkObject;
 
     static const int classCode = kCipConnectionManagerClassCode;
     CIP_ConnectionManager (struct sockaddr *originator_address, struct sockaddr *remote_address)
@@ -241,8 +199,6 @@ public:
      * functionality of the connection object is not implemented. Therefore this
      * data can not be accessed with CIP means.
      */
-    ConnectionState state;
-    ConnectionType instance_type;
 
     /* conditional
    CipUint DeviceNetProductedConnectionID;
@@ -257,7 +213,7 @@ public:
     CipUdint produced_connection_id;
     CipUdint consumed_connection_id;
     /**/
-    WatchdogTimeoutAction watchdog_timeout_action;
+    //todo: check with connection WatchdogTimeoutAction watchdog_timeout_action;
     CipUint produced_connection_path_length;
     CipEpath produced_connection_path;
     CipUint consumed_connection_path_length;
@@ -280,7 +236,7 @@ public:
     CipUsint connection_path_size;
     CipElectronicKey electronic_key;
     CipConnectionPath connection_path; // padded EPATH
-    LinkObject link_object;
+    //todo: check with connection LinkObject link_object;
 
     const CIP_Object * consuming_instance;
     /*S_CIP_CM_Object *p_stConsumingCMObject; */

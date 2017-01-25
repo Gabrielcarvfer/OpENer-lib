@@ -80,6 +80,12 @@ typedef enum {
     kCipStatusOk = 0, /**< Stack is ok */
     kCipStatusOkSend = 1, /**< Stack is ok, after send */
     kCipStatusError = -1 /**< Stack is in error */
+} kCipStatus;
+
+typedef struct
+{
+    CipUsint status;
+    CipUsint extended_status;
 } CipStatus;
 
 /** @brief Communication direction of an UDP socket; consuming is receiver,
