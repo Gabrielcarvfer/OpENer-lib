@@ -85,12 +85,7 @@ public:
         kConnectionManagerStatusCodeTargetObjectOutOfConnections = 0x011A
     } ConnectionManagerStatusCode;
 
-    typedef enum {
-        kConnectionTriggerTypeProductionTriggerMask = 0x70,
-        kConnectionTriggerTypeCyclicConnection = 0x0,
-        kConnectionTriggerTypeChangeOfStateTriggeredConnection = 0x10,
-        kConnectionTriggerTypeApplicationTriggeredConnection = 0x20
-    } ConnectionTriggerType;
+
 
 /** @brief macros for comparing sequence numbers according to CIP spec vol
  * 2 3-4.2 for int type variables
@@ -200,28 +195,9 @@ public:
      * data can not be accessed with CIP means.
      */
 
-    /* conditional
-   CipUint DeviceNetProductedConnectionID;
-   CipUint DeviceNetConsumedConnectionID;
-   */
-    CipByte device_net_initial_comm_characteristcs;
-    CipUint produced_connection_size;
-    CipUint consumed_connection_size;
-    CipUint expected_packet_rate;
 
-    /*conditional*/
-    CipUdint produced_connection_id;
-    CipUdint consumed_connection_id;
-    /**/
-    //todo: check with connection WatchdogTimeoutAction watchdog_timeout_action;
-    CipUint produced_connection_path_length;
-    CipEpath produced_connection_path;
-    CipUint consumed_connection_path_length;
-    CipEpath consumed_connection_path;
-    /* conditional
-   UINT16 ProductionInhibitTime;
-   */
-    /* non CIP Attributes, only relevant for opened connections */
+
+        /* non CIP Attributes, only relevant for opened connections */
     CipByte priority_timetick;
     CipUsint timeout_ticks;
     CipUint connection_serial_number;

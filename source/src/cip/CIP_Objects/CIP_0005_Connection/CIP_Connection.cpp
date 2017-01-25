@@ -3,6 +3,8 @@
 //
 
 #include <typedefs.hpp>
+#include <vector>
+#include <cstring>
 #include "CIP_Connection.hpp"
 
 CipStatus CIP_Connection::Init()
@@ -10,26 +12,27 @@ CipStatus CIP_Connection::Init()
     class_id = 5;
     class_name = "Connection";
     class_id = kCipConnectionManagerClassCode;
-    get_all_class_attributes_mask = 0xC6;
-    get_all_instance_attributes_mask = 0xffffffff;
     class_name = "Connection Manager";
     revision = 1;
-    revision = 0;
 
     CIP_Connection *instance = new CIP_Connection();
-    object_Set.emplace(object_Set.size(), instance);
 
-    //Chapter 4 vol 1
-    instance->InsertAttribute(1, , , , );
-    instance->InsertAttribute(2, , , , );
-    instance->InsertAttribute(3, , , , );
-    instance->InsertAttribute(4, , , , );
-    instance->InsertAttribute(5, , , , );
-    instance->InsertAttribute(6, , , , );
-    instance->InsertAttribute(7, , , , );
+    //Chapter 4 vol 1 - Common CIP attributes added on template itself
+    instance->InsertAttribute(1, kCipUint , &revision                             , kGetableSingleAndAll);
+    instance->InsertAttribute(2, kCipUint , &max_instances                        , kGetableSingleAndAll);
+    instance->InsertAttribute(3, kCipUint , &number_of_instances                  , kGetableSingleAndAll);
+    instance->InsertAttribute(4, kCipUdint, &optional_attribute_list              , kGetableSingleAndAll);
+    instance->InsertAttribute(5, kCipUdint, &optional_service_list                , kGetableSingleAndAll);
+    instance->InsertAttribute(6, kCipUint , &maximum_id_number_class_attributes   , kGetableSingleAndAll);
+    instance->InsertAttribute(7, kCipUint , &maximum_id_number_instance_attributes, kGetableSingleAndAll);
+
     //Chapter 5 vol 5
-    instance->InsertAttribute(8, , , , );
-    instance->InsertAttribute(9, , , , );
+    //todo: recheck sizes
+    instance->InsertAttribute(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
+    instance->InsertAttribute(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
+
+
+    object_Set.emplace(object_Set.size(), instance);
 
     //Class services
 }
@@ -37,7 +40,27 @@ CipStatus CIP_Connection::Init()
 //Class services
 CipStatus CIP_Connection::Create()
 {
-
+    CIP_Connection *instance = new CIP_Connection();
+    //Chapter 3-4.4 vol 1
+    instance->InsertAttribute( 1, kCipUsint, &State                                , kGetableSingleAndAll);
+    instance->InsertAttribute( 2, kCipUsint, &InstanceT_type                       , kGetableSingleAndAll);
+    instance->InsertAttribute( 3, kCipByte , &TransportClass_trigger               , kGetableSingleAndAll);
+    instance->InsertAttribute( 4, kCipUint , &DeviceNet_produced_connection_id     , kGetableSingleAndAll);
+    instance->InsertAttribute( 5, kCipUint , &DeviceNet_consumed_connection_id     , kGetableSingleAndAll);
+    instance->InsertAttribute( 6, kCipByte , &DeviceNet_initial_comm_characteristcs, kGetableSingleAndAll);
+    instance->InsertAttribute( 7, kCipUint , &Produced_connection_size             , kGetableSingleAndAll);
+    instance->InsertAttribute( 8, kCipUint , &Consumed_connection_size             , kGetableSingleAndAll);
+    instance->InsertAttribute( 9, kCipUint , &Expected_packet_rate                 , kGetableSingleAndAll);
+    instance->InsertAttribute(10, kCipUdint, &CIP_produced_connection_id           , kGetableSingleAndAll);
+    instance->InsertAttribute(11, kCipUdint, &CIP_consumed_connection_id           , kGetableSingleAndAll);
+    instance->InsertAttribute(12, kCipUsint, &Watchdog_timeout_action              , kGetableSingleAndAll);
+    instance->InsertAttribute(13, kCipUint , &Produced_connection_path_length      , kGetableSingleAndAll);
+    instance->InsertAttribute(14, kCipEpath, &Produced_connection_path             , kGetableSingleAndAll);
+    instance->InsertAttribute(15, kCipUint , &Consumed_connection_path_length      , kGetableSingleAndAll);
+    instance->InsertAttribute(16, kCipEpath, &Consumed_connection_path             , kGetableSingleAndAll);
+    instance->InsertAttribute(17, kCipUint , &Production_inhibit_time              , kGetableSingleAndAll);
+    instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier        , kGetableSingleAndAll);
+    instance->InsertAttribute(19, kCipUdint, &Connection_binding_list              , kGetableSingleAndAll);
 }
 
 CipStatus CIP_Connection::Delete()
@@ -61,18 +84,18 @@ CipStatus CIP_Connection::GetAttributeSingle()
 }
 
 //Instance services
-CipStatus CIP_Connection::Bind(ConnectionHandles connHandle)
+CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
 {
     CipStatus status;
-    if (GetInstance(connHandle.handle[0]) == nullptr & GetInstance(connHandle.handle[1]) == nullptr)
+    if (GetInstance(bound_instances[0]) == nullptr & GetInstance(bound_instances[1]) == nullptr)
     {
         //if both connections exist, then
         //check if there are resources to bound
         if ()
         {
-            if (GetInstance(connHandle.handle[0])->state == kConnectionStateEstablished & GetInstance(connHandle.handle[1])->state == kConnectionStateEstablished)
+            if (GetInstance(bound_instances[0])->State == kConnectionStateEstablished & GetInstance(bound_instances[1])->State == kConnectionStateEstablished)
             {
-                if (connHandle.handle[0] != connHandle.handle[1])
+                if (bound_instances[0] != bound_instances[1])
                 {
                     //check if one or both instances are not dynamically created I/O conn
                     if ()
@@ -114,9 +137,38 @@ CipStatus CIP_Connection::Bind(ConnectionHandles connHandle)
     return status;
 }
 
-CipStatus CIP_Connection::ProducingLookup()
+CipStatus CIP_Connection::ProducingLookup(CipEpath producing_application_path, CipUint *instance_count, std::vector<CipUint> connection_instance_list[])
 {
+    int j;
+    CipStatus status;
+    if ( ( j = object_Set.size() ) < 1)
+    {
+        status.status = 0x02;
+        status.extended_status = 0x01;
+        return status;
+    }
+    const CIP_Connection * obj_ptr;
 
+    //Check every connection to check out if active and producing
+    CipUint k;
+    for (unsigned int i = 0; i < j; i++)
+    {
+        obj_ptr = GetInstance(i);
+        if (obj_ptr->is_active & obj_ptr->is_producing)
+        {
+            if (strcmp(producing_application_path, obj_ptr->Produced_connection_path) == 0)
+            {
+                (*instance_count)++;
+                connection_instance_list->push_back(k = obj_ptr->id);
+            }
+        }
+    }
+
+
+
+    status.status = 0x0;
+    status.extended_status = 0x0;
+    return status;
 }
 
 CipStatus CIP_Connection::SafetyClose()
