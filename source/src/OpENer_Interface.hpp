@@ -14,7 +14,7 @@
 #include "cip/ciptypes.hpp"
 #include "cip/CIP_Objects/template/CIP_Object.hpp"
 #include "typedefs.hpp"
-#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
+#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "OpENer_IOConnection.hpp"
 #include "OpENer_ExplicitConnection.hpp"
 
@@ -347,7 +347,7 @@ class OpENer_Interface
      *
      * @return CIP error code
      */
-    //TODO:typedef CipStatus (*OpenConnectionFunction)(CIP_Connection* connection, CipUint* extended_error_code);
+    //TODO:typedef CipStatus (*OpenConnectionFunction)(CIP_ConnectionManager* connection, CipUint* extended_error_code);
 
     /** @ingroup CIP_API
      * @brief Function prototype for handling the closing of connections
@@ -355,14 +355,14 @@ class OpENer_Interface
      * @param CIP_Connection The connection object which is closing the
      * connection
      */
-    //TODO:typedef void (*ConnectionCloseFunction)(CIP_Connection* connection);
+    //TODO:typedef void (*ConnectionCloseFunction)(CIP_ConnectionManager* connection);
 
     /** @ingroup CIP_API
      * @brief Function prototype for handling the timeout of connections
      *
      * @param CIP_Connection The connection object which connection timed out
      */
-    //TODO:typedef void (*ConnectionTimeoutFunction)(CIP_Connection* connection);
+    //TODO:typedef void (*ConnectionTimeoutFunction)(CIP_ConnectionManager* connection);
 
     /** @ingroup CIP_API
      * @brief Function prototype for sending data via a connection
@@ -371,7 +371,7 @@ class OpENer_Interface
      *
      * @return EIP stack status
      */
-    //TODO:typedef CipStatus (*ConnectionSendDataFunction)(CIP_Connection* connection);
+    //TODO:typedef CipStatus (*ConnectionSendDataFunction)(CIP_ConnectionManager* connection);
 
     /** @ingroup CIP_API
      * @brief Function prototype for receiving data via a connection
@@ -382,7 +382,7 @@ class OpENer_Interface
      *
      * @return Stack status
      */
-    //TODO:typedef CipStatus (*ConnectionReceiveDataFunction)(CIP_Connection* connection, CipUsint* data, CipUint data_length);
+    //TODO:typedef CipStatus (*ConnectionReceiveDataFunction)(CIP_ConnectionManager* connection, CipUsint* data, CipUint data_length);
 
     /** @ingroup CIP_API
      * @brief register open functions for an specific object.

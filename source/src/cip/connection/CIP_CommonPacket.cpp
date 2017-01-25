@@ -5,7 +5,7 @@
  ******************************************************************************/
 #include "CIP_CommonPacket.hpp"
 #include "../CIP_Common.hpp"
-#include "../CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
+#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "../CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
 #include "network/NET_Endianconv.hpp"
 #include "network/ethIP/eip_endianconv.hpp"
@@ -73,7 +73,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
         if (common_packet_data.address_item.type_id == kCipItemIdConnectionAddress) /* check if ConnectedAddressItem received, otherwise it is no connected message and should not be here*/
         {
             // ConnectedAddressItem item
-            CIP_Connection* connection_object = CIP_Connection::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
+            CIP_ConnectionManager* connection_object = CIP_ConnectionManager::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
             if (NULL != connection_object)
             {
                 // reset the watchdog timer

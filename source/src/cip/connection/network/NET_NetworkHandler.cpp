@@ -234,7 +234,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
                 // if it is still checked it is a TCP receive
                 if (kCipStatusError == HandleDataOnTcpSocket(socket)) // if error
                 {
-                    //todo: move to CIP_Connection
+                    //todo: move to CIP_ConnectionManager
                     // CloseSocket;
                     // CloseSession; // clean up session and close the socket
                 }
@@ -251,13 +251,13 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
     if (g_elapsed_time >= kOpENerTimerTickInMilliSeconds)
     {
         /* call manage_connections() in connection manager every OPENER_TIMER_TICK ms */
-        CIP_Connection::ManageConnections(g_elapsed_time);
+        CIP_ConnectionManager::ManageConnections(g_elapsed_time);
         g_elapsed_time = 0;
     }
     return kCipStatusOk;
 }
 
-//todo:move to CIP_Connection
+//todo:move to CIP_ConnectionManager
 /*void NET_NetworkHandler::IApp_CloseSocket_udp(int socket_handle)
 {
     CloseSocket(socket_handle);
@@ -601,15 +601,15 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
     struct sockaddr_in from_address;
     socklen_t from_address_length;
 
-    CIP_Connection* connection_object_iterator;
-    CIP_Connection* current_connection_object = NULL;
+    CIP_ConnectionManager* connection_object_iterator;
+    CIP_ConnectionManager* current_connection_object = NULL;
 
     // see a message on one of the registered UDP sockets has been received
-    for (int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+    for (int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
 
         // do this at the beginning as the close function may can make the entry invalid
-        connection_object_iterator = (CIP_Connection*)CIP_Connection::active_connections_set[i];
+        connection_object_iterator = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set[i];
 
         if ((-1 != current_connection_object->netConn->GetSocketHandle(/*todo:kUdpCommuncationDirectionConsuming*/) && (CheckSocketSet( current_connection_object->netConn->GetSocketHandle (/*todo:kUdpCommuncationDirectionConsuming*/)))))
         {

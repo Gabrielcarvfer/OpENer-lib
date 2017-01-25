@@ -7,7 +7,7 @@
 #include <cstring> /*needed for memcpy */
 #include <cstdlib>
 #include "CIP_Assembly.hpp"
-#include "../CIP_0006_ConnectionManager/CIP_Connection.hpp"
+#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 
 CIP_Assembly::CIP_Assembly()
 {
@@ -123,7 +123,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
             CipByteArray* data = (CipByteArray*)attribute->getData ();
 
             /* TODO: check for ATTRIBUTE_SET/GETABLE MASK */
-            if (CIP_Connection::IsConnectedOutputAssembly((CipUdint) GetInstanceNumber(this)) != 0)
+            if (CIP_ConnectionManager::IsConnectedOutputAssembly((CipUdint) GetInstanceNumber(this)) != 0)
             {
                 OPENER_TRACE_WARN("Assembly AssemblyAttributeSingle: received data for connected output assembly\n\r");
                 message_router_response->general_status = kCipErrorAttributeNotSetable;

@@ -5,6 +5,7 @@ add_subdirectory(CIP_0001_Identity)
 add_subdirectory(CIP_0002_MessageRouter)
 add_subdirectory(CIP_0003_DeviceNET)
 add_subdirectory(CIP_0004_Assembly)
+add_subdirectory(CIP_0005_Connection)
 add_subdirectory(CIP_0006_ConnectionManager)
 add_subdirectory(CIP_000A_AnalogInput)
 add_subdirectory(CIP_00F5_TCPIP_Interface)
@@ -20,6 +21,7 @@ target_link_libraries(
         CIP_CLASS0002_MSGROUTER
         CIP_CLASS0003_DEVICENET
         CIP_CLASS0004_ASSEMBLY
+        CIP_CLASS0005_CONNECTION
         CIP_CLASS0006_CONNECTIONMANAGER
         CIP_CLASS000A_ANALOGINPUT
         CIP_CLASS00F5_TCPIPINTERFACE

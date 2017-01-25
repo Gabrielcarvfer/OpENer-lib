@@ -42,11 +42,11 @@
 
 
 #include "../CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
-#include "../CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
+#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "CIP_CommonPacket.hpp"
 #include "../../OpENer_Interface.hpp"
 
-class CIP_IOConnection : public CIP_Connection
+class CIP_IOConnection : public CIP_ConnectionManager
 {
     public:
         /** @brief Setup all data in order to establish an IO connection

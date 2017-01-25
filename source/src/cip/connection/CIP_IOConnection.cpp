@@ -45,7 +45,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
     // TODO: add check for transport type trigger
 
-    if (CIP_Connection::kConnectionTriggerTypeCyclicConnection != (transport_type_class_trigger & CIP_Connection::kConnectionTriggerTypeProductionTriggerMask))
+    if (CIP_ConnectionManager::kConnectionTriggerTypeCyclicConnection != (transport_type_class_trigger & CIP_ConnectionManager::kConnectionTriggerTypeProductionTriggerMask))
     {
         if (256 == production_inhibit_time)
         {
@@ -101,7 +101,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (originator_to_target_connection_type != 0)
         {
             //setup consumer side
-            if (0 != (instance = (const CIP_Object<CIP_Connection>*) CIP_Assembly::GetInstance (connection_path.connection_point[0])))
+            if (0 != (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance (connection_path.connection_point[0])))
             {
                 // consuming Connection Point is present
                 consuming_instance = instance;
@@ -137,13 +137,13 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                 {
                     /*wrong connection size */
                     correct_originator_to_target_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
-                    *extended_error = CIP_Connection::kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize;
+                    *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize;
                     return (CipStatus) kCipErrorConnectionFailure;
                 }
             }
             else
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeInvalidConsumingApllicationPath;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidConsumingApllicationPath;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
         }
@@ -151,7 +151,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (target_to_originator_connection_type != 0)
         {
             //setup producer side
-            if (0 != (instance = (const CIP_Object<CIP_Connection>*) CIP_Assembly::GetInstance(connection_path.connection_point[producing_index])))
+            if (0 != (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance(connection_path.connection_point[producing_index])))
             {
                 producing_instance = instance;
 
@@ -186,14 +186,14 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                 {
                     /*wrong connection size*/
                     correct_target_to_originator_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
-                    *extended_error = CIP_Connection::kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize;
+                    *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize;
                     return (CipStatus) kCipErrorConnectionFailure;
                 }
 
             }
             else
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
         }
@@ -216,7 +216,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         }
     }
 
-    CIP_Connection::AddNewActiveConnection(this);
+    CIP_ConnectionManager::AddNewActiveConnection(this);
     //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventOpened);
     return eip_status;
 }
@@ -310,7 +310,7 @@ CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket
 
 CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
-    CIP_Connection* existing_connection_object = (CIP_Connection*)CIP_Appcontype::GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
+    CIP_ConnectionManager* existing_connection_object = (CIP_ConnectionManager*)CIP_Appcontype::GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
     int j;
 
     if (NULL == existing_connection_object)
@@ -339,7 +339,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
         j = 1;
     }
 
-    if (CIP_Connection::kConnectionTypeIoExclusiveOwner == instance_type)
+    if (CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner == instance_type)
     {
         //exclusive owners take the socket and further manage the connection
         //especially in the case of time outs.
@@ -446,7 +446,7 @@ CipStatus CIP_IOConnection::OpenMulticastConnection(UdpCommuncationDirection dir
 CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
 {
     CipUint connection_manager_status = 0;
-    const CIP_Object* config_instance = (const CIP_Object<CIP_Connection>*)CIP_Assembly::GetClass();
+    const CIP_Object* config_instance = (const CIP_Object<CIP_ConnectionManager>*)CIP_Assembly::GetClass();
 
     if (0 != g_config_data_length)
     {
@@ -457,14 +457,14 @@ CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
             CipByteArray* p = (CipByteArray*)GetCipAttribute(3)->getData ();
             if (p->length != g_config_data_length)
             {
-                connection_manager_status = CIP_Connection::kConnectionManagerStatusCodeErrorOwnershipConflict;
+                connection_manager_status = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
             }
             else
             {
                 /*FIXME check if this is correct */
                 if (memcmp(p->data, g_config_data_buffer, g_config_data_length))
                 {
-                    connection_manager_status = CIP_Connection::kConnectionManagerStatusCodeErrorOwnershipConflict;
+                    connection_manager_status = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
                 }
             }
         }
@@ -476,7 +476,7 @@ CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
             if (kCipStatusOk != NotifyAssemblyConnectedDataReceived(config_instance, g_config_data_buffer, g_config_data_length))
             {
                 OPENER_TRACE_WARN("Configuration data was invalid\n");
-                connection_manager_status = CIP_Connection::kConnectionManagerStatusCodeInvalidConfigurationApplicationPath;
+                connection_manager_status = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidConfigurationApplicationPath;
             }
              */
         }
@@ -489,11 +489,11 @@ void CIP_IOConnection::CloseIoConnection()
 
     //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventClosed);
 
-    if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == instance_type) || (CIP_Connection::kConnectionTypeIoInputOnly == instance_type))
+    if ((CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner == instance_type) || (CIP_ConnectionManager::kConnectionTypeIoInputOnly == instance_type))
     {
-        if ((CIP_Connection::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
+        if ((CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
         {
-            CIP_Connection* next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+            CIP_ConnectionManager* next_non_control_master_connection = (CIP_ConnectionManager*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
             if (NULL != next_non_control_master_connection)
             {
                 next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
@@ -509,7 +509,7 @@ void CIP_IOConnection::CloseIoConnection()
             else
             {
                 // this was the last master connection close all listen only connections listening on the port
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoListenOnly);
             }
         }
     }
@@ -519,22 +519,22 @@ void CIP_IOConnection::CloseIoConnection()
 
 void CIP_IOConnection::HandleIoConnectionTimeOut()
 {
-    CIP_Connection* next_non_control_master_connection;
+    CIP_ConnectionManager* next_non_control_master_connection;
     //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventTimedOut);
 
-    if (CIP_Connection::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection))
+    if (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
     {
         switch (instance_type)
         {
-            case CIP_Connection::kConnectionTypeIoExclusiveOwner:
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+            case CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner:
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoInputOnly);
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoListenOnly);
                 break;
-            case CIP_Connection::kConnectionTypeIoInputOnly:
+            case CIP_ConnectionManager::kConnectionTypeIoInputOnly:
                 if (kEipInvalidSocket != netConn->GetSocketHandle ())
                 {
                     // we are the controlling input only connection find a new controller
-                    next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+                    next_non_control_master_connection = (CIP_ConnectionManager*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
                     if (NULL != next_non_control_master_connection)
                     {
                         next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
@@ -544,7 +544,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
                     else
                     {
                         //this was the last master connection close all listen only connections listening on the port
-                        CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                        CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoListenOnly);
                     }
                 }
                 break;

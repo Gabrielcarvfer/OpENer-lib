@@ -17,7 +17,7 @@
 
 #include "../../../opener_user_conf.hpp"
 #include "../../ciptypes.hpp"
-#include "../../CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
+#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "NET_Connection.hpp"
 
 #include "ethIP/NET_EthIP_Includes.h"

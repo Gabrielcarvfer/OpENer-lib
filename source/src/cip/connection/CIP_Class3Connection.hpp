@@ -11,17 +11,17 @@
  *  @brief CIP Class 3 connection
  */
 
-#include "../CIP_Objects/CIP_0006_ConnectionManager/CIP_Connection.hpp"
+#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "../../OpENer_Interface.hpp"
 #include "../../opener_user_conf.hpp"
 
-class CIP_Class3conn : public CIP_Connection
+class CIP_Class3conn : public CIP_ConnectionManager
 {
     public:
     /**** Global variables ****/
 
     /** @brief Array of the available explicit connections */
-       static CIP_Connection *g_explicit_connections[];
+       static CIP_ConnectionManager *g_explicit_connections[];
 
     /** @brief Check if Class3 connection is available and if yes setup all data.
      *
@@ -35,7 +35,7 @@ class CIP_Class3conn : public CIP_Connection
 
     static void InitializeClass3ConnectionData (void);
 
-    CIP_Connection *GetFreeExplicitConnection (void);
+    CIP_ConnectionManager *GetFreeExplicitConnection (void);
 
 };
 #endif /* OPENER_CIPCLASS3CONNECTION_H_ */

@@ -48,9 +48,9 @@ void CIP_Appcontype::ConfigureListenOnlyConnectionPoint(unsigned int connection_
     }
 }
 
-const  CIP_Connection* CIP_Appcontype::GetIoConnectionForConnectionData(const CIP_Connection* connection_object, CipUint* extended_error)
+const  CIP_ConnectionManager* CIP_Appcontype::GetIoConnectionForConnectionData(const CIP_ConnectionManager* connection_object, CipUint* extended_error)
 {
-    const CIP_Connection* io_connection = NULL;
+    const CIP_ConnectionManager* io_connection = NULL;
     *extended_error = 0;
 
     io_connection = GetExclusiveOwnerConnection(connection_object, extended_error);
@@ -70,36 +70,36 @@ const  CIP_Connection* CIP_Appcontype::GetIoConnectionForConnectionData(const CI
                     {
                         /* no application connection type was found that suits the given data */
                         /* TODO check error code VS */
-                        *extended_error = CIP_Connection::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
+                        *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
                     }
                     else
                     {
-                        ((CIP_Connection*)connection_object)->instance_type = CIP_Connection::kConnectionTypeIoListenOnly;
+                        ((CIP_ConnectionManager*)connection_object)->instance_type = CIP_ConnectionManager::kConnectionTypeIoListenOnly;
                     }
                 }
             }
             else
             {
-                ((CIP_Connection*)connection_object)->instance_type = CIP_Connection::kConnectionTypeIoInputOnly;
+                ((CIP_ConnectionManager*)connection_object)->instance_type = CIP_ConnectionManager::kConnectionTypeIoInputOnly;
             }
         }
     }
     else
     {
-        ((CIP_Connection*)connection_object)->instance_type = CIP_Connection::kConnectionTypeIoExclusiveOwner;
+        ((CIP_ConnectionManager*)connection_object)->instance_type = CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner;
     }
 
     if (NULL != io_connection)
     {
-        CIP_Connection::CopyConnectionData(io_connection, connection_object);
+        CIP_ConnectionManager::CopyConnectionData(io_connection, connection_object);
     }
 
     return io_connection;
 }
 
-const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error)
+const  CIP_ConnectionManager* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_ConnectionManager* connection_object, CipUint* extended_error)
 {
-    CIP_Connection* exclusive_owner_connection = NULL;
+    CIP_ConnectionManager* exclusive_owner_connection = NULL;
     int i;
 
     for (i = 0; i < OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS; i++)
@@ -110,9 +110,9 @@ const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Con
         {
 
             /* check if on other connection point with the same output assembly is currently connected */
-            if (NULL != CIP_Connection::GetConnectedOutputAssembly(connection_object->connection_path.connection_point[0]))
+            if (NULL != CIP_ConnectionManager::GetConnectedOutputAssembly(connection_object->connection_path.connection_point[0]))
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeErrorOwnershipConflict;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
                 break;
             }
             exclusive_owner_connection = (g_exlusive_owner_connections[i]
@@ -123,9 +123,9 @@ const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Con
     return exclusive_owner_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetInputOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
+const CIP_ConnectionManager* CIP_Appcontype::GetInputOnlyConnection(const CIP_ConnectionManager* connection_object, CipUint* extended_error)
 {
-    CIP_Connection* input_only_connection = NULL;
+    CIP_ConnectionManager* input_only_connection = NULL;
     int i, j;
 
     for (i = 0; i < OPENER_CIP_NUM_INPUT_ONLY_CONNS; i++)
@@ -134,38 +134,38 @@ const CIP_Connection* CIP_Appcontype::GetInputOnlyConnection(const CIP_Connectio
         { /* we have the same output assembly */
             if (g_input_only_connections[i].input_assembly != connection_object->connection_path.connection_point[1])
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
                 break;
             }
             if (g_input_only_connections[i].config_assembly!= connection_object->connection_path.connection_point[2])
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
                 break;
             }
 
             for (j = 0; j < OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH; j++)
             {
-                if (CIP_Connection::kConnectionStateNonExistent == g_input_only_connections[i].connection_data[j].state)
+                if (CIP_ConnectionManager::kConnectionStateNonExistent == g_input_only_connections[i].connection_data[j].state)
                 {
                     return (&g_input_only_connections[i].connection_data[j]);
                 }
             }
-            *extended_error = CIP_Connection::kConnectionManagerStatusCodeTargetObjectOutOfConnections;
+            *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeTargetObjectOutOfConnections;
             break;
         }
     }
     return input_only_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetListenOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
+const CIP_ConnectionManager* CIP_Appcontype::GetListenOnlyConnection(const CIP_ConnectionManager* connection_object, CipUint* extended_error)
 {
-    CIP_Connection* listen_only_connection = NULL;
+    CIP_ConnectionManager* listen_only_connection = NULL;
     int i, j;
 
-    if (CIP_Connection::kRoutingTypeMulticastConnection != (connection_object->t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection))
+    if (CIP_ConnectionManager::kRoutingTypeMulticastConnection != (connection_object->t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
     {
         /* a listen only connection has to be a multicast connection. */
-        *extended_error = CIP_Connection::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened; /* maybe not the best error message however there is no suitable definition in the cip spec */
+        *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened; /* maybe not the best error message however there is no suitable definition in the cip spec */
         return NULL;
     }
 
@@ -175,47 +175,47 @@ const CIP_Connection* CIP_Appcontype::GetListenOnlyConnection(const CIP_Connecti
         { /* we have the same output assembly */
             if (g_listen_only_connections[i].input_assembly != connection_object->connection_path.connection_point[1])
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
                 break;
             }
             if (g_listen_only_connections[i].config_assembly != connection_object->connection_path.connection_point[2])
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
                 break;
             }
 
             if (NULL == GetExistingProducerMulticastConnection(connection_object->connection_path.connection_point[1]))
             {
-                *extended_error = CIP_Connection::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened;
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened;
                 break;
             }
 
             for (j = 0; j < OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH; j++)
             {
-                if (CIP_Connection::kConnectionStateNonExistent == g_listen_only_connections[i].connection_data[j].state)
+                if (CIP_ConnectionManager::kConnectionStateNonExistent == g_listen_only_connections[i].connection_data[j].state)
                 {
                     return &g_listen_only_connections[i].connection_data[j];
                 }
             }
-            *extended_error = CIP_Connection::kConnectionManagerStatusCodeTargetObjectOutOfConnections;
+            *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeTargetObjectOutOfConnections;
             break;
         }
     }
     return listen_only_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetExistingProducerMulticastConnection(CipUdint input_point)
+const CIP_ConnectionManager* CIP_Appcontype::GetExistingProducerMulticastConnection(CipUdint input_point)
 {
-    const CIP_Connection* producer_multicast_connection;
+    const CIP_ConnectionManager* producer_multicast_connection;
 
-    for(unsigned int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+    for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        producer_multicast_connection = CIP_Connection::active_connections_set[i];
+        producer_multicast_connection = CIP_ConnectionManager::active_connections_set[i];
 
-        if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == producer_multicast_connection->instance_type) || (CIP_Connection::kConnectionTypeIoInputOnly   == producer_multicast_connection->instance_type))
+        if ((CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner == producer_multicast_connection->instance_type) || (CIP_ConnectionManager::kConnectionTypeIoInputOnly   == producer_multicast_connection->instance_type))
         {
             if ((input_point == producer_multicast_connection->connection_path.connection_point[1])
-                && (CIP_Connection::kRoutingTypeMulticastConnection == (producer_multicast_connection->t_to_o_network_connection_parameter & CIP_Connection::kRoutingTypeMulticastConnection))
+                && (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (producer_multicast_connection->t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
                 && (kEipInvalidSocket!= producer_multicast_connection->netConn->GetSocketHandle()))//todo:kUdpCommuncationDirectionProducing)))
             {
                 /* we have a connection that produces the same input assembly,
@@ -228,20 +228,20 @@ const CIP_Connection* CIP_Appcontype::GetExistingProducerMulticastConnection(Cip
     return producer_multicast_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetNextNonControlMasterConnection(CipUdint input_point)
+const CIP_ConnectionManager* CIP_Appcontype::GetNextNonControlMasterConnection(CipUdint input_point)
 {
-    CIP_Connection* next_non_control_master_connection;
+    CIP_ConnectionManager* next_non_control_master_connection;
 
-     for(unsigned int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+     for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        next_non_control_master_connection = (CIP_Connection*)CIP_Connection::active_connections_set[i];
+        next_non_control_master_connection = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set[i];
 
-        if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == next_non_control_master_connection->instance_type)
-            || (CIP_Connection::kConnectionTypeIoInputOnly == next_non_control_master_connection->instance_type))
+        if ((CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner == next_non_control_master_connection->instance_type)
+            || (CIP_ConnectionManager::kConnectionTypeIoInputOnly == next_non_control_master_connection->instance_type))
         {
             if ((input_point == next_non_control_master_connection->connection_path.connection_point[1])
-                && (CIP_Connection::kRoutingTypeMulticastConnection == (next_non_control_master_connection->t_to_o_network_connection_parameter
-                              & CIP_Connection::kRoutingTypeMulticastConnection))
+                && (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (next_non_control_master_connection->t_to_o_network_connection_parameter
+                              & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
                 && (kEipInvalidSocket == next_non_control_master_connection->netConn->GetSocketHandle()))//todo:kUdpCommuncationDirectionProducing)))
             {
                 /* we have a connection that produces the same input assembly,
@@ -254,14 +254,14 @@ const CIP_Connection* CIP_Appcontype::GetNextNonControlMasterConnection(CipUdint
     return next_non_control_master_connection;
 }
 
-void CIP_Appcontype::CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_Connection::ConnectionType instance_type)
+void CIP_Appcontype::CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_ConnectionManager::ConnectionType instance_type)
 {
-    const CIP_Connection* connection;
-    const CIP_Connection* connection_to_delete;
+    const CIP_ConnectionManager* connection;
+    const CIP_ConnectionManager* connection_to_delete;
 
-    for(unsigned int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+    for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        connection = CIP_Connection::active_connections_set[i];
+        connection = CIP_ConnectionManager::active_connections_set[i];
 
         if ((instance_type == connection->instance_type) && (input_point == connection->connection_path.connection_point[1]))
         {
@@ -270,19 +270,19 @@ void CIP_Appcontype::CloseAllConnectionsForInputWithSameType(CipUdint input_poin
 
             /* FIXME check if this is ok */
             //connection_to_delete->connection_close_function(connection_to_delete);
-            ((CIP_Connection*)connection)->CloseConnection (); /*will remove the connection from the active connection list */
+            ((CIP_ConnectionManager*)connection)->CloseConnection (); /*will remove the connection from the active connection list */
         }
     }
 }
 
 void CIP_Appcontype::CloseAllConnections(void)
 {
-    const  CIP_Connection* connection;
-    for(unsigned int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+    const  CIP_ConnectionManager* connection;
+    for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        connection = CIP_Connection::active_connections_set[i];
+        connection = CIP_ConnectionManager::active_connections_set[i];
         /*FIXME check if m_pfCloseFunc would be suitable*/
-        ((CIP_Connection*)connection)->CloseConnection();
+        ((CIP_ConnectionManager*)connection)->CloseConnection();
         /* Close connection will remove the connection from the list therefore we
      * need to get again the start until there is no connection left
      */
@@ -291,10 +291,10 @@ void CIP_Appcontype::CloseAllConnections(void)
 
 CipBool CIP_Appcontype::ConnectionWithSameConfigPointExists(CipUdint config_point)
 {
-    CIP_Connection* connection;
-    for(unsigned int i = 0; i < CIP_Connection::active_connections_set.size(); i++)
+    CIP_ConnectionManager* connection;
+    for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        connection = (CIP_Connection*)CIP_Connection::active_connections_set[i];
+        connection = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set[i];
 
         if (config_point == connection->connection_path.connection_point[2]) {
             break;
@@ -311,12 +311,12 @@ void CIP_Appcontype::InitializeIoConnectionData(void)
     g_input_only_connections = new InputOnlyConnection[OPENER_CIP_NUM_INPUT_ONLY_CONNS]();
     /*for (int i = 0; i < OPENER_CIP_NUM_INPUT_ONLY_CONNS; i++)
     {
-        g_input_only_connections[i].connection_data = new CIP_Connection[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]();
+        g_input_only_connections[i].connection_data = new CIP_ConnectionManager[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]();
     }*/
 
     g_listen_only_connections = new ListenOnlyConnection[OPENER_CIP_NUM_LISTEN_ONLY_CONNS]();
     /*for (int i = 0; i < OPENER_CIP_NUM_LISTEN_ONLY_CONNS; i++)
     {
-        g_listen_only_connections[i].connection_data = new CIP_Connection[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]();
+        g_listen_only_connections[i].connection_data = new CIP_ConnectionManager[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]();
     }*/
 }
