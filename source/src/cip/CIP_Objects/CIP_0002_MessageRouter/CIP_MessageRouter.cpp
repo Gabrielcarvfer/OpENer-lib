@@ -15,7 +15,7 @@ CipOctet CIP_MessageRouter::g_message_data_reply_buffer[100];
 
 
 //Methods
-CipStatus CIP_MessageRouter::CipMessageRouterInit()
+void CIP_MessageRouter::Init()
 {
     classAttributesNum = 0;
     instanceAttributesNum = 0;
@@ -23,7 +23,7 @@ CipStatus CIP_MessageRouter::CipMessageRouterInit()
     classServicesNum = 0;
     instanceAttributesNum = 0;
 
-    maxNumOfInstances = 1;
+    max_instances = 1;
 
     revision = 1;
     class_name = "message router";

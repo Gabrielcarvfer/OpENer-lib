@@ -19,10 +19,8 @@ class CIP_Assembly : public CIP_Object<CIP_Assembly>
 		/** @brief Setup the Assembly object
 		 *
 		 * Creates the Assembly Class with zero instances and sets up all services.
-		 *
-		 * @return Returns kCipStatusOk if assembly object was successfully created, otherwise kCipStatusError
 		 */
-		static CipStatus CipAssemblyInitialize(void);
+		static void Init();
 
 		/** @brief clean up the data allocated in the assembly object instances
 		 *

@@ -82,11 +82,14 @@ typedef enum {
     kCipStatusError = -1 /**< Stack is in error */
 } kCipStatus;
 
-typedef struct
+class CipStatus
 {
+public:
+    CipStatus(CipUsint status=kCipStatusOk, CipUsint extended_status=0x00){status = status; extended_status = extended_status;};
+    ~CipStatus(){};
     CipUsint status;
     CipUsint extended_status;
-} CipStatus;
+};
 
 /** @brief Communication direction of an UDP socket; consuming is receiver,
  * producing is sender

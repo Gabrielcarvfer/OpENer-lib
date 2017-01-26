@@ -24,12 +24,20 @@ class CIP_Object
         static bool RemoveClassInstance(T * instance);
         static bool RemoveClassInstance(CipUdint position);
 
+        virtual static CipStatus Init();
+        virtual static CipStatus Shut();
         CIP_Object();
         virtual ~CIP_Object();
 
         static CipUdint class_id;
         static std::string class_name;
-        static CipUint revision;
+        static CipUint  revision;
+        static CipUint  max_instances;
+        static CipUint  number_of_instances;
+        static CipUdint optional_attribute_list;
+        static CipUdint optional_service_list;
+        static CipUint  maximum_id_number_class_attributes;
+        static CipUint  maximum_id_number_instance_attributes;
 
         std::map< CipUdint, CIP_Attribute * > attributes;
         std::map< CipUdint, CIP_Service * > services;
@@ -142,16 +150,6 @@ class CIP_Object
         //Instance stuff
         int id;
         static T * class_ptr;
-
-        //Class stuff
-        static int instancesNum;
-        static int classAttributesNum;
-        static int instanceAttributesNum;
-        static int maxNumOfInstances;
-        static int classServicesNum;
-        static int instanceServicesNum;
-        static CipUdint get_all_class_attributes_mask;
-        static CipUdint get_all_instance_attributes_mask;
         static std::map<CipUdint, const T *> object_Set;
 };
 

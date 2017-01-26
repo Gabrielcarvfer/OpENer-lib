@@ -11,18 +11,15 @@
 #include <utility>
 
 //Static variables
-template<class T> CipUdint        CIP_Object<T>::class_id;
-template<class T> std::string     CIP_Object<T>::class_name;
-template<class T> CipUint         CIP_Object<T>::revision;
-template<class T> T*              CIP_Object<T>::class_ptr;
-template<class T> int             CIP_Object<T>::instancesNum;
-template<class T> int             CIP_Object<T>::classAttributesNum;
-template<class T> int             CIP_Object<T>::instanceAttributesNum;
-template<class T> int             CIP_Object<T>::maxNumOfInstances;
-template<class T> int             CIP_Object<T>::classServicesNum;
-template<class T> int             CIP_Object<T>::instanceServicesNum;
-template<class T> CipUdint        CIP_Object<T>::get_all_class_attributes_mask;
-template<class T> CipUdint        CIP_Object<T>::get_all_instance_attributes_mask;
+template<class T> CipUdint    CIP_Object<T>::class_id;
+template<class T> std::string CIP_Object<T>::class_name;
+template<class T> CipUint     CIP_Object<T>::revision;
+template<class T> CipUint     CIP_Object<T>::max_instances;
+template<class T> CipUint     CIP_Object<T>::number_of_instances;
+template<class T> CipUdint    CIP_Object<T>::optional_attribute_list;
+template<class T> CipUdint    CIP_Object<T>::optional_service_list;
+template<class T> CipUint     CIP_Object<T>::maximum_id_number_class_attributes;
+template<class T> CipUint     CIP_Object<T>::maximum_id_number_instance_attributes;
 template<class T> std::map<CipUdint, const T *> CIP_Object<T>::object_Set;
 
 //Methods
@@ -30,8 +27,8 @@ template<class T> std::map<CipUdint, const T *> CIP_Object<T>::object_Set;
 template <class T>
 CIP_Object<T>::CIP_Object()
 {
-  id = instancesNum;
-  instancesNum++;
+  id = number_of_instances;
+  number_of_instances++;
 }
 
 template <class T>
@@ -58,7 +55,7 @@ const T  * CIP_Object<T>::GetClass()
 template <class T>
 CipUdint CIP_Object<T>::GetNumberOfInstances()
 {
-    return object_Set.size();
+    return (CipUdint)object_Set.size();
 }
 
 template <class T>
@@ -223,7 +220,7 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest* message_rou
         }
     }
 
-    return kCipStatusOkSend;
+    return CipStatus(kCipStatusOkSend);
 }
 
 template <class T>
@@ -267,10 +264,11 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router
                     if (attrNum < 32 && (class_ptr->get_all_class_attributes_mask & 1 << attrNum))
                     {
                         message_router_request->request_path.attribute_number = attrNum;
-                        if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response))
+                        if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
                         {
                             message_router_response->data = reply;
-                            return kCipStatusError;
+
+                            return CipStatus(kCipStatusError);
                         }
                         message_router_response->data += message_router_response->data_length;
                     }
@@ -278,10 +276,10 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router
                 message_router_response->data_length = message_router_response->data - reply;
                 message_router_response->data = reply;
             }
-            return kCipStatusOkSend;
+            return CipStatus(kCipStatusOkSend);
         }
     }
-    return kCipStatusOk; /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
+    return CipStatus(kCipStatusOk); /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
 }
 
 #endif

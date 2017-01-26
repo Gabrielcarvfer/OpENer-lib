@@ -15,7 +15,7 @@ class CIP_EthIP_Link : public CIP_Object<CIP_EthIP_Link>
 public:
     /** @brief Initialize the Ethernet Link Objects data
     */
-    static CipStatus CipEthernetLinkInit(void);
+    static void Init(void);
     static CipStatus Shutdown();
     CIP_EthIP_Interface * associatedInterface;
 private:

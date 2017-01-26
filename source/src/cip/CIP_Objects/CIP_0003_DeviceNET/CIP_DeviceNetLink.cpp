@@ -20,33 +20,33 @@
 #include "CIP_DeviceNetLink.hpp"
  
 //Variables
-//CipUdint NET_DeviceNET_Link::class_id = kCipDeviceNetLinkClassCode;
-//std::string NET_DeviceNET_Link::class_name = "Devicenet Link";
-//CipUdint NET_DeviceNET_Link::get_all_class_attributes_mask = 0xffffffff;
-//CipUdint NET_DeviceNET_Link::get_all_instance_attributes_mask = 0xffffffff;
+//CipUdint CIP_DeviceNET_Link::class_id = kCipDeviceNetLinkClassCode;
+//std::string CIP_DeviceNET_Link::class_name = "Devicenet Link";
+//CipUdint CIP_DeviceNET_Link::get_all_class_attributes_mask = 0xffffffff;
+//CipUdint CIP_DeviceNET_Link::get_all_instance_attributes_mask = 0xffffffff;
 
 //Methods
 
-NET_DeviceNET_Link::~NET_DeviceNET_Link()
+CIP_DeviceNET_Link::~CIP_DeviceNET_Link()
 {
 
 }
 
 
-CipStatus NET_DeviceNET_Link::CipDevicenetLinkInit()
+void CIP_DeviceNET_Link::Init()
 {
     // set attributes to initial values
-    baud_rate = 0;
-    BOI = false;
-    BOC = 0;
-    mac_id_switch = false;
-    baud_rate_switch = false;
-    baud_rate_switch_val = 0;
-    quick_connect = false;
+    //baud_rate = 0;
+    //BOI = false;
+    //BOC = 0;
+    //mac_id_switch = false;
+    //baud_rate_switch = false;
+    //baud_rate_switch_val = 0;
+    //quick_connect = false;
     
     if (object_Set.size() == 0)
 	{
-		NET_DeviceNET_Link * class_ptr = new NET_DeviceNET_Link();
+		CIP_DeviceNET_Link * class_ptr = new CIP_DeviceNET_Link();
 
         //DeviceNet Object Attribute - Revision
         class_ptr->InsertAttribute(1, kCipUint,  &revision, kGetableSingle);
@@ -56,7 +56,7 @@ CipStatus NET_DeviceNET_Link::CipDevicenetLinkInit()
         //service code 0E
 		object_Set.emplace(0, class_ptr);
 
-		NET_DeviceNET_Link * instance_ptr = new NET_DeviceNET_Link();
+		CIP_DeviceNET_Link * instance_ptr = new CIP_DeviceNET_Link();
 		instance_ptr->class_ptr = class_ptr;
 
         //DeviceNet instance attributes
@@ -115,15 +115,9 @@ CipStatus NET_DeviceNET_Link::CipDevicenetLinkInit()
 		object_Set.emplace(instance_ptr->id, instance_ptr);
 
     }
-	else 
-	{
-        return kCipStatusError;
-    }
-
-    return kCipStatusOk;
 }
 
-CipStatus NET_DeviceNET_Link::GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_DeviceNET_Link::GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
 
     CipStatus status = kCipStatusOkSend;
@@ -134,7 +128,7 @@ CipStatus NET_DeviceNET_Link::GetAttributeSingleDeviceNetInterface(CipMessageRou
     return status;
 }
 
-CipStatus NET_DeviceNET_Link::InstanceServices(int service, CipMessageRouterRequest * msg_router_request, CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_DeviceNET_Link::InstanceServices(int service, CipMessageRouterRequest * msg_router_request, CipMessageRouterResponse* msg_router_response)
 {
 	switch (service)
 	{

@@ -10,9 +10,10 @@
 
 
 
-class NET_DeviceNET_Link : public CIP_Object<NET_DeviceNET_Link>
+class CIP_DeviceNET_Link : public CIP_Object<CIP_DeviceNET_Link>
 {
-	NET_DeviceNET_Link
+public:
+	CIP_DeviceNET_Link
 	(
 		 CipUdint serial, CipUsint baud_rate, CipUint vendor_id,
 		 CipBool BOI, CipUsint BOC, CipBool mac_id_switch, CipUsint baud_rate_switch,
@@ -34,10 +35,10 @@ class NET_DeviceNET_Link : public CIP_Object<NET_DeviceNET_Link>
 		physical_port = physical_port;
 		associated_can;
 	};
-	NET_DeviceNET_Link() { mac_id = 0xFF; };
-	~NET_DeviceNET_Link();
+	CIP_DeviceNET_Link() { mac_id = 0xFF; };
+	~CIP_DeviceNET_Link();
 
-	CipStatus CipDevicenetLinkInit();
+	static void Init();
 	CipStatus GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 	CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request, CipMessageRouterResponse* msg_router_response);
 

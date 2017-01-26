@@ -11,7 +11,7 @@ add_subdirectory(CIP_000A_AnalogInput)
 add_subdirectory(CIP_00F5_TCPIP_Interface)
 add_subdirectory(CIP_00F6_EthernetLink)
 
-set(CIP_OBJECTS_SRC ./template/CIP_Object.hpp )
+set(CIP_OBJECTS_SRC ./template/CIP_Object.hpp CIP_Objects.cpp CIP_Objects.hpp)
 
 add_library(CIP_Objects STATIC ${CIP_OBJECTS_SRC})
 

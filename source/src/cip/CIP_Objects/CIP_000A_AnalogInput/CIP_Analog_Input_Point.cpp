@@ -5,6 +5,10 @@
 //CipUdint CIP_AnalogInputPoint::class_id = 0x0A;
 
 //Methods
+void CIP_AnalogInputPoint::Init()
+{
+
+}
 
 // Handle Explicit requests to the class
 void CIP_AnalogInputPoint::handle_class_inquiry(unsigned char request[], unsigned char response[])

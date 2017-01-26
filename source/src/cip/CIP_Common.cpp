@@ -13,7 +13,7 @@
 #include "CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
 #include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
 #include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
-
+#include "CIP_Objects/CIP_Objects.hpp"
 //Static variables
 std::map <CipUsint,CipByteArray*> CIP_Common::message_data_reply_buffer;
 
@@ -23,7 +23,10 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
     CipStatus eip_status;
     NET_Encapsulation::Initialize ();
 
-    /* The message router is the first CIP object be initialized!!! */
+    int pointOfFail = -1; // OK
+    pointOfFail = CIP_Objects::InitObjects();
+    /*
+    // The message router is the first CIP object be initialized!!!
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
 
@@ -35,7 +38,7 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
 
     eip_status = CIP_Assembly::CipAssemblyInitialize ();
     OPENER_ASSERT(kCipStatusOk == eip_status);
-
+*/
     /* the application has to be initialized at last */
     //eip_status = ApplicationInitialization ();
     //OPENER_ASSERT(kCipStatusOk == eip_status);

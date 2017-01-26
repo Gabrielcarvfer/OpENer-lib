@@ -117,9 +117,8 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest* message_router_request, 
 
 /** @brief CIP Identity object constructor
  *
- * @returns EIP_ERROR if the class could not be created, otherwise EIP_OK
  */
-CipStatus CIP_Identity::CipIdentityInit()
+void CIP_Identity::Init()
 {
     // attributes in CIP Identity Object
     vendor_id_ = OPENER_DEVICE_VENDOR_ID;
@@ -147,7 +146,7 @@ CipStatus CIP_Identity::CipIdentityInit()
     instance->InsertAttribute(6, kCipUdint,       &serial_number_, kGetableSingleAndAll);
     instance->InsertAttribute(7, kCipShortString, &product_name_,  kGetableSingleAndAll);
 
-    return kCipStatusOk;
+    //return kCipStatusOk;
 }
 
 CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest *msg_router_request, CipMessageRouterResponse *msg_router_response)

@@ -28,7 +28,7 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
         /** @brief Initialize the data structures of the message router
          *  @return kCipStatusOk if class was initialized, otherwise kCipStatusError
          */
-        static CipStatus CipMessageRouterInit();
+        static void Init();
 
 
         /** @brief A class registry

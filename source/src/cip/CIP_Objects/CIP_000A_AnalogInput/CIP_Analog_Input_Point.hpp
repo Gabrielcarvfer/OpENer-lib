@@ -32,6 +32,7 @@ private:
 
 
 public:
+	static void Init();
 	static void handle_class_inquiry(unsigned char*, unsigned char*);
 	void handle_explicit(unsigned char*, unsigned char*);
 	unsigned char get_value(void);

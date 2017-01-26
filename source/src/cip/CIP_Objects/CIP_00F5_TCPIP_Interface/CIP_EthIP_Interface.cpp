@@ -122,11 +122,11 @@ CipStatus CIP_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* me
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_EthIP_Interface::CipTcpIpInterfaceInit()
+void CIP_EthIP_Interface::Init()
 {
     CIP_EthIP_Interface* instance;
 
-    if (instancesNum == 0)
+    if (number_of_instances == 0)
     {
         class_name = "TCP/IP interface";
         class_id = kCipTcpIpInterfaceClassCode;

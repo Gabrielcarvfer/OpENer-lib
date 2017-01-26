@@ -12,9 +12,9 @@ void CIP_EthIP_Link::ConfigureMacAddress(const CipUsint* mac_address)
     memcpy(&g_ethernet_link.physical_address, mac_address, sizeof(g_ethernet_link.physical_address));
 }
 
-CipStatus CIP_EthIP_Link::CipEthernetLinkInit()
+void CIP_EthIP_Link::Init()
 {
-    if (instancesNum == 0)
+    if (number_of_instances == 0)
     {
         get_all_class_attributes_mask = 0xffffffff;
         get_all_instance_attributes_mask = 0xffffffff;
@@ -35,7 +35,7 @@ CipStatus CIP_EthIP_Link::CipEthernetLinkInit()
 
     CIP_EthIP_Interface::CipTcpIpInterfaceInit ();
 
-    return kCipStatusOk;
+    //return kCipStatusOk;
 }
 
 CipStatus CIP_EthIP_Link::Shutdown ()

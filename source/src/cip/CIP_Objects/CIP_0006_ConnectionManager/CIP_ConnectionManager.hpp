@@ -31,24 +31,13 @@ class CIP_ConnectionManager :   public CIP_Object<CIP_ConnectionManager>
 {
 
 public:
-    CIP_ConnectionManager()
-    {
-
-    }
-
-    virtual ~CIP_ConnectionManager()
-    {
-
-    }
+    static void Init();
 
     CipMessageRouterRequest g_message_router_request;
     CipMessageRouterResponse g_message_router_response;
     CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
     NET_Connection * netConn;
-
-
-
 
     /**
  * @brief Sets the routing type of a connection, either
@@ -106,19 +95,6 @@ public:
 #define SEQ_LEQ16(a, b) ((short)((a) - (b)) <= 0)
 #define SEQ_GEQ16(a, b) ((short)((a) - (b)) >= 0)
 
-
-
-
-    static const int classCode = kCipConnectionManagerClassCode;
-    CIP_ConnectionManager (struct sockaddr *originator_address, struct sockaddr *remote_address)
-    {
-
-    }
-
-
-    /** @brief Initialize the data of the connection manager object
-     */
-    static CipStatus ConnectionManagerInit(CipUint unique_connection_id);
 
     /** @brief Get a connected object dependent on requested ConnectionID.
      *
@@ -304,10 +280,6 @@ public:
 
     ConnectionManagementHandling* GetConnMgmEntry(CipUdint class_id);
 
-    void InitializeConnectionManagerData(void)
-    {
-
-    }
 
     void AddNullAddressItem(CIP_CommonPacket::PacketFormat* common_data_packet_format_data);
 
