@@ -15,28 +15,66 @@
 
 int CIP_Objects::InitObjects()
 {
-    CIP_Identity::Init();
-    CIP_MessageRouter::Init();
-    CIP_DeviceNET_Link::Init();
-    CIP_Assembly::Init();
-    CIP_Connection::Init();
-    CIP_ConnectionManager::Init();
-    CIP_AnalogInputPoint::Init();
-    CIP_EthIP_Interface::Init();
-    CIP_EthIP_Link::Init();
-    return -1; //OK
+    //init CIP Identiry object and return object ID in case of failure
+    if (CIP_Identity::Init().status != kCipStatusOk)
+        return CIP_Identity::class_id;
+
+    if (CIP_MessageRouter::Init().status != kCipStatusOk)
+        return CIP_MessageRouter::class_id;
+
+    if (CIP_DeviceNET_Link::Init().status != kCipStatusOk)
+        return CIP_DeviceNET_Link::class_id;
+
+    if (CIP_Assembly::Init().status != kCipStatusOk)
+        return CIP_Assembly ::class_id;
+
+    if (CIP_Connection::Init().status != kCipStatusOk)
+        return CIP_Connection::class_id;
+
+    if (CIP_ConnectionManager::Init().status != kCipStatusOk)
+        return CIP_ConnectionManager::class_id;
+
+    if (CIP_AnalogInputPoint::Init().status != kCipStatusOk)
+        return CIP_AnalogInputPoint::class_id;
+
+    if (CIP_EthIP_Interface::Init().status != kCipStatusOk)
+        return CIP_EthIP_Interface::class_id;
+
+    if (CIP_EthIP_Link::Init().status != kCipStatusOk)
+        return CIP_EthIP_Link::class_id;
+
+    return 0; //OK
 }
 
 int CIP_Objects::ShutObjects()
 {
-    CIP_Identity::Shut();
-    CIP_MessageRouter::Shut();
-    CIP_DeviceNET_Link::Shut();
-    CIP_Assembly::Shut();
-    CIP_Connection::Shut();
-    CIP_ConnectionManager::Shut();
-    CIP_AnalogInputPoint::Shut();
-    CIP_EthIP_Interface::Shut();
-    CIP_EthIP_Link::Shut();
-    return -1; //OK
+    //shut CIP Identiry object and return object ID in case of failure
+    if (CIP_Identity::Shut().status != kCipStatusOk)
+        return CIP_Identity::class_id;
+
+    if (CIP_MessageRouter::Shut().status != kCipStatusOk)
+        return CIP_MessageRouter::class_id;
+
+    if (CIP_DeviceNET_Link::Shut().status != kCipStatusOk)
+        return CIP_DeviceNET_Link::class_id;
+
+    if (CIP_Assembly::Shut().status != kCipStatusOk)
+        return CIP_Assembly ::class_id;
+
+    if (CIP_Connection::Shut().status != kCipStatusOk)
+        return CIP_Connection::class_id;
+
+    if (CIP_ConnectionManager::Shut().status != kCipStatusOk)
+        return CIP_ConnectionManager::class_id;
+
+    if (CIP_AnalogInputPoint::Shut().status != kCipStatusOk)
+        return CIP_AnalogInputPoint::class_id;
+
+    if (CIP_EthIP_Interface::Shut().status != kCipStatusOk)
+        return CIP_EthIP_Interface::class_id;
+
+    if (CIP_EthIP_Link::Shut().status != kCipStatusOk)
+        return CIP_EthIP_Link::class_id;
+
+    return 0; //OK
 }

@@ -9,32 +9,36 @@
 
 CipStatus CIP_Connection::Init()
 {
-    class_id = 5;
-    class_name = "Connection";
-    class_id = kCipConnectionManagerClassCode;
-    class_name = "Connection Manager";
-    revision = 1;
+    if (number_of_instances == 0)
+    {
+        class_id = 5;
+        class_name = "Connection";
+        class_id = kCipConnectionManagerClassCode;
+        class_name = "Connection Manager";
+        revision = 1;
 
-    CIP_Connection *instance = new CIP_Connection();
+        CIP_Connection *instance = new CIP_Connection();
 
-    //Chapter 4 vol 1 - Common CIP attributes added on template itself
-    instance->InsertAttribute(1, kCipUint , &revision                             , kGetableSingleAndAll);
-    instance->InsertAttribute(2, kCipUint , &max_instances                        , kGetableSingleAndAll);
-    instance->InsertAttribute(3, kCipUint , &number_of_instances                  , kGetableSingleAndAll);
-    instance->InsertAttribute(4, kCipUdint, &optional_attribute_list              , kGetableSingleAndAll);
-    instance->InsertAttribute(5, kCipUdint, &optional_service_list                , kGetableSingleAndAll);
-    instance->InsertAttribute(6, kCipUint , &maximum_id_number_class_attributes   , kGetableSingleAndAll);
-    instance->InsertAttribute(7, kCipUint , &maximum_id_number_instance_attributes, kGetableSingleAndAll);
+        //Chapter 4 vol 1 - Common CIP attributes added on template itself
+        instance->InsertAttribute(1, kCipUint , &revision                             , kGetableSingleAndAll);
+        instance->InsertAttribute(2, kCipUint , &max_instances                        , kGetableSingleAndAll);
+        instance->InsertAttribute(3, kCipUint , &number_of_instances                  , kGetableSingleAndAll);
+        instance->InsertAttribute(4, kCipUdint, &optional_attribute_list              , kGetableSingleAndAll);
+        instance->InsertAttribute(5, kCipUdint, &optional_service_list                , kGetableSingleAndAll);
+        instance->InsertAttribute(6, kCipUint , &maximum_id_number_class_attributes   , kGetableSingleAndAll);
+        instance->InsertAttribute(7, kCipUint , &maximum_id_number_instance_attributes, kGetableSingleAndAll);
 
-    //Chapter 5 vol 5
-    //todo: recheck sizes
-    instance->InsertAttribute(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
-    instance->InsertAttribute(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
+        //Chapter 5 vol 5
+        //todo: recheck sizes
+        instance->InsertAttribute(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
+        instance->InsertAttribute(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
 
 
-    object_Set.emplace(object_Set.size(), instance);
+        object_Set.emplace(object_Set.size(), instance);
 
-    //Class services
+        //Class services
+    }
+    return kCipStatusOk;
 }
 
 //Class services

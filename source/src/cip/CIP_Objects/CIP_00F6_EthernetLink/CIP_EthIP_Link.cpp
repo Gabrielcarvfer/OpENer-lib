@@ -12,15 +12,13 @@ void CIP_EthIP_Link::ConfigureMacAddress(const CipUsint* mac_address)
     memcpy(&g_ethernet_link.physical_address, mac_address, sizeof(g_ethernet_link.physical_address));
 }
 
-void CIP_EthIP_Link::Init()
+CipStatus CIP_EthIP_Link::Init()
 {
     if (number_of_instances == 0)
     {
-        get_all_class_attributes_mask = 0xffffffff;
-        get_all_instance_attributes_mask = 0xffffffff;
         class_name = "Ethernet Link";
         class_id = kCipEthernetLinkClassCode;
-    }
+
         CIP_EthIP_Link * instance = new CIP_EthIP_Link();
         /* set attributes to initial values */
         instance->g_ethernet_link.interface_speed = 100;
@@ -31,16 +29,12 @@ void CIP_EthIP_Link::Init()
         instance->InsertAttribute (1, kCipUdint, &instance->g_ethernet_link.interface_speed, kGetableSingleAndAll);
         instance->InsertAttribute (2, kCipDword, &instance->g_ethernet_link.interface_flags, kGetableSingleAndAll);
         instance->InsertAttribute (3, kCip6Usint, &instance->g_ethernet_link.physical_address, kGetableSingleAndAll);
-
-
-    CIP_EthIP_Interface::CipTcpIpInterfaceInit ();
-
-    //return kCipStatusOk;
+    }
+    return kCipStatusOk;
 }
 
 CipStatus CIP_EthIP_Link::Shutdown ()
 {
-    CIP_EthIP_Interface::ShutdownTcpIpInterface ();
 	return kCipStatusOk;
 }
 

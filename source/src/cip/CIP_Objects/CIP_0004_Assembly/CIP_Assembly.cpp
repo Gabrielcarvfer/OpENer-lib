@@ -22,16 +22,19 @@ CIP_Assembly::~CIP_Assembly()
 }
 
 // create the CIP Assembly object with zero instances
-void CIP_Assembly::Init(void)
+CipStatus CIP_Assembly::Init(void)
 {
-    class_id = kCipAssemblyClassCode;
-    class_name = "Assembly";
-    revision = 0;
+    if (number_of_instances == 0)
+    {
+        class_id = kCipAssemblyClassCode;
+        class_name = "Assembly";
+        revision = 0;
 
-    CIP_Assembly *instance = new CIP_Assembly();
+        CIP_Assembly *instance = new CIP_Assembly();
 
-    object_Set.emplace(object_Set.size(), instance);
-
+        object_Set.emplace(object_Set.size(), instance);
+    }
+    return kCipStatusOk;
 }
 
 void CIP_Assembly::ShutdownAssemblies(void)

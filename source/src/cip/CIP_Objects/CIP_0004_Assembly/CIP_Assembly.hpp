@@ -20,7 +20,7 @@ class CIP_Assembly : public CIP_Object<CIP_Assembly>
 		 *
 		 * Creates the Assembly Class with zero instances and sets up all services.
 		 */
-		static void Init();
+		static CipStatus Init();
 
 		/** @brief clean up the data allocated in the assembly object instances
 		 *

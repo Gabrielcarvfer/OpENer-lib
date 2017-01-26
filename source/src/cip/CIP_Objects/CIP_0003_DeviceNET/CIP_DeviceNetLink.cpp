@@ -33,7 +33,7 @@ CIP_DeviceNET_Link::~CIP_DeviceNET_Link()
 }
 
 
-void CIP_DeviceNET_Link::Init()
+CipStatus CIP_DeviceNET_Link::Init()
 {
     // set attributes to initial values
     //baud_rate = 0;
@@ -44,7 +44,7 @@ void CIP_DeviceNET_Link::Init()
     //baud_rate_switch_val = 0;
     //quick_connect = false;
     
-    if (object_Set.size() == 0)
+    if (number_of_instances == 0)
 	{
 		CIP_DeviceNET_Link * class_ptr = new CIP_DeviceNET_Link();
 
@@ -113,8 +113,8 @@ void CIP_DeviceNET_Link::Init()
 
         //Active Node Table (ARRAY'o'bool)
 		object_Set.emplace(instance_ptr->id, instance_ptr);
-
     }
+	return kCipStatusOk;
 }
 
 CipStatus CIP_DeviceNET_Link::GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)

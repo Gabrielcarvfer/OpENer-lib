@@ -35,7 +35,7 @@ public:
 /* public functions */
 /** @brief Initializing the data structures of the TCP/IP interface object
  */
-    static void Init (void);
+    static CipStatus Init();
 
 /** @brief Clean up the allocated data of the TCP/IP interface object.
  * Currently this is the host name string and the domain name string.

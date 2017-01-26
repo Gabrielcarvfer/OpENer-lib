@@ -15,39 +15,35 @@ CipOctet CIP_MessageRouter::g_message_data_reply_buffer[100];
 
 
 //Methods
-void CIP_MessageRouter::Init()
+CipStatus CIP_MessageRouter::Init()
 {
-    classAttributesNum = 0;
-    instanceAttributesNum = 0;
+    if (number_of_instances == 0)
+    {
+        max_instances = 1;
 
-    classServicesNum = 0;
-    instanceAttributesNum = 0;
-
-    max_instances = 1;
-
-    revision = 1;
-    class_name = "message router";
-    class_id = kCipMessageRouterClassCode;
-    /*message_router = CIP_ClassInstance(kCipMessageRouterClassCode, / class ID
-                                                       0, // # of class attributes
-                                              0xffffffff, // class getAttributeAll mask
-                                                       0, // # of class services
-                                                       0, // # of instance attributes
-                                              0xffffffff, // instance getAttributeAll mask
-                                                       0, // # of instance services
-                                                       1, // # of instances
-                                        "message router", // class name
-                                                       1  // revision
-                              );
-*/
+        revision = 1;
+        class_name = "message router";
+        class_id = kCipMessageRouterClassCode;
+        /*message_router = CIP_ClassInstance(kCipMessageRouterClassCode, / class ID
+                                                           0, // # of class attributes
+                                                  0xffffffff, // class getAttributeAll mask
+                                                           0, // # of class services
+                                                           0, // # of instance attributes
+                                                  0xffffffff, // instance getAttributeAll mask
+                                                           0, // # of instance services
+                                                           1, // # of instances
+                                            "message router", // class name
+                                                           1  // revision
+                                  );
+        */
 
 
-    /* reserved for future use -> set to zero */
-    g_message_router_response.reserved = 0;
+        /* reserved for future use -> set to zero */
+        g_message_router_response.reserved = 0;
 
-    // set reply buffer, using a fixed buffer (about 100 bytes)
-    g_message_router_response.data = g_message_data_reply_buffer;
-
+        // set reply buffer, using a fixed buffer (about 100 bytes)
+        g_message_router_response.data = g_message_data_reply_buffer;
+    }
     return kCipStatusOk;
 }
 

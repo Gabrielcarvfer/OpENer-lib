@@ -5,7 +5,7 @@
 //CipUdint CIP_AnalogInputPoint::class_id = 0x0A;
 
 //Methods
-void CIP_AnalogInputPoint::Init()
+CipStatus CIP_AnalogInputPoint::Init()
 {
 
 }

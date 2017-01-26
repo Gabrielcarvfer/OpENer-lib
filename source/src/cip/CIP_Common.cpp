@@ -5,6 +5,7 @@
  ******************************************************************************/
 //Includes
 #include <cstring>
+#include <iostream>
 #include "CIP_Common.hpp"
 #include "connection/CIP_CommonPacket.hpp"
 #include "CIP_Appcontype.hpp"
@@ -23,8 +24,19 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
     CipStatus eip_status;
     NET_Encapsulation::Initialize ();
 
-    int pointOfFail = -1; // OK
+    int pointOfFail = 0; // OK
+
     pointOfFail = CIP_Objects::InitObjects();
+
+    switch(pointOfFail)
+    {
+        case (0):
+            break;
+        default:
+            std::cout << "Failed to initialize CIP Object with code " << pointOfFail << std::end;
+            exit(-1);
+
+    }
     /*
     // The message router is the first CIP object be initialized!!!
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();

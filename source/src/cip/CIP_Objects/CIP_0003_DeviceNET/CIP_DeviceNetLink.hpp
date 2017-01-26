@@ -38,7 +38,7 @@ public:
 	CIP_DeviceNET_Link() { mac_id = 0xFF; };
 	~CIP_DeviceNET_Link();
 
-	static void Init();
+	static CipStatus Init();
 	CipStatus GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 	CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request, CipMessageRouterResponse* msg_router_response);
 

@@ -31,7 +31,7 @@ class CIP_ConnectionManager :   public CIP_Object<CIP_ConnectionManager>
 {
 
 public:
-    static void Init();
+    static CipStatus Init();
 
     CipMessageRouterRequest g_message_router_request;
     CipMessageRouterResponse g_message_router_response;

@@ -74,17 +74,20 @@ CipUdint CIP_ConnectionManager::GetConnectionId (void)
 }
 
 
-void CIP_ConnectionManager::Init ()
+CipStatus CIP_ConnectionManager::Init ()
 {
-    CIP_Class3conn::InitializeClass3ConnectionData ();
-    CIP_Appcontype::InitializeIoConnectionData ();
+    if (number_of_instances == 0)
+    {
+        CIP_Class3conn::InitializeClass3ConnectionData();
+        CIP_Appcontype::InitializeIoConnectionData();
 
-    class_id = kCipConnectionManagerClassCode;
-    class_name = "Connection Manager";
-    revision = 1;
+        class_id = kCipConnectionManagerClassCode;
+        class_name = "Connection Manager";
+        revision = 1;
 
-    //g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
-
+        //g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
+    }
+    return kCipStatusOk;
 }
 
 CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CipUsint *data, int data_length, struct sockaddr_in *from_address)

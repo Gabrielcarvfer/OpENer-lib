@@ -118,35 +118,37 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest* message_router_request, 
 /** @brief CIP Identity object constructor
  *
  */
-void CIP_Identity::Init()
+CipStatus CIP_Identity::Init()
 {
-    // attributes in CIP Identity Object
-    vendor_id_ = OPENER_DEVICE_VENDOR_ID;
-    device_type_ = OPENER_DEVICE_TYPE;
-    product_code_ = OPENER_DEVICE_PRODUCT_CODE;
-    revision_ = { OPENER_DEVICE_MAJOR_REVISION,  OPENER_DEVICE_MINOR_REVISION };
-    status_ = 0;
-    serial_number_ = 0;
-    product_name_ = { sizeof(OPENER_DEVICE_NAME) - 1, (CipByte*)OPENER_DEVICE_NAME };
+    if (number_of_instances == 0)
+    {
+        // attributes in CIP Identity Object
+        vendor_id_ = OPENER_DEVICE_VENDOR_ID;
+        device_type_ = OPENER_DEVICE_TYPE;
+        product_code_ = OPENER_DEVICE_PRODUCT_CODE;
+        revision_ = {OPENER_DEVICE_MAJOR_REVISION, OPENER_DEVICE_MINOR_REVISION};
+        status_ = 0;
+        serial_number_ = 0;
+        product_name_ = {sizeof(OPENER_DEVICE_NAME) - 1, (CipByte *) OPENER_DEVICE_NAME};
 
-    class_id = kCipIdentityClassCode;
-    get_all_class_attributes_mask = MASK4(1,2,6,7);
-    get_all_instance_attributes_mask = MASK7(1,2,3,4,5,6,7);
-    class_name = "Identity";
-    revision = 1;
+        class_id = kCipIdentityClassCode;
+        //get_all_class_attributes_mask = MASK4(1, 2, 6, 7);
+        //get_all_instance_attributes_mask = MASK7(1, 2, 3, 4, 5, 6, 7);
+        class_name = "Identity";
+        revision = 1;
 
-    CIP_Identity * instance = new CIP_Identity();
-    AddClassInstance (instance, 0);
+        CIP_Identity *instance = new CIP_Identity();
+        AddClassInstance(instance, 0);
 
-    instance->InsertAttribute(1, kCipUint,        &vendor_id_,     kGetableSingleAndAll);
-    instance->InsertAttribute(2, kCipUint,        &device_type_,   kGetableSingleAndAll);
-    instance->InsertAttribute(3, kCipUint,        &product_code_,  kGetableSingleAndAll);
-    instance->InsertAttribute(4, kCipUsintUsint,  &revision_,      kGetableSingleAndAll);
-    instance->InsertAttribute(5, kCipWord,        &status_,        kGetableSingleAndAll);
-    instance->InsertAttribute(6, kCipUdint,       &serial_number_, kGetableSingleAndAll);
-    instance->InsertAttribute(7, kCipShortString, &product_name_,  kGetableSingleAndAll);
-
-    //return kCipStatusOk;
+        instance->InsertAttribute(1, kCipUint, &vendor_id_, kGetableSingleAndAll);
+        instance->InsertAttribute(2, kCipUint, &device_type_, kGetableSingleAndAll);
+        instance->InsertAttribute(3, kCipUint, &product_code_, kGetableSingleAndAll);
+        instance->InsertAttribute(4, kCipUsintUsint, &revision_, kGetableSingleAndAll);
+        instance->InsertAttribute(5, kCipWord, &status_, kGetableSingleAndAll);
+        instance->InsertAttribute(6, kCipUdint, &serial_number_, kGetableSingleAndAll);
+        instance->InsertAttribute(7, kCipShortString, &product_name_, kGetableSingleAndAll);
+    }
+    return kCipStatusOk;
 }
 
 CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest *msg_router_request, CipMessageRouterResponse *msg_router_response)

@@ -122,7 +122,7 @@ CipStatus CIP_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* me
     return kCipStatusOkSend;
 }
 
-void CIP_EthIP_Interface::Init()
+CipStatus CIP_EthIP_Interface::Init()
 {
     CIP_EthIP_Interface* instance;
 
@@ -130,8 +130,6 @@ void CIP_EthIP_Interface::Init()
     {
         class_name = "TCP/IP interface";
         class_id = kCipTcpIpInterfaceClassCode;
-        get_all_class_attributes_mask = 0xffffffff;
-        get_all_instance_attributes_mask = 0xffffffff;
 
         tcp_status_ = 0x1;
         configuration_capability_ = 0x04 | 0x20;
@@ -157,10 +155,6 @@ void CIP_EthIP_Interface::Init()
         instance->InsertAttribute(6, kCipString, (void*)&hostname_, kGetableSingleAndAll);
         instance->InsertAttribute(8, kCipUsint, (void*)&g_time_to_live_value, kGetableSingleAndAll);
         instance->InsertAttribute(9, kCipAny, (void*)&g_multicast_configuration, kGetableSingleAndAll);
-    }
-    else
-    {
-        return kCipStatusError;
     }
 
 
