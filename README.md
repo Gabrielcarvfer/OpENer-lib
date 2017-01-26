@@ -11,7 +11,7 @@ OpENer-lib is a library based on OpENer (https://github.com/EIPStackGroup/OpENer
 It supports (or will support) multiple I/O and explicit connections; includes objects and services to make EtherNet/IP&trade; and DeviceNet&trade;
 compliant products defined in ODVA's specifications (http://www.odva.org).
 
-OpENer-lib objects are to port the OpENer to C++, reduce code coupling, add support to DeviceNET (using Linux's SocketCAN), 
+OpENer-lib objectives are to port the OpENer to C++, reduce code coupling, add support to DeviceNET (using Linux's SocketCAN), 
 increase maintainability and readability.
 
 
