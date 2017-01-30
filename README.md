@@ -57,16 +57,5 @@ Directory structure:
 - doc ...  Doxygen generated documentation (has to be generated for the SVN version) and Coding rules
 - data ... EDS file for the default application
 - source
-	- src ... the production source code
-		- cip ... the CIP layer of the stack
-			- template ... the CIP object/instance, CIP Attributes and CIP Services templates/classes
-			- connection ... the connection layer of CIP (platform agnostic)
-				- network ... the network layer of CIP (platform aware)
-					- deviceNet ... the deviceNet&trade; object and support
-						- can_link ... platform dependant implementation of SocketCAN calls
-					- ethIP ... the Ethernet/IP&trade; object and support
-						- tcpip ... platform dependant implementation of TCP/IP calls
-		- utils ... utility functions
-	- tests ... the test source code
-		- utils ... tests for utility functions
 
+		
