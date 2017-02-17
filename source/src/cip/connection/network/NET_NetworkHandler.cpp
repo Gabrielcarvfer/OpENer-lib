@@ -232,7 +232,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
             if (CheckSocketSet)
             {
                 // if it is still checked it is a TCP receive
-                if (kCipStatusError == HandleDataOnTcpSocket(socket)) // if error
+                if (kCipStatusError == HandleDataOnTcpSocket(socket).status) // if error
                 {
                     //todo: move to CIP_ConnectionManager
                     // CloseSocket;

@@ -604,7 +604,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardCloseResponse (CipUint connectio
     return kCipStatusOkSend;
 }
 
-CIP_ConnectionManager *CIP_ConnectionManager::GetConnectedObject (CipUdint connection_id)
+CIP_Connection *CIP_ConnectionManager::GetConnectedObject (CipUdint connection_id)
 {
     CIP_ConnectionManager *active_connection_object_list_item;;
 
@@ -621,7 +621,7 @@ CIP_ConnectionManager *CIP_ConnectionManager::GetConnectedObject (CipUdint conne
     return NULL;
 }
 
-CIP_ConnectionManager *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdint output_assembly_id)
+CIP_Connection *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdint output_assembly_id)
 {
     CIP_ConnectionManager *active_connection_object_list_item;
 

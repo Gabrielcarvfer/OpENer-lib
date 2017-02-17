@@ -3,6 +3,7 @@
  * All rights reserved. 
  *
  ******************************************************************************/
+#include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
 #include "CIP_CommonPacket.hpp"
 #include "../CIP_Common.hpp"
 #include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
@@ -18,16 +19,17 @@ CIP_CommonPacket::PacketFormat CIP_CommonPacket::common_packet_data;
 
 int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, CipUsint* reply_buffer)
 {
-    int return_value = kCipStatusError;
+    CipStatus return_value;
+    return_value.status = kCipStatusError;
 
-    if ((return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &common_packet_data)) == kCipStatusError)
+    if ((return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &common_packet_data)).status == kCipStatusError)
     {
         OPENER_TRACE_ERR("notifyCPF: error from createCPFstructure\n");
     }
     else
     {
         // In cases of errors we normally need to send an error response
-        return_value = kCipStatusOk;
+        return_value.status = kCipStatusOk;
         // check if NullAddressItem received, otherwise it is no unconnected message and should not be here
         if (common_packet_data.address_item.type_id == kCipItemIdNullAddress)
         {
@@ -36,7 +38,7 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
             {
                 // unconnected data item received
                 return_value = CIP_MessageRouter::NotifyMR(common_packet_data.data_item.data, common_packet_data.data_item.length);
-                if (return_value != kCipStatusError)
+                if (return_value.status != kCipStatusError)
                 {
                     return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
                 }
@@ -55,25 +57,25 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
             recv_data->status = kEncapsulationProtocolIncorrectData;
         }
     }
-    return return_value;
+    return return_value.extended_status;
 }
 
 int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_data, CipUsint* reply_buffer)
 {
 
-    int return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &common_packet_data);
+    CipStatus return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &common_packet_data);
 
-    if (kCipStatusError == return_value)
+    if (kCipStatusError == return_value.status)
     {
         OPENER_TRACE_ERR("notifyConnectedCPF: error from createCPFstructure\n");
     }
     else
     {
-        return_value = kCipStatusError; /* For connected explicit messages status always has to be 0*/
+        return_value.status = kCipStatusError; /* For connected explicit messages status always has to be 0*/
         if (common_packet_data.address_item.type_id == kCipItemIdConnectionAddress) /* check if ConnectedAddressItem received, otherwise it is no connected message and should not be here*/
         {
             // ConnectedAddressItem item
-            CIP_ConnectionManager* connection_object = CIP_ConnectionManager::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
+            CIP_Connection* connection_object = CIP_ConnectionManager::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
             if (NULL != connection_object)
             {
                 // reset the watchdog timer
@@ -87,9 +89,9 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
                     common_packet_data.address_item.data.sequence_number = (CipUdint)NET_Endianconv::GetIntFromMessage(&pnBuf);
                     return_value = CIP_MessageRouter::NotifyMR(pnBuf, common_packet_data.data_item.length - 2);
 
-                    if (return_value != kCipStatusError)
+                    if (return_value.status != kCipStatusError)
                     {
-                        common_packet_data.address_item.data.connection_identifier = connection_object->produced_connection_id;
+                        common_packet_data.address_item.data.connection_identifier = connection_object->CIP_produced_connection_id;
                         return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data,reply_buffer);
                     }
                 }
@@ -109,7 +111,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
             OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_NULL\n");
         }
     }
-    return return_value;
+    return return_value.status;
 }
 
 /**
@@ -125,6 +127,7 @@ CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
     CipUsint* data, int data_length,
     PacketFormat* common_packet_format_data)
 {
+
 
     common_packet_format_data->address_info_item[0].type_id = 0;
     common_packet_format_data->address_info_item[1].type_id = 0;

@@ -8,6 +8,7 @@
 
 
 #include <map>
+#include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
 #include "../../ciptypes.hpp"
 #include "../../connection/CIP_CommonPacket.hpp"
 #include "../template/CIP_Object.hpp"
@@ -102,7 +103,7 @@ public:
      *   @return pointer to connected Object
      *           0 .. connection not present in device
      */
-    static CIP_ConnectionManager* GetConnectedObject(CipUdint connection_id);
+    static CIP_Connection* GetConnectedObject(CipUdint connection_id);
 
     /**  Get a connection object for a given output assembly.
      *
@@ -111,10 +112,10 @@ public:
      *   @return pointer to connected Object
      *           0 .. connection not present in device
      */
-    static CIP_ConnectionManager* GetConnectedOutputAssembly(CipUdint output_assembly_id);
+    static CIP_Connection* GetConnectedOutputAssembly(CipUdint output_assembly_id);
 
     // Copy the given connection data from pa_pstSrc to pa_pstDst
-    static void CopyConnectionData(const CIP_ConnectionManager* destination, const CIP_ConnectionManager* source);
+    static void CopyConnectionData(const CIP_Connection* destination, const CIP_Connection* source);
 
     /** @brief Close the given connection
      *

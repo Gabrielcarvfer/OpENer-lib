@@ -55,7 +55,7 @@ void NET_EthIP_Encap::EncapsulationInit(void)
     g_interface_information.capability_flags = kCapabilityFlagsCipTcp | kCapabilityFlagsCipUdpClass0or1;
     strcpy((char*)g_interface_information.name_of_service, "Communications");
 
-    CIP_EthernetIP_Link::CipEthernetLinkInit ();
+    //CIP_EthernetIP_Link::CipEthernetLinkInit ();
 }
 
 int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,

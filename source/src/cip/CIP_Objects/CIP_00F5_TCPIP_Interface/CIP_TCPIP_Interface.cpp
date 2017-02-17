@@ -14,7 +14,9 @@
     #include <iostream>
     #include <iphlpapi.h>
     #include <sstream>
-	#ifdef VSTUDIO
+#include <cip/ciptypes.hpp>
+
+#ifdef VSTUDIO
 		#pragma comment(lib, "Ws2_32.lib")
 		#pragma comment(lib, "iphlpapi.lib")
 	#endif
@@ -27,18 +29,19 @@
 #endif
 
 //Defines
+#define SZ(x) (sizeof(x))
 #define CIP_ETHERNETLINK_CLASS_CODE 0xF6
 
 //Methods
 CipStatus CIP_TCPIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)
 {
 
-    interface_configuration_.ip_address = inet_addr(ip_address);
-    interface_configuration_.network_mask = inet_addr(subnet_mask);
-    interface_configuration_.gateway = inet_addr(gateway);
+    interface_configuration.ip_address = inet_addr(ip_address);
+    interface_configuration.network_mask = inet_addr(subnet_mask);
+    interface_configuration.gateway_address = inet_addr(gateway);
 
     // calculate the CIP multicast address. The multicast address is calculated, not input
-    CipUdint host_id = NET_Connection::endian_ntohl(interface_configuration_.ip_address) & ~NET_Connection::endian_ntohl(interface_configuration_.network_mask); // see CIP spec 3-5.3 for multicast address algorithm
+    CipUdint host_id = NET_Connection::endian_ntohl(interface_configuration.ip_address) & ~NET_Connection::endian_ntohl(interface_configuration.network_mask); // see CIP spec 3-5.3 for multicast address algorithm
     host_id -= 1;
     host_id &= 0x3ff;
 
@@ -47,46 +50,46 @@ CipStatus CIP_TCPIP_Interface::ConfigureNetworkInterface(const char* ip_address,
     return kCipStatusOk;
 }
 
-void CIP_TCPIP_Interface::ConfigureDomainName(const char* domain_name)
+void CIP_TCPIP_Interface::ConfigureDomainName(CipString * domain_name)
 {
-    if (NULL != interface_configuration_.domain_name.string)
+    if (NULL != interface_configuration.domain_name.string)
     {
         // if the string is already set to a value we have to free the resources
         // before we can set the new value in order to avoid memory leaks.
 
-        //CipFree(interface_configuration_.domain_name.string);
-        delete[] interface_configuration_.domain_name.string;
+        //CipFree(interface_configuration.domain_name.string);
+        delete[] interface_configuration.domain_name.string;
     }
-    interface_configuration_.domain_name.length = (CipUint) strlen(domain_name);
-    if (interface_configuration_.domain_name.length)
+    interface_configuration.domain_name.length = domain_name->length;
+    if (interface_configuration.domain_name.length)
     {
-        interface_configuration_.domain_name.string = new CipByte[interface_configuration_.domain_name.length+1]();//(CipByte*)CipCalloc(interface_configuration_.domain_name.length + 1, sizeof(EipInt8));
-        strcpy((char*)interface_configuration_.domain_name.string, domain_name);
+        interface_configuration.domain_name.string = new CipByte[interface_configuration.domain_name.length+1]();//(CipByte*)CipCalloc(interface_configuration.domain_name.length + 1, sizeof(EipInt8));
+        strcpy((char*)interface_configuration.domain_name.string, (char*)domain_name->string);
     }
     else
     {
-        interface_configuration_.domain_name.string = NULL;
+        interface_configuration.domain_name.string = NULL;
     }
 }
 
-void CIP_TCPIP_Interface::ConfigureHostName(const char* hostname)
+void CIP_TCPIP_Interface::ConfigureHostName(CipString * hostname)
 {
-    if (NULL != hostname_.string)
+    if (NULL != hostname)
     {
         // if the string is already set to a value we have to free the resources
         // before we can set the new value in order to avoid memory leaks.
 
-        //CipFree(hostname_.string);
+        delete[] host_name.string;
     }
-    hostname_.length = (CipUint) strlen(hostname);
-    if (hostname_.length)
+    host_name.length = hostname->length;
+    if (host_name.length)
     {
-        hostname_.string = new CipByte[hostname_.length+1]();//(CipByte*)CipCalloc(hostname_.length + 1, sizeof(CipByte));
-        strcpy((char*)hostname_.string, hostname);
+        host_name.string = new CipByte[host_name.length+1]();//(CipByte*)CipCalloc(hostname_.length + 1, sizeof(CipByte));
+        strcpy((char*)host_name.string, (char*)hostname->string);
     }
     else
     {
-        hostname_.string = NULL;
+        host_name.string = NULL;
     }
 }
 
@@ -115,7 +118,7 @@ CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* me
 
 CipStatus CIP_TCPIP_Interface::Init()
 {
-    CIP_TCPIP_Interface* class_ptr;
+    CIP_TCPIP_Interface *class_ptr;
 
     if (number_of_instances == 0)
     {
@@ -124,38 +127,34 @@ CipStatus CIP_TCPIP_Interface::Init()
 
         //Static variables
         revision = 0;
-        tcp_status_ = 0x1;
-        configuration_capability_ = 0x04 | 0x20;
-        configuration_control_ = 0;
-        physical_link_object_ = {2, CIP_ETHERNETLINK_CLASS_CODE, 1, 0};
-        interface_configuration_ = { 0, 0, 0, 0, 0, {0, NULL,} };
-        hostname_= { 0, NULL };
-        g_multicast_configuration = {
-                0, // us the default allocation algorithm
-                0, // reserved
-                1, // we currently use only one multicast address
-                0 // the multicast address will be allocated on ip address configuration
+        //tcp_status_ = 0x1;
+        //configuration_capability_ = 0x04 | 0x20;
+        //configuration_control_ = 0;
+        //physical_link_object_ = {2, CIP_ETHERNETLINK_CLASS_CODE, 1, 0};
+        //interface_configuration = {0, 0, 0, 0, 0, {0, NULL,}};
+        //hostname_ = {0, NULL};
+        g_multicast_configuration = {0, // us the default allocation algorithm
+                                     0, // reserved
+                                     1, // we currently use only one multicast address
+                                     0 // the multicast address will be allocated on ip address configuration
         };
         g_time_to_live_value = 1;
 
-        class_ptr = new CIP_TCPIP_Interface();
+        class_ptr = new CIP_TCPIP_Interface ();
 
         //Class attributes from Vol 2 Chapter 5
         class_ptr->InsertAttribute (1, kCipUint, (void *) &revision, kGetableSingleAndAll);
         class_ptr->InsertAttribute (2, kCipUint, (void *) &max_instances, kGetableSingleAndAll);
         class_ptr->InsertAttribute (3, kCipUint, (void *) &number_of_instances, kGetableSingleAndAll);
 
-        //Class optional attributes from Vol 1 Chapter 4
-        class_ptr->InsertAttribute (4, kCipEpath, &physical_link_object_, kGetableSingleAndAll);
-        class_ptr->InsertAttribute (5, kCipUdintUdintUdintUdintUdintString, &interface_configuration_, kGetableSingleAndAll);
-        class_ptr->InsertAttribute (6, kCipString, (void *) &hostname_, kGetableSingleAndAll);
-        class_ptr->InsertAttribute (7, kCipUsint, (void *) &g_time_to_live_value, kGetableSingleAndAll);
+        //Class optional attributes (4-7) from Vol 1 Chapter 4
 
-        object_Set.emplace(class_ptr->id, class_ptr);
-
-
+        object_Set.emplace (class_ptr->id, class_ptr);
     }
-
+    else
+    {
+        return kCipStatusError;
+    }
 
     return kCipStatusOk;
 }
@@ -167,18 +166,18 @@ CipStatus CIP_TCPIP_Interface::Create()
 
     //Instance attributes
     //TODO: fix attribute access
-    instance_ptr->InsertAttribute (1 , kCipDword, (void *) &status , kGetableSingleAndAll);
-    instance_ptr->InsertAttribute (2 , kCipDword, (void *) &configuration_capability, kGetableSingleAndAll);
-    instance_ptr->InsertAttribute (3 , kCipDword, (void *) &configuration_control, kSetAndGetAble);
-    instance_ptr->InsertAttribute (4 , sizeof(physical_link_object_t), &physical_link_object, kGetableSingleAndAll);
-    instance_ptr->InsertAttribute (5 , sizeof(interface_configuration_t), &interface_configuration, kSetAndGetAble);
-    instance_ptr->InsertAttribute (6 , kCipString, &host_name, kSetAndGetAble);
+    instance_ptr->InsertAttribute (1 , kCipDword,                     &instance_ptr->status,                   kGetableSingleAndAll);
+    instance_ptr->InsertAttribute (2 , kCipDword,                     &instance_ptr->configuration_capability, kGetableSingleAndAll);
+    instance_ptr->InsertAttribute (3 , kCipDword,                     &instance_ptr->configuration_control,    kSetAndGetAble);
+    instance_ptr->InsertAttribute (4 , SZ(physical_link_object_t),    &instance_ptr->physical_link_object,     kGetableSingleAndAll);
+    instance_ptr->InsertAttribute (5 , SZ(interface_configuration_t), &instance_ptr->interface_configuration,  kSetAndGetAble);
+    instance_ptr->InsertAttribute (6 , kCipString,                    &instance_ptr->host_name,                kSetAndGetAble);
     //instan_ptrce->InsertAttribute  (7, //TODO:8 octets safety_network_number
-    instance_ptr->InsertAttribute (8 , kCipUsint, &ttl_value, kSetAndGetAble);
-    instance_ptr->InsertAttribute (9 , sizeof(multicast_address_configuration_t), &multicast_address_configuration, kSetAndGetAble);
-    instance_ptr->InsertAttribute (10, kCipBool, &select_acd, kSetable);
-    instance_ptr->InsertAttribute (11, sizeof(last_conflict_detected_t), &last_conflict_detected, kSetable);
-    instance_ptr->InsertAttribute (12, kCipBool, &quick_connect, kSetable);
+    instance_ptr->InsertAttribute (8 , kCipUsint,                     &instance_ptr->ttl_value,                kSetAndGetAble);
+    instance_ptr->InsertAttribute (9 , SZ(multicast_address_configuration_t), &instance_ptr->multicast_address_configuration, kSetAndGetAble);
+    instance_ptr->InsertAttribute (10, kCipBool,                      &instance_ptr->select_acd,               kSetable);
+    instance_ptr->InsertAttribute (11, SZ(last_conflict_detected_t),  &instance_ptr->last_conflict_detected,   kSetable);
+    instance_ptr->InsertAttribute (12, kCipBool,                      &instance_ptr->quick_connect,            kSetable);
 
     object_Set.emplace(instance_ptr->id, instance_ptr);
 
@@ -193,18 +192,18 @@ CipStatus CIP_TCPIP_Interface::Create()
 void CIP_TCPIP_Interface::ShutdownTcpIpInterface(void)
 {
     //Only free the resources if they are initialized
-    if (NULL != hostname_.string)
+    /*if (NULL != hostname_.string)
     {
         //CipFree(hostname_.string);
         delete[] hostname_.string;
         hostname_.string = NULL;
-    }
+    }*/
 
-    if (NULL != interface_configuration_.domain_name.string)
+    /*if (NULL != interface_configuration.domain_name.string)
     {
-        //CipFree(interface_configuration_.domain_name.string);
-        interface_configuration_.domain_name.string = NULL;
-    }
+        //CipFree(interface_configuration.domain_name.string);
+        interface_configuration.domain_name.string = NULL;
+    }*/
 }
 
 CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
@@ -245,7 +244,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
         int attribute_number = attribute[j].getNumber ();
 
         // only return attributes that are flagged as being part of GetAttributeALl
-        if (attribute_number < 32 && (this->get_all_instance_attributes_mask & 1 << attribute_number))
+        if (attribute_number < 32 )//todo:&& (this->get_all_instance_attributes_mask & 1 << attribute_number))
         {
             message_router_request->request_path.attribute_number = (CipUint) attribute_number;
 

@@ -97,8 +97,8 @@ private:
     CipStatus GetAttributeAllTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
     CipStatus ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask, const char* gateway);
-    void ConfigureDomainName(const char* domain_name);
-    void ConfigureHostName(const char* hostname);
+    void ConfigureDomainName(CipString * domain_name);
+    void ConfigureHostName(CipString * hostname);
     CipStatus SetAttributeSingleTcp(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
 };

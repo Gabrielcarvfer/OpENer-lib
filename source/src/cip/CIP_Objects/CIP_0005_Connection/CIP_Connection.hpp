@@ -6,6 +6,7 @@
 #define OPENERMAIN_CIP_CONNECTION_H
 
 #include "../template/CIP_Object.hpp"
+#include <vector>
 
 class CIP_Connection : public CIP_Object<CIP_Connection>
 {
