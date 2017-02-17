@@ -7,8 +7,7 @@
 #include <cstring>
 #include "CIP_Class3Connection.hpp"
 
-//Static variables
-CIP_ConnectionManager * CIP_Class3conn::g_explicit_connections[OPENER_CIP_NUM_EXPLICIT_CONNS];
+
 
 //Methods
 CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
@@ -19,7 +18,7 @@ CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
     /*TODO add check for transport type trigger */
     /* if (0x03 == (g_stDummyCIP_Connection.TransportTypeClassTrigger & 0x03)) */
 
-    CIP_ConnectionManager* explicit_connection = GetFreeExplicitConnection();
+    CIP_Connection* explicit_connection = GetFreeExplicitConnection();
 
     if (NULL == explicit_connection)
     {
@@ -32,8 +31,8 @@ CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
 
         produced_connection_id_buffer = explicit_connection->produced_connection_id;
         explicit_connection->GeneralConnectionConfiguration();
-        explicit_connection->produced_connection_id = produced_connection_id_buffer;
-        explicit_connection->instance_type = CIP_ConnectionManager::kConnectionTypeExplicit;
+        explicit_connection->CIP_produced_connection_id = produced_connection_id_buffer;
+        explicit_connection->instance_type = kConnectionTypeExplicit;
         explicit_connection->netConn->SetSocketHandle (kEipInvalidSocket);
         /* set the connection call backs */
         //explicit_connection->connection_close_function = CIP_ConnectionManager::RemoveFromActiveConnections;
@@ -45,12 +44,12 @@ CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
     return eip_status;
 }
 
-CIP_ConnectionManager* CIP_Class3conn::GetFreeExplicitConnection(void)
+CIP_Connection * CIP_Class3conn::GetFreeExplicitConnection(void)
 {
     int i;
     for (i = 0; i < OPENER_CIP_NUM_EXPLICIT_CONNS; i++)
     {
-        if (g_explicit_connections[i]->state == CIP_ConnectionManager::kConnectionStateNonExistent)
+        if (g_explicit_connections[i]->state == kConnectionStateNonExistent)
             return g_explicit_connections[i];
     }
     return NULL;
@@ -58,5 +57,7 @@ CIP_ConnectionManager* CIP_Class3conn::GetFreeExplicitConnection(void)
 
 void CIP_Class3conn::InitializeClass3ConnectionData(void)
 {
-    memset(g_explicit_connections, 0, OPENER_CIP_NUM_EXPLICIT_CONNS * sizeof(CIP_ConnectionManager));
+    //memset(g_explicit_connections, 0, OPENER_CIP_NUM_EXPLICIT_CONNS * sizeof(CIP_ConnectionManager));
+    //Static variables
+    //CIP_ConnectionManager * CIP_Class3conn::g_explicit_connections[OPENER_CIP_NUM_EXPLICIT_CONNS];
 }

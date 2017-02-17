@@ -146,7 +146,7 @@ public:
      *
      * @param connection_object pointer to the connection object to be added.
      */
-   static void AddNewActiveConnection(const CIP_ConnectionManager* connection_object);
+   static void AddNewActiveConnection(const CIP_Connection* connection_object);
 
     /* TODO: Missing documentation */
     void RemoveFromActiveConnections();

@@ -45,7 +45,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
     // TODO: add check for transport type trigger
 
-    if (CIP_ConnectionManager::kConnectionTriggerTypeCyclicConnection != (transport_type_class_trigger & CIP_ConnectionManager::kConnectionTriggerTypeProductionTriggerMask))
+    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
     {
         if (256 == production_inhibit_time)
         {

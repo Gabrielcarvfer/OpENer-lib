@@ -47,6 +47,42 @@ public:
         CipUsint arp_pdu[28];
     } last_conflict_detected_t;
 
+    typedef enum
+    {
+        //interface configuration status bits 3-0
+        not_configured               = 0x00,
+        valid_software_configuration = 0x01,
+        valid_hardware_configuration = 0x02,
+
+        //other configuration
+        mcast_pending                   = BIT_N(4),
+        interface_configuration_pending = BIT_N(5),
+        acd_status                      = BIT_N(6)
+    }instance_status;
+
+    typedef enum {
+        bootp_client                    = BIT_N(0),
+        dns_client                      = BIT_N(1),
+        dhcp_client                     = BIT_N(2),
+        dhcp_dns_update                 = BIT_N(3),
+        configuration_settable          = BIT_N(4),
+        hardware_configurable           = BIT_N(5),
+        interface_change_requires_reset = BIT_N(6),
+        acd_capable                     = BIT_N(7)
+    }configuration_capability_attributes;
+
+    typedef enum {
+        //configuration methods bits 3-0
+        statical_config = 0x00,
+        bootp_config    = 0x01,
+        dhcp_config     = 0x02,
+
+        //other configuration
+        dns_enable = BIT_N(4)
+    }configuration_control_attributes;
+
+
+
 /* public functions */
 /** @brief Initializing the data structures of the TCP/IP interface object
  */

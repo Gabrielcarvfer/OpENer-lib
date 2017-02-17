@@ -338,6 +338,8 @@ typedef enum {
 
 } CipClassCodes;
 
+#define BIT_N(x) (0x01 << x)
+
 /* these are used for creating the getAttributeAll masks
  TODO there might be a way simplifying this using __VARARGS__ in #define */
 #define MASK1(a) (1 << (a))

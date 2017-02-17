@@ -172,7 +172,7 @@ CipStatus CIP_ConnectionManager::ForwardOpen (CipMessageRouterRequest *message_r
     // keep it to none existent till the setup is done this eases error handling and
     // the state changes within the forward open request can not be detected from
     // the application or from outside (reason we are single threaded)
-    state = kConnectionStateNonExistent;
+    state = CIP_Connection::kConnectionStateNonExistent;
     sequence_count_producing = 0; // set the sequence count to zero
 
     connection_timeout_multiplier = *message_router_request->data++;
@@ -313,7 +313,7 @@ CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest *message_
     {
         connection_object = (CIP_ConnectionManager*)active_connections_set[i];
         /* this check should not be necessary as only established connections should be in the active connection list */
-        if ((connection_object->state == kConnectionStateEstablished) || (connection_object->state == kConnectionStateTimedOut))
+        if ((connection_object->state == CIP_Connection::kConnectionStateEstablished) || (connection_object->state == CIP_Connection::kConnectionStateTimedOut))
         {
             if ((connection_object->connection_serial_number == connection_serial_number) &&
                 (connection_object->originator_vendor_id == originator_vendor_id) &&
@@ -373,7 +373,7 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
     {
         connection_object = (CIP_ConnectionManager*)active_connections_set[i];
 
-        if (connection_object->state == kConnectionStateEstablished)
+        if (connection_object->state == CIP_Connection::kConnectionStateEstablished)
         {
             // we have a consuming connection check inactivity watchdog timer or all sever connections have to maintain an inactivity watchdog timer
             if ((0 != connection_object->consuming_instance) ||  (connection_object->transport_type_class_trigger & 0x80))
@@ -388,12 +388,12 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
                 }
             }
             // only if the connection has not timed out check if data is to be send
-            if (kConnectionStateEstablished == connection_object->state)
+            if (CIP_Connection::kConnectionStateEstablished == connection_object->state)
             {
                 // client connection
                 if ((connection_object->expected_packet_rate != 0) && (kEipInvalidSocket != connection_object->netConn->sock)) // only produce for the master connection
                 {
-                    if (kConnectionTriggerTypeCyclicConnection != (connection_object->transport_type_class_trigger & kConnectionTriggerTypeProductionTriggerMask))
+                    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (connection_object->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
                     {
                         // non cyclic connections have to decrement production inhibit timer
                         if (0 <= connection_object->production_inhibit_timer)
@@ -413,7 +413,7 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
                         }
                         // reload the timer value
                         connection_object->transmission_trigger_timer = connection_object->expected_packet_rate;
-                        if (kConnectionTriggerTypeCyclicConnection != (connection_object->transport_type_class_trigger & kConnectionTriggerTypeProductionTriggerMask))
+                        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (connection_object->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
                         {
                             // non cyclic connections have to reload the production inhibit timer
                             connection_object->production_inhibit_timer = connection_object->production_inhibit_time;
@@ -475,7 +475,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CipMessageRouterRe
     {
         /* we have an connection creation error */
         OPENER_TRACE_INFO("assembleFWDOpenResponse: sending error response\n");
-        state = kConnectionStateNonExistent;
+        state = CIP_Connection::kConnectionStateNonExistent;
         message_router_response->data_length = 10;
 
         switch (general_status)
@@ -612,7 +612,7 @@ CIP_Connection *CIP_ConnectionManager::GetConnectedObject (CipUdint connection_i
     {
         active_connection_object_list_item = (CIP_ConnectionManager*)active_connections_set[i];
 
-        if (active_connection_object_list_item->state == kConnectionStateEstablished)
+        if (active_connection_object_list_item->state == CIP_Connection::kConnectionStateEstablished)
         {
             if (active_connection_object_list_item->consumed_connection_id == connection_id)
                 return active_connection_object_list_item;
@@ -629,7 +629,7 @@ CIP_Connection *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdint outp
     {
         active_connection_object_list_item = (CIP_ConnectionManager*)active_connections_set[i];
 
-        if (active_connection_object_list_item->state == kConnectionStateEstablished)
+        if (active_connection_object_list_item->state == CIP_Connection::kConnectionStateEstablished)
         {
             if (active_connection_object_list_item->connection_path.connection_point[0] == output_assembly_id)
                 return active_connection_object_list_item;
@@ -645,7 +645,7 @@ CIP_ConnectionManager *CIP_ConnectionManager::CheckForExistingConnection (CIP_Co
     {
         active_connection_object_list_item = (CIP_ConnectionManager*)active_connections_set[i];
 
-        if (active_connection_object_list_item->state == kConnectionStateEstablished)
+        if (active_connection_object_list_item->state == CIP_Connection::kConnectionStateEstablished)
         {
             if ((connection_object->connection_serial_number == active_connection_object_list_item->connection_serial_number) &&
                 (connection_object->originator_vendor_id == active_connection_object_list_item->originator_vendor_id) &&
@@ -793,7 +793,7 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest *me
             OPENER_TRACE_INFO("no key\n");
         }
 
-        if (kConnectionTriggerTypeCyclicConnection != (transport_type_class_trigger & kConnectionTriggerTypeProductionTriggerMask))
+        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
         {
             // non cyclic connections may have a production inhibit
             if (kProductionTimeInhibitTimeNetworkSegment == *message)
@@ -948,7 +948,7 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest *me
                         break;
                         // TODO do we have to handle ANSI extended symbol data segments too?
                     case kProductionTimeInhibitTimeNetworkSegment:
-                        if (kConnectionTriggerTypeCyclicConnection != (transport_type_class_trigger & kConnectionTriggerTypeProductionTriggerMask))
+                        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
                         {
                             // only non cyclic connections may have a production inhibit
                             production_inhibit_time = message[1];
@@ -983,7 +983,7 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest *me
 
 void CIP_ConnectionManager::CloseConnection ()
 {
-    state = kConnectionStateNonExistent;
+    state = CIP_Connection::kConnectionStateNonExistent;
     if (0x03 != (transport_type_class_trigger & 0x03))
     {
         // only close the UDP connection for not class 3 connections
@@ -994,19 +994,19 @@ void CIP_ConnectionManager::CloseConnection ()
     RemoveFromActiveConnections ();
 }
 
-void CIP_ConnectionManager::CopyConnectionData (const CIP_ConnectionManager *pa_pstDst,const  CIP_ConnectionManager *pa_pstSrc)
+void CIP_ConnectionManager::CopyConnectionData (const CIP_Connection*pa_pstDst,const  CIP_Connection *pa_pstSrc)
 {
     memcpy ((CIP_ConnectionManager*)pa_pstDst, pa_pstSrc, sizeof (CIP_ConnectionManager));
 }
 
-void CIP_ConnectionManager::AddNewActiveConnection (const CIP_ConnectionManager *pa_pstConn)
+void CIP_ConnectionManager::AddNewActiveConnection (const CIP_Connection *pa_pstConn)
 {
-   ((CIP_ConnectionManager*)pa_pstConn)->state = kConnectionStateEstablished;
+   ((CIP_Connection*)pa_pstConn)->state = CIP_Connection::kConnectionStateEstablished;
 }
 
 void CIP_ConnectionManager::RemoveFromActiveConnections ()
 {
-    state = kConnectionStateNonExistent;
+    state = CIP_Connection::kConnectionStateNonExistent;
     active_connections_set.erase ((const unsigned int &) id);
 }
 
@@ -1042,7 +1042,7 @@ CipStatus CIP_ConnectionManager::TriggerConnections (CipUdint pa_unOutputAssembl
         if ((pa_unOutputAssembly == pstRunner->connection_path.connection_point[0]) &&
             (pa_unInputAssembly == pstRunner->connection_path.connection_point[1]))
         {
-            if (kConnectionTriggerTypeApplicationTriggeredConnection == (pstRunner->transport_type_class_trigger & kConnectionTriggerTypeProductionTriggerMask))
+            if (CIP_Connection::kConnectionTriggerApplicationTriggeredConnection == (pstRunner->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
             {
                 // produce at the next allowed occurrence
                 pstRunner->transmission_trigger_timer = pstRunner->production_inhibit_timer;

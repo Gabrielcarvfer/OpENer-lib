@@ -15,13 +15,13 @@
 #include "../../OpENer_Interface.hpp"
 #include "../../opener_user_conf.hpp"
 
-class CIP_Class3conn : public CIP_ConnectionManager
+class CIP_Class3conn : public CIP_Connection
 {
     public:
     /**** Global variables ****/
 
     /** @brief Array of the available explicit connections */
-       static CIP_ConnectionManager *g_explicit_connections[];
+       static CIP_Connection *g_explicit_connections[];
 
     /** @brief Check if Class3 connection is available and if yes setup all data.
      *
@@ -35,7 +35,7 @@ class CIP_Class3conn : public CIP_ConnectionManager
 
     static void InitializeClass3ConnectionData (void);
 
-    CIP_ConnectionManager *GetFreeExplicitConnection (void);
+    CIP_Connection *GetFreeExplicitConnection (void);
 
 };
 #endif /* OPENER_CIPCLASS3CONNECTION_H_ */
