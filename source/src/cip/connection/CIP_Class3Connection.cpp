@@ -29,8 +29,8 @@ CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
     {
         CIP_ConnectionManager::CopyConnectionData(explicit_connection, this);
 
-        produced_connection_id_buffer = explicit_connection->produced_connection_id;
-        explicit_connection->GeneralConnectionConfiguration();
+        produced_connection_id_buffer = explicit_connection->CIP_produced_connection_id;
+        CIP_ConnectionManager::GeneralConnectionConfiguration (explicit_connection);
         explicit_connection->CIP_produced_connection_id = produced_connection_id_buffer;
         explicit_connection->instance_type = kConnectionTypeExplicit;
         explicit_connection->netConn->SetSocketHandle (kEipInvalidSocket);
@@ -49,7 +49,7 @@ CIP_Connection * CIP_Class3conn::GetFreeExplicitConnection(void)
     int i;
     for (i = 0; i < OPENER_CIP_NUM_EXPLICIT_CONNS; i++)
     {
-        if (g_explicit_connections[i]->state == kConnectionStateNonExistent)
+        if (g_explicit_connections[i]->State == kConnectionStateNonExistent)
             return g_explicit_connections[i];
     }
     return NULL;

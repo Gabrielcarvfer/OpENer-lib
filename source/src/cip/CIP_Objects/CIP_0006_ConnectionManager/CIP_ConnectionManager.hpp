@@ -36,7 +36,11 @@ public:
 
     CipMessageRouterRequest g_message_router_request;
     CipMessageRouterResponse g_message_router_response;
-    CipStatus InstanceServices(int service, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus InstanceServices(int service,
+                               CIP_Connection * connection_object,
+                               CipMessageRouterRequest* message_router_request,
+                               CipMessageRouterResponse* message_router_response
+                            );
 
     NET_Connection * netConn;
 
@@ -124,7 +128,7 @@ public:
      * @param connection_object pointer to the connection object structure to be
      *closed
      */
-    void CloseConnection();
+    static void CloseConnection(CIP_Connection * connection_object);
 
     /* TODO: Missing documentation */
     static CipBool IsConnectedOutputAssembly(CipUdint instance_number);
@@ -135,7 +139,7 @@ public:
      * @param connection_object pointer to the connection object that should be set
      *up.
      */
-    void GeneralConnectionConfiguration();
+    static void GeneralConnectionConfiguration(CIP_Connection * connection_object);
 
     /** @brief Insert the given connection object to the list of currently active
      *  and managed connections.
@@ -146,13 +150,13 @@ public:
      *
      * @param connection_object pointer to the connection object to be added.
      */
-   static void AddNewActiveConnection(const CIP_Connection* connection_object);
+   static void AddNewActiveConnection(CIP_Connection * connection_object);
 
     /* TODO: Missing documentation */
-    void RemoveFromActiveConnections();
+    static void RemoveFromActiveConnections(CIP_Connection * connection_object);
 
 
-    static std::map<CipUdint, const CIP_ConnectionManager *> active_connections_set;
+    static std::map<CipUdint, const CIP_Connection *> active_connections_set;
 
     /** List holding information on the object classes and open/close function
      * pointers to which connections may be established.
@@ -160,7 +164,7 @@ public:
     static std::map<CipUdint, ConnectionManagementHandling> g_astConnMgmList;
 
     /** buffer connection object needed for forward open */
-    static CIP_ConnectionManager *g_dummy_connection_object;
+    static CIP_Connection *g_dummy_connection_object;
 
     /** @brief Holds the connection ID's "incarnation ID" in the upper 16 bits */
     static CipUdint g_incarnation_id;
@@ -231,13 +235,13 @@ public:
 
 
     /* private functions */
-    CipStatus ForwardOpen(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus ForwardOpen(CIP_Connection * connection_object, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
     CipStatus ForwardClose(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
     CipStatus GetConnectionOwner(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
 
-    CipStatus AssembleForwardOpenResponse(CipMessageRouterResponse* message_router_response, CipUsint general_status, CipUint extended_status);
+    CipStatus AssembleForwardOpenResponse(CIP_Connection * connection_object, CipMessageRouterResponse* message_router_response, CipUsint general_status, CipUint extended_status);
 
     CipStatus AssembleForwardCloseResponse(
             CipUint connection_serial_number, CipUint originatior_vendor_id,
@@ -255,7 +259,7 @@ public:
      *    - NULL if no equal established connection exists
      *    - pointer to the equal connection object
      */
-    CIP_ConnectionManager* CheckForExistingConnection(CIP_ConnectionManager* connection_object);
+    CIP_Connection* CheckForExistingConnection(CIP_Connection* connection_object);
 
     /** @brief Compare the electronic key received with a forward open request with the device's data.
      *
@@ -324,7 +328,7 @@ public:
      */
     static CipStatus ManageConnections (MilliSeconds elapsed_time);
 
-    CipUdint GetConnectionId (void);
+    static CipUdint GetConnectionId (void);
 
     /** @ingroup CIP_API
  *  @brief Notify the connection manager that data for a connection has been
@@ -338,7 +342,11 @@ public:
  *           connection hijacking
  *  @return EIP_OK on success
  */
-    CipStatus HandleReceivedConnectedData(CipUsint* received_data, int data_length, struct sockaddr_in* from_address);
+    static CipStatus HandleReceivedConnectedData(CIP_Connection * connection_object,
+                                                 CipUsint* received_data,
+                                                 int data_length,
+                                                 struct sockaddr_in* from_address
+                                            );
 
 
     /* End of instance info */

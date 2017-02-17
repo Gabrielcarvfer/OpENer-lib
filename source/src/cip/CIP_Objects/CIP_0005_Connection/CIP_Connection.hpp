@@ -112,6 +112,8 @@ public:
     static CipStatus ProducingLookup(CipEpath producing_application_path, CipUint *instance_count, std::vector<CipUint> connection_instance_list[]);
     static CipStatus SafetyClose();
     static CipStatus SafetyOpen();
+
+
 };
 
 
