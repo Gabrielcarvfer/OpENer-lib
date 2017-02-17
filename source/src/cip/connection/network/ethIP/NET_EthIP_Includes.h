@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 20/12/2016.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 20/12/2016.
 //
 
 #ifndef OPENERMAIN_NET_ETHIP_INCLUDES_H

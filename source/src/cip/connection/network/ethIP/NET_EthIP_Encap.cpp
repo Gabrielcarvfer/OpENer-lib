@@ -118,14 +118,14 @@ int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
                     break;
             }
             /* if nRetVal is greater than 0 data has to be sent */
-            if (kCipStatusOk < return_value)
+            if (kCipStatusOk < return_value.status)
             {
                 return_value = (CipStatus)EncapsulateData(&encapsulation_data);
             }
         }
     }
 
-    return return_value;
+    return return_value.status;
 }
 
 int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
@@ -178,13 +178,13 @@ int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* f
                     break;
             }
             /* if nRetVal is greater than 0 data has to be sent */
-            if (0 < status)
+            if (0 < status.status)
             {
                 status = (CipStatus)EncapsulateData(&encapsulation_data);
             }
         }
     }
-    return status;
+    return status.status;
 }
 
 int NET_EthIP_Encap::EncapsulateData(const EncapsulationData* const send_data)

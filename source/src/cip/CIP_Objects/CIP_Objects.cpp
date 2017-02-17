@@ -1,11 +1,11 @@
 //
-// Created by gabriel on 26/01/2017.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 26/01/2017.
 //
 
 #include "CIP_Objects.hpp"
 #include "CIP_0001_Identity/CIP_Identity.hpp"
 #include "CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
-#include "CIP_0003_DeviceNET/CIP_DeviceNetLink.hpp"
+//#include "CIP_0003_DeviceNET/CIP_DeviceNetLink.hpp"
 #include "CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "CIP_0005_Connection/CIP_Connection.hpp"
 #include "CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
@@ -22,8 +22,8 @@ int CIP_Objects::InitObjects()
     if (CIP_MessageRouter::Init().status != kCipStatusOk)
         return CIP_MessageRouter::class_id;
 
-    if (CIP_DeviceNET_Link::Init().status != kCipStatusOk)
-        return CIP_DeviceNET_Link::class_id;
+    //if (CIP_DeviceNET_Link::Init().status != kCipStatusOk)
+    //    return CIP_DeviceNET_Link::class_id;
 
     if (CIP_Assembly::Init().status != kCipStatusOk)
         return CIP_Assembly ::class_id;
@@ -55,8 +55,8 @@ int CIP_Objects::ShutObjects()
     if (CIP_MessageRouter::Shut().status != kCipStatusOk)
         return CIP_MessageRouter::class_id;
 
-    if (CIP_DeviceNET_Link::Shut().status != kCipStatusOk)
-        return CIP_DeviceNET_Link::class_id;
+    //if (CIP_DeviceNET_Link::Shut().status != kCipStatusOk)
+    //    return CIP_DeviceNET_Link::class_id;
 
     if (CIP_Assembly::Shut().status != kCipStatusOk)
         return CIP_Assembly ::class_id;

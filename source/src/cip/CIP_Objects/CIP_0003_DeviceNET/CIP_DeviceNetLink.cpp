@@ -62,35 +62,35 @@ CipStatus CIP_DeviceNET_Link::Init()
         //DeviceNet instance attributes
 
         //MAC ID (USINT)
-		instance_ptr->InsertAttribute(1, kCipUsint, &mac_id, kSetAndGetAble); // bind attributes to the instance
+		instance_ptr->InsertAttribute(1, kCipUsint, &instance_ptr->mac_id, kSetAndGetAble); // bind attributes to the instance
 
         //Baud Rate (USINT)
-		instance_ptr->InsertAttribute(2, kCipUsint, &baud_rate, kSetAndGetAble);
+		instance_ptr->InsertAttribute(2, kCipUsint, &instance_ptr->baud_rate, kSetAndGetAble);
 
         //BOI (BOOL)
-		instance_ptr->InsertAttribute(3, kCipBool, &BOI, kSetAndGetAble);
+		instance_ptr->InsertAttribute(3, kCipBool, &instance_ptr->BOI, kSetAndGetAble);
 
         //Bus-Off Counter (USINT)
-		instance_ptr->InsertAttribute(4, kCipUsint, &BOC, kSetAndGetAble);
+		instance_ptr->InsertAttribute(4, kCipUsint, &instance_ptr->BOC, kSetAndGetAble);
 
         //Allocation Information (STRUCT)
         //Allocation Choice Byte (BYTE)
         //Master MAC ID (USINT)
 
         //MAC ID Switch Changed (BOOL)
-		instance_ptr->InsertAttribute(6, kCipBool, &mac_id_switch, kGetableSingleAndAll);
+		instance_ptr->InsertAttribute(6, kCipBool, &instance_ptr->mac_id_switch, kGetableSingleAndAll);
 
         //Baud Rate Switch Changed (BOOL)
-		instance_ptr->InsertAttribute(7, kCipBool, &baud_rate_switch, kGetableSingleAndAll);
+		instance_ptr->InsertAttribute(7, kCipBool, &instance_ptr->baud_rate_switch, kGetableSingleAndAll);
 
         //Mac ID Switch Value (USINT)
-		instance_ptr->InsertAttribute(8, kCipUsint, &mac_id_switch_val, kGetableSingleAndAll);
+		instance_ptr->InsertAttribute(8, kCipUsint, &instance_ptr->mac_id_switch_val, kGetableSingleAndAll);
 
         //Baud Rate Switch Value (USINT)
-		instance_ptr->InsertAttribute(9, kCipUsint, &baud_rate_switch_val, kGetableSingleAndAll);
+		instance_ptr->InsertAttribute(9, kCipUsint, &instance_ptr->baud_rate_switch_val, kGetableSingleAndAll);
 
         //Quick Connect (BOOL)
-		instance_ptr->InsertAttribute(10, kCipBool, &quick_connect, kSetable);
+		instance_ptr->InsertAttribute(10, kCipBool, &instance_ptr->quick_connect, kSetable);
 
         //Safety Network Number
         //InsertAttribute(3, kCipBool,

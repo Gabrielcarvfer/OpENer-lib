@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 18/11/2016.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 18/11/2016.
 //
 #ifndef CIP_OBJECT_IMPL_H
 #define CIP_OBJECT_IMPL_H

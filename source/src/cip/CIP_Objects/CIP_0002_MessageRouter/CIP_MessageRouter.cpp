@@ -74,7 +74,7 @@ CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance)
 CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
 {
     CipStatus cip_status = kCipStatusOkSend;
-    CipByte nStatus;
+    CipStatus nStatus;
 
     g_message_router_response.data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
 
@@ -82,11 +82,11 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     /* error from create MR structure*/
     nStatus = CreateMessageRouterRequestStructure(data, (CipInt) data_length, &g_message_router_request);
 
-    if ( kCipErrorSuccess != nStatus )
+    if ( kCipErrorSuccess != nStatus.status )
     {
         OPENER_TRACE_ERR("notifyMR: error from createMRRequeststructure\n");
 
-        g_message_router_response.general_status = nStatus;
+        g_message_router_response.general_status = nStatus.status;
         g_message_router_response.size_of_additional_status = 0;
         g_message_router_response.reserved = 0;
         g_message_router_response.data_length = 0;
@@ -140,7 +140,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     return cip_status;
 }
 
-CipError CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request)
+CipStatus CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request)
 {
     int number_of_decoded_bytes;
 

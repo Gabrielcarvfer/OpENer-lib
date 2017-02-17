@@ -76,7 +76,7 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
          * @return status  0 .. success
          *                 -1 .. error
          */
-        static CipError CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request);
+        static CipStatus CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request);
 
 
         /** @brief Notify the MessageRouter that an explicit message (connected or unconnected)

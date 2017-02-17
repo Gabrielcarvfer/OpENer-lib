@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 26/01/2017.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 26/01/2017.
 //
 
 #ifndef OPENERMAIN_CIP_OBJECTS_H

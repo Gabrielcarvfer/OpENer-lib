@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 25/01/17.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 25/01/17.
 //
 
 #ifndef OPENERMAIN_CIP_CONNECTION_H

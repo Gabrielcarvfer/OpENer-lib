@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 18/11/2016.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 18/11/2016.
 //
 
 #ifndef OPENER_CIP_OBJECT_H
@@ -24,8 +24,8 @@ class CIP_Object
         static bool RemoveClassInstance(T * instance);
         static bool RemoveClassInstance(CipUdint position);
 
-        virtual static CipStatus Init();
-        virtual static CipStatus Shut();
+        static CipStatus Init();
+        static CipStatus Shut();
         CIP_Object();
         virtual ~CIP_Object();
 

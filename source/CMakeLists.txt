@@ -8,10 +8,11 @@ cmake_minimum_required( VERSION 2.8.9 )
 #######################################
 project(OpENerMain CXX)
 add_definitions(-std=c++11)
-#add_definitions(-DWIN32)
+add_definitions(-DWIN32)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
 unset(CMAKE_LINK_LIBRARY_SUFFIX)
+
 #######################################
 # Project version                     #
 #######################################
@@ -69,16 +70,6 @@ endif( OpENer_TESTS )
 #######################################
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall" )
 
-####################################################
-# Internal cache holding the available CIP objects #
-####################################################
-set( OpENer_ADD_CIP_OBJECTS "" CACHE INTERNAL STRING )
-
-#######################################
-# Add custom CIP objects              #
-#######################################
-#set( OpENer_CIP_OBJECTS_DIR ${PROJECT_SOURCE_DIR}/src/cip_objects )
-#include(${OpENer_BUILDSUPPORT_DIR}/OpENer_CIP_Object_generator.cmake)
 
 #######################################
 # Add subdirectories                  #

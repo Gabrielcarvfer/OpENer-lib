@@ -12,7 +12,7 @@
 #ifdef WIN32
     #include <iostream>
     #include <iphlpapi.h>
-    #include <strstream>
+    #include <sstream>
 	#ifdef VSTUDIO
 		#pragma comment(lib, "Ws2_32.lib")
 		#pragma comment(lib, "iphlpapi.lib")
@@ -227,7 +227,7 @@ CipStatus CIP_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
                 message_router_response->data += 6;
             }
 
-            if (kCipStatusOkSend != this->GetAttributeSingleTcpIpInterface(message_router_request, message_router_response))
+            if (kCipStatusOkSend != this->GetAttributeSingleTcpIpInterface(message_router_request, message_router_response).status)
             {
                 message_router_response->data = response;
                 return kCipStatusError;

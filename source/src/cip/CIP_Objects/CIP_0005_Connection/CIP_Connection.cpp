@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 25/01/17.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 25/01/17.
 //
 
 #include <typedefs.hpp>
@@ -30,8 +30,8 @@ CipStatus CIP_Connection::Init()
 
         //Chapter 5 vol 5
         //todo: recheck sizes
-        instance->InsertAttribute(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
-        instance->InsertAttribute(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
+        //instance->InsertAttribute(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
+        //instance->InsertAttribute(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
 
 
         object_Set.emplace(object_Set.size(), instance);
