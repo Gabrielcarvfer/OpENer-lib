@@ -65,6 +65,11 @@ CipStatus CIP_Connection::Create()
     instance->InsertAttribute(17, kCipUint , &Production_inhibit_time              , kGetableSingleAndAll);
     instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier        , kGetableSingleAndAll);
     instance->InsertAttribute(19, kCipUdint, &Connection_binding_list              , kGetableSingleAndAll);
+
+    CipStatus stat;
+    stat.status = kCipStatusOk;
+    stat.extended_status = (CipUsint) instance->id;
+    return stat;
 }
 
 CipStatus CIP_Connection::Delete()

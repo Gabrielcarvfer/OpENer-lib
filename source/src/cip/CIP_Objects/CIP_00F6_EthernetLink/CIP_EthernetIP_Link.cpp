@@ -4,22 +4,22 @@
  *
  ******************************************************************************/
 #include <cstring>
-#include "CIP_EthIP_Link.hpp"
+#include "CIP_EthernetIP_Link.hpp"
 
 
-void CIP_EthIP_Link::ConfigureMacAddress(const CipUsint* mac_address)
+void CIP_EthernetIP_Link::ConfigureMacAddress(const CipUsint* mac_address)
 {
     memcpy(&g_ethernet_link.physical_address, mac_address, sizeof(g_ethernet_link.physical_address));
 }
 
-CipStatus CIP_EthIP_Link::Init()
+CipStatus CIP_EthernetIP_Link::Init()
 {
     if (number_of_instances == 0)
     {
         class_name = "Ethernet Link";
         class_id = kCipEthernetLinkClassCode;
 
-        CIP_EthIP_Link * instance = new CIP_EthIP_Link();
+        CIP_EthernetIP_Link * instance = new CIP_EthernetIP_Link();
         /* set attributes to initial values */
         instance->g_ethernet_link.interface_speed = 100;
         instance->g_ethernet_link.interface_flags = 0xF; /* successful speed and duplex neg, full duplex active link, TODO in future it should be checked if link is active */
@@ -33,12 +33,12 @@ CipStatus CIP_EthIP_Link::Init()
     return kCipStatusOk;
 }
 
-CipStatus CIP_EthIP_Link::Shutdown ()
+CipStatus CIP_EthernetIP_Link::Shutdown ()
 {
 	return kCipStatusOk;
 }
 
-CipStatus CIP_EthIP_Link::InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_EthernetIP_Link::InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response)
 {
     return kCipStatusError;
 }

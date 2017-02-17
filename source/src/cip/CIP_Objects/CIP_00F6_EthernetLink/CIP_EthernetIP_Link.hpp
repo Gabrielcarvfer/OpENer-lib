@@ -8,16 +8,16 @@
 
 #include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
-#include "../CIP_00F5_TCPIP_Interface/CIP_EthIP_Interface.hpp"
+#include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
 
-class CIP_EthIP_Link : public CIP_Object<CIP_EthIP_Link>
+class CIP_EthernetIP_Link : public CIP_Object<CIP_EthernetIP_Link>
 {
 public:
     /** @brief Initialize the Ethernet Link Objects data
     */
     static CipStatus Init();
     static CipStatus Shutdown();
-    CIP_EthIP_Interface * associatedInterface;
+    CIP_TCPIP_Interface * associatedInterface;
 private:
     //Definitions
     typedef struct {
@@ -25,6 +25,8 @@ private:
         CipUdint interface_flags;
         CipUsint physical_address[6];
     } CipEthernetLinkObject;
+
+
 
     //Methods
     void ConfigureMacAddress(const CipUsint* mac_address);

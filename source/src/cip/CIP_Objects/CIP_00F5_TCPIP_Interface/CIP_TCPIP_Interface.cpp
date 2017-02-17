@@ -3,10 +3,11 @@
  * All rights reserved.
  *
  *****************************************************************************/
+
 //Includes
 #include <cstring>
 #include "../../ciptypes.hpp"
-#include "CIP_EthIP_Interface.hpp"
+#include "CIP_TCPIP_Interface.hpp"
 #include "../../connection/network/NET_Connection.hpp"
 
 #ifdef WIN32
@@ -28,18 +29,8 @@
 //Defines
 #define CIP_ETHERNETLINK_CLASS_CODE 0xF6
 
-//Static variables
-CIP_EthIP_Interface::MulticastAddressConfiguration CIP_EthIP_Interface::g_multicast_configuration;
-CipTcpIpNetworkInterfaceConfiguration CIP_EthIP_Interface::interface_configuration_;
-CipUsint  CIP_EthIP_Interface::g_time_to_live_value;
-CipDword  CIP_EthIP_Interface::tcp_status_;
-CipDword  CIP_EthIP_Interface::configuration_capability_;
-CipDword  CIP_EthIP_Interface::configuration_control_;
-CipEpath  CIP_EthIP_Interface::physical_link_object_;
-CipString CIP_EthIP_Interface::hostname_;
-
 //Methods
-CipStatus CIP_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)
+CipStatus CIP_TCPIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)
 {
 
     interface_configuration_.ip_address = inet_addr(ip_address);
@@ -56,7 +47,7 @@ CipStatus CIP_EthIP_Interface::ConfigureNetworkInterface(const char* ip_address,
     return kCipStatusOk;
 }
 
-void CIP_EthIP_Interface::ConfigureDomainName(const char* domain_name)
+void CIP_TCPIP_Interface::ConfigureDomainName(const char* domain_name)
 {
     if (NULL != interface_configuration_.domain_name.string)
     {
@@ -78,7 +69,7 @@ void CIP_EthIP_Interface::ConfigureDomainName(const char* domain_name)
     }
 }
 
-void CIP_EthIP_Interface::ConfigureHostName(const char* hostname)
+void CIP_TCPIP_Interface::ConfigureHostName(const char* hostname)
 {
     if (NULL != hostname_.string)
     {
@@ -99,7 +90,7 @@ void CIP_EthIP_Interface::ConfigureHostName(const char* hostname)
     }
 }
 
-CipStatus CIP_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
     CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
 
@@ -122,15 +113,17 @@ CipStatus CIP_EthIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* me
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_EthIP_Interface::Init()
+CipStatus CIP_TCPIP_Interface::Init()
 {
-    CIP_EthIP_Interface* instance;
+    CIP_TCPIP_Interface* class_ptr;
 
     if (number_of_instances == 0)
     {
         class_name = "TCP/IP interface";
         class_id = kCipTcpIpInterfaceClassCode;
 
+        //Static variables
+        revision = 0;
         tcp_status_ = 0x1;
         configuration_capability_ = 0x04 | 0x20;
         configuration_control_ = 0;
@@ -145,23 +138,59 @@ CipStatus CIP_EthIP_Interface::Init()
         };
         g_time_to_live_value = 1;
 
-        instance = new CIP_EthIP_Interface();
+        class_ptr = new CIP_TCPIP_Interface();
 
-        instance->InsertAttribute(1, kCipDword, (void*)&tcp_status_, kGetableSingleAndAll);
-        instance->InsertAttribute(2, kCipDword, (void*)&configuration_capability_, kGetableSingleAndAll);
-        instance->InsertAttribute(3, kCipDword, (void*)&configuration_control_, kGetableSingleAndAll);
-        instance->InsertAttribute(4, kCipEpath, &physical_link_object_, kGetableSingleAndAll);
-        instance->InsertAttribute(5, kCipUdintUdintUdintUdintUdintString, &interface_configuration_, kGetableSingleAndAll);
-        instance->InsertAttribute(6, kCipString, (void*)&hostname_, kGetableSingleAndAll);
-        instance->InsertAttribute(8, kCipUsint, (void*)&g_time_to_live_value, kGetableSingleAndAll);
-        instance->InsertAttribute(9, kCipAny, (void*)&g_multicast_configuration, kGetableSingleAndAll);
+        //Class attributes from Vol 2 Chapter 5
+        class_ptr->InsertAttribute (1, kCipUint, (void *) &revision, kGetableSingleAndAll);
+        class_ptr->InsertAttribute (2, kCipUint, (void *) &max_instances, kGetableSingleAndAll);
+        class_ptr->InsertAttribute (3, kCipUint, (void *) &number_of_instances, kGetableSingleAndAll);
+
+        //Class optional attributes from Vol 1 Chapter 4
+        class_ptr->InsertAttribute (4, kCipEpath, &physical_link_object_, kGetableSingleAndAll);
+        class_ptr->InsertAttribute (5, kCipUdintUdintUdintUdintUdintString, &interface_configuration_, kGetableSingleAndAll);
+        class_ptr->InsertAttribute (6, kCipString, (void *) &hostname_, kGetableSingleAndAll);
+        class_ptr->InsertAttribute (7, kCipUsint, (void *) &g_time_to_live_value, kGetableSingleAndAll);
+
+        object_Set.emplace(class_ptr->id, class_ptr);
+
+
     }
 
 
     return kCipStatusOk;
 }
 
-void CIP_EthIP_Interface::ShutdownTcpIpInterface(void)
+
+CipStatus CIP_TCPIP_Interface::Create()
+{
+    CIP_TCPIP_Interface* instance_ptr = new CIP_TCPIP_Interface();
+
+    //Instance attributes
+    //TODO: fix attribute access
+    instance_ptr->InsertAttribute (1 , kCipDword, (void *) &status , kGetableSingleAndAll);
+    instance_ptr->InsertAttribute (2 , kCipDword, (void *) &configuration_capability, kGetableSingleAndAll);
+    instance_ptr->InsertAttribute (3 , kCipDword, (void *) &configuration_control, kSetAndGetAble);
+    instance_ptr->InsertAttribute (4 , sizeof(physical_link_object_t), &physical_link_object, kGetableSingleAndAll);
+    instance_ptr->InsertAttribute (5 , sizeof(interface_configuration_t), &interface_configuration, kSetAndGetAble);
+    instance_ptr->InsertAttribute (6 , kCipString, &host_name, kSetAndGetAble);
+    //instan_ptrce->InsertAttribute  (7, //TODO:8 octets safety_network_number
+    instance_ptr->InsertAttribute (8 , kCipUsint, &ttl_value, kSetAndGetAble);
+    instance_ptr->InsertAttribute (9 , sizeof(multicast_address_configuration_t), &multicast_address_configuration, kSetAndGetAble);
+    instance_ptr->InsertAttribute (10, kCipBool, &select_acd, kSetable);
+    instance_ptr->InsertAttribute (11, sizeof(last_conflict_detected_t), &last_conflict_detected, kSetable);
+    instance_ptr->InsertAttribute (12, kCipBool, &quick_connect, kSetable);
+
+    object_Set.emplace(instance_ptr->id, instance_ptr);
+
+    CipStatus stat;
+    stat.status = kCipStatusOk;
+    stat.extended_status = (CipUsint) instance_ptr->id;
+    return stat;
+}
+
+
+
+void CIP_TCPIP_Interface::ShutdownTcpIpInterface(void)
 {
     //Only free the resources if they are initialized
     if (NULL != hostname_.string)
@@ -178,7 +207,7 @@ void CIP_EthIP_Interface::ShutdownTcpIpInterface(void)
     }
 }
 
-CipStatus CIP_EthIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
 
     CipStatus status = kCipStatusOkSend;
@@ -205,7 +234,7 @@ CipStatus CIP_EthIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
     return status;
 }
 
-CipStatus CIP_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
 {
 
     CipUsint* response = message_router_response->data; // pointer into the reply
@@ -241,7 +270,7 @@ CipStatus CIP_EthIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_EthIP_Interface::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_TCPIP_Interface::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
 {
     CipStatus returnValue;
     //Class services
@@ -304,7 +333,7 @@ typedef struct {
 int GetInterfacesList(ip_interface **interface_ptr);
 
 //Scan for avaible tcpip interfaces
-CipStatus CIP_EthIP_Interface::ScanInterfaces()
+CipStatus CIP_TCPIP_Interface::ScanInterfaces()
 {
     ip_interface ** interfaces = (ip_interface**)calloc(1,sizeof(ip_interface*));
 
@@ -315,11 +344,11 @@ CipStatus CIP_EthIP_Interface::ScanInterfaces()
     int i;
     for(i = 0; i < numInterfaces; i++)
     {
-        //Search for an CIP_EthIP_Interface object with same MAC address, if it exists, update info, if not, create a new object
+        //Search for an CIP_TCPIP_Interface object with same MAC address, if it exists, update info, if not, create a new object
         //(*interfaces)[i].mac
     }
 
-    //Turn data list into CIP_EthIP_Interface objects, checking before if the interface is already registered
+    //Turn data list into CIP_TCPIP_Interface objects, checking before if the interface is already registered
 
     delete[] *interfaces;
     free(interfaces);

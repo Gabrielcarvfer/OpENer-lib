@@ -10,8 +10,8 @@
 #include "CIP_0005_Connection/CIP_Connection.hpp"
 #include "CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp"
-#include "CIP_00F5_TCPIP_Interface/CIP_EthIP_Interface.hpp"
-#include "CIP_00F6_EthernetLink/CIP_EthIP_Link.hpp"
+#include "CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
+#include "CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
 
 int CIP_Objects::InitObjects()
 {
@@ -37,11 +37,11 @@ int CIP_Objects::InitObjects()
     if (CIP_AnalogInputPoint::Init().status != kCipStatusOk)
         return CIP_AnalogInputPoint::class_id;
 
-    if (CIP_EthIP_Interface::Init().status != kCipStatusOk)
-        return CIP_EthIP_Interface::class_id;
+    if (CIP_TCPIP_Interface::Init().status != kCipStatusOk)
+        return CIP_TCPIP_Interface::class_id;
 
-    if (CIP_EthIP_Link::Init().status != kCipStatusOk)
-        return CIP_EthIP_Link::class_id;
+    if (CIP_EthernetIP_Link::Init().status != kCipStatusOk)
+        return CIP_EthernetIP_Link::class_id;
 
     return 0; //OK
 }
@@ -70,11 +70,11 @@ int CIP_Objects::ShutObjects()
     if (CIP_AnalogInputPoint::Shut().status != kCipStatusOk)
         return CIP_AnalogInputPoint::class_id;
 
-    if (CIP_EthIP_Interface::Shut().status != kCipStatusOk)
-        return CIP_EthIP_Interface::class_id;
+    if (CIP_TCPIP_Interface::Shut().status != kCipStatusOk)
+        return CIP_TCPIP_Interface::class_id;
 
-    if (CIP_EthIP_Link::Shut().status != kCipStatusOk)
-        return CIP_EthIP_Link::class_id;
+    if (CIP_EthernetIP_Link::Shut().status != kCipStatusOk)
+        return CIP_EthernetIP_Link::class_id;
 
     return 0; //OK
 }

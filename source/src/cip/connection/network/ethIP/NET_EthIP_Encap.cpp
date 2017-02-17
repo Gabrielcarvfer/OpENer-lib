@@ -6,7 +6,7 @@
 //Includes
 #include <cstring>
 #include "NET_EthIP_Encap.hpp"
-#include "../../../CIP_Objects/CIP_00F6_EthernetLink/CIP_EthIP_Link.hpp"
+#include "cip/CIP_Objects/CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
 #include "eip_endianconv.hpp"
 #include "../NET_Endianconv.hpp"
 #include "../NET_NetworkHandler.hpp"
@@ -55,7 +55,7 @@ void NET_EthIP_Encap::EncapsulationInit(void)
     g_interface_information.capability_flags = kCapabilityFlagsCipTcp | kCapabilityFlagsCipUdpClass0or1;
     strcpy((char*)g_interface_information.name_of_service, "Communications");
 
-    CIP_EthIP_Link::CipEthernetLinkInit ();
+    CIP_EthernetIP_Link::CipEthernetLinkInit ();
 }
 
 int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
@@ -278,7 +278,7 @@ int NET_EthIP_Encap::EncapsulateListIdentyResponseMessage(CipByte* const communi
 
     NET_Endianconv::AddIntToMessage((CipUint) kSupportedProtocolVersion, &communication_buffer_runner);
 
-    EncapsulateIpAddress(NET_Connection::endian_htons ((uint16_t) kOpENerEthernetPort), CIP_EthIP_Interface::interface_configuration_.ip_address, &communication_buffer_runner);
+    EncapsulateIpAddress(NET_Connection::endian_htons ((uint16_t) kOpENerEthernetPort), CIP_TCPIP_Interface::interface_configuration_.ip_address, &communication_buffer_runner);
 
     memset(communication_buffer_runner, 0, 8);
 
@@ -569,7 +569,7 @@ void NET_EthIP_Encap::EncapsulationShutDown(void)
             g_registered_sessions[i] = kEipInvalidSocket;
         }
     }
-    CIP_EthIP_Link::Shutdown();
+    CIP_EthernetIP_Link::Shutdown();
 }
 
 void NET_EthIP_Encap::ManageEncapsulationMessages(MilliSeconds elapsed_time)
