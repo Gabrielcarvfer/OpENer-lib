@@ -90,14 +90,18 @@ CipStatus CIP_ConnectionManager::Init ()
     return kCipStatusOk;
 }
 
-CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_Connection * connection_object, 
+CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_ConnectionManager * connection_manager_instance,
                                                               CipUsint *data,
                                                               int data_length,
                                                               struct sockaddr_in *from_address
                                                             )
 {
 
-    if (kCipStatusError == (CIP_CommonPacket::CreateCommonPacketFormatStructure (data, data_length, &CIP_CommonPacket::common_packet_data)).status)
+    CIP_Connection * connection_object
+            = (CIP_Connection*)CIP_Connection::GetInstance(connection_manager_instance->connection_serial_number);
+
+    if (kCipStatusError == (CIP_CommonPacket::CreateCommonPacketFormatStructure
+            (data, data_length, &CIP_CommonPacket::common_packet_data)).status)
     {
         return kCipStatusError;
     }
@@ -115,15 +119,17 @@ CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_Connection * c
                 //    return kCipStatusError;
 
                 // only handle the data if it is coming from the originator
-                if (((struct sockaddr_in*)(netConn->originator_address))->sin_addr.s_addr == from_address->sin_addr.s_addr)
+                if (((struct sockaddr_in*)(connection_object->netConn->originator_address))->sin_addr.s_addr == from_address->sin_addr.s_addr)
                 {
-                    if (SEQ_GT32(CIP_CommonPacket::common_packet_data.address_item.data.sequence_number, eip_level_sequence_count_consuming))
+                    if (SEQ_GT32(CIP_CommonPacket::common_packet_data.address_item.data.sequence_number, connection_manager_instance->eip_level_sequence_count_consuming))
                     {
                         // reset the watchdog timer
-                        inactivity_watchdog_timer = (o_to_t_requested_packet_interval / 1000) << (2 + connection_timeout_multiplier);
+                        connection_manager_instance->inactivity_watchdog_timer
+                                = (connection_manager_instance->o_to_t_requested_packet_interval / 1000)
+                                << (2 + connection_manager_instance->connection_timeout_multiplier);
 
                         // only inform assembly object if the sequence counter is greater or equal
-                        eip_level_sequence_count_consuming = CIP_CommonPacket::common_packet_data.address_item.data.sequence_number;
+                        connection_manager_instance->eip_level_sequence_count_consuming = CIP_CommonPacket::common_packet_data.address_item.data.sequence_number;
 
                         //TODO: fix handles per IO Type
                         //return HandleReceivedIoConnectionData (CIP_CommonPacket::common_packet_data.data_item.data, CIP_CommonPacket::common_packet_data.data_item.length);
@@ -272,50 +278,55 @@ CipStatus CIP_ConnectionManager::ForwardOpen (CIP_Connection * connection_object
     }
 }
 
-void CIP_ConnectionManager::GeneralConnectionConfiguration (CIP_Connection * connection_object)
+void CIP_ConnectionManager::GeneralConnectionConfiguration (CIP_ConnectionManager * connection_manager_instance)
 {
-    if (kRoutingTypePointToPointConnection == (connection_object->o_to_t_network_connection_parameter & kRoutingTypePointToPointConnection))
+    CIP_Connection * connection_instance = (CIP_Connection*)CIP_Connection::GetInstance(connection_manager_instance->connection_serial_number);
+    if (kRoutingTypePointToPointConnection == (connection_manager_instance->o_to_t_network_connection_parameter & kRoutingTypePointToPointConnection))
     {
         // if we have a point to point connection for the O to T direction the target shall choose the connection ID.
-        connection_object->CIP_consumed_connection_id = GetConnectionId ();
+        connection_instance->CIP_consumed_connection_id = GetConnectionId ();
     }
 
-    if (kRoutingTypeMulticastConnection == (connection_object->t_to_o_network_connection_parameter & kRoutingTypeMulticastConnection))
+    if (kRoutingTypeMulticastConnection == (connection_manager_instance->t_to_o_network_connection_parameter & kRoutingTypeMulticastConnection))
     {
         // if we have a multi-cast connection for the T to O direction the target shall choose the connection ID.
-        connection_object->CIP_produced_connection_id = GetConnectionId ();
+        connection_instance->CIP_produced_connection_id = GetConnectionId ();
     }
 
-    eip_level_sequence_count_producing = 0;
-    sequence_count_producing = 0;
-    eip_level_sequence_count_consuming = 0;
-    sequence_count_consuming = 0;
+    connection_manager_instance->eip_level_sequence_count_producing = 0;
+    connection_manager_instance->sequence_count_producing = 0;
+    connection_manager_instance->eip_level_sequence_count_consuming = 0;
+    connection_manager_instance->sequence_count_consuming = 0;
 
-    watchdog_timeout_action = kWatchdogTimeoutActionAutoDelete; /* the default for all connections on EIP*/
+    connection_instance->Watchdog_timeout_action = CIP_Connection::kWatchdogTimeoutActionAutoDelete; /* the default for all connections on EIP*/
 
-    expected_packet_rate = 0; // default value
+    connection_instance->Expected_packet_rate = 0; // default value
 
     // Client Type Connection requested
-    if ((transport_type_class_trigger & 0x80) == 0x00)
+    if ((connection_manager_instance->transport_type_class_trigger & 0x80) == 0x00)
     {
-        expected_packet_rate = (CipUint) ((t_to_o_requested_packet_interval) / 1000);
+        connection_instance->Expected_packet_rate = (CipUint) ((connection_manager_instance->t_to_o_requested_packet_interval) / 1000);
         // As soon as we are ready we should produce the connection. With the 0 here we will produce with the next timer tick which should be sufficient.
-        transmission_trigger_timer = 0;
+        connection_manager_instance->transmission_trigger_timer = 0;
     }
     else
     {
         // Server Type Connection requested
-        expected_packet_rate = (CipUint) ((o_to_t_requested_packet_interval) / 1000);
+        connection_instance->Expected_packet_rate = (CipUint) ((connection_manager_instance->o_to_t_requested_packet_interval) / 1000);
     }
 
-    connection_object->production_inhibit_timer = production_inhibit_time = 0;
+    connection_manager_instance->production_inhibit_timer = connection_manager_instance->production_inhibit_time = 0;
 
     //setup the preconsuption timer: max(ConnectionTimeoutMultiplier * EpectetedPacketRate, 10s)
-    connection_object->inactivity_watchdog_timer = ((((o_to_t_requested_packet_interval) / 1000) << (2 + connection_timeout_multiplier)) > 10000) ? (((connection_object->o_to_t_requested_packet_interval) / 1000) << (2 + connection_object->connection_timeout_multiplier)) : 10000;
+    connection_manager_instance->inactivity_watchdog_timer
+            = ((((connection_manager_instance->o_to_t_requested_packet_interval) / 1000)
+            << (2 + connection_manager_instance->connection_timeout_multiplier)) > 10000)
+              ? (((connection_manager_instance->o_to_t_requested_packet_interval) / 1000)
+                    << (2 + connection_manager_instance->connection_timeout_multiplier)) : 10000;
 
-    connection_object->Consumed_connection_size = (CipUint)(o_to_t_network_connection_parameter & 0x01FF);
+    connection_instance->Consumed_connection_size = (CipUint)(connection_manager_instance->o_to_t_network_connection_parameter & 0x01FF);
 
-    connection_object->Produced_connection_size = (CipUint)(t_to_o_network_connection_parameter & 0x01FF);
+    connection_instance->Produced_connection_size = (CipUint)(connection_manager_instance->t_to_o_network_connection_parameter & 0x01FF);
 }
 
 CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
@@ -323,7 +334,8 @@ CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest *message_
 
     // check connection_serial_number && originator_vendor_id && originator_serial_number if connection is established
     ConnectionManagerStatusCode connection_status = kConnectionManagerStatusCodeErrorConnectionNotFoundAtTargetApplication;
-    CIP_Connection *connection_object;
+    CIP_ConnectionManager *connection_manager_instance;
+    CIP_Connection * connection_instance;
 
     // set AddressInfo Items to invalid TypeID to prevent assembleLinearMsg to read them
     CIP_CommonPacket::common_packet_data.address_info_item[0].type_id = 0;
@@ -339,17 +351,19 @@ CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest *message_
 
     for (unsigned int i = 0; i < active_connections_set.size(); i++)
     {
-        connection_object = (CIP_Connection*)active_connections_set[i];
+        connection_manager_instance = (CIP_ConnectionManager*)active_connections_set[i];
+        connection_instance = (CIP_Connection*)CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
         /* this check should not be necessary as only established connections should be in the active connection list */
-        if ((connection_object->State == CIP_Connection::kConnectionStateEstablished) || (connection_object->State == CIP_Connection::kConnectionStateTimedOut))
+        if ((connection_instance->State == CIP_Connection::kConnectionStateEstablished)
+            || (connection_instance->State == CIP_Connection::kConnectionStateTimedOut))
         {
-            if ((connection_object->connection_serial_number == connection_serial_number) &&
-                (connection_object->originator_vendor_id == originator_vendor_id) &&
-                (connection_object->originator_serial_number == originator_serial_number))
+            if ((connection_manager_instance->connection_serial_number == connection_serial_number) &&
+                (connection_manager_instance->originator_vendor_id == originator_vendor_id) &&
+                (connection_manager_instance->originator_serial_number == originator_serial_number))
             {
                 /* found the corresponding connection object -> close it */
                 //OPENER_ASSERT(NULL != connection_object->connection_close_function);
-                CloseConnection (connection_object);
+                CloseConnection (connection_manager_instance);
                 connection_status = kConnectionManagerStatusCodeSuccess;
                 break;
             }
@@ -391,7 +405,8 @@ CipStatus CIP_ConnectionManager::GetConnectionOwner (CipMessageRouterRequest *me
 CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
 {
     CipStatus eip_status;
-    CIP_Connection *connection_object;
+    CIP_ConnectionManager *connection_manager_instance;
+    CIP_Connection * connection_instance;
 
     /*Inform application that it can execute */
     //todo:HandleApplication ();
@@ -399,52 +414,57 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
 
     for (unsigned int i = 0; i < active_connections_set.size (); i++)
     {
-        connection_object = (CIP_Connection*)active_connections_set[i];
+        connection_manager_instance = (CIP_ConnectionManager*)object_Set[i];
+        connection_instance = (CIP_Connection*)CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
 
-        if (connection_object->State == CIP_Connection::kConnectionStateEstablished)
+        if (connection_instance->State == CIP_Connection::kConnectionStateEstablished)
         {
             // we have a consuming connection check inactivity watchdog timer or all sever connections have to maintain an inactivity watchdog timer
-            if ((0 != connection_object->consuming_instance) ||  (connection_object->transport_type_class_trigger & 0x80))
+            if ( (0 != connection_manager_instance->consuming_instance)
+                ||  (connection_manager_instance->transport_type_class_trigger & 0x80) )
             {
-                connection_object->inactivity_watchdog_timer -= elapsed_time;
-                if (connection_object->inactivity_watchdog_timer <= 0)
+                connection_manager_instance->inactivity_watchdog_timer -= elapsed_time;
+                if (connection_manager_instance->inactivity_watchdog_timer <= 0)
                 {
                     // we have a timed out connection perform watchdog time out action
                     OPENER_TRACE_INFO(">>>>>>>>>>Connection timed out\n");
-                    //OPENER_ASSERT(NULL != connection_object->connection_timeout_function);
-                    RemoveFromActiveConnections (connection_object);
+                    //OPENER_ASSERT(NULL != connection_instance->connection_timeout_function);
+                    RemoveFromActiveConnections (connection_instance);
                 }
             }
             // only if the connection has not timed out check if data is to be send
-            if (CIP_Connection::kConnectionStateEstablished == connection_object->State)
+            if (CIP_Connection::kConnectionStateEstablished == connection_instance->State)
             {
                 // client connection
-                if ((connection_object->expected_packet_rate != 0) && (kEipInvalidSocket != connection_object->netConn->sock)) // only produce for the master connection
+                if ((connection_instance->Expected_packet_rate != 0)
+                    && (kEipInvalidSocket != connection_instance->netConn->sock)) // only produce for the master connection
                 {
-                    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (connection_object->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
+                    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic
+                        != (connection_manager_instance->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
                     {
                         // non cyclic connections have to decrement production inhibit timer
-                        if (0 <= connection_object->production_inhibit_timer)
+                        if (0 <= connection_manager_instance->production_inhibit_timer)
                         {
-                            connection_object->production_inhibit_timer -= elapsed_time;
+                            connection_manager_instance->production_inhibit_timer -= elapsed_time;
                         }
                     }
-                    connection_object->transmission_trigger_timer -= elapsed_time;
-                    if (connection_object->transmission_trigger_timer <= 0)
+                    connection_manager_instance->transmission_trigger_timer -= elapsed_time;
+                    if (connection_manager_instance->transmission_trigger_timer <= 0)
                     {
                         // need to send package
-                        //OPENER_ASSERT(NULL != connection_object->connection_send_data_function);
-                        //todo: eip_status = SendConnectedData (connection_object); //only for IO connections
+                        //OPENER_ASSERT(NULL != connection_instance->connection_send_data_function);
+                        //todo: eip_status = SendConnectedData (connection_instance); //only for IO connections
                         if (eip_status.status == kCipStatusError)
                         {
                             OPENER_TRACE_ERR("sending of UDP data in manage Connection failed\n");
                         }
                         // reload the timer value
-                        connection_object->transmission_trigger_timer = connection_object->expected_packet_rate;
-                        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (connection_object->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
+                        connection_manager_instance->transmission_trigger_timer = connection_instance->Expected_packet_rate;
+                        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic
+                            != (connection_manager_instance->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
                         {
                             // non cyclic connections have to reload the production inhibit timer
-                            connection_object->production_inhibit_timer = connection_object->production_inhibit_time;
+                            connection_manager_instance->production_inhibit_timer = connection_manager_instance->production_inhibit_time;
                         }
                     }
                 }
@@ -653,37 +673,41 @@ CIP_Connection *CIP_ConnectionManager::GetConnectedObject (CipUdint connection_i
     return NULL;
 }
 
-CIP_Connection *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdint output_assembly_id)
+CIP_ConnectionManager *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdint output_assembly_id)
 {
-    CIP_Connection *active_connection_object_list_item;
+    CIP_ConnectionManager * active_connection_manager_instance;
+    CIP_Connection * connection_instance;
 
     for (unsigned int i = 0; i < active_connections_set.size (); i++)
     {
-        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
+        active_connection_manager_instance = (CIP_ConnectionManager*)active_connections_set[i];
+        connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (active_connection_manager_instance->connection_serial_number);
 
-        if (active_connection_object_list_item->State == CIP_Connection::kConnectionStateEstablished)
+        if (connection_instance->State == CIP_Connection::kConnectionStateEstablished)
         {
-            if (active_connection_object_list_item->connection_path.connection_point[0] == output_assembly_id)
-                return active_connection_object_list_item;
+            if (active_connection_manager_instance->connection_path.connection_point[0] == output_assembly_id)
+                return active_connection_manager_instance;
         }
     }
     return NULL;
 }
 
-CIP_Connection *CIP_ConnectionManager::CheckForExistingConnection (CIP_Connection *connection_object)
+CIP_ConnectionManager *CIP_ConnectionManager::CheckForExistingConnection (CIP_ConnectionManager * connection_manager_instance)
 {
-    CIP_Connection *active_connection_object_list_item;
+    CIP_ConnectionManager * active_connection_manager_instance;
+    CIP_Connection * connection_instance;
     for (unsigned int i = 0; i < active_connections_set.size (); i++)
     {
-        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
+        active_connection_manager_instance = (CIP_ConnectionManager*)active_connections_set[i];
+        connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (active_connection_manager_instance->connection_serial_number);
 
-        if (active_connection_object_list_item->State == CIP_Connection::kConnectionStateEstablished)
+        if (connection_instance->State == CIP_Connection::kConnectionStateEstablished)
         {
-            if ((connection_object->connection_serial_number == active_connection_object_list_item->connection_serial_number) &&
-                (connection_object->originator_vendor_id == active_connection_object_list_item->originator_vendor_id) &&
-                (connection_object->originator_serial_number == active_connection_object_list_item->originator_serial_number))
+            if ((connection_manager_instance->connection_serial_number == active_connection_manager_instance->connection_serial_number) &&
+                (connection_manager_instance->originator_vendor_id == active_connection_manager_instance->originator_vendor_id) &&
+                (connection_manager_instance->originator_serial_number == active_connection_manager_instance->originator_serial_number))
             {
-                return active_connection_object_list_item;
+                return active_connection_manager_instance;
             }
         }
     }
@@ -1014,17 +1038,20 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest *me
     return kCipStatusOk;
 }
 
-void CIP_ConnectionManager::CloseConnection (CIP_Connection * connection_object)
+void CIP_ConnectionManager::CloseConnection (CIP_ConnectionManager * connection_manager_instance)
 {
-    connection_object->State = CIP_Connection::kConnectionStateNonExistent;
-    if (0x03 != (transport_type_class_trigger & 0x03))
+    CIP_Connection * connection_instance;
+    connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
+
+    connection_instance->State = CIP_Connection::kConnectionStateNonExistent;
+    if (0x03 != (connection_manager_instance->transport_type_class_trigger & 0x03))
     {
         // only close the UDP connection for not class 3 connections
         //IApp_CloseSocket_udp (pa_pstConnObj->netConn->GetSocketHandle());
         //netConn->SetSocketHandle(kEipInvalidSocket);
-        netConn->CloseSocket ();
+        connection_instance->netConn->CloseSocket ();
     }
-    RemoveFromActiveConnections (connection_object);
+    RemoveFromActiveConnections (connection_manager_instance);
 }
 
 void CIP_ConnectionManager::CopyConnectionData (const CIP_Connection*pa_pstDst,const  CIP_Connection *pa_pstSrc)
@@ -1037,10 +1064,12 @@ void CIP_ConnectionManager::AddNewActiveConnection (CIP_Connection * connection_
     connection_object->State = CIP_Connection::kConnectionStateEstablished;
 }
 
-void CIP_ConnectionManager::RemoveFromActiveConnections (CIP_Connection * connection_object)
+void CIP_ConnectionManager::RemoveFromActiveConnections (CIP_ConnectionManager * connection_manager_instance)
 {
-    connection_object->State = CIP_Connection::kConnectionStateNonExistent;
-    active_connections_set.erase ((const unsigned int &) connection_object->id);
+    CIP_Connection * connection_instance;
+    connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
+    connection_instance->State = CIP_Connection::kConnectionStateNonExistent;
+    active_connections_set.erase ((const unsigned int &) connection_manager_instance->id);
 }
 
 CipBool CIP_ConnectionManager::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)
@@ -1102,7 +1131,7 @@ CipStatus CIP_ConnectionManager::InstanceServices(int service,
 		return ForwardOpen(connection_object, message_router_request, message_router_response);
                 break;
             case kForwardClose:
-		return ForwardClose(connection_object, message_router_request, message_router_response);
+		return ForwardClose(message_router_request, message_router_response);
                 break;
             case kGetConnectionOwner:
                 return GetConnectionOwner(message_router_request, message_router_response);

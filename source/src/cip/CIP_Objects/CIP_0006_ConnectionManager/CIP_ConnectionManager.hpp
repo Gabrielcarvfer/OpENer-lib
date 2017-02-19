@@ -116,7 +116,7 @@ public:
      *   @return pointer to connected Object
      *           0 .. connection not present in device
      */
-    static CIP_Connection* GetConnectedOutputAssembly(CipUdint output_assembly_id);
+    static CIP_ConnectionManager* GetConnectedOutputAssembly(CipUdint output_assembly_id);
 
     // Copy the given connection data from pa_pstSrc to pa_pstDst
     static void CopyConnectionData(const CIP_Connection* destination, const CIP_Connection* source);
@@ -128,7 +128,7 @@ public:
      * @param connection_object pointer to the connection object structure to be
      *closed
      */
-    static void CloseConnection(CIP_Connection * connection_object);
+    static void CloseConnection (CIP_ConnectionManager * connection_manager_instance);
 
     /* TODO: Missing documentation */
     static CipBool IsConnectedOutputAssembly(CipUdint instance_number);
@@ -139,7 +139,7 @@ public:
      * @param connection_object pointer to the connection object that should be set
      *up.
      */
-    static void GeneralConnectionConfiguration(CIP_Connection * connection_object);
+    static void GeneralConnectionConfiguration(CIP_ConnectionManager * connection_manager_instance);
 
     /** @brief Insert the given connection object to the list of currently active
      *  and managed connections.
@@ -164,7 +164,7 @@ public:
     static std::map<CipUdint, ConnectionManagementHandling> g_astConnMgmList;
 
     /** buffer connection object needed for forward open */
-    static CIP_Connection *g_dummy_connection_object;
+    static CIP_ConnectionManager *g_dummy_connection_object;
 
     /** @brief Holds the connection ID's "incarnation ID" in the upper 16 bits */
     static CipUdint g_incarnation_id;
@@ -176,9 +176,28 @@ public:
      * data can not be accessed with CIP means.
      */
 
+    typedef struct {
+        CipUint NumconnEntries;
+        CipBool ConnOpenBits[32];//todo: get size from connection max_instances
 
+    }connection_entry_list_t;
 
-        /* non CIP Attributes, only relevant for opened connections */
+    //CIP Attributes
+    CipUint Open_requests;
+    CipUint Open_format_rejects;
+    CipUint Open_resource_rejects;
+    CipUint Open_other_rejects;
+    CipUint Close_requests;
+    CipUint Close_format_requests;
+    CipUint Close_other_requests;
+    CipUint Connection_timeouts;
+    connection_entry_list_t connection_entry_list;
+    //attribute 10 is obsolete
+    CipUint CPU_utilization;
+    CipUdint Max_buff_size;
+    CipUdint Buff_size_remaining;
+
+    /* non CIP Attributes, only relevant for opened connections */
     CipByte priority_timetick;
     CipUsint timeout_ticks;
     CipUint connection_serial_number;
@@ -195,10 +214,10 @@ public:
     CipConnectionPath connection_path; // padded EPATH
     //todo: check with connection LinkObject link_object;
 
-    const CIP_Object * consuming_instance;
+    CIP_Connection * consuming_instance;
     /*S_CIP_CM_Object *p_stConsumingCMObject; */
 
-    const CIP_Object * producing_instance;
+    CIP_Connection * producing_instance;
     /*S_CIP_CM_Object *p_stProducingCMObject; */
 
     /* the EIP level sequence Count for Class 0/1 Producing Connections may have a different
@@ -259,7 +278,7 @@ public:
      *    - NULL if no equal established connection exists
      *    - pointer to the equal connection object
      */
-    CIP_Connection* CheckForExistingConnection(CIP_Connection* connection_object);
+    CIP_ConnectionManager* CheckForExistingConnection(CIP_ConnectionManager* connection_manager_instance);
 
     /** @brief Compare the electronic key received with a forward open request with the device's data.
      *
@@ -342,7 +361,7 @@ public:
  *           connection hijacking
  *  @return EIP_OK on success
  */
-    static CipStatus HandleReceivedConnectedData(CIP_Connection * connection_object,
+    static CipStatus HandleReceivedConnectedData(CIP_ConnectionManager * connection_manager_instance,
                                                  CipUsint* received_data,
                                                  int data_length,
                                                  struct sockaddr_in* from_address

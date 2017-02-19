@@ -46,6 +46,7 @@ public:
         kConnectionTriggerProductionTriggerCyclic = 0x10,
         kConnectionTriggerProductionTriggerChangeOState = 0x20,
         kConnectionTriggerProductionTriggerApplicationObj = 0x30,
+        kConnectionTriggerProductionTriggerMask = 0x70,
         kConnectionTriggerDirectionClient = 0x00,
         kConnectionTriggerDirectionServer = 0x80
     } ConnectionTriggerType;
