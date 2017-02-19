@@ -55,20 +55,20 @@ public:
         valid_hardware_configuration = 0x02,
 
         //other configuration
-        mcast_pending                   = BIT_N(4),
-        interface_configuration_pending = BIT_N(5),
-        acd_status                      = BIT_N(6)
+        mcast_pending                   = SET_BIT_N_TO_X(4,1),
+        interface_configuration_pending = SET_BIT_N_TO_X(5,1),
+        acd_status                      = SET_BIT_N_TO_X(6,1)
     }instance_status;
 
     typedef enum {
-        bootp_client                    = BIT_N(0),
-        dns_client                      = BIT_N(1),
-        dhcp_client                     = BIT_N(2),
-        dhcp_dns_update                 = BIT_N(3),
-        configuration_settable          = BIT_N(4),
-        hardware_configurable           = BIT_N(5),
-        interface_change_requires_reset = BIT_N(6),
-        acd_capable                     = BIT_N(7)
+        bootp_client                    = SET_BIT_N_TO_X(0,1),
+        dns_client                      = SET_BIT_N_TO_X(1,1),
+        dhcp_client                     = SET_BIT_N_TO_X(2,1),
+        dhcp_dns_update                 = SET_BIT_N_TO_X(3,1),
+        configuration_settable          = SET_BIT_N_TO_X(4,1),
+        hardware_configurable           = SET_BIT_N_TO_X(5,1),
+        interface_change_requires_reset = SET_BIT_N_TO_X(6,1),
+        acd_capable                     = SET_BIT_N_TO_X(7,1)
     }configuration_capability_attributes;
 
     typedef enum {
@@ -78,7 +78,7 @@ public:
         dhcp_config     = 0x02,
 
         //other configuration
-        dns_enable = BIT_N(4)
+        dns_enable = SET_BIT_N_TO_X(4,1)
     }configuration_control_attributes;
 
 

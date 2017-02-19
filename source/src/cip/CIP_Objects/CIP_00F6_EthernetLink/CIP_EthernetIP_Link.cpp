@@ -16,6 +16,10 @@ CipStatus CIP_EthernetIP_Link::Init()
 {
     if (number_of_instances == 0)
     {
+        //Init class attributes from 1 to 7
+        revision = kEthIPMultiplePortRev;
+        //max_inst
+        //num_inst
         class_name = "Ethernet Link";
         class_id = kCipEthernetLinkClassCode;
 

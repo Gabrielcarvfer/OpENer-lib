@@ -96,13 +96,15 @@ CipStatus CIP_Connection::GetAttributeSingle()
 CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
 {
     CipStatus status;
-    if (GetInstance(bound_instances[0]) == nullptr & GetInstance(bound_instances[1]) == nullptr)
+    if (GetInstance(bound_instances[0]) == nullptr
+        & GetInstance(bound_instances[1]) == nullptr)
     {
         //if both connections exist, then
         //check if there are resources to bound
         if ()
         {
-            if (GetInstance(bound_instances[0])->State == kConnectionStateEstablished & GetInstance(bound_instances[1])->State == kConnectionStateEstablished)
+            if (GetInstance(bound_instances[0])->State == kConnectionStateEstablished
+                & GetInstance(bound_instances[1])->State == kConnectionStateEstablished)
             {
                 if (bound_instances[0] != bound_instances[1])
                 {
