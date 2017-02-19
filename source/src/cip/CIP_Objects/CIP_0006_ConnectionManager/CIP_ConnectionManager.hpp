@@ -153,10 +153,10 @@ public:
    static void AddNewActiveConnection(CIP_Connection * connection_object);
 
     /* TODO: Missing documentation */
-    static void RemoveFromActiveConnections(CIP_Connection * connection_object);
+    static void RemoveFromActiveConnections(CIP_ConnectionManager * connection_object);
 
 
-    static std::map<CipUdint, const CIP_Connection *> active_connections_set;
+    static std::map<CipUdint, const CIP_ConnectionManager *> active_connections_set;
 
     /** List holding information on the object classes and open/close function
      * pointers to which connections may be established.

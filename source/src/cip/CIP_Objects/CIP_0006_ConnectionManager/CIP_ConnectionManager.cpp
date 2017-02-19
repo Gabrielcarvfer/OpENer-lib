@@ -429,7 +429,7 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
                     // we have a timed out connection perform watchdog time out action
                     OPENER_TRACE_INFO(">>>>>>>>>>Connection timed out\n");
                     //OPENER_ASSERT(NULL != connection_instance->connection_timeout_function);
-                    RemoveFromActiveConnections (connection_instance);
+                    RemoveFromActiveConnections (connection_manager_instance);
                 }
             }
             // only if the connection has not timed out check if data is to be send
@@ -1054,9 +1054,9 @@ void CIP_ConnectionManager::CloseConnection (CIP_ConnectionManager * connection_
     RemoveFromActiveConnections (connection_manager_instance);
 }
 
-void CIP_ConnectionManager::CopyConnectionData (const CIP_Connection*pa_pstDst,const  CIP_Connection *pa_pstSrc)
+void CIP_ConnectionManager::CopyConnectionData (const CIP_Connection *pa_pstDst,const  CIP_Connection *pa_pstSrc)
 {
-    memcpy ((CIP_ConnectionManager*)pa_pstDst, pa_pstSrc, sizeof (CIP_ConnectionManager));
+    memcpy (pa_pstDst, pa_pstSrc, sizeof (CIP_Connection));
 }
 
 void CIP_ConnectionManager::AddNewActiveConnection (CIP_Connection * connection_object)

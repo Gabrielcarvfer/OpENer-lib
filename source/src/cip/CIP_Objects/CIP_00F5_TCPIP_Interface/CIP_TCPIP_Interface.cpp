@@ -30,7 +30,6 @@
 
 //Defines
 #define SZ(x) (sizeof(x))
-#define CIP_ETHERNETLINK_CLASS_CODE 0xF6
 
 //Methods
 CipStatus CIP_TCPIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)

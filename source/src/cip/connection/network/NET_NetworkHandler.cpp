@@ -601,36 +601,42 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
     struct sockaddr_in from_address;
     socklen_t from_address_length;
 
-    CIP_Connection* connection_object_iterator;
-    CIP_Connection* current_connection_object = NULL;
+    CIP_ConnectionManager* connection_manager_instance;
+    CIP_Connection* current_connection_instance = NULL;
 
     // see a message on one of the registered UDP sockets has been received
     for (int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
 
         // do this at the beginning as the close function may can make the entry invalid
-        connection_object_iterator = (CIP_Connection*)CIP_ConnectionManager::active_connections_set[i];
+        connection_manager_instance = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set[i];
+        current_connection_instance = (CIP_Connection*)CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
 
-        if ((-1 != current_connection_object->netConn->GetSocketHandle(/*todo:kUdpCommuncationDirectionConsuming*/) && (CheckSocketSet( current_connection_object->netConn->GetSocketHandle (/*todo:kUdpCommuncationDirectionConsuming*/)))))
+        if ((-1 != current_connection_instance->netConn->GetSocketHandle(/*todo:kUdpCommuncationDirectionConsuming*/) && (CheckSocketSet( current_connection_instance->netConn->GetSocketHandle (/*todo:kUdpCommuncationDirectionConsuming*/)))))
         {
             from_address_length = sizeof(from_address);
-            int received_size = recvfrom(
-                     current_connection_object->netConn->GetSocketHandle(/*kUdpCommuncationDirectionConsuming*/), (char*)g_ethernet_communication_buffer, PC_OPENER_ETHERNET_BUFFER_SIZE, 0, (struct sockaddr*)&from_address, &from_address_length);
+            int received_size
+                    = recvfrom(current_connection_instance->netConn->GetSocketHandle(/*kUdpCommuncationDirectionConsuming*/),
+                               (char*)g_ethernet_communication_buffer,
+                               PC_OPENER_ETHERNET_BUFFER_SIZE,
+                               0,
+                               (struct sockaddr*)&from_address,
+                               &from_address_length);
             if (0 == received_size)
             {
                 OPENER_TRACE_STATE("connection closed by client\n");
-                CIP_ConnectionManager::CloseConnection (current_connection_object);
+                CIP_ConnectionManager::CloseConnection (connection_manager_instance);
                 continue;
             }
 
             if (0 > received_size)
             {
                 OPENER_TRACE_ERR("networkhandler: error on recv: %s\n", strerror(errno));
-                CIP_ConnectionManager::CloseConnection (current_connection_object);
+                CIP_ConnectionManager::CloseConnection (connection_manager_instance);
                 continue;
             }
 
-            CIP_ConnectionManager::HandleReceivedConnectedData(current_connection_object, g_ethernet_communication_buffer, received_size, &from_address);
+            CIP_ConnectionManager::HandleReceivedConnectedData(connection_manager_instance, g_ethernet_communication_buffer, received_size, &from_address);
         }
     }
 }

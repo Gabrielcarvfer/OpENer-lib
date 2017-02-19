@@ -101,49 +101,46 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (originator_to_target_connection_type != 0)
         {
             //setup consumer side
-            if (0 != (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance (connection_path.connection_point[0])))
-            {
-                // consuming Connection Point is present
-                consuming_instance = instance;
-
-                Consumed_connection_path_length = 6;
-                Consumed_connection_path.path_size = 6;
-                Consumed_connection_path.class_id = (CipUint) connection_path.class_id;
-                Consumed_connection_path.instance_number = (CipUint) connection_path.connection_point[0];
-                Consumed_connection_path.attribute_number = 3;
-
-                attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
-                OPENER_ASSERT(attribute != NULL);
-                // an assembly object should always have an attribute 3
-                data_size = Consumed_connection_size;
-                diff_size = 0;
-                is_heartbeat = (((CipByteArray*)attribute->getData ())->length == 0);
-
-                if ((transport_type_class_trigger & 0x0F) == 1)
-                {
-                    // class 1 connection
-                    data_size -= 2; // remove 16-bit sequence count length
-                    diff_size += 2;
-                }
-
-                if ((kOpENerConsumedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
-                {
-                    // we only have an run idle header if it is not an heartbeat connection
-                    data_size -= 4; // remove the 4 bytes needed for run/idle header
-                    diff_size += 4;
-                }
-
-                if (((CipByteArray*)attribute->getData())->length != data_size)
-                {
-                    /*wrong connection size */
-                    correct_originator_to_target_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
-                    *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize;
-                    return (CipStatus) kCipErrorConnectionFailure;
-                }
-            }
-            else
+            if (0 == (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance (connection_path.connection_point[0])))
             {
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidConsumingApllicationPath;
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+            // consuming Connection Point is present
+            consuming_instance = instance;
+
+            Consumed_connection_path_length = 6;
+            Consumed_connection_path.path_size = 6;
+            Consumed_connection_path.class_id = (CipUint) connection_path.class_id;
+            Consumed_connection_path.instance_number = (CipUint) connection_path.connection_point[0];
+            Consumed_connection_path.attribute_number = 3;
+
+            attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
+            OPENER_ASSERT(attribute != NULL);
+            // an assembly object should always have an attribute 3
+            data_size = Consumed_connection_size;
+            diff_size = 0;
+            is_heartbeat = (((CipByteArray*)attribute->getData ())->length == 0);
+
+            if ((transport_type_class_trigger & 0x0F) == 1)
+            {
+                // class 1 connection
+                data_size -= 2; // remove 16-bit sequence count length
+                diff_size += 2;
+            }
+
+            if ((kOpENerConsumedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
+            {
+                // we only have an run idle header if it is not an heartbeat connection
+                data_size -= 4; // remove the 4 bytes needed for run/idle header
+                diff_size += 4;
+            }
+
+            if (((CipByteArray*)attribute->getData())->length != data_size)
+            {
+                /*wrong connection size */
+                correct_originator_to_target_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
         }
@@ -151,51 +148,49 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (target_to_originator_connection_type != 0)
         {
             //setup producer side
-            if (0 != (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance(connection_path.connection_point[producing_index])))
-            {
-                producing_instance = instance;
-
-                Produced_connection_path_length = 6;
-                Produced_connection_path.path_size = 6;
-                Produced_connection_path.class_id = (CipUint) connection_path.class_id;
-                Produced_connection_path.instance_number = (CipUint) connection_path.connection_point[producing_index];
-                Produced_connection_path.attribute_number = 3;
-
-                attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
-                OPENER_ASSERT(attribute != NULL);
-                // an assembly object should always have an attribute 3
-                data_size = Produced_connection_size;
-                diff_size = 0;
-                is_heartbeat = (((CipByteArray*)attribute->getData())->length == 0);
-
-                if ((transport_type_class_trigger & 0x0F) == 1)
-                {
-                    // class 1 connection
-                    data_size -= 2; //remove 16-bit sequence count length
-                    diff_size += 2;
-                }
-
-                if ((kOpENerProducedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
-                {
-                    // we only have an run idle header if it is not an heartbeat connection
-                    data_size -= 4; // remove the 4 bytes needed for run/idle header
-                    diff_size += 4;
-                }
-
-                if (((CipByteArray*)attribute->getData())->length != data_size)
-                {
-                    /*wrong connection size*/
-                    correct_target_to_originator_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
-                    *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize;
-                    return (CipStatus) kCipErrorConnectionFailure;
-                }
-
-            }
-            else
+            if (0 == (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance(connection_path.connection_point[producing_index])))
             {
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
+            producing_instance = instance;
+
+            Produced_connection_path_length = 6;
+            Produced_connection_path.path_size = 6;
+            Produced_connection_path.class_id = (CipUint) connection_path.class_id;
+            Produced_connection_path.instance_number = (CipUint) connection_path.connection_point[producing_index];
+            Produced_connection_path.attribute_number = 3;
+
+            attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
+            OPENER_ASSERT(attribute != NULL);
+            // an assembly object should always have an attribute 3
+            data_size = Produced_connection_size;
+            diff_size = 0;
+            is_heartbeat = (((CipByteArray*)attribute->getData())->length == 0);
+
+            if ((transport_type_class_trigger & 0x0F) == 1)
+            {
+                // class 1 connection
+                data_size -= 2; //remove 16-bit sequence count length
+                diff_size += 2;
+            }
+
+            if ((kOpENerProducedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
+            {
+                // we only have an run idle header if it is not an heartbeat connection
+                data_size -= 4; // remove the 4 bytes needed for run/idle header
+                diff_size += 4;
+            }
+
+            if (((CipByteArray*)attribute->getData())->length != data_size)
+            {
+                /*wrong connection size*/
+                correct_target_to_originator_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize;
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+
+
         }
 
         if (NULL != g_config_data_buffer)
