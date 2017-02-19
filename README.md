@@ -16,13 +16,11 @@ increase maintainability and readability.
 
 Requirements:
 -------------
-OpENer-lib has been developed to be portable, readable and easy to modify.
-The default version targets PCs with a POSIX operating system and a BSD-socket network interface. 
-To test this version we recommend a PC with Linux or Windows installed.
-You will need to have the following installed:
+OpENer-lib has been developed to be portable (to some extent), readable and easy to modify.
+To test it, you will need to have the following installed:
 
 * CMake
-* gcc/mingw/clang/visual c++
+* g++/clang++ (Linux/OS X) or mingw-g++/Visual C++/clang++ (Windows)
 * make
 * binutils 
  
