@@ -46,7 +46,7 @@
 #include "CIP_CommonPacket.hpp"
 #include "../../OpENer_Interface.hpp"
 
-class CIP_IOConnection : public CIP_ConnectionManager
+class CIP_IOConnection : public CIP_Connection
 {
     public:
         /** @brief Setup all data in order to establish an IO connection

@@ -30,7 +30,7 @@ public:
  *          data given in pa_pstConnData.
  *        - on error: NULL
  */
-    static const CIP_ConnectionManager *GetIoConnectionForConnectionData (const CIP_ConnectionManager *connection_object, CipUint *extended_error);
+    static const CIP_Connection* GetIoConnectionForConnectionData (const CIP_Connection *connection_object, CipUint *extended_error);
 
 /** @brief Check if there exists already an exclusive owner or listen only connection
  *         which produces the input assembly.
@@ -38,7 +38,7 @@ public:
  *  @param input_point the Input point to be produced
  *  @return if a connection could be found a pointer to this connection if not NULL
  */
-    static const CIP_ConnectionManager *GetExistingProducerMulticastConnection (CipUdint input_point);
+    static const CIP_Connection* GetExistingProducerMulticastConnection (CipUdint input_point);
 
 /** @brief check if there exists an producing multicast exclusive owner or
  * listen only connection that should produce the same input but is not in charge
@@ -48,7 +48,7 @@ public:
  * @return if a connection could be found the pointer to this connection
  *      otherwise NULL.
  */
-    static const CIP_ConnectionManager *GetNextNonControlMasterConnection (CipUdint input_point);
+    static const CIP_Connection* GetNextNonControlMasterConnection (CipUdint input_point);
 
 /** @brief Close all connection producing the same input and have the same type
  * (i.e., listen only or input only).
@@ -125,21 +125,21 @@ public:
         unsigned int output_assembly; /**< the O-to-T point for the connection */
         unsigned int input_assembly; /**< the T-to-O point for the connection */
         unsigned int config_assembly; /**< the config point for the connection */
-        CIP_ConnectionManager *connection_data; /**< the connection data, only one connection is allowed per O-to-T point*/
+        CIP_Connection *connection_data; /**< the connection data, only one connection is allowed per O-to-T point*/
     } ExclusiveOwnerConnection;
 
     typedef struct {
         unsigned int output_assembly; /**< the O-to-T point for the connection */
         unsigned int input_assembly; /**< the T-to-O point for the connection */
         unsigned int config_assembly; /**< the config point for the connection */
-        CIP_ConnectionManager *connection_data;//[OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH]; /*< the connection data */
+        CIP_Connection *connection_data;//[OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH]; /*< the connection data */
     } InputOnlyConnection;
 
     typedef struct {
         unsigned int output_assembly; /**< the O-to-T point for the connection */
         unsigned int input_assembly; /**< the T-to-O point for the connection */
         unsigned int config_assembly; /**< the config point for the connection */
-        CIP_ConnectionManager *connection_data;//[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]; /**< the connection data */
+        CIP_Connection *connection_data;//[OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH]; /**< the connection data */
     } ListenOnlyConnection;
 
 
@@ -152,10 +152,10 @@ private:
 
     static ListenOnlyConnection *g_listen_only_connections;
 
-    static const CIP_ConnectionManager* GetExclusiveOwnerConnection(const CIP_ConnectionManager* connection_object, CipUint* extended_error);
+    static const CIP_Connection* GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error);
 
-    static const CIP_ConnectionManager* GetInputOnlyConnection(const CIP_ConnectionManager* connection_object, CipUint* extended_error);
+    static const CIP_Connection* GetInputOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error);
 
-    static const CIP_ConnectionManager* GetListenOnlyConnection(const CIP_ConnectionManager* connection_object, CipUint* extended_error);
+    static const CIP_Connection* GetListenOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error);
 };
 #endif

@@ -32,7 +32,7 @@ CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
         produced_connection_id_buffer = explicit_connection->CIP_produced_connection_id;
         CIP_ConnectionManager::GeneralConnectionConfiguration (explicit_connection);
         explicit_connection->CIP_produced_connection_id = produced_connection_id_buffer;
-        explicit_connection->instance_type = kConnectionTypeExplicit;
+        explicit_connection->Instance_type = kConnectionTypeExplicit;
         explicit_connection->netConn->SetSocketHandle (kEipInvalidSocket);
         /* set the connection call backs */
         //explicit_connection->connection_close_function = CIP_ConnectionManager::RemoveFromActiveConnections;

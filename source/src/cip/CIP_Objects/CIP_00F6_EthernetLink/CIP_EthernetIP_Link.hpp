@@ -79,10 +79,10 @@ private:
     } ethip_link_flags_e;
 
     typedef enum {
-        kEthIpControlBitsAutoNegotiationDisabled = 0,
-        kEthIpControlBitsAutoNegotiationEnabled  = 1,
-        kEthIpControlBitsForcedDuplexModeHalf    = SET_BIT_N_TO_X (2,0),
-        kEthIpControlBitsForcedDuplexModeFull    = SET_BIT_N_TO_X (2,1),
+        kEthIpControlBitsAutoNegotiationDisabled = SET_BIT_N_TO_X (0,0),
+        kEthIpControlBitsAutoNegotiationEnabled  = SET_BIT_N_TO_X (0,1),
+        kEthIpControlBitsForcedDuplexModeHalf    = SET_BIT_N_TO_X (1,0),
+        kEthIpControlBitsForcedDuplexModeFull    = SET_BIT_N_TO_X (1,1),
     } ethip_control_bits_e;
 
     //Methods

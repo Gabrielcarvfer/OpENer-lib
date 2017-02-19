@@ -209,14 +209,14 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         }
 
         eip_status = OpenCommunicationChannels();
-        if (kCipStatusOk != eip_status)
+        if (kCipStatusOk != eip_status.status)
         {
             *extended_error = 0; //TODO find out the correct extended error code
             return eip_status;
         }
     }
 
-    CIP_ConnectionManager::AddNewActiveConnection(this);
+    CIP_ConnectionManager::AddNewActiveConnection((CIP_Connection*)this);
     //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventOpened);
     return eip_status;
 }
@@ -310,7 +310,7 @@ CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket
 
 CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
-    CIP_ConnectionManager* existing_connection_object = (CIP_ConnectionManager*)CIP_Appcontype::GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
+    CIP_Connection* existing_connection_object = (CIP_Connection*)CIP_Appcontype::GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
     int j;
 
     if (NULL == existing_connection_object)
@@ -339,7 +339,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
         j = 1;
     }
 
-    if (CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner == instance_type)
+    if (CIP_Connection::kConnectionTypeIoExclusiveOwner == instance_type)
     {
         //exclusive owners take the socket and further manage the connection
         //especially in the case of time outs.
@@ -489,16 +489,19 @@ void CIP_IOConnection::CloseIoConnection()
 
     //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventClosed);
 
-    if ((CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner == instance_type) || (CIP_ConnectionManager::kConnectionTypeIoInputOnly == instance_type))
+    if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == instance_type) 
+        || (CIP_Connection::kConnectionTypeIoInputOnly == instance_type))
     {
         if ((CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
         {
-            CIP_ConnectionManager* next_non_control_master_connection = (CIP_ConnectionManager*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+            CIP_Connection* next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
             if (NULL != next_non_control_master_connection)
             {
                 next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
 
-                memcpy(&(next_non_control_master_connection->netConn->remote_address), &(netConn->remote_address), sizeof(next_non_control_master_connection->netConn->remote_address));
+                memcpy(&(next_non_control_master_connection->netConn->remote_address),
+                       &(netConn->remote_address),
+                       sizeof(next_non_control_master_connection->netConn->remote_address));
 
                 next_non_control_master_connection->eip_level_sequence_count_producing = eip_level_sequence_count_producing;
 
@@ -509,7 +512,7 @@ void CIP_IOConnection::CloseIoConnection()
             else
             {
                 // this was the last master connection close all listen only connections listening on the port
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoListenOnly);
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
             }
         }
     }
@@ -519,22 +522,22 @@ void CIP_IOConnection::CloseIoConnection()
 
 void CIP_IOConnection::HandleIoConnectionTimeOut()
 {
-    CIP_ConnectionManager* next_non_control_master_connection;
+    CIP_Connection* next_non_control_master_connection;
     //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventTimedOut);
 
     if (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
     {
         switch (instance_type)
         {
-            case CIP_ConnectionManager::kConnectionTypeIoExclusiveOwner:
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoInputOnly);
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoListenOnly);
+            case CIP_Connection::kConnectionTypeIoExclusiveOwner:
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
+                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
                 break;
-            case CIP_ConnectionManager::kConnectionTypeIoInputOnly:
+            case CIP_Connection::kConnectionTypeIoInputOnly:
                 if (kEipInvalidSocket != netConn->GetSocketHandle ())
                 {
                     // we are the controlling input only connection find a new controller
-                    next_non_control_master_connection = (CIP_ConnectionManager*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+                    next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
                     if (NULL != next_non_control_master_connection)
                     {
                         next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
@@ -544,7 +547,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
                     else
                     {
                         //this was the last master connection close all listen only connections listening on the port
-                        CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_ConnectionManager::kConnectionTypeIoListenOnly);
+                        CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
                     }
                 }
                 break;

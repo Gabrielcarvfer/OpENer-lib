@@ -79,7 +79,8 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
             if (NULL != connection_object)
             {
                 // reset the watchdog timer
-                connection_object->inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000) << (2 + connection_object->connection_timeout_multiplier);
+                connection_object->inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000)
+                        << (2 + connection_object->connection_timeout_multiplier);
 
                 //TODO check connection id  and sequence count
                 if (common_packet_data.data_item.type_id == kCipItemIdConnectedDataItem)

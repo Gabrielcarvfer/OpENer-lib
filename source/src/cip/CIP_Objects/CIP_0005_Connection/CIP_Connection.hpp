@@ -7,6 +7,7 @@
 
 #include "../template/CIP_Object.hpp"
 #include <vector>
+#include <cip/connection/network/NET_Connection.hpp>
 
 class CIP_Connection : public CIP_Object<CIP_Connection>
 {
@@ -76,7 +77,7 @@ public:
 
     //Instance attributes (ids 1 to 19)
     ConnectionState State;
-    ConnectionType InstanceT_type;
+    ConnectionType Instance_type;
     ConnectionTriggerType TransportClass_trigger;
     CipUint DeviceNet_produced_connection_id;
     CipUint DeviceNet_consumed_connection_id;
@@ -113,7 +114,8 @@ public:
     static CipStatus SafetyClose();
     static CipStatus SafetyOpen();
 
-
+    //temporary
+    NET_Connection * netConn;
 };
 
 

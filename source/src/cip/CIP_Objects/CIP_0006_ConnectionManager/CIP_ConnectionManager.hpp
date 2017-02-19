@@ -42,7 +42,7 @@ public:
                                CipMessageRouterResponse* message_router_response
                             );
 
-    NET_Connection * netConn;
+
 
     /**
  * @brief Sets the routing type of a connection, either
