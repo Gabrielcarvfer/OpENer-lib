@@ -30,7 +30,7 @@ for normal building.
 
 For the development, its recommended to use an IDE that supports CMAKE based projects, like Visual Studio 2017 or Jetbrains CLion.
 
-For configuring the project we recommend the use of a CMake GUI (e.g.,the cmake-gui oackage on Linux)
+For configuring the project we recommend the use of a CMake GUI (e.g.,the cmake-gui package on Linux)
 
 Compiling:
 ----------------
@@ -47,7 +47,7 @@ Compiling:
 2. Within Visual Studio or CLion
 	1. Open the source folder as a project
 	2. Set OpENer to be built than build
-	3. The resulting library will be in the directory /bin or the directoy you have choosen via CMake
+	3. The resulting library will be in the directory /bin or the directory you have choosen via CMake
 
 
 Directory structure:
