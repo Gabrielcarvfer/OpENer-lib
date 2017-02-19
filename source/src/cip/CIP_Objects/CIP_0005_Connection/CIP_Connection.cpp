@@ -13,8 +13,6 @@ CipStatus CIP_Connection::Init()
     {
         class_id = 5;
         class_name = "Connection";
-        class_id = kCipConnectionManagerClassCode;
-        class_name = "Connection Manager";
         revision = 1;
 
         CIP_Connection *instance = new CIP_Connection();
@@ -47,7 +45,7 @@ CipStatus CIP_Connection::Create()
     CIP_Connection *instance = new CIP_Connection();
     //Chapter 3-4.4 vol 1
     instance->InsertAttribute( 1, kCipUsint, &State                                , kGetableSingleAndAll);
-    instance->InsertAttribute( 2, kCipUsint, &InstanceT_type                       , kGetableSingleAndAll);
+    instance->InsertAttribute( 2, kCipUsint, &Instance_type                       , kGetableSingleAndAll);
     instance->InsertAttribute( 3, kCipByte , &TransportClass_trigger               , kGetableSingleAndAll);
     instance->InsertAttribute( 4, kCipUint , &DeviceNet_produced_connection_id     , kGetableSingleAndAll);
     instance->InsertAttribute( 5, kCipUint , &DeviceNet_consumed_connection_id     , kGetableSingleAndAll);
@@ -65,6 +63,9 @@ CipStatus CIP_Connection::Create()
     instance->InsertAttribute(17, kCipUint , &Production_inhibit_time              , kGetableSingleAndAll);
     instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier        , kGetableSingleAndAll);
     instance->InsertAttribute(19, kCipUdint, &Connection_binding_list              , kGetableSingleAndAll);
+
+
+    object_Set.emplace(object_Set.size(), instance);
 
     CipStatus stat;
     stat.status = kCipStatusOk;
@@ -96,56 +97,66 @@ CipStatus CIP_Connection::GetAttributeSingle()
 CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
 {
     CipStatus status;
-    if (GetInstance(bound_instances[0]) == nullptr
-        & GetInstance(bound_instances[1]) == nullptr)
+    if (GetInstance(bound_instances[0]) != nullptr
+        | GetInstance(bound_instances[1]) != nullptr)
     {
-        //if both connections exist, then
-        //check if there are resources to bound
-        if ()
-        {
-            if (GetInstance(bound_instances[0])->State == kConnectionStateEstablished
-                & GetInstance(bound_instances[1])->State == kConnectionStateEstablished)
-            {
-                if (bound_instances[0] != bound_instances[1])
-                {
-                    //check if one or both instances are not dynamically created I/O conn
-                    if ()
-                    {
-                        //check if connections are ccreated internaly and device prevent bind
-                        if ()
-                        {
-                            status.status=kCipStatusOk;
-                            return status;
-                        }
-                        //Device prevent binding
-                        status.extended_status = 0x02;
-                        status.status = 0xD0;
-                        return status;
-                    }
-                    //At least one connection is not dynamically created
-                    status.extended_status = 0x01;
-                    status.status = 0xD0;
-                    return status;
-                }
-                //Both connections are the same
-                status.extended_status = 0x01;
-                status.status = kCipErrorInvalidParameter;
-                return status;
-            }
-            //Both instances exist, but at least one is not in Established state
-            status.extended_status = 0x01;
-            status.status = kCipErrorObjectStateConflict;
-            return status;
-        }
+
+        //One or both connections dont exist
+        status.extended_status = 0x01;
+        status.status = kCipErrorResourceUnavailable;
+        return status;
+    }
+
+    //if both connections exist, then
+    //check if there are resources to bound
+    if ()
+    {
         //Class or instance out of resources to bind
         status.extended_status = 0x02;
         status.status = kCipErrorResourceUnavailable;
         return status;
     }
-    //One or both connections dont exist
-    status.extended_status = 0x01;
-    status.status = kCipErrorResourceUnavailable;
+
+    if (GetInstance(bound_instances[0])->State != kConnectionStateEstablished
+        | GetInstance(bound_instances[1])->State != kConnectionStateEstablished)
+    {
+        //Both instances exist, but at least one is not in Established state
+        status.extended_status = 0x01;
+        status.status = kCipErrorObjectStateConflict;
+        return status;
+    }
+
+
+    if (bound_instances[0] == bound_instances[1])
+    {
+        //Both connections are the same
+        status.extended_status = 0x01;
+        status.status = kCipErrorInvalidParameter;
+        return status;
+    }
+
+    //check if one or both instances are not dynamically created I/O conn
+    if ()
+    {
+        //At least one connection is not dynamically created
+        status.extended_status = 0x01;
+        status.status = 0xD0;
+        return status;
+    }
+
+    //check if connections are created internaly and device prevent bind
+    if ()
+    {
+        //Device prevent binding
+        status.extended_status = 0x02;
+        status.status = 0xD0;
+        return status;
+    }
+
+    //all checks passed
+    status.status=kCipStatusOk;
     return status;
+
 }
 
 CipStatus CIP_Connection::ProducingLookup(CipEpath producing_application_path, CipUint *instance_count, std::vector<CipUint> connection_instance_list[])
@@ -174,8 +185,6 @@ CipStatus CIP_Connection::ProducingLookup(CipEpath producing_application_path, C
             }
         }
     }
-
-
 
     status.status = 0x0;
     status.extended_status = 0x0;

@@ -94,9 +94,9 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         }
 
         consuming_instance = 0;
-        consumed_connection_path_length = 0;
+        Consumed_connection_path_length = 0;
         producing_instance = 0;
-        produced_connection_path_length = 0;
+        Produced_connection_path_length = 0;
 
         if (originator_to_target_connection_type != 0)
         {
@@ -106,16 +106,16 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
                 // consuming Connection Point is present
                 consuming_instance = instance;
 
-                consumed_connection_path_length = 6;
-                consumed_connection_path.path_size = 6;
-                consumed_connection_path.class_id = (CipUint) connection_path.class_id;
-                consumed_connection_path.instance_number = (CipUint) connection_path.connection_point[0];
-                consumed_connection_path.attribute_number = 3;
+                Consumed_connection_path_length = 6;
+                Consumed_connection_path.path_size = 6;
+                Consumed_connection_path.class_id = (CipUint) connection_path.class_id;
+                Consumed_connection_path.instance_number = (CipUint) connection_path.connection_point[0];
+                Consumed_connection_path.attribute_number = 3;
 
                 attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
                 OPENER_ASSERT(attribute != NULL);
                 // an assembly object should always have an attribute 3
-                data_size = consumed_connection_size;
+                data_size = Consumed_connection_size;
                 diff_size = 0;
                 is_heartbeat = (((CipByteArray*)attribute->getData ())->length == 0);
 
@@ -155,16 +155,16 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
             {
                 producing_instance = instance;
 
-                produced_connection_path_length = 6;
-                produced_connection_path.path_size = 6;
-                produced_connection_path.class_id = (CipUint) connection_path.class_id;
-                produced_connection_path.instance_number = (CipUint) connection_path.connection_point[producing_index];
-                produced_connection_path.attribute_number = 3;
+                Produced_connection_path_length = 6;
+                Produced_connection_path.path_size = 6;
+                Produced_connection_path.class_id = (CipUint) connection_path.class_id;
+                Produced_connection_path.instance_number = (CipUint) connection_path.connection_point[producing_index];
+                Produced_connection_path.attribute_number = 3;
 
                 attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
                 OPENER_ASSERT(attribute != NULL);
                 // an assembly object should always have an attribute 3
-                data_size = produced_connection_size;
+                data_size = Produced_connection_size;
                 diff_size = 0;
                 is_heartbeat = (((CipByteArray*)attribute->getData())->length == 0);
 
@@ -321,7 +321,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     else
     {
         // we need to inform our originator on the correct connection id
-        produced_connection_id = existing_connection_object->produced_connection_id;
+        CIP_produced_connection_id = existing_connection_object->CIP_produced_connection_id;
     }
 
     // we have a connection reuse the data and the socket
@@ -339,7 +339,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
         j = 1;
     }
 
-    if (CIP_Connection::kConnectionTypeIoExclusiveOwner == instance_type)
+    if (CIP_Connection::kConnectionTypeIoExclusiveOwner == Instance_type)
     {
         //exclusive owners take the socket and further manage the connection
         //especially in the case of time outs.
@@ -489,8 +489,8 @@ void CIP_IOConnection::CloseIoConnection()
 
     //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventClosed);
 
-    if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == instance_type) 
-        || (CIP_Connection::kConnectionTypeIoInputOnly == instance_type))
+    if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == Instance_type) 
+        || (CIP_Connection::kConnectionTypeIoInputOnly == Instance_type))
     {
         if ((CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
         {
@@ -527,7 +527,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
 
     if (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
     {
-        switch (instance_type)
+        switch (Instance_type)
         {
             case CIP_Connection::kConnectionTypeIoExclusiveOwner:
                 CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
@@ -586,7 +586,7 @@ CipStatus CIP_IOConnection::SendConnectedData()
         cpf_data->address_item.type_id = CIP_CommonPacket::kCipItemIdConnectionAddress;
         cpf_data->address_item.length = 4;
     }
-    cpf_data->address_item.data.connection_identifier = produced_connection_id;
+    cpf_data->address_item.data.connection_identifier = CIP_produced_connection_id;
 
     cpf_data->data_item.type_id = CIP_CommonPacket::kCipItemIdConnectedDataItem;
 
@@ -694,14 +694,14 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels()
     // open a connection "point to point" or "multicast" based on the ConnectionParameter
     if (originator_to_target_connection_type == 1) //TODO: Fix magic number; Multicast consuming
     {
-        if (OpenMulticastConnection(kUdpCommuncationDirectionConsuming, cpf_data) == kCipStatusError)
+        if (kCipStatusError == OpenMulticastConnection(kUdpCommuncationDirectionConsuming, cpf_data).status)
         {
             OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
             return (CipStatus) kCipErrorConnectionFailure;
         }
     } else if (originator_to_target_connection_type == 2) // TODO: Fix magic number; Point to Point consuming
     {
-        if (OpenConsumingPointToPointConnection(cpf_data) == kCipStatusError)
+        if (kCipStatusError == OpenConsumingPointToPointConnection(cpf_data).status)
         {
             OPENER_TRACE_ERR("error in PointToPoint consuming connection\n");
             return (CipStatus) kCipErrorConnectionFailure;
@@ -710,7 +710,7 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels()
 
     if (target_to_originator_connection_type == 1) // TODO: Fix magic number; Multicast producing
     {
-        if (OpenProducingMulticastConnection(cpf_data) == kCipStatusError)
+        if (kCipStatusError == OpenProducingMulticastConnection(cpf_data).status)
         {
             OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
             return (CipStatus) kCipErrorConnectionFailure;
@@ -719,7 +719,7 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels()
     else if (target_to_originator_connection_type == 2) // TODO: Fix magic number; Point to Point producing
     {
 
-        if (OpenProducingPointToPointConnection(cpf_data) != kCipStatusOk)
+        if (kCipStatusOk == OpenProducingPointToPointConnection(cpf_data).status)
         {
             OPENER_TRACE_ERR("error in PointToPoint producing connection\n");
             return (CipStatus) kCipErrorConnectionFailure;

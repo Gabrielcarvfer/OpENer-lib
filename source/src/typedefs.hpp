@@ -88,7 +88,7 @@ public:
     CipStatus(CipUsint status=kCipStatusOk, CipUsint extended_status=0x00){status = status; extended_status = extended_status;};
     ~CipStatus(){};
     CipUsint status;
-    CipUsint extended_status;
+    CipUdint extended_status;
 };
 
 /** @brief Communication direction of an UDP socket; consuming is receiver,

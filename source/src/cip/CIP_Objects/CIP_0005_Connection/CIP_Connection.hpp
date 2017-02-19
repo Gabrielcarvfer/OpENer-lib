@@ -58,23 +58,6 @@ public:
         kWatchdogTimeoutActionDeferredDelete = 3 // Only valid for DeviceNet, invalid for I/O connections
     } WatchdogTimeoutAction;
 
-    typedef struct {
-        ConnectionState state;
-        CipUint connection_id;
-        /*TODO think if this is needed anymore TCMReceiveDataFunc m_ptfuncReceiveData; */
-    } LinkConsumer;
-
-    typedef struct {
-        ConnectionState state;
-        CipUint connection_id;
-    } LinkProducer;
-
-    typedef struct {
-        LinkConsumer consumer;
-        LinkProducer producer;
-    } LinkObject;
-
-
     //Instance attributes (ids 1 to 19)
     ConnectionState State;
     ConnectionType Instance_type;

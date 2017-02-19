@@ -25,39 +25,39 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
     if ((return_value = CreateCommonPacketFormatStructure(recv_data->current_communication_buffer_position, recv_data->data_length, &common_packet_data)).status == kCipStatusError)
     {
         OPENER_TRACE_ERR("notifyCPF: error from createCPFstructure\n");
+        return return_value.extended_status;
     }
-    else
+
+    // In cases of errors we normally need to send an error response
+    return_value.status = kCipStatusOk;
+    // check if NullAddressItem received, otherwise it is no unconnected message and should not be here
+    if (common_packet_data.address_item.type_id != kCipItemIdNullAddress)
     {
-        // In cases of errors we normally need to send an error response
-        return_value.status = kCipStatusOk;
-        // check if NullAddressItem received, otherwise it is no unconnected message and should not be here
-        if (common_packet_data.address_item.type_id == kCipItemIdNullAddress)
-        {
-            // found null address item
-            if (common_packet_data.data_item.type_id == kCipItemIdUnconnectedDataItem)
-            {
-                // unconnected data item received
-                return_value = CIP_MessageRouter::NotifyMR(common_packet_data.data_item.data, common_packet_data.data_item.length);
-                if (return_value.status != kCipStatusError)
-                {
-                    return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
-                }
-            }
-            else
-            {
-                // wrong data item detected
-                OPENER_TRACE_ERR("notifyCPF: got something besides the expected CIP_ITEM_ID_UNCONNECTEDMESSAGE\n");
-                recv_data->status = kEncapsulationProtocolIncorrectData;
-            }
-        }
-        else
-        {
-            OPENER_TRACE_ERR(
+        OPENER_TRACE_ERR(
                 "notifyCPF: got something besides the expected CIP_ITEM_ID_NULL\n");
-            recv_data->status = kEncapsulationProtocolIncorrectData;
-        }
+        recv_data->status = kEncapsulationProtocolIncorrectData;
+        return return_value.extended_status;
     }
+
+    // found null address item
+    if (common_packet_data.data_item.type_id != kCipItemIdUnconnectedDataItem)
+    {
+        // wrong data item detected
+        OPENER_TRACE_ERR("notifyCPF: got something besides the expected CIP_ITEM_ID_UNCONNECTEDMESSAGE\n");
+        recv_data->status = kEncapsulationProtocolIncorrectData;
+        return return_value.extended_status;
+    }
+
+    // unconnected data item received
+    return_value = CIP_MessageRouter::NotifyMR(common_packet_data.data_item.data, common_packet_data.data_item.length);
+    if (return_value.status == kCipStatusError)
+    {
+        return return_value.extended_status;
+    }
+
+    return_value.extended_status = (CipUdint) AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
     return return_value.extended_status;
+
 }
 
 int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_data, CipUsint* reply_buffer)
@@ -68,49 +68,51 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
     if (kCipStatusError == return_value.status)
     {
         OPENER_TRACE_ERR("notifyConnectedCPF: error from createCPFstructure\n");
+        return return_value.status;
     }
     else
     {
-        return_value.status = kCipStatusError; /* For connected explicit messages status always has to be 0*/
-        if (common_packet_data.address_item.type_id == kCipItemIdConnectionAddress) /* check if ConnectedAddressItem received, otherwise it is no connected message and should not be here*/
-        {
-            // ConnectedAddressItem item
-            CIP_Connection* connection_object = CIP_ConnectionManager::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
-            if (NULL != connection_object)
-            {
-                // reset the watchdog timer
-                connection_object->inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000)
-                        << (2 + connection_object->connection_timeout_multiplier);
+        // For connected explicit messages status always has to be 0
+        return_value.status = kCipStatusError;
 
-                //TODO check connection id  and sequence count
-                if (common_packet_data.data_item.type_id == kCipItemIdConnectedDataItem)
-                {
-                    // connected data item received
-                    CipUsint* pnBuf = common_packet_data.data_item.data;
-                    common_packet_data.address_item.data.sequence_number = (CipUdint)NET_Endianconv::GetIntFromMessage(&pnBuf);
-                    return_value = CIP_MessageRouter::NotifyMR(pnBuf, common_packet_data.data_item.length - 2);
-
-                    if (return_value.status != kCipStatusError)
-                    {
-                        common_packet_data.address_item.data.connection_identifier = connection_object->CIP_produced_connection_id;
-                        return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data,reply_buffer);
-                    }
-                }
-                else
-                {
-                    /* wrong data item detected*/
-                    OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_UNCONNECTEDMESSAGE\n");
-                }
-            }
-            else
-            {
-                OPENER_TRACE_ERR("notifyConnectedCPF: connection with given ID could not be found\n");
-            }
-        }
-        else
+        // check if ConnectedAddressItem received, otherwise it is no connected message and should not be here
+        if (common_packet_data.address_item.type_id != kCipItemIdConnectionAddress)
         {
             OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_NULL\n");
+            return return_value.status;
         }
+
+        // ConnectedAddressItem item
+        CIP_Connection* connection_object = CIP_ConnectionManager::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
+        if (NULL == connection_object)
+        {
+            OPENER_TRACE_ERR("notifyConnectedCPF: connection with given ID could not be found\n");
+            return return_value.status;
+        }
+
+        // reset the watchdog timer
+        connection_object->inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000)
+                << (2 + connection_object->connection_timeout_multiplier);
+
+        //TODO check connection id  and sequence count
+        if (common_packet_data.data_item.type_id != kCipItemIdConnectedDataItem)
+        {
+            /* wrong data item detected*/
+            OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_UNCONNECTEDMESSAGE\n");
+            return return_value.status;
+        }
+
+        // connected data item received
+        CipUsint* pnBuf = common_packet_data.data_item.data;
+        common_packet_data.address_item.data.sequence_number = (CipUdint)NET_Endianconv::GetIntFromMessage(&pnBuf);
+        return_value = CIP_MessageRouter::NotifyMR(pnBuf, common_packet_data.data_item.length - 2);
+
+        if (return_value.status != kCipStatusError)
+        {
+            common_packet_data.address_item.data.connection_identifier = connection_object->CIP_produced_connection_id;
+            return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data,reply_buffer);
+        }
+
     }
     return return_value.status;
 }

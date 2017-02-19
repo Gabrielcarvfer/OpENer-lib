@@ -313,9 +313,9 @@ void CIP_ConnectionManager::GeneralConnectionConfiguration (CIP_Connection * con
     //setup the preconsuption timer: max(ConnectionTimeoutMultiplier * EpectetedPacketRate, 10s)
     connection_object->inactivity_watchdog_timer = ((((o_to_t_requested_packet_interval) / 1000) << (2 + connection_timeout_multiplier)) > 10000) ? (((connection_object->o_to_t_requested_packet_interval) / 1000) << (2 + connection_object->connection_timeout_multiplier)) : 10000;
 
-    connection_object->consumed_connection_size = (CipUint)(o_to_t_network_connection_parameter & 0x01FF);
+    connection_object->Consumed_connection_size = (CipUint)(o_to_t_network_connection_parameter & 0x01FF);
 
-    connection_object->produced_connection_size = (CipUint)(t_to_o_network_connection_parameter & 0x01FF);
+    connection_object->Produced_connection_size = (CipUint)(t_to_o_network_connection_parameter & 0x01FF);
 }
 
 CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
