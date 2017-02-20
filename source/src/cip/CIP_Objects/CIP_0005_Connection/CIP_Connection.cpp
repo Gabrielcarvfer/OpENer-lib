@@ -255,50 +255,63 @@ CipStatus CIP_Connection::Behaviour()
         if ((kConnectionTriggerTransportClass0 & TransportClass_trigger) == kConnectionTriggerTransportClass0)
         {
 
-            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
             {
                 //If client
             }
             else
             {
                 //If server
+                //Link_consumer consumes a message and then notifies application
+                //todo: implement class 0 server behaviour
             }
         }
         else if ((kConnectionTriggerTransportClass1 & TransportClass_trigger) == kConnectionTriggerTransportClass1)
         {
-            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
             {
                 //If client
             }
             else
             {
                 //If server
+                //Link_consumer consumes a message, check for duplicates (based on last received sequence count,
+                // notifying the application if dupe happened(and dropping the message), or if the message was received
+                //todo: implement class 1 server behaviour
             }
         }
         else if ((kConnectionTriggerTransportClass2 & TransportClass_trigger) == kConnectionTriggerTransportClass2)
         {
-            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
             {
                 //If client
             }
             else
             {
                 //If server
+                //Link_consumer consumes a message, automatically invokes Link_producer, prepending incoming sequence count,
+                // and then delivers the message to the application, that checks for dupes and then do something
+                //todo: implement class 2 server behaviour
             }
         }
         else if ((kConnectionTriggerTransportClass3 & TransportClass_trigger) == kConnectionTriggerTransportClass3)
         {
-            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
             {
                 //If client
             }
             else
             {
                 //If server
+                //Link_consumer consumes a message, then check for dupes and notify the application, that
+                // tells the connection to produce a message with Link_producer, and then send it
+                //todo: implement class 3 server behaviour
             }
-        } else
+        }
+        else
         {
             //Unknown transport class, return error
+            //todo: return error
         }
 
     }

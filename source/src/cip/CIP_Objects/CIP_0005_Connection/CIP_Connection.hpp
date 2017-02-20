@@ -73,7 +73,7 @@ public:
     ConnectionTriggerType TransportClass_trigger;
     CipUint DeviceNet_produced_connection_id;
     CipUint DeviceNet_consumed_connection_id;
-    CipByte DeviceNet_initial_comm_characteristcs;
+    CipByte DeviceNet_initial_comm_characteristics;
     CipUint Produced_connection_size;
     CipUint Consumed_connection_size;
     CipUint Expected_packet_rate;
