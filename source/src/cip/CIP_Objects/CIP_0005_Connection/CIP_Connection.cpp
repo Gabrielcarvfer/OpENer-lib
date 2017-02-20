@@ -242,3 +242,88 @@ CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest*
         return kCipStatusOk;
     }
 }
+
+
+
+
+
+CipStatus CIP_Connection::Behaviour()
+{
+    if (Instance_type == kConnectionTypeExplicit)
+    {
+
+        if ((kConnectionTriggerTransportClass0 & TransportClass_trigger) == kConnectionTriggerTransportClass0)
+        {
+
+            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            {
+                //If client
+            }
+            else
+            {
+                //If server
+            }
+        }
+        else if ((kConnectionTriggerTransportClass1 & TransportClass_trigger) == kConnectionTriggerTransportClass1)
+        {
+            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            {
+                //If client
+            }
+            else
+            {
+                //If server
+            }
+        }
+        else if ((kConnectionTriggerTransportClass2 & TransportClass_trigger) == kConnectionTriggerTransportClass2)
+        {
+            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            {
+                //If client
+            }
+            else
+            {
+                //If server
+            }
+        }
+        else if ((kConnectionTriggerTransportClass3 & TransportClass_trigger) == kConnectionTriggerTransportClass3)
+        {
+            if ((kConnectionTriggerDirectionClient & TransportClass_trigger) != 0)
+            {
+                //If client
+            }
+            else
+            {
+                //If server
+            }
+        } else
+        {
+            //Unknown transport class, return error
+        }
+
+    }
+    else if (Instance_type == kConnectionTypeIo)
+    {
+
+    }
+    else if (Instance_type == kConnectionTypeBridged)
+    {
+
+    }
+    else
+    {
+        //Unknown connection type
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -54,14 +54,14 @@ NET_CanInterface::~NET_CanInterface()
 
 	int NET_CanInterface::send_frame(struct can_frame *frame)
 	{
-		LPDWORD written = NULL;
-		WriteFile(soc, frame, sizeof(struct can_frame), written, NULL);
+		LPDWORD written = nullptr;
+		WriteFile(soc, frame, sizeof(struct can_frame), written, nullptr);
 		return (int)*written;
 	}
 
 	void NET_CanInterface::read_frame(struct can_frame * frame_rd, int *recvBytes)
 	{
-		ReadFile(soc, frame_rd, sizeof(struct can_frame), (LPDWORD)recvBytes, NULL);
+		ReadFile(soc, frame_rd, sizeof(struct can_frame), (LPDWORD)recvBytes, nullptr);
 	}
 
 	int NET_CanInterface::close_port()
@@ -132,7 +132,7 @@ NET_CanInterface::~NET_CanInterface()
 			fd_set readSet;
 			FD_ZERO(&readSet);
 			FD_SET(soc, &readSet);
-			if (select((soc + 1), &readSet, NULL, NULL, &timeout) >= 0)
+			if (select((soc + 1), &readSet, nullptr, nullptr, &timeout) >= 0)
 			{
 				if (!read_can_port)
 				{

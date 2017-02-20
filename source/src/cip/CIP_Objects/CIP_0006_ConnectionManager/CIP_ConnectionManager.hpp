@@ -275,7 +275,7 @@ public:
      * The following elements have to be equal: Vendor ID, Connection Serial Number, Originator Serial Number
      * @param connection_object connection object containing the comparison elements from the forward open request
      * @return
-     *    - NULL if no equal established connection exists
+     *    - nullptr if no equal established connection exists
      *    - pointer to the equal connection object
      */
     CIP_ConnectionManager* CheckForExistingConnection(CIP_ConnectionManager* connection_manager_instance);

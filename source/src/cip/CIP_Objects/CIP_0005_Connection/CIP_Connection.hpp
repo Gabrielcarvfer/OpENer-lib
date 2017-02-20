@@ -37,18 +37,26 @@ public:
      *  Direction (0 = client, 1 = server)
      *  Production trigger (0 = cyclic, 1 = change of state, 2 = application object)
      *  Transport Class ( x = class x)
+     *  Transports 0 and 1 - consumer/producer only, based on Dir, launches LinkProducer/Consumer
+     *  Transports 2 and 3 - produce and consume on same connection (request by client to server, response from server to client)
+     *  Transport 4 - nonblocking
+     *  Transport 5 - nonblocking & fragmented
+     *  Transport 6 - multicast & fragmented
      */
     typedef enum {
         kConnectionTriggerTransportClass0 = 0x00,
         kConnectionTriggerTransportClass1 = 0x01,
         kConnectionTriggerTransportClass2 = 0x02,
         kConnectionTriggerTransportClass3 = 0x03,
-        kConnectionTriggerProductionTriggerCyclic = 0x10,
-        kConnectionTriggerProductionTriggerChangeOState = 0x20,
-        kConnectionTriggerProductionTriggerApplicationObj = 0x30,
-        kConnectionTriggerProductionTriggerMask = 0x70,
-        kConnectionTriggerDirectionClient = 0x00,
-        kConnectionTriggerDirectionServer = 0x80
+        kConnectionTriggerTransportClass4 = 0x04,
+        kConnectionTriggerTransportClass5 = 0x05,
+        kConnectionTriggerTransportClass6 = 0x06,
+        kConnectionTriggerProductionTriggerCyclic         = SET_BIT_N_TO_X (4,0),
+        kConnectionTriggerProductionTriggerChangeOfState  = SET_BIT_N_TO_X (4,1),
+        kConnectionTriggerProductionTriggerApplicationObj = SET_BIT_N_TO_X (5,1),
+        kConnectionTriggerProductionTriggerMask           = SET_BIT_N_TO_X (4,1) | SET_BIT_N_TO_X (5,1) | SET_BIT_N_TO_X (6,1),
+        kConnectionTriggerDirectionClient                 = SET_BIT_N_TO_X (7,0),
+        kConnectionTriggerDirectionServer                 = SET_BIT_N_TO_X (7,1)
     } ConnectionTriggerType;
 
 /** @brief Possible values for the watch dog time out action of a connection */
@@ -99,6 +107,7 @@ public:
     static CipStatus SafetyOpen();
 
     //temporary
+    CipStatus Behaviour();
     NET_Connection * netConn;
 };
 

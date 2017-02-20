@@ -51,7 +51,7 @@ CipStatus CIP_TCPIP_Interface::ConfigureNetworkInterface(const char* ip_address,
 
 void CIP_TCPIP_Interface::ConfigureDomainName(CipString * domain_name)
 {
-    if (NULL != interface_configuration.domain_name.string)
+    if (nullptr != interface_configuration.domain_name.string)
     {
         // if the string is already set to a value we have to free the resources
         // before we can set the new value in order to avoid memory leaks.
@@ -67,13 +67,13 @@ void CIP_TCPIP_Interface::ConfigureDomainName(CipString * domain_name)
     }
     else
     {
-        interface_configuration.domain_name.string = NULL;
+        interface_configuration.domain_name.string = nullptr;
     }
 }
 
 void CIP_TCPIP_Interface::ConfigureHostName(CipString * hostname)
 {
-    if (NULL != hostname)
+    if (nullptr != hostname)
     {
         // if the string is already set to a value we have to free the resources
         // before we can set the new value in order to avoid memory leaks.
@@ -88,7 +88,7 @@ void CIP_TCPIP_Interface::ConfigureHostName(CipString * hostname)
     }
     else
     {
-        host_name.string = NULL;
+        host_name.string = nullptr;
     }
 }
 
@@ -130,8 +130,8 @@ CipStatus CIP_TCPIP_Interface::Init()
         //configuration_capability_ = 0x04 | 0x20;
         //configuration_control_ = 0;
         //physical_link_object_ = {2, CIP_ETHERNETLINK_CLASS_CODE, 1, 0};
-        //interface_configuration = {0, 0, 0, 0, 0, {0, NULL,}};
-        //hostname_ = {0, NULL};
+        //interface_configuration = {0, 0, 0, 0, 0, {0, nullptr,}};
+        //hostname_ = {0, nullptr};
         g_multicast_configuration = {0, // us the default allocation algorithm
                                      0, // reserved
                                      1, // we currently use only one multicast address
@@ -191,17 +191,17 @@ CipStatus CIP_TCPIP_Interface::Create()
 void CIP_TCPIP_Interface::ShutdownTcpIpInterface(void)
 {
     //Only free the resources if they are initialized
-    /*if (NULL != hostname_.string)
+    /*if (nullptr != hostname_.string)
     {
         //CipFree(hostname_.string);
         delete[] hostname_.string;
-        hostname_.string = NULL;
+        hostname_.string = nullptr;
     }*/
 
-    /*if (NULL != interface_configuration.domain_name.string)
+    /*if (nullptr != interface_configuration.domain_name.string)
     {
         //CipFree(interface_configuration.domain_name.string);
-        interface_configuration.domain_name.string = NULL;
+        interface_configuration.domain_name.string = nullptr;
     }*/
 }
 
@@ -371,14 +371,14 @@ CipStatus CIP_TCPIP_Interface::ScanInterfaces()
     {
         HINSTANCE hDll = LoadLibrary("iphlpapi.dll");
 
-        if(GetAdaptersInfo==NULL)
+        if(GetAdaptersInfo==nullptr)
         {
             printf("Error in iphlpapi.dll%d",(int)GetLastError());
         }
 
         SendArp = (psendarp)GetProcAddress(hDll,"SendARP");
 
-        if(SendArp==NULL)
+        if(SendArp==nullptr)
         {
             printf("Error in iphlpapi.dll%d",(int)GetLastError());
         }
@@ -482,17 +482,17 @@ int GetInterfacesList(ip_interface **interface_ptr)
 
     /* Walk through linked list, maintaining head pointer so we
        can free list later */
-    for (ifa = ifaddr, i = 0; ifa != NULL; ifa = ifa->ifa_next, i++)
+    for (ifa = ifaddr, i = 0; ifa != nullptr; ifa = ifa->ifa_next, i++)
     {
-        if (ifa->ifa_addr == NULL)
+        if (ifa->ifa_addr == nullptr)
             continue;
     }
 
     *interface_ptr = new ip_interface[i]();
 
-    for (ifa = ifaddr, i = 0; ifa != NULL; ifa = ifa->ifa_next, i++)
+    for (ifa = ifaddr, i = 0; ifa != nullptr; ifa = ifa->ifa_next, i++)
     {
-        if (ifa->ifa_addr == NULL || ((family = ifa->ifa_addr->sa_family) != AF_INET))
+        if (ifa->ifa_addr == nullptr || ((family = ifa->ifa_addr->sa_family) != AF_INET))
             continue;
 
             s = getnameinfo(
@@ -500,7 +500,7 @@ int GetInterfacesList(ip_interface **interface_ptr)
                             sizeof(struct sockaddr_in),
                             host,
                             NI_MAXHOST,
-                            NULL,
+                            nullptr,
                             0,
                             NI_NUMERICHOST
                             );
@@ -511,7 +511,7 @@ int GetInterfacesList(ip_interface **interface_ptr)
             }
 
             int fd;
-            unsigned char *mac_ptr = NULL;
+            unsigned char *mac_ptr = nullptr;
             char mac[18];
             struct ifreq ifr;
 

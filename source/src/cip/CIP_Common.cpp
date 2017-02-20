@@ -99,7 +99,7 @@ CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest *message_router_reque
                 {
                     // call the service, and return what it returns
                     OPENER_TRACE_INFO("notify: calling %s service\n", service->name);
-                    //OPENER_ASSERT(NULL != service_set[i]->service_function);
+                    //OPENER_ASSERT(nullptr != service_set[i]->service_function);
                     return service_set[i]->getService (instance, message_router_request, message_router_response);
                 }
             }

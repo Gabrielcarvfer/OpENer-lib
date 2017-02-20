@@ -110,7 +110,7 @@ void OpENer_Interface::OpENerWorker()
     alarmRang = false;
 
     #ifdef WIN32
-        DWORD_PTR ptr = NULL;
+        DWORD_PTR ptr = nullptr;
         timeSetEvent(smallerInterval, smallerInterval, (LPTIMECALLBACK)alarmRinging, ptr, TIME_ONESHOT);
     #else
         alarm(smallerInterval);
@@ -181,7 +181,7 @@ OpENer_IOConnection * OpENer_Interface::GetOpENerIOConnection(CipUdint handle)
     if (IO_Connection_set.find(handle) != IO_Connection_set.end())
         return IO_Connection_set[handle];
     else
-        return NULL;
+        return nullptr;
 }
 
 //Get pointer to Explicit connection
@@ -190,7 +190,7 @@ OpENer_ExplicitConnection * OpENer_Interface::GetOpENerExplicitConnection(CipUdi
     if (Explicit_Connection_set.find(handle) != Explicit_Connection_set.end())
         return Explicit_Connection_set[handle];
     else
-        return NULL;
+        return nullptr;
 }
 
 CipStatus OpENer_Interface::ResetDevice()

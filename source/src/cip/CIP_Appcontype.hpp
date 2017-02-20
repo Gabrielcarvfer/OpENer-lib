@@ -28,7 +28,7 @@ public:
  *  @return
  *        - on success: A pointer to the connection object already containing the connection
  *          data given in pa_pstConnData.
- *        - on error: NULL
+ *        - on error: nullptr
  */
     static const CIP_Connection* GetIoConnectionForConnectionData (const CIP_Connection *connection_object, CipUint *extended_error);
 
@@ -36,7 +36,7 @@ public:
  *         which produces the input assembly.
  *
  *  @param input_point the Input point to be produced
- *  @return if a connection could be found a pointer to this connection if not NULL
+ *  @return if a connection could be found a pointer to this connection if not nullptr
  */
     static const CIP_Connection* GetExistingProducerMulticastConnection (CipUdint input_point);
 
@@ -46,7 +46,7 @@ public:
  *
  * @param input_point the produced input
  * @return if a connection could be found the pointer to this connection
- *      otherwise NULL.
+ *      otherwise nullptr.
  */
     static const CIP_Connection* GetNextNonControlMasterConnection (CipUdint input_point);
 

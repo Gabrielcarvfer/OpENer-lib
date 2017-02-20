@@ -22,7 +22,7 @@ CipUdint CIP_IOConnection::g_run_idle_state;
 //Methods
 void CIP_IOConnection::InitializeIOConnectionData()
 {
-    g_config_data_buffer = NULL;
+    g_config_data_buffer = nullptr;
     g_config_data_length = 0;
 }
 CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
@@ -34,11 +34,11 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
     // currently we allow I/O connections only to assembly objects
     // we don't need to check for zero as this is handled in the connection path parsing
     const CIP_Object<CIP_Assembly>* assembly_class = CIP_Assembly::GetClass();
-    const CIP_Object* instance = NULL;
+    const CIP_Object* instance = nullptr;
 
    CIP_Appcontype::GetIoConnectionForConnectionData(this, extended_error);
 
-    //if (NULL == this)
+    //if (nullptr == this)
     {
         //return (CipStatus) kCipErrorConnectionFailure;
     }
@@ -116,7 +116,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
             Consumed_connection_path.attribute_number = 3;
 
             attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
-            OPENER_ASSERT(attribute != NULL);
+            OPENER_ASSERT(attribute != nullptr);
             // an assembly object should always have an attribute 3
             data_size = Consumed_connection_size;
             diff_size = 0;
@@ -162,7 +162,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
             Produced_connection_path.attribute_number = 3;
 
             attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
-            OPENER_ASSERT(attribute != NULL);
+            OPENER_ASSERT(attribute != nullptr);
             // an assembly object should always have an attribute 3
             data_size = Produced_connection_size;
             diff_size = 0;
@@ -193,7 +193,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
         }
 
-        if (NULL != g_config_data_buffer)
+        if (nullptr != g_config_data_buffer)
         {
             // config data has been sent with this forward open request
             *extended_error = HandleConfigData((CIP_Assembly*)assembly_class);
@@ -308,7 +308,7 @@ CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::P
     CIP_Connection* existing_connection_object = (CIP_Connection*)CIP_Appcontype::GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
     int j;
 
-    if (NULL == existing_connection_object)
+    if (nullptr == existing_connection_object)
     {
         // we are the first connection producing for the given Input Assembly
         return OpenMulticastConnection(kUdpCommuncationDirectionProducing, cpf_data);
@@ -490,7 +490,7 @@ void CIP_IOConnection::CloseIoConnection()
         if ((CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
         {
             CIP_Connection* next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
-            if (NULL != next_non_control_master_connection)
+            if (nullptr != next_non_control_master_connection)
             {
                 next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
 
@@ -533,7 +533,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
                 {
                     // we are the controlling input only connection find a new controller
                     next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
-                    if (NULL != next_non_control_master_connection)
+                    if (nullptr != next_non_control_master_connection)
                     {
                         next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
                         netConn->SetSocketHandle (kEipInvalidSocket);
@@ -551,7 +551,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
         }
     }
 
-    //OPENER_ASSERT(NULL != CloseConnection ());
+    //OPENER_ASSERT(nullptr != CloseConnection ());
     CloseConnection();
 }
 

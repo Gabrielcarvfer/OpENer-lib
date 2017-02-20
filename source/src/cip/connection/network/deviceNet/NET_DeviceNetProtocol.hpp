@@ -126,7 +126,7 @@ public:
 		S2 = NET_CanInterface::S6 //500k
 	}kDeviceNETBaudRate;
 
-	NET_DeviceNetProtocol(CipUsint * id = NULL, char state = NON_EXISTENT)
+	NET_DeviceNetProtocol(CipUsint * id = nullptr, char state = NON_EXISTENT)
 	{
 		id = id;
 		state = state;

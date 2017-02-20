@@ -50,23 +50,23 @@ void CIP_Appcontype::ConfigureListenOnlyConnectionPoint(unsigned int connection_
 
 const  CIP_Connection* CIP_Appcontype::GetIoConnectionForConnectionData(const CIP_Connection* connection_object, CipUint* extended_error)
 {
-    const CIP_Connection* io_connection = NULL;
+    const CIP_Connection* io_connection = nullptr;
     *extended_error = 0;
 
     io_connection = GetExclusiveOwnerConnection(connection_object, extended_error);
-    if (NULL == io_connection)
+    if (nullptr == io_connection)
     {
         if (0 == *extended_error)
         {
             /* we found no connection and don't have an error so try input only next */
             io_connection = GetInputOnlyConnection(connection_object, extended_error);
-            if (NULL == io_connection)
+            if (nullptr == io_connection)
             {
                 if (0 == *extended_error)
                 {
                     /* we found no connection and don't have an error so try listen only next */
                     io_connection = GetListenOnlyConnection(connection_object, extended_error);
-                    if ((NULL == io_connection) && (0 == *extended_error))
+                    if ((nullptr == io_connection) && (0 == *extended_error))
                     {
                         /* no application connection type was found that suits the given data */
                         /* TODO check error code VS */
@@ -89,7 +89,7 @@ const  CIP_Connection* CIP_Appcontype::GetIoConnectionForConnectionData(const CI
         ((CIP_Connection*)connection_object)->Instance_type = CIP_Connection::kConnectionTypeIoExclusiveOwner;
     }
 
-    if (NULL != io_connection)
+    if (nullptr != io_connection)
     {
         CIP_ConnectionManager::CopyConnectionData(io_connection, connection_object);
     }
@@ -99,7 +99,7 @@ const  CIP_Connection* CIP_Appcontype::GetIoConnectionForConnectionData(const CI
 
 const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error)
 {
-    CIP_Connection* exclusive_owner_connection = NULL;
+    CIP_Connection* exclusive_owner_connection = nullptr;
     int i;
 
     for (i = 0; i < OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS; i++)
@@ -110,7 +110,7 @@ const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Con
         {
 
             /* check if on other connection point with the same output assembly is currently connected */
-            if (NULL != CIP_ConnectionManager::GetConnectedOutputAssembly(connection_object->connection_path.connection_point[0]))
+            if (nullptr != CIP_ConnectionManager::GetConnectedOutputAssembly(connection_object->connection_path.connection_point[0]))
             {
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
                 break;
@@ -125,7 +125,7 @@ const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Con
 
 const CIP_Connection* CIP_Appcontype::GetInputOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
 {
-    CIP_Connection* input_only_connection = NULL;
+    CIP_Connection* input_only_connection = nullptr;
     int i, j;
 
     for (i = 0; i < OPENER_CIP_NUM_INPUT_ONLY_CONNS; i++)
@@ -159,14 +159,14 @@ const CIP_Connection* CIP_Appcontype::GetInputOnlyConnection(const CIP_Connectio
 
 const CIP_Connection* CIP_Appcontype::GetListenOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
 {
-    CIP_Connection* listen_only_connection = NULL;
+    CIP_Connection* listen_only_connection = nullptr;
     int i, j;
 
     if (CIP_ConnectionManager::kRoutingTypeMulticastConnection != (connection_object->t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
     {
         /* a listen only connection has to be a multicast connection. */
         *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened; /* maybe not the best error message however there is no suitable definition in the cip spec */
-        return NULL;
+        return nullptr;
     }
 
     for (i = 0; i < OPENER_CIP_NUM_LISTEN_ONLY_CONNS; i++)
@@ -184,7 +184,7 @@ const CIP_Connection* CIP_Appcontype::GetListenOnlyConnection(const CIP_Connecti
                 break;
             }
 
-            if (NULL == GetExistingProducerMulticastConnection(connection_object->connection_path.connection_point[1]))
+            if (nullptr == GetExistingProducerMulticastConnection(connection_object->connection_path.connection_point[1]))
             {
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened;
                 break;
@@ -300,7 +300,7 @@ CipBool CIP_Appcontype::ConnectionWithSameConfigPointExists(CipUdint config_poin
             break;
         }
     }
-    return (CipBool) (NULL != connection);
+    return (CipBool) (nullptr != connection);
 }
 
 void CIP_Appcontype::InitializeIoConnectionData(void)

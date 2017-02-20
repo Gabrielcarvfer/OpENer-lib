@@ -325,7 +325,7 @@ class OpENer_Interface
      * @param instance_number  instance number of the assembly object to create
      * @param data         pointer to the data the assembly object should contain
      * @param data_length   length of the assembly object's data
-     * @return pointer to the instance of the created assembly object. NULL on error
+     * @return pointer to the instance of the created assembly object. nullptr on error
      *
      * Assembly Objects for Configuration Data:
      *

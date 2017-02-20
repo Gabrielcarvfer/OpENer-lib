@@ -20,7 +20,7 @@ CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
 
     CIP_Connection* explicit_connection = GetFreeExplicitConnection();
 
-    if (NULL == explicit_connection)
+    if (nullptr == explicit_connection)
     {
         eip_status = (CipStatus)kCipErrorConnectionFailure;
         *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorNoMoreConnectionsAvailable;
@@ -52,7 +52,7 @@ CIP_Connection * CIP_Class3conn::GetFreeExplicitConnection(void)
         if (g_explicit_connections[i]->State == kConnectionStateNonExistent)
             return g_explicit_connections[i];
     }
-    return NULL;
+    return nullptr;
 }
 
 void CIP_Class3conn::InitializeClass3ConnectionData(void)

@@ -34,7 +34,7 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
     if (common_packet_data.address_item.type_id != kCipItemIdNullAddress)
     {
         OPENER_TRACE_ERR(
-                "notifyCPF: got something besides the expected CIP_ITEM_ID_NULL\n");
+                "notifyCPF: got something besides the expected CIP_ITEM_ID_nullptr\n");
         recv_data->status = kEncapsulationProtocolIncorrectData;
         return return_value.extended_status;
     }
@@ -78,13 +78,13 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
         // check if ConnectedAddressItem received, otherwise it is no connected message and should not be here
         if (common_packet_data.address_item.type_id != kCipItemIdConnectionAddress)
         {
-            OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_NULL\n");
+            OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_nullptr\n");
             return return_value.status;
         }
 
         // ConnectedAddressItem item
         CIP_Connection* connection_object = CIP_ConnectionManager::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
-        if (NULL == connection_object)
+        if (nullptr == connection_object)
         {
             OPENER_TRACE_ERR("notifyConnectedCPF: connection with given ID could not be found\n");
             return return_value.status;

@@ -179,7 +179,7 @@ void NET_NetworkHandler::CheckAndHandleTcpListenerSocket(void)
     {
         OPENER_TRACE_INFO("networkhandler: new TCP connection\n");
 
-        new_socket = accept(netStats[tcp_listener]->GetSocketHandle(), NULL, NULL);
+        new_socket = accept(netStats[tcp_listener]->GetSocketHandle(), nullptr, nullptr);
         if (new_socket == -1)
         {
             OPENER_TRACE_ERR("networkhandler: error on accept: %s\n", strerror(errno));
@@ -602,7 +602,7 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
     socklen_t from_address_length;
 
     CIP_ConnectionManager* connection_manager_instance;
-    CIP_Connection* current_connection_instance = NULL;
+    CIP_Connection* current_connection_instance = nullptr;
 
     // see a message on one of the registered UDP sockets has been received
     for (int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)

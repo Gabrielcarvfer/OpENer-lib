@@ -237,7 +237,7 @@ void NET_EthIP_Encap::HandleReceivedListIdentityCommandTcp(EncapsulationData* re
 
 void NET_EthIP_Encap::HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_address, EncapsulationData* receive_data)
 {
-    DelayedEncapsulationMessage* delayed_message_buffer = NULL;
+    DelayedEncapsulationMessage* delayed_message_buffer = nullptr;
 
     for (unsigned int i = 0; i < ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES; i++)
     {
@@ -248,7 +248,7 @@ void NET_EthIP_Encap::HandleReceivedListIdentityCommandUdp(int socket, struct so
         }
     }
 
-    if (NULL != delayed_message_buffer)
+    if (nullptr != delayed_message_buffer)
     {
         delayed_message_buffer->socket = socket;
         memcpy((&delayed_message_buffer->receiver), from_address, sizeof(struct sockaddr_in));

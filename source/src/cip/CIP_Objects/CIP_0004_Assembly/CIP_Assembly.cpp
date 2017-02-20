@@ -39,7 +39,7 @@ CipStatus CIP_Assembly::Init(void)
 
 void CIP_Assembly::ShutdownAssemblies(void)
 {
-    if (CIP_Assembly::GetClass() != NULL)
+    if (CIP_Assembly::GetClass() != nullptr)
     {
         CIP_Attribute* attribute;
         const CIP_Object* instance;
@@ -49,7 +49,7 @@ void CIP_Assembly::ShutdownAssemblies(void)
             instance = GetInstance(i);
 
             attribute = ((CIP_Object*)instance)->GetCipAttribute(3);
-            if (NULL != attribute)
+            if (nullptr != attribute)
             {
                 //delete[] (attribute->getData());
                 free(attribute->getData ());
@@ -66,9 +66,9 @@ CIP_Assembly::CIP_Assembly(CipByte* data, CipUint data_length)
     /* add instances (always succeeds (or asserts))*/
     instance = new CIP_Assembly();
 
-    if ((assembly_byte_array = new CipByteArray()) == NULL)
+    if ((assembly_byte_array = new CipByteArray()) == nullptr)
     {
-        exit(-1);//return NULL; /*TODO remove assembly instance in case of error*/
+        exit(-1);//return nullptr; /*TODO remove assembly instance in case of error*/
     }
 
     assembly_byte_array->length = data_length;
@@ -116,9 +116,9 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
 
     attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
 
-    if ((attribute != NULL) && (3 == message_router_request->request_path.attribute_number))
+    if ((attribute != nullptr) && (3 == message_router_request->request_path.attribute_number))
     {
-        if (attribute->getData() != NULL)
+        if (attribute->getData() != nullptr)
         {
             CipByteArray* data = (CipByteArray*)attribute->getData ();
 
@@ -173,7 +173,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
         }
     }
 
-    if ((attribute != NULL) && (4 == message_router_request->request_path.attribute_number))
+    if ((attribute != nullptr) && (4 == message_router_request->request_path.attribute_number))
     {
         message_router_response->general_status = kCipErrorAttributeNotSetable;
     }

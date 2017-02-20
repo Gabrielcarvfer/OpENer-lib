@@ -95,7 +95,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     else
     {
         /* forward request to appropriate Object if it is registered*/
-        CIP_MessageRouter* registered_object = NULL;
+        CIP_MessageRouter* registered_object = nullptr;
 
         //registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
         if (registered_object == 0)
@@ -115,7 +115,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
             /* call notify function from Object with ClassID (gMRRequest.RequestPath.ClassID)
             object will or will not make an reply into gMRResponse*/
             g_message_router_response.reserved = 0;
-            //OPENER_ASSERT(NULL != registered_object->CIP_ClassInstance);
+            //OPENER_ASSERT(nullptr != registered_object->CIP_ClassInstance);
 
             OPENER_TRACE_INFO("notifyMR: calling notify function of class '%s'\n",
                 registered_object->CIP_ClassInstance->class_name);

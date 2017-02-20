@@ -736,7 +736,7 @@ void CONNECTION::handle_explicit(UCHAR request[], UCHAR response[])
 			response[1] = service | SUCCESS_RESPONSE;
 			if (instance_type == EXPLICIT_TYPE)
 			{
-				// Path is NULL for Explicit Connection
+				// Path is nullptr for Explicit Connection
 				response[LENGTH] = 2;
 			}
 			else  // Path for data sent in I/O Poll response
@@ -757,7 +757,7 @@ void CONNECTION::handle_explicit(UCHAR request[], UCHAR response[])
 			case 16:  // consumed conxn path
 			response[0] = request[0] & NON_FRAGMENTED;
 			response[1] = service | SUCCESS_RESPONSE;
-			// path is NULL for both Explicit and I/O Poll Connections
+			// path is nullptr for both Explicit and I/O Poll Connections
 			response[LENGTH] = 2;
 			break;
 

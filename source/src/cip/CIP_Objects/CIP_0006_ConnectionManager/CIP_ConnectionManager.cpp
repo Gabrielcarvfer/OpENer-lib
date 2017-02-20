@@ -115,7 +115,7 @@ CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_ConnectionMana
             {
                 // connected data item received
                 //CIP_ConnectionManager *connection_object = GetConnectedObject (CIP_CommonPacket::common_packet_data.address_item.data.connection_identifier);
-                //if (connection_object == NULL)
+                //if (connection_object == nullptr)
                 //    return kCipStatusError;
 
                 // only handle the data if it is coming from the originator
@@ -169,7 +169,7 @@ CipStatus CIP_ConnectionManager::ForwardOpen (CIP_Connection * connection_object
     originator_vendor_id = NET_Endianconv::GetIntFromMessage (&message_router_request->data);
     originator_serial_number = NET_Endianconv::GetDintFromMessage (&message_router_request->data);
 
-    if ((NULL != CheckForExistingConnection (g_dummy_connection_object)))
+    if ((nullptr != CheckForExistingConnection (g_dummy_connection_object)))
     {
         // TODO this test is  incorrect, see CIP spec 3-5.5.2 re: duplicate forward open
         // it should probably be testing the connection type fields
@@ -253,7 +253,7 @@ CipStatus CIP_ConnectionManager::ForwardOpen (CIP_Connection * connection_object
 
     //parsing is now finished all data is available and check now establish the connection
     connection_management_entry = GetConnMgmEntry (connection_path.class_id);
-    if (NULL != connection_management_entry)
+    if (nullptr != connection_management_entry)
     {
         CipUint * extended_error;
         //todo:temp = connection_management_entry->open_connection_function ( &connection_status, extended_error);
@@ -362,7 +362,7 @@ CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest *message_
                 (connection_manager_instance->originator_serial_number == originator_serial_number))
             {
                 /* found the corresponding connection object -> close it */
-                //OPENER_ASSERT(NULL != connection_object->connection_close_function);
+                //OPENER_ASSERT(nullptr != connection_object->connection_close_function);
                 CloseConnection (connection_manager_instance);
                 connection_status = kConnectionManagerStatusCodeSuccess;
                 break;
@@ -378,7 +378,7 @@ ConnectionManagementHandling* CIP_ConnectionManager::GetConnMgmEntry(CipUdint cl
     int i;
     ConnectionManagementHandling *pstRetVal;
 
-    pstRetVal = NULL;
+    pstRetVal = nullptr;
 
     for (i = 0; i < g_kNumberOfConnectableObjects; ++i)
     {
@@ -428,7 +428,7 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
                 {
                     // we have a timed out connection perform watchdog time out action
                     OPENER_TRACE_INFO(">>>>>>>>>>Connection timed out\n");
-                    //OPENER_ASSERT(NULL != connection_instance->connection_timeout_function);
+                    //OPENER_ASSERT(nullptr != connection_instance->connection_timeout_function);
                     RemoveFromActiveConnections (connection_manager_instance);
                 }
             }
@@ -452,7 +452,7 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
                     if (connection_manager_instance->transmission_trigger_timer <= 0)
                     {
                         // need to send package
-                        //OPENER_ASSERT(NULL != connection_instance->connection_send_data_function);
+                        //OPENER_ASSERT(nullptr != connection_instance->connection_send_data_function);
                         //todo: eip_status = SendConnectedData (connection_instance); //only for IO connections
                         if (eip_status.status == kCipStatusError)
                         {
@@ -670,7 +670,7 @@ CIP_Connection *CIP_ConnectionManager::GetConnectedObject (CipUdint connection_i
                 return active_connection_object_list_item;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 CIP_ConnectionManager *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdint output_assembly_id)
@@ -689,7 +689,7 @@ CIP_ConnectionManager *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdi
                 return active_connection_manager_instance;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 CIP_ConnectionManager *CIP_ConnectionManager::CheckForExistingConnection (CIP_ConnectionManager * connection_manager_instance)
@@ -711,7 +711,7 @@ CIP_ConnectionManager *CIP_ConnectionManager::CheckForExistingConnection (CIP_Co
             }
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, CipKeyData *key_data, CipUint *extended_status)
@@ -895,7 +895,7 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest *me
             // store the configuration ID for later checking in the application connection types
             connection_path.connection_point[2] = GetPaddedLogicalPath (&message);
             OPENER_TRACE_INFO("Configuration instance id %" PRId32 "\n", connection_path.connection_point[2]);
-            //todo: fix this -> if (NULL == connection_path.connection_point[2])
+            //todo: fix this -> if (nullptr == connection_path.connection_point[2])
             {
                 // according to the test tool we should respond with this extended error code
                 *extended_error = kConnectionManagerStatusCodeErrorInvalidSegmentTypeInPath;
@@ -988,7 +988,7 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest *me
             }
 
             CIP_IOConnection::g_config_data_length = 0;
-            CIP_IOConnection::g_config_data_buffer = NULL;
+            CIP_IOConnection::g_config_data_buffer = nullptr;
 
             while (remaining_path_size > 0)
             {

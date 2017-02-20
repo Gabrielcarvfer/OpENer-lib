@@ -4,8 +4,8 @@
 //Methods
 UTILS_EletronicDatasheet::UTILS_EletronicDatasheet(std::string filePath)
 {
-	memoryBlock = NULL;
-	memoryMap = NULL;
+	memoryBlock = nullptr;
+	memoryMap = nullptr;
 }
 
 UTILS_EletronicDatasheet::~UTILS_EletronicDatasheet()
