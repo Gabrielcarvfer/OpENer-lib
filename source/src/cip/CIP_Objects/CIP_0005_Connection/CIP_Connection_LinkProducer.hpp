@@ -10,6 +10,7 @@
 
 class CIP_Connection_LinkProducer : public CIP_Object<CIP_Connection_LinkProducer>
 {
+public:
     //Class services
     static CipStatus Init();
     static CipStatus Create();

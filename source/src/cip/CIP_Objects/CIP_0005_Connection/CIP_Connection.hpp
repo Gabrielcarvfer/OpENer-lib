@@ -6,6 +6,8 @@
 #define OPENERMAIN_CIP_CONNECTION_H
 
 #include "../template/CIP_Object.hpp"
+#include "CIP_Connection_LinkConsumer.hpp"
+#include "CIP_Connection_LinkProducer.hpp"
 #include <vector>
 #include <cip/connection/network/NET_Connection.hpp>
 
@@ -44,20 +46,34 @@ public:
      *  Transport 6 - multicast & fragmented
      */
     typedef enum {
-        kConnectionTriggerTransportClass0 = 0x00,
-        kConnectionTriggerTransportClass1 = 0x01,
-        kConnectionTriggerTransportClass2 = 0x02,
-        kConnectionTriggerTransportClass3 = 0x03,
-        kConnectionTriggerTransportClass4 = 0x04,
-        kConnectionTriggerTransportClass5 = 0x05,
-        kConnectionTriggerTransportClass6 = 0x06,
-        kConnectionTriggerProductionTriggerCyclic         = SET_BIT_N_TO_X (4,0),
-        kConnectionTriggerProductionTriggerChangeOfState  = SET_BIT_N_TO_X (4,1),
-        kConnectionTriggerProductionTriggerApplicationObj = SET_BIT_N_TO_X (5,1),
+        kConnectionTriggerTransportClass0 = 0,
+        kConnectionTriggerTransportClass1 = 1,
+        kConnectionTriggerTransportClass2 = 2,
+        kConnectionTriggerTransportClass3 = 3,
+        kConnectionTriggerTransportClass4 = 4,
+        kConnectionTriggerTransportClass5 = 5,
+        kConnectionTriggerTransportClass6 = 6,
+        kConnectionTriggerProductionTriggerCyclic         = 0,
+        kConnectionTriggerProductionTriggerChangeOfState  = 1,
+        kConnectionTriggerProductionTriggerApplicationObj = 2,
         kConnectionTriggerProductionTriggerMask           = SET_BIT_N_TO_X (4,1) | SET_BIT_N_TO_X (5,1) | SET_BIT_N_TO_X (6,1),
-        kConnectionTriggerDirectionClient                 = SET_BIT_N_TO_X (7,0),
-        kConnectionTriggerDirectionServer                 = SET_BIT_N_TO_X (7,1)
-    } ConnectionTriggerType;
+        kConnectionTriggerDirectionClient                 = 0,
+        kConnectionTriggerDirectionServer                 = 1
+    } ConnectionTriggerType_e;
+
+    typedef struct
+    {
+        union
+        {
+            struct
+            {
+                CipUsint transport_class    : 4;
+                CipUsint production_trigger : 3;
+                CipUsint direction          : 1;
+            };
+            CipUsint val;
+        };
+    } ConnectionTriggerType_t;
 
 /** @brief Possible values for the watch dog time out action of a connection */
     typedef enum {
@@ -70,7 +86,7 @@ public:
     //Instance attributes (ids 1 to 19)
     ConnectionState State;
     ConnectionType Instance_type;
-    ConnectionTriggerType TransportClass_trigger;
+    ConnectionTriggerType_t TransportClass_trigger;
     CipUint DeviceNet_produced_connection_id;
     CipUint DeviceNet_consumed_connection_id;
     CipByte DeviceNet_initial_comm_characteristics;
@@ -88,7 +104,9 @@ public:
     CipUsint Connection_timeout_multiplier;
     std::vector<CipUint> Connection_binding_list;
 
-
+    //Links
+    CIP_Connection_LinkConsumer * Link_consumer;
+    CIP_Connection_LinkProducer * Link_producer;
 
     static CipStatus Init();
     CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response);
@@ -106,9 +124,11 @@ public:
     static CipStatus SafetyClose();
     static CipStatus SafetyOpen();
 
+private:
     //temporary
     CipStatus Behaviour();
     NET_Connection * netConn;
+    bool check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_msg_ptr);
 };
 
 

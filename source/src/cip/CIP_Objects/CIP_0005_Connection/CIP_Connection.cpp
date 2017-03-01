@@ -44,25 +44,25 @@ CipStatus CIP_Connection::Create()
 {
     CIP_Connection *instance = new CIP_Connection();
     //Chapter 3-4.4 vol 1
-    instance->InsertAttribute( 1, kCipUsint, &State                                , kGetableSingleAndAll);
-    instance->InsertAttribute( 2, kCipUsint, &Instance_type                       , kGetableSingleAndAll);
-    instance->InsertAttribute( 3, kCipByte , &TransportClass_trigger               , kGetableSingleAndAll);
-    instance->InsertAttribute( 4, kCipUint , &DeviceNet_produced_connection_id     , kGetableSingleAndAll);
-    instance->InsertAttribute( 5, kCipUint , &DeviceNet_consumed_connection_id     , kGetableSingleAndAll);
-    instance->InsertAttribute( 6, kCipByte , &DeviceNet_initial_comm_characteristcs, kGetableSingleAndAll);
-    instance->InsertAttribute( 7, kCipUint , &Produced_connection_size             , kGetableSingleAndAll);
-    instance->InsertAttribute( 8, kCipUint , &Consumed_connection_size             , kGetableSingleAndAll);
-    instance->InsertAttribute( 9, kCipUint , &Expected_packet_rate                 , kGetableSingleAndAll);
-    instance->InsertAttribute(10, kCipUdint, &CIP_produced_connection_id           , kGetableSingleAndAll);
-    instance->InsertAttribute(11, kCipUdint, &CIP_consumed_connection_id           , kGetableSingleAndAll);
-    instance->InsertAttribute(12, kCipUsint, &Watchdog_timeout_action              , kGetableSingleAndAll);
-    instance->InsertAttribute(13, kCipUint , &Produced_connection_path_length      , kGetableSingleAndAll);
-    instance->InsertAttribute(14, kCipEpath, &Produced_connection_path             , kGetableSingleAndAll);
-    instance->InsertAttribute(15, kCipUint , &Consumed_connection_path_length      , kGetableSingleAndAll);
-    instance->InsertAttribute(16, kCipEpath, &Consumed_connection_path             , kGetableSingleAndAll);
-    instance->InsertAttribute(17, kCipUint , &Production_inhibit_time              , kGetableSingleAndAll);
-    instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier        , kGetableSingleAndAll);
-    instance->InsertAttribute(19, kCipUdint, &Connection_binding_list              , kGetableSingleAndAll);
+    instance->InsertAttribute( 1, kCipUsint, &State                                 , kGetableSingleAndAll);
+    instance->InsertAttribute( 2, kCipUsint, &Instance_type                         , kGetableSingleAndAll);
+    instance->InsertAttribute( 3, kCipByte , &TransportClass_trigger                , kGetableSingleAndAll);
+    instance->InsertAttribute( 4, kCipUint , &DeviceNet_produced_connection_id      , kGetableSingleAndAll);
+    instance->InsertAttribute( 5, kCipUint , &DeviceNet_consumed_connection_id      , kGetableSingleAndAll);
+    instance->InsertAttribute( 6, kCipByte , &DeviceNet_initial_comm_characteristics, kGetableSingleAndAll);
+    instance->InsertAttribute( 7, kCipUint , &Produced_connection_size              , kGetableSingleAndAll);
+    instance->InsertAttribute( 8, kCipUint , &Consumed_connection_size              , kGetableSingleAndAll);
+    instance->InsertAttribute( 9, kCipUint , &Expected_packet_rate                  , kGetableSingleAndAll);
+    instance->InsertAttribute(10, kCipUdint, &CIP_produced_connection_id            , kGetableSingleAndAll);
+    instance->InsertAttribute(11, kCipUdint, &CIP_consumed_connection_id            , kGetableSingleAndAll);
+    instance->InsertAttribute(12, kCipUsint, &Watchdog_timeout_action               , kGetableSingleAndAll);
+    instance->InsertAttribute(13, kCipUint , &Produced_connection_path_length       , kGetableSingleAndAll);
+    instance->InsertAttribute(14, kCipEpath, &Produced_connection_path              , kGetableSingleAndAll);
+    instance->InsertAttribute(15, kCipUint , &Consumed_connection_path_length       , kGetableSingleAndAll);
+    instance->InsertAttribute(16, kCipEpath, &Consumed_connection_path              , kGetableSingleAndAll);
+    instance->InsertAttribute(17, kCipUint , &Production_inhibit_time               , kGetableSingleAndAll);
+    instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier         , kGetableSingleAndAll);
+    instance->InsertAttribute(19, kCipUdint, &Connection_binding_list               , kGetableSingleAndAll);
 
 
     object_Set.emplace(object_Set.size(), instance);
@@ -207,7 +207,7 @@ CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest*
     if (this->id == 0)
     {
         switch (service)
-        {
+        {/*
             case (kConnectionServiceCreate):
                 break;
             case (kConnectionServiceDelete):
@@ -218,6 +218,7 @@ CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest*
                 break;
             case (kConnectionServiceGetAttributeSingle):
                 break;
+                */
             default:
                 return kCipStatusError;
         }
@@ -228,6 +229,7 @@ CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest*
     {
         switch(service)
         {
+            /*
             case (kConnectionInstServiceBind):
                 break;
             case (kConnectionInstServiceProducingLookup):
@@ -236,6 +238,7 @@ CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest*
                 break;
             case (kConnectionInstServiceSafetyOpen):
                 break;
+                */
             default:
                 return kCipStatusError;
         }
@@ -243,96 +246,141 @@ CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest*
     }
 }
 
-
-
-
-
 CipStatus CIP_Connection::Behaviour()
 {
-    if (Instance_type == kConnectionTypeExplicit)
+    switch (Instance_type)
     {
-
-        if ((kConnectionTriggerTransportClass0 & TransportClass_trigger) == kConnectionTriggerTransportClass0)
-        {
-
-            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
+        case kConnectionTypeExplicit:
+            //If explicit connection
+            //check direction
+            switch (TransportClass_trigger.direction)
             {
-                //If client
+                case kConnectionTriggerDirectionServer:
+                    //todo: fix transport classes
+                    switch (TransportClass_trigger.transport_class)
+                    {
+                        case kConnectionTriggerTransportClass0:
+                            //Link_consumer consumes a message and then notifies application
+                            Link_consumer->Receive();
+                            notify_application();
+                            break;
+                        case kConnectionTriggerTransportClass1:
+                            //Link_consumer consumes a message, check for duplicates (based on last received sequence count,
+                            // notifying the application if dupe happened(and dropping the message), or if the message was received
+                            Link_consumer->Receive ();
+                            check_for_duplicate(last_msg_ptr, recv_data_ptr);
+                            notify_application(connection->consuming_instance, recv_data_ptr, recv_data_length);
+                            break;
+                        case kConnectionTriggerTransportClass2:
+                            //Link_consumer consumes a message, automatically invokes Link_producer, prepending incoming sequence count,
+                            // and then delivers the message to the application, that checks for dupes and then do something
+                            Link_consumer->Receive();
+                            Link_producer->Send();
+                            notify_application(connection->consuming_instance, recv_data_ptr, recv_data_length);
+                            break;
+                        case kConnectionTriggerTransportClass3:
+                            //Link_consumer consumes a message, then check for dupes and notify the application, that
+                            // tells the connection to produce a message with Link_producer, and then send it
+                            Link_consumer->Receive();
+                            check_for_duplicate(last_msg_ptr, recv_data_ptr);
+                            notify_application(connection->consuming_instance, recv_data_ptr, recv_data_length);//
+                            break;
+                        default:
+                            //Unknown transport class, return error
+                            //todo: return error
+                            break;
+                    }
+                    break;
+                case kConnectionTriggerDirectionClient:
+                    switch (TransportClass_trigger.transport_class)
+                    {
+                        case kConnectionTriggerTransportClass0:
+                            switch(TransportClass_trigger.production_trigger)
+                            {
+                                case kConnectionTriggerProductionTriggerCyclic:
+                                    break;
+                                case kConnectionTriggerProductionTriggerChangeOfState:
+                                    break;
+                                case kConnectionTriggerProductionTriggerApplicationObj:
+                                    break;
+                                default:
+                                    //Unknown production trigger
+                                    break;
+                            }
+                            break;
+                        case kConnectionTriggerTransportClass1:
+                            switch(TransportClass_trigger.production_trigger)
+                            {
+                                case kConnectionTriggerProductionTriggerCyclic:
+                                    break;
+                                case kConnectionTriggerProductionTriggerChangeOfState:
+                                    break;
+                                case kConnectionTriggerProductionTriggerApplicationObj:
+                                    break;
+                                default:
+                                    //Unknown production trigger
+                                    break;
+                            }
+                            break;
+                        case kConnectionTriggerTransportClass2:
+                            switch(TransportClass_trigger.production_trigger)
+                            {
+                                case kConnectionTriggerProductionTriggerCyclic:
+                                    break;
+                                case kConnectionTriggerProductionTriggerChangeOfState:
+                                    break;
+                                case kConnectionTriggerProductionTriggerApplicationObj:
+                                    break;
+                                default:
+                                    //Unknown production trigger
+                                    break;
+                            }
+                            break;
+                        case kConnectionTriggerTransportClass3:
+                            switch(TransportClass_trigger.production_trigger)
+                            {
+                                case kConnectionTriggerProductionTriggerCyclic:
+                                    break;
+                                case kConnectionTriggerProductionTriggerChangeOfState:
+                                    break;
+                                case kConnectionTriggerProductionTriggerApplicationObj:
+                                    break;
+                                default:
+                                    //Unknown production trigger
+                                    break;
+                            }
+                            break;
+                        default:
+                            //Unknown transport class, return error
+                            //todo: return error
+                            break;
+                    }
+                    break;
+                default:
+                    break;
             }
-            else
-            {
-                //If server
-                //Link_consumer consumes a message and then notifies application
-                //todo: implement class 0 server behaviour
-            }
-        }
-        else if ((kConnectionTriggerTransportClass1 & TransportClass_trigger) == kConnectionTriggerTransportClass1)
-        {
-            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
-            {
-                //If client
-            }
-            else
-            {
-                //If server
-                //Link_consumer consumes a message, check for duplicates (based on last received sequence count,
-                // notifying the application if dupe happened(and dropping the message), or if the message was received
-                //todo: implement class 1 server behaviour
-            }
-        }
-        else if ((kConnectionTriggerTransportClass2 & TransportClass_trigger) == kConnectionTriggerTransportClass2)
-        {
-            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
-            {
-                //If client
-            }
-            else
-            {
-                //If server
-                //Link_consumer consumes a message, automatically invokes Link_producer, prepending incoming sequence count,
-                // and then delivers the message to the application, that checks for dupes and then do something
-                //todo: implement class 2 server behaviour
-            }
-        }
-        else if ((kConnectionTriggerTransportClass3 & TransportClass_trigger) == kConnectionTriggerTransportClass3)
-        {
-            if ((kConnectionTriggerDirectionServer & TransportClass_trigger) == 0)
-            {
-                //If client
-            }
-            else
-            {
-                //If server
-                //Link_consumer consumes a message, then check for dupes and notify the application, that
-                // tells the connection to produce a message with Link_producer, and then send it
-                //todo: implement class 3 server behaviour
-            }
-        }
-        else
-        {
-            //Unknown transport class, return error
-            //todo: return error
-        }
+            break;
+        case kConnectionTypeIo:
+            //If IO connection
+            break;
+        case kConnectionTypeBridged:
+            //If bridged connection
+            break;
+        default:
+            //Unknown connection type
+            break;
 
     }
-    else if (Instance_type == kConnectionTypeIo)
-    {
-
-    }
-    else if (Instance_type == kConnectionTypeBridged)
-    {
-
-    }
-    else
-    {
-        //Unknown connection type
-    }
-
 }
 
 
-
-
+bool CIP_Connection::check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_msg_ptr)
+{
+    if ( (CipUint)last_msg_ptr[0] == (CipUint)curr_msg_ptr[0])
+        return true; //Dupe found
+    else
+        return false; //Not a dupe
+}
 
 
 
