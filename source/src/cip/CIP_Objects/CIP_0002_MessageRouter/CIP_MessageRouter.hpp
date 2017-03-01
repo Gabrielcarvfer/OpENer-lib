@@ -95,6 +95,10 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
          */
         static void DeleteAllClasses(void);
 
+        //temporary
+        static CipStatus notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification notification);
+        static CipStatus route_message(CipEpath target_epath, CipUint target_epath_size, CipByte * data_ptr, CipUdint data_size );
+
 };
 
 

@@ -5,6 +5,7 @@
 #include <typedefs.hpp>
 #include <vector>
 #include <cstring>
+#include <cip/CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
 #include "CIP_Connection.hpp"
 
 CipStatus CIP_Connection::Init()
@@ -256,34 +257,36 @@ CipStatus CIP_Connection::Behaviour()
             switch (TransportClass_trigger.direction)
             {
                 case kConnectionTriggerDirectionServer:
-                    //todo: fix transport classes
+                    //todo: fix placeholders
+                    CipByte * last_msg_ptr, *recv_data_ptr, recv_data_len;
+                    CipNotification notification;
                     switch (TransportClass_trigger.transport_class)
                     {
                         case kConnectionTriggerTransportClass0:
                             //Link_consumer consumes a message and then notifies application
                             Link_consumer->Receive();
-                            notify_application();
+                            CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, notification);//
                             break;
                         case kConnectionTriggerTransportClass1:
                             //Link_consumer consumes a message, check for duplicates (based on last received sequence count,
                             // notifying the application if dupe happened(and dropping the message), or if the message was received
                             Link_consumer->Receive ();
-                            check_for_duplicate(last_msg_ptr, recv_data_ptr);
-                            notify_application(connection->consuming_instance, recv_data_ptr, recv_data_length);
+                            check_for_duplicate(last_msg_ptr, recv_data_ptr) ? notification = kCipNotificationDuplicate : notification = kCipNotificationReceived;
+                            CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, notification);
                             break;
                         case kConnectionTriggerTransportClass2:
                             //Link_consumer consumes a message, automatically invokes Link_producer, prepending incoming sequence count,
                             // and then delivers the message to the application, that checks for dupes and then do something
                             Link_consumer->Receive();
                             Link_producer->Send();
-                            notify_application(connection->consuming_instance, recv_data_ptr, recv_data_length);
+                            CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
                             break;
                         case kConnectionTriggerTransportClass3:
                             //Link_consumer consumes a message, then check for dupes and notify the application, that
                             // tells the connection to produce a message with Link_producer, and then send it
                             Link_consumer->Receive();
-                            check_for_duplicate(last_msg_ptr, recv_data_ptr);
-                            notify_application(connection->consuming_instance, recv_data_ptr, recv_data_length);//
+                            check_for_duplicate(last_msg_ptr, recv_data_ptr) ? notification = kCipNotificationDuplicate : notification = kCipNotificationReceived;
+                            CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
                             break;
                         default:
                             //Unknown transport class, return error
@@ -376,7 +379,7 @@ CipStatus CIP_Connection::Behaviour()
 
 bool CIP_Connection::check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_msg_ptr)
 {
-    if ( (CipUint)last_msg_ptr[0] == (CipUint)curr_msg_ptr[0])
+    if ( ((CipUint*)last_msg_ptr)[0] == ((CipUint*)curr_msg_ptr)[0])
         return true; //Dupe found
     else
         return false; //Not a dupe

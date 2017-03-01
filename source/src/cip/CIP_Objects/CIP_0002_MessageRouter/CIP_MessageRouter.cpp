@@ -208,3 +208,27 @@ void CIP_MessageRouter::DeleteAllClasses(void)
     }
      */
 }
+
+CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification notification )
+{
+    //todo: implement message routing for notifications
+    //Parse Epath
+
+    //Find registered class/CIP_Object
+
+    //Pick the instnace of CIP_Object
+
+    //Set notification flags?
+}
+
+CipStatus CIP_MessageRouter::route_message(CipEpath target_epath, CipUint target_epath_size, CipByte * data_ptr, CipUdint data_size )
+{
+    //todo: implement message routing for notifications
+    //Parse Epath
+
+    //Find registered class/CIP_Object
+
+    //Pick the instnace of CIP_Object
+
+    //Send data
+}

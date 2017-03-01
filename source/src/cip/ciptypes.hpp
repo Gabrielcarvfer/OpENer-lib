@@ -338,6 +338,13 @@ typedef enum {
 
 } CipClassCodes;
 
+typedef enum {
+    kCipNotificationDuplicate,
+    kCipNotificationReceived,
+    kCipNotificationSent,
+    kCipNotificationFailed
+} CipNotification;
+
 #define SET_BIT_N_TO_X(n,x) ((0x01&x)<< n)
 
 /* these are used for creating the getAttributeAll masks

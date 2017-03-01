@@ -124,10 +124,10 @@ public:
     static CipStatus SafetyClose();
     static CipStatus SafetyOpen();
 
-private:
-    //temporary
-    CipStatus Behaviour();
+    //Temporary
     NET_Connection * netConn;
+private:
+    CipStatus Behaviour();
     bool check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_msg_ptr);
 };
 
