@@ -109,7 +109,7 @@ public:
     CIP_Connection_LinkProducer * Link_producer;
 
     static CipStatus Init();
-    CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response);
+    CipStatus InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response);
 
     //Class services
     static CipStatus Create();

@@ -92,7 +92,7 @@ void CIP_TCPIP_Interface::ConfigureHostName(CipString * hostname)
     }
 }
 
-CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
     CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
 
@@ -109,8 +109,8 @@ CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest* me
         message_router_response->general_status = kCipErrorAttributeNotSupported;
     }
 
-    message_router_response->size_of_additional_status = 0;
-    message_router_response->data_length = 0;
+    message_router_response->size_additional_status = 0;
+    message_router_response->response_data.clear();
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     return kCipStatusOkSend;
 }
@@ -205,25 +205,27 @@ void CIP_TCPIP_Interface::ShutdownTcpIpInterface(void)
     }*/
 }
 
-CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
 
     CipStatus status = kCipStatusOkSend;
-    CipByte* message = message_router_response->data;
+    CipByte* message = &message_router_response->response_data[0];
 
-    if (9 == message_router_request->request_path.attribute_number) { // attribute 9 can not be easily handled with the default mechanism therefore we will do it by hand
-        message_router_response->data_length = 0;
+    if (9 == message_router_request->request_path.attribute_number)
+    { 
+        // attribute 9 can not be easily handled with the default mechanism therefore we will do it by hand
+        message_router_response->response_data.clear ();
         message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
         message_router_response->general_status = kCipErrorSuccess;
-        message_router_response->size_of_additional_status = 0;
+        message_router_response->size_additional_status = 0;
 
-        message_router_response->data_length += CIP_Common::EncodeData(kCipUsint, &(g_multicast_configuration.alloc_control), &message);
-        message_router_response->data_length += CIP_Common::EncodeData(kCipUsint, &(g_multicast_configuration.reserved_shall_be_zero), &message);
-        message_router_response->data_length += CIP_Common::EncodeData(kCipUint, &(g_multicast_configuration.number_of_allocated_multicast_addresses), &message);
+        //message_router_response->response_data.size() += CIP_Common::EncodeData(kCipUsint, &(g_multicast_configuration.alloc_control), &message);
+        //message_router_response->response_data.size() += CIP_Common::EncodeData(kCipUsint, &(g_multicast_configuration.reserved_shall_be_zero), &message);
+        //message_router_response->response_data.size() += CIP_Common::EncodeData(kCipUint, &(g_multicast_configuration.number_of_allocated_multicast_addresses), &message);
 
         CipUdint multicast_address = ntohl(g_multicast_configuration.starting_multicast_address);
 
-        message_router_response->data_length += CIP_Common::EncodeData(kCipUdint, &multicast_address, &message);
+        //message_router_response->response_data.size() += CIP_Common::EncodeData(kCipUdint, &multicast_address, &message);
     }
     else
     {
@@ -232,10 +234,10 @@ CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
     return status;
 }
 
-CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
 
-    CipUsint* response = message_router_response->data; // pointer into the reply
+    CipUsint* response = &message_router_response->response_data[0]; // pointer into the reply
     CIP_Attribute* attribute;
 
     for (int j = 0; j < this->attributes.size(); j++) // for each instance attribute of this class
@@ -250,25 +252,25 @@ CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
             if (8 == attribute_number)
             {
                 // insert 6 zeros for the required empty safety network number according to Table 5-3.10
-                memset(message_router_response->data, 0, 6);
-                message_router_response->data += 6;
+                memset(&message_router_response->response_data[0], 0, 6);
+
+                //message_router_response->response_data += 6;
             }
 
             if (kCipStatusOkSend != this->GetAttributeSingleTcpIpInterface(message_router_request, message_router_response).status)
             {
-                message_router_response->data = response;
+                //message_router_response->response_data = response;
                 return kCipStatusError;
             }
-            message_router_response->data += message_router_response->data_length;
+            //message_router_response->response_data += message_router_response->response_data.size();
         }
     }
-    message_router_response->data_length = (CipInt) (message_router_response->data - response);
-    message_router_response->data = response;
+    message_router_response->response_data.emplace (message_router_response->response_data.begin(), *response);
 
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_TCPIP_Interface::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_TCPIP_Interface::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response)
 {
     CipStatus returnValue;
     //Class services

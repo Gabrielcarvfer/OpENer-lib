@@ -103,7 +103,7 @@ private:
 
 
     CipEthernetLinkObject g_ethernet_link;
-    CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response);
+    CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response);
 
 };
 

@@ -70,7 +70,7 @@ void CIP_Common::ShutdownCipStack (void)
     CIP_MessageRouter::DeleteAllClasses ();
 }
 /*
-CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
+CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest_t *message_router_request, CipMessageRouterResponse_t *message_router_response)
 {
     int i;
     CIP_ClassInstance *instance;
@@ -118,7 +118,7 @@ CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest *message_router_reque
     // handle error replies
 
     // fill in the rest of the reply with not much of anything
-    message_router_response->size_of_additional_status = 0;
+    message_router_response->size_additional_status = 0;
     message_router_response->data_length = 0;
 
     // except the reply code is an echo of the command + the reply flag

@@ -151,8 +151,8 @@ CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_ConnectionMana
  *      	-1 .. error
  */
 CipStatus CIP_ConnectionManager::ForwardOpen (CIP_Connection * connection_object,
-                                              CipMessageRouterRequest *message_router_request,
-                                              CipMessageRouterResponse *message_router_response
+                                              CipMessageRouterRequest_t *message_router_request,
+                                              CipMessageRouterResponse_t *message_router_response
                                             )
 {
     CipUint connection_status = kConnectionManagerStatusCodeSuccess;
@@ -329,7 +329,7 @@ void CIP_ConnectionManager::GeneralConnectionConfiguration (CIP_ConnectionManage
     connection_instance->Produced_connection_size = (CipUint)(connection_manager_instance->t_to_o_network_connection_parameter & 0x01FF);
 }
 
-CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
+CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest_t *message_router_request, CipMessageRouterResponse_t *message_router_response)
 {
 
     // check connection_serial_number && originator_vendor_id && originator_serial_number if connection is established
@@ -393,7 +393,7 @@ ConnectionManagementHandling* CIP_ConnectionManager::GetConnMgmEntry(CipUdint cl
 
 
 /* TODO: Not implemented */
-CipStatus CIP_ConnectionManager::GetConnectionOwner (CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response)
+CipStatus CIP_ConnectionManager::GetConnectionOwner (CipMessageRouterRequest_t *message_router_request, CipMessageRouterResponse_t *message_router_response)
 {
     /* suppress compiler warnings */
     (void) message_router_request;
@@ -489,7 +489,7 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
  * 		  -1 .. error
  */
 CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * connection_object,
-                                                              CipMessageRouterResponse *message_router_response,
+                                                              CipMessageRouterResponse_t *message_router_response,
                                                               CipUsint general_status,
                                                               CipUint extended_status
                                                             )
@@ -509,7 +509,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
     {
         OPENER_TRACE_INFO("assembleFWDOpenResponse: sending success response\n");
         message_router_response->data_length = 26; /* if there is no application specific data */
-        message_router_response->size_of_additional_status = 0;
+        message_router_response->size_additional_status = 0;
 
         if (cip_common_packet_format_data->address_info_item[0].type_id != 0)
         {
@@ -535,7 +535,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
             case kCipErrorNotEnoughData:
             case kCipErrorTooMuchData:
             {
-                message_router_response->size_of_additional_status = 0;
+                message_router_response->size_additional_status = 0;
                 break;
             }
 
@@ -545,7 +545,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
                 {
                     case kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize:
                     {
-                        message_router_response->size_of_additional_status = 2;
+                        message_router_response->size_additional_status = 2;
                         message_router_response->additional_status[0] = extended_status;
                         message_router_response->additional_status[1] = correct_originator_to_target_size;
                         break;
@@ -553,7 +553,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
 
                     case kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize:
                     {
-                        message_router_response->size_of_additional_status = 2;
+                        message_router_response->size_additional_status = 2;
                         message_router_response->additional_status[0] = extended_status;
                         message_router_response->additional_status[1] = correct_target_to_originator_size;
                         break;
@@ -561,7 +561,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
 
                     default:
                     {
-                        message_router_response->size_of_additional_status = 1;
+                        message_router_response->size_additional_status = 1;
                         message_router_response->additional_status[0] = extended_status;
                         break;
                     }
@@ -618,7 +618,7 @@ void CIP_ConnectionManager::AddNullAddressItem (CIP_CommonPacket::PacketFormat *
  * 			1 .. need to send reply
  * 		       -1 .. error
  */
-CipStatus CIP_ConnectionManager::AssembleForwardCloseResponse (CipUint connection_serial_number, CipUint originatior_vendor_id, CipUdint originator_serial_number, CipMessageRouterRequest *message_router_request, CipMessageRouterResponse *message_router_response, CipUint extended_error_code)
+CipStatus CIP_ConnectionManager::AssembleForwardCloseResponse (CipUint connection_serial_number, CipUint originatior_vendor_id, CipUdint originator_serial_number, CipMessageRouterRequest_t *message_router_request, CipMessageRouterResponse_t *message_router_response, CipUint extended_error_code)
 {
     // write reply information in CPF struct dependent of pa_status
     CIP_CommonPacket::PacketFormat *common_data_packet_format_data = &CIP_CommonPacket::common_packet_data;
@@ -639,14 +639,14 @@ CipStatus CIP_ConnectionManager::AssembleForwardCloseResponse (CipUint connectio
     {
         *message = 0; // no application data
         message_router_response->general_status = kCipErrorSuccess;
-        message_router_response->size_of_additional_status = 0;
+        message_router_response->size_additional_status = 0;
     }
     else
     {
         *message = *message_router_request->data; // remaining path size
         message_router_response->general_status = kCipErrorConnectionFailure;
         message_router_response->additional_status[0] = extended_error_code;
-        message_router_response->size_of_additional_status = 1;
+        message_router_response->size_additional_status = 1;
     }
 
     message++;
@@ -786,7 +786,7 @@ CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, Ci
     return (*extended_status == kConnectionManagerStatusCodeSuccess) ? kCipStatusOk : kCipStatusError;
 }
 
-CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest *message_router_request, CipUint *extended_error)
+CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *message_router_request, CipUint *extended_error)
 {
     CipUsint *message = message_router_request->data;
     int remaining_path_size = connection_path_size = *message++; // length in words
@@ -1119,8 +1119,8 @@ CipStatus CIP_ConnectionManager::TriggerConnections (CipUdint pa_unOutputAssembl
 
 CipStatus CIP_ConnectionManager::InstanceServices(int service,
                                                   CIP_Connection * connection_object,
-                                                  CipMessageRouterRequest* message_router_request,
-                                                  CipMessageRouterResponse* message_router_response)
+                                                  CipMessageRouterRequest_t* message_router_request,
+                                                  CipMessageRouterResponse_t* message_router_response)
 {
     //Class services
     if (this->id == 0)

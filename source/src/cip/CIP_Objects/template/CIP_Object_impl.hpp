@@ -9,6 +9,7 @@
 #include "CIP_Attribute.hpp"
 #include "../../../opener_user_conf.hpp"
 #include <utility>
+#include <cip/ciptypes.hpp>
 
 //Static variables
 template<class T> CipUdint    CIP_Object<T>::class_id;
@@ -172,18 +173,17 @@ CIP_Attribute* CIP_Object<T>::GetCipAttribute(CipUint attribute_number)
 
 /* TODO: this needs to check for buffer overflow*/
 template <class T>
-CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
     // Mask for filtering get-ability
     CipByte get_mask;
 
     CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
-    CipByte* message = message_router_response->data;
+    CipByte* message = &message_router_response->response_data[0];
 
-    message_router_response->data_length = 0;
     message_router_response->reply_service = (0x80 | message_router_request->service);
     message_router_response->general_status = kCipErrorAttributeNotSupported;
-    message_router_response->size_of_additional_status = 0;
+    message_router_response->size_additional_status = 0;
 
     // set filter according to service: get_attribute_all or get_attribute_single
     if (kGetAttributeAll == message_router_request->service)
@@ -224,13 +224,13 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest* message_rou
 }
 
 template <class T>
-CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
     int i, j;
     CipOctet* reply;
 
     // pointer into the reply
-    reply = message_router_response->data;
+    reply = message_router_response->response_data;
 
     if (this->id == 2)
     {
@@ -248,10 +248,9 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router
             if (0 == this->attributes.size())
             {
                 //there are no attributes to be sent back
-                message_router_response->data_length = 0;
                 message_router_response->reply_service = (0x80 | message_router_request->service);
                 message_router_response->general_status = kCipErrorServiceNotSupported;
-                message_router_response->size_of_additional_status = 0;
+                message_router_response->size_additional_status = 0;
             }
             else
             {
@@ -266,15 +265,15 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest* message_router
                         message_router_request->request_path.attribute_number = attrNum;
                         if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
                         {
-                            message_router_response->data = reply;
+                            message_router_response->response_data = reply;
 
                             return CipStatus(kCipStatusError);
                         }
-                        message_router_response->data += message_router_response->data_length;
+                        //message_router_response->data += message_router_response->data_length;
                     }
                 }
-                message_router_response->data_length = message_router_response->data - reply;
-                message_router_response->data = reply;
+                //message_router_response->data_length = message_router_response->data - reply;
+                message_router_response->response_data = reply;
             }
             return CipStatus(kCipStatusOkSend);
         }

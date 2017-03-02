@@ -125,17 +125,17 @@ private:
     CipBool quick_connect;
 
     //Functions
-    CipStatus InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response);
+    CipStatus InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response);
 
     //Functions
-    CipStatus GetAttributeSingleTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus GetAttributeSingleTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
-    CipStatus GetAttributeAllTcpIpInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus GetAttributeAllTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
     CipStatus ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask, const char* gateway);
     void ConfigureDomainName(CipString * domain_name);
     void ConfigureHostName(CipString * hostname);
-    CipStatus SetAttributeSingleTcp(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus SetAttributeSingleTcp(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
 };
 #endif /* OPENER_CIPTCPIPINTERFACE_H_ */

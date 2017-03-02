@@ -100,19 +100,17 @@ CipStatus CIP_Assembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipU
     return kCipStatusOk;//TODO:OpENer_Interface::AfterAssemblyDataReceived(this);
 }
 
-CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* message_router_request,
-                                                  CipMessageRouterResponse* message_router_response)
+CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest_t* message_router_request,
+                                                  CipMessageRouterResponse_t* message_router_response)
 {
     CipUsint* router_request_data;
     CIP_Attribute* attribute;
     OPENER_TRACE_INFO(" setAttribute %d\n", message_router_request->request_path.attribute_number);
 
-    router_request_data = message_router_request->data;
-
-    message_router_response->data_length = 0;
+    router_request_data = &message_router_request->request_data[0];
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     message_router_response->general_status = kCipErrorAttributeNotSupported;
-    message_router_response->size_of_additional_status = 0;
+    message_router_response->size_additional_status = 0;
 
     attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
 
@@ -130,14 +128,14 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
             }
             else
             {
-                if (message_router_request->data_length < data->length)
+                if (message_router_request->request_data.size() < data->length)
                 {
                     OPENER_TRACE_INFO("Assembly setAssemblyAttributeSingle: not enough data received.\r\n");
                     message_router_response->general_status = kCipErrorNotEnoughData;
                 }
                 else
                 {
-                    if (message_router_request->data_length > data->length)
+                    if (message_router_request->request_data.size() > data->length)
                     {
                         OPENER_TRACE_INFO("Assembly setAssemblyAttributeSingle: too much data received.\r\n");
                         message_router_response->general_status = kCipErrorTooMuchData;
@@ -181,7 +179,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest* mess
     return kCipStatusOkSend;
 }
 
-CipStatus CIP_Assembly::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_Assembly::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response)
 {
     //Class services
     if (this->id == 0)

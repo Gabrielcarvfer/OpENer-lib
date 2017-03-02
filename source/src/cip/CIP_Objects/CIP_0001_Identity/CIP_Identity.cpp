@@ -62,19 +62,19 @@ void CIP_Identity::SetDeviceStatus(CipUint status)
  * @returns Currently always kEipOkSend is returned
  */
  //                           pointer to message router request         -      pointer to message router response
-CipStatus CIP_Identity::Reset( CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response)
+CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
     CipStatus eip_status;
 
     eip_status = kCipStatusOkSend;
 
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
-    message_router_response->size_of_additional_status = 0;
+    message_router_response->size_additional_status = 0;
     message_router_response->general_status = kCipErrorSuccess;
 
-    if (message_router_request->data_length == 1)
+    if (message_router_request->request_data.size() == 1)
     {
-        switch (message_router_request->data[0])
+        switch (message_router_request->request_data[0])
         {
         case 0: /* Reset type 0 -> emulate device reset / Power cycle */
             if (kCipStatusError == OpENer_Interface::ResetDevice().status)
@@ -111,7 +111,7 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest* message_router_request, 
             /* eip_status = EIP_OK; */
         }
     }
-    message_router_response->data_length = 0;
+    message_router_response->response_data.clear ();
     return eip_status;
 }
 
@@ -151,7 +151,7 @@ CipStatus CIP_Identity::Init()
     return kCipStatusOk;
 }
 
-CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest *msg_router_request, CipMessageRouterResponse *msg_router_response)
+CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest_t *msg_router_request, CipMessageRouterResponse_t *msg_router_response)
 {
     switch(service)
     {

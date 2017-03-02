@@ -5,13 +5,14 @@
  ******************************************************************************/
 
 //Includes
+#include <cip/ciptypes.hpp>
 #include "CIP_MessageRouter.hpp"
 
 //Static variables
-CipMessageRouterRequest  CIP_MessageRouter::g_message_router_request;
-CipMessageRouterResponse CIP_MessageRouter::g_message_router_response;
+CipMessageRouterRequest_t  CIP_MessageRouter::g_message_router_request;
+CipMessageRouterResponse_t CIP_MessageRouter::g_message_router_response;
 
-CipOctet CIP_MessageRouter::g_message_data_reply_buffer[100];
+std::vector<CipOctet> CIP_MessageRouter::g_message_data_reply_buffer;
 
 
 //Methods
@@ -42,7 +43,7 @@ CipStatus CIP_MessageRouter::Init()
         g_message_router_response.reserved = 0;
 
         // set reply buffer, using a fixed buffer (about 100 bytes)
-        g_message_router_response.data = g_message_data_reply_buffer;
+        g_message_router_response.response_data = g_message_data_reply_buffer;
     }
     return kCipStatusOk;
 }
@@ -76,7 +77,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     CipStatus cip_status = kCipStatusOkSend;
     CipStatus nStatus;
 
-    g_message_router_response.data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
+    g_message_router_response.response_data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
 
     OPENER_TRACE_INFO("notifyMR: routing unconnected message\n");
     /* error from create MR structure*/
@@ -87,9 +88,9 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
         OPENER_TRACE_ERR("notifyMR: error from createMRRequeststructure\n");
 
         g_message_router_response.general_status = nStatus.status;
-        g_message_router_response.size_of_additional_status = 0;
+        g_message_router_response.size_additional_status = 0;
         g_message_router_response.reserved = 0;
-        g_message_router_response.data_length = 0;
+        //g_message_router_response.data_length = 0;
         g_message_router_response.reply_service = (CipUsint) (0x80 | g_message_router_request.service);
     }
     else
@@ -105,9 +106,9 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
                 (unsigned)g_message_router_request.request_path.class_id);
 
             g_message_router_response.general_status = kCipErrorPathDestinationUnknown; /*according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;*/
-            g_message_router_response.size_of_additional_status = 0;
+            g_message_router_response.size_additional_status = 0;
             g_message_router_response.reserved = 0;
-            g_message_router_response.data_length = 0;
+            //g_message_router_response.data_length = 0;
             g_message_router_response.reply_service = (CipUsint)(0x80 | g_message_router_request.service);
         }
         else
@@ -140,7 +141,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     return cip_status;
 }
 
-CipStatus CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request)
+CipStatus CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest_t* message_router_request)
 {
     int number_of_decoded_bytes;
 
@@ -155,10 +156,10 @@ CipStatus CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data,
         return kCipErrorPathSegmentError;
     }
 
-    message_router_request->data = data;
-    message_router_request->data_length = (CipInt) (data_length - number_of_decoded_bytes);
+    message_router_request->request_data.emplace (message_router_request->request_data.begin(), *data);
+    //message_router_request->data_length = (CipInt) (data_length - number_of_decoded_bytes);
 
-    if (message_router_request->data_length < 0)
+    if (message_router_request->request_data.size() - number_of_decoded_bytes < 0)
         return kCipErrorPathSizeInvalid;
     else
         return kCipErrorSuccess;

@@ -128,7 +128,7 @@ class CIP_Object
      * @return length of data stream >0 .. success
      *              0 .. no reply to send
      */
-    CipStatus GetAttributeAll(CipMessageRouterRequest * message_router_request,CipMessageRouterResponse* message_router_response);
+    CipStatus GetAttributeAll(CipMessageRouterRequest_t * message_router_request,CipMessageRouterResponse_t* message_router_response);
 
 
     /** @brief Generic implementation of the GetAttributeSingle CIP service
@@ -141,10 +141,10 @@ class CIP_Object
      * @return status  >0 .. success
      *          -1 .. requested attribute not available
      */
-    CipStatus GetAttributeSingle(CipMessageRouterRequest * message_router_request,CipMessageRouterResponse* message_router_response);
+    CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,CipMessageRouterResponse_t* message_router_response);
     /* type definition of CIP service structure */
 
-    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response)=0;
+    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)=0;
 
     protected:
         //Class stuff

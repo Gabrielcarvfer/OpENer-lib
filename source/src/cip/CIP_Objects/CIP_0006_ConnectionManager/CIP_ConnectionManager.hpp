@@ -34,12 +34,12 @@ class CIP_ConnectionManager :   public CIP_Object<CIP_ConnectionManager>
 public:
     static CipStatus Init();
 
-    CipMessageRouterRequest g_message_router_request;
-    CipMessageRouterResponse g_message_router_response;
+    CipMessageRouterRequest_t g_message_router_request;
+    CipMessageRouterResponse_t g_message_router_response;
     CipStatus InstanceServices(int service,
                                CIP_Connection * connection_object,
-                               CipMessageRouterRequest* message_router_request,
-                               CipMessageRouterResponse* message_router_response
+                               CipMessageRouterRequest_t* message_router_request,
+                               CipMessageRouterResponse_t* message_router_response
                             );
 
 
@@ -254,19 +254,19 @@ public:
 
 
     /* private functions */
-    CipStatus ForwardOpen(CIP_Connection * connection_object, CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus ForwardOpen(CIP_Connection * connection_object, CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
-    CipStatus ForwardClose(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus ForwardClose(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
-    CipStatus GetConnectionOwner(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
+    CipStatus GetConnectionOwner(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
-    CipStatus AssembleForwardOpenResponse(CIP_Connection * connection_object, CipMessageRouterResponse* message_router_response, CipUsint general_status, CipUint extended_status);
+    CipStatus AssembleForwardOpenResponse(CIP_Connection * connection_object, CipMessageRouterResponse_t* message_router_response, CipUsint general_status, CipUint extended_status);
 
     CipStatus AssembleForwardCloseResponse(
             CipUint connection_serial_number, CipUint originatior_vendor_id,
             CipUdint originator_serial_number,
-            CipMessageRouterRequest* message_router_request,
-            CipMessageRouterResponse* message_router_response,
+            CipMessageRouterRequest_t* message_router_request,
+            CipMessageRouterResponse_t* message_router_response,
             CipUint extended_error_code);
 
     /** @brief check if the data given in the connection object match with an already established connection
@@ -300,7 +300,7 @@ public:
      *    - EIP_OK ... on success
      *    - On an error the general status code to be put into the response
      */
-    CipUsint ParseConnectionPath( CipMessageRouterRequest* message_router_request, CipUint* extended_error);
+    CipUsint ParseConnectionPath( CipMessageRouterRequest_t* message_router_request, CipUint* extended_error);
 
     ConnectionManagementHandling* GetConnMgmEntry(CipUdint class_id);
 

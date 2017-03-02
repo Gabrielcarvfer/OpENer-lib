@@ -202,7 +202,7 @@ CipStatus CIP_Connection::SafetyOpen()
 
 }
 
-CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest* msg_router_request, CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response)
 {
     //Class services
     if (this->id == 0)

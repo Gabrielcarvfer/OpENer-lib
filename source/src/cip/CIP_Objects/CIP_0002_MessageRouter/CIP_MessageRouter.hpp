@@ -21,10 +21,10 @@
 class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 {
     public:
-            static CipMessageRouterRequest g_message_router_request;
-            static CipMessageRouterResponse g_message_router_response;
+            static CipMessageRouterRequest_t g_message_router_request;
+            static CipMessageRouterResponse_t g_message_router_response;
 
-            static CipOctet g_message_data_reply_buffer[100];
+            static std::vector<CipOctet> g_message_data_reply_buffer;
         /** @brief Initialize the data structures of the message router
          *  @return kCipStatusOk if class was initialized, otherwise kCipStatusError
          */
@@ -76,7 +76,7 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
          * @return status  0 .. success
          *                 -1 .. error
          */
-        static CipStatus CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest* message_router_request);
+        static CipStatus CreateMessageRouterRequestStructure(CipUsint* data, CipInt data_length, CipMessageRouterRequest_t* message_router_request);
 
 
         /** @brief Notify the MessageRouter that an explicit message (connected or unconnected)

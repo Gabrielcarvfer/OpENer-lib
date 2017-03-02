@@ -42,7 +42,7 @@ CipStatus CIP_EthernetIP_Link::Shutdown ()
 	return kCipStatusOk;
 }
 
-CipStatus CIP_EthernetIP_Link::InstanceServices(int service, CipMessageRouterRequest * msg_router_request,CipMessageRouterResponse* msg_router_response)
+CipStatus CIP_EthernetIP_Link::InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)
 {
     return kCipStatusError;
 }

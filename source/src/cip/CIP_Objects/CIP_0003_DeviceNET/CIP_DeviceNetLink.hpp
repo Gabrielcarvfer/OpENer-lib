@@ -39,8 +39,8 @@ public:
 	~CIP_DeviceNET_Link();
 
 	static CipStatus Init();
-	CipStatus GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest* message_router_request, CipMessageRouterResponse* message_router_response);
-	CipStatus InstanceServices(int service, CipMessageRouterRequest * msg_router_request, CipMessageRouterResponse* msg_router_response);
+	CipStatus GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+	CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request, CipMessageRouterResponse_t* msg_router_response);
 
 	private:
 		CipUsint mac_id;
