@@ -30,8 +30,8 @@ CipStatus CIP_EthernetIP_Link::Init()
 
 
         // bind attributes to the instance
-        instance->InsertAttribute (1, kCipUdint, &instance->g_ethernet_link.interface_speed, kGetableSingleAndAll);
-        instance->InsertAttribute (2, kCipDword, &instance->g_ethernet_link.interface_flags, kGetableSingleAndAll);
+        instance->InsertAttribute (1, kCipUdint,  &instance->g_ethernet_link.interface_speed,  kGetableSingleAndAll);
+        instance->InsertAttribute (2, kCipDword,  &instance->g_ethernet_link.interface_flags,  kGetableSingleAndAll);
         instance->InsertAttribute (3, kCip6Usint, &instance->g_ethernet_link.physical_address, kGetableSingleAndAll);
     }
     return kCipStatusOk;

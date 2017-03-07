@@ -21,10 +21,21 @@
 class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 {
     public:
-            static CipMessageRouterRequest_t g_message_router_request;
-            static CipMessageRouterResponse_t g_message_router_response;
+        typedef struct {
+            CipUint number;
+            std::vector<CipUint> classes;
+        } object_list_t;
 
-            static std::vector<CipOctet> g_message_data_reply_buffer;
+        typedef enum {
+           kCipSymbolicPathUnknown = 0, //path not recognized by processing node
+           kCipSymbolicPathDestinationNotAssigned = 1, //recognized but not associated
+           kCipSymbolicPathSegmentError = 2 //syntax can't be understood by the node
+        } CipSymbolicPath_e;
+
+        static CipMessageRouterRequest_t g_message_router_request;
+        static CipMessageRouterResponse_t g_message_router_response;
+
+        static std::vector<CipOctet> g_message_data_reply_buffer;
         /** @brief Initialize the data structures of the message router
          *  @return kCipStatusOk if class was initialized, otherwise kCipStatusError
          */
@@ -97,10 +108,18 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 
         //temporary
         static CipStatus notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification notification);
-        static CipStatus route_message(CipEpath target_epath, CipUint target_epath_size, CipByte * data_ptr, CipUdint data_size );
+        static CipStatus route_message( CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response );
+
+    //CIP attributes
+    //Class attributes are only the ones already specified in the template
+    //Instance attributes
+    object_list_t object_list;
+    CipUint number_avaiable;
+    CipUint number_active;
+    std::vector<CipUint>active_connections;
+
+    //CIP services
+    static CipStatus symbolic_translation(CipEpath *symbolic_epath, CipEpath *logical_epath);
 
 };
-
-
-
 #endif /* OPENER_CIPMESSAGEROUTER_H_ */

@@ -29,6 +29,7 @@ class CIP_Object
         CIP_Object();
         virtual ~CIP_Object();
 
+        //CIP class/object attributes
         static CipUdint class_id;
         static std::string class_name;
         static CipUint  revision;

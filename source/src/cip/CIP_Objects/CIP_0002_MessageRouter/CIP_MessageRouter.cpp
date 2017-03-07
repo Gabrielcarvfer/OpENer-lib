@@ -21,7 +21,6 @@ CipStatus CIP_MessageRouter::Init()
     if (number_of_instances == 0)
     {
         max_instances = 1;
-
         revision = 1;
         class_name = "message router";
         class_id = kCipMessageRouterClassCode;
@@ -222,14 +221,34 @@ CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint t
     //Set notification flags?
 }
 
-CipStatus CIP_MessageRouter::route_message(CipEpath target_epath, CipUint target_epath_size, CipByte * data_ptr, CipUdint data_size )
+CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response)
 {
-    //todo: implement message routing for notifications
+    CipStatus stat;
+
+    //Process eletronic key segment (if exists)
+
+    //Process network segment (if exists)
+
     //Parse Epath
 
     //Find registered class/CIP_Object
 
-    //Pick the instnace of CIP_Object
+    //Pick the instance of CIP_Object
 
-    //Send data
+    //Routes service to specified object
+
+    //Interpret service directed to it
+
+    //Routes response back to originator
+}
+
+CipStatus CIP_MessageRouter::symbolic_translation(CipEpath *symbolic_epath, CipEpath *logical_epath)
+{
+    CipStatus stat;
+
+    //todo: implement translation
+
+    stat.extended_status = kCipSymbolicPathUnknown;
+    stat.status = kCipStatusError;
+    return stat;
 }
