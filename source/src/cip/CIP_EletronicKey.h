@@ -1,9 +1,9 @@
-/*******************************************************************************
+/***********************************************************************************
  * Copyright (c) 2009, Rockwell Automation, Inc.
  * All rights reserved.
  *
- * (originally from ciptypes.h)
- ******************************************************************************/
+ * ( originally from ciptypes.h - Modified by Gabriel Ferreira (@gabrielcarvfer) )
+ **********************************************************************************/
 
 #ifndef CIP_ELETRONICKEY_H
 #define CIP_ELETRONICKEY_H
