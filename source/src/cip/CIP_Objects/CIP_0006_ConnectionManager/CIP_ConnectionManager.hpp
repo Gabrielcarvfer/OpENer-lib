@@ -9,7 +9,7 @@
 
 #include <map>
 #include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
-#include <cip/CIP_EletronicKey.h>
+#include <cip/CIP_ElectronicKey.hpp>
 #include "../../ciptypes.hpp"
 #include "../../connection/CIP_CommonPacket.hpp"
 #include "../template/CIP_Object.hpp"
@@ -211,7 +211,7 @@ public:
     CipUint t_to_o_network_connection_parameter;
     CipByte transport_type_class_trigger;
     CipUsint connection_path_size;
-    CIP_EletronicKey electronic_key;
+    CIP_ElectronicKey electronic_key;
     CipConnectionPath connection_path; // padded EPATH
     //todo: check with connection LinkObject link_object;
 
@@ -290,7 +290,7 @@ public:
      *    - EIP_OK ... on success
      *    - On an error the general status code to be put into the response
      */
-    CipStatus CheckElectronicKeyData(CipUsint key_format, CIP_EletronicKey::key_data_t * key_data, CipUint* extended_status);
+    CipStatus CheckElectronicKeyData(CipUsint key_format, CIP_ElectronicKey::key_data_t * key_data, CipUint* extended_status);
 
     /** @brief Parse the connection path of a forward open request
      *

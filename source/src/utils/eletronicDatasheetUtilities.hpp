@@ -1,5 +1,5 @@
 //
-//	Gabriel Ferreira (gabrielcarvfer)
+//	Gabriel Ferreira (@gabrielcarvfer)
 //
 
 #ifndef UTILS_ELETRONICDATASHEET_H

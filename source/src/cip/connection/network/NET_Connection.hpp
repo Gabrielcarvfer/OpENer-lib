@@ -1,5 +1,5 @@
 //
-// @author Gabriel Ferreira (gabrielcarvfer)
+// Created by Gabriel Ferreira (@gabrielcarvfer)
 //
 
 #ifndef OPENER_NET_CONNECTION_H

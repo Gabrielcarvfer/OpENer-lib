@@ -1,5 +1,5 @@
 //
-// @author Gabriel Ferreira (gabrielcarvfer)
+// Created by Gabriel Ferreira (@gabrielcarvfer)
 //
 #ifndef NET_CANINTERFACE_H
 #define NET_CANINTERFACE_H
