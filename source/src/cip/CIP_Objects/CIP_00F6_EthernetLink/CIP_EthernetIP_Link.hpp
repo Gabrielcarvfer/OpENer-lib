@@ -26,6 +26,35 @@ private:
         CipUsint physical_address[6];
     } CipEthernetLinkObject;
 
+    typedef union {
+        struct
+        {
+            CipUdint link_status:1;
+            CipUdint duplex:1; //1 if full, 0 if half
+            CipUdint negotiation_status:2;
+            CipUdint manual_setting_requires_reset:1;
+            CipUdint local_hardware_fault:1;
+            CipUdint reserved:26;
+        };
+        CipUdint value;
+    }interface_flags_t;
+
+    typedef enum {
+        interface_flag_linkStatus_inactive                   = 0,
+        interface_flag_linkStatus_active                     = 1,
+        interface_flag_duplex_half                           = 0,
+        interface_flag_duplex_full                           = 1,
+        interface_flag_negotiationStatus_autoInProgress      = 0,
+        interface_flag_negotiationStatus_autoFailed          = 1,
+        interface_flag_negotiationStatus_autoFailedSpeedDetected = 2,
+        interface_flag_negotiationStatus_autoSucceded        = 3,
+        interface_flag_negotiationStatus_autoNotAttempted    = 4,
+        interface_flag_manualSettingRequiresReset_no         = 0, // autonegotiate
+        interface_flag_manualSettingRequiresReset_yes        = 1, // requires that a reset service is issued
+        interface_flag_localHardwareFault_notDetected        = 0,
+        interface_flag_localHardwareFault_detected           = 1
+    } interface_flags_e;
+
     typedef struct {
         CipUdint In_octets;
         CipUdint In_ucast_packets;
@@ -55,8 +84,18 @@ private:
         CipUdint Mac_receive_errors;
     }media_counters_t;
 
+    typedef union
+    {
+        struct{
+            CipUint auto_negotiate:1;
+            CipUint forced_duplex_mode:1;
+            CipUint reserved:14;
+        };
+        CipUint value;
+    }interface_control_bits_t;
+
     typedef struct {
-        CipWord Control_bits;
+        interface_control_bits_t Control_bits;
         CipUint Forced_interface_speed;
     }interface_control_t;
 
@@ -66,23 +105,20 @@ private:
         kEthIPMultiplePortRev     = 3
     } ethip_link_revision_e;
 
-    typedef enum {
-        kEthIpFlagsLinkStatus                               = 0,
-        kEthIpFlagsHalfFullDuples                           = 1,
-        kEthIpFlagsNegotiationStatusAutoInProgress          = SET_BIT_N_TO_X (2,0),
-        kEthIpFlagsNegotiationStatusAutoFailed              = SET_BIT_N_TO_X (2,1),
-        kEthIpFlagsNegotiationStatusAutoFailedSpeedDetected = SET_BIT_N_TO_X (3,0),
-        kEthIpFlagsNegotiationStatusAutoSucess              = SET_BIT_N_TO_X (3,1),
-        kEthIpFlagsNegotiationStatusAutoNotAttempted        = SET_BIT_N_TO_X (4,1),
-        kEthIpFlagsManualSettingRequiresReset               = SET_BIT_N_TO_X (5,1),
-        kEthIpFlagsLocalHardwareFault                       = SET_BIT_N_TO_X (6,1)
-    } ethip_link_flags_e;
+
 
     typedef enum {
-        kEthIpControlBitsAutoNegotiationDisabled = SET_BIT_N_TO_X (0,0),
-        kEthIpControlBitsAutoNegotiationEnabled  = SET_BIT_N_TO_X (0,1),
-        kEthIpControlBitsForcedDuplexModeHalf    = SET_BIT_N_TO_X (1,0),
-        kEthIpControlBitsForcedDuplexModeFull    = SET_BIT_N_TO_X (1,1),
+        interface_control_autoNegotiationDisabled = 0,
+        interface_control_autoNegotiationEnabled  = 1,
+
+        //if autonegotiate = 0
+        //  forceDuplexMode = 0 indicate that half duplex should be used
+        //  forceDuplexMode = 1 indicate that full duplex should be used
+        //if autonegotiate = 1
+        // interfaces that dont support requested duplex results in GRC 0x09 (invalid attribute)
+        // forceDuplexMode = 1 results in GRC 0x0C (object state conflict)
+        interface_control_forceDuplexModeOff      = 0,
+        interface_control_forceDuplexModeOn       = 1,
     } ethip_control_bits_e;
 
     //Methods
@@ -91,7 +127,7 @@ private:
 
     //Instance attributes
     CipUdint Interface_speed;
-    CipDword Interface_flags;
+    interface_flags_t Interface_flags;
     CipUsint Physical_address[6];
     interface_counters_t Interface_counters;
     media_counters_t Media_counters;

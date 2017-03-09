@@ -1,5 +1,5 @@
 //
-// Created by Gabriel Ferreira on 06/03/2017.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 06/03/2017.
 //
 
 #include "CIP_ElectronicKey.hpp"

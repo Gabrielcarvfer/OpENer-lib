@@ -27,12 +27,14 @@ public:
         CipUdint starting_multicast_address; /**< Starting multicast address from which Num Mcast addresses are allocated */
     } multicast_address_configuration_t;
 
-    typedef struct {
+    typedef struct
+    {
         CipUint path_size;
         CipEpath padded_epath;
     }physical_link_object_t;
 
-    typedef struct {
+    typedef struct
+    {
         CipUdint ip_address;
         CipUdint network_mask;
         CipUdint gateway_address;
@@ -41,7 +43,8 @@ public:
         CipString domain_name;
     }interface_configuration_t;
 
-    typedef struct {
+    typedef struct
+    {
         CipUsint acd_activity;
         CipUsint remote_mac[6];
         CipUsint arp_pdu[28];
@@ -49,37 +52,59 @@ public:
 
     typedef enum
     {
-        //interface configuration status bits 3-0
-        not_configured               = 0x00,
-        valid_software_configuration = 0x01,
-        valid_hardware_configuration = 0x02,
+        not_configured = 0,
+        valid_software_configuration = 1,
+        valid_hardware_configuration = 2
+        //  3 (0x3) to 15 (0xF) is reserved
+    }instance_status_interface_configuration_status_e;
 
-        //other configuration
-        mcast_pending                   = SET_BIT_N_TO_X(4,1),
-        interface_configuration_pending = SET_BIT_N_TO_X(5,1),
-        acd_status                      = SET_BIT_N_TO_X(6,1)
-    }instance_status;
+    typedef union
+    {
+        struct
+        {
+            CipUdint interface_configuration_status:4;
+            CipUdint mcast_pending: 1;
+            CipUdint interface_configuration_pending:1;
+            CipUdint acd_status:1;
+            CipUdint reserved:25;
+        };
+        CipUdint value;
+    }instance_status_t;
 
-    typedef enum {
-        bootp_client                    = SET_BIT_N_TO_X(0,1),
-        dns_client                      = SET_BIT_N_TO_X(1,1),
-        dhcp_client                     = SET_BIT_N_TO_X(2,1),
-        dhcp_dns_update                 = SET_BIT_N_TO_X(3,1),
-        configuration_settable          = SET_BIT_N_TO_X(4,1),
-        hardware_configurable           = SET_BIT_N_TO_X(5,1),
-        interface_change_requires_reset = SET_BIT_N_TO_X(6,1),
-        acd_capable                     = SET_BIT_N_TO_X(7,1)
-    }configuration_capability_attributes;
+    typedef union {
+        struct
+        {
+            CipUdint bootp_client:1;
+            CipUdint dns_client:1;
+            CipUdint dhcp_client:1;
+            CipUdint dhcp_dns_update:1;
+            CipUdint configuration_settable:1;
+            CipUdint hardware_configurable:1;
+            CipUdint interface_change_requires_reset:1;
+            CipUdint acd_capable:1;
+            CipUdint reserved:24;
+        };
+        CipUdint value;
+    }configuration_capability_attributes_t;
 
     typedef enum {
         //configuration methods bits 3-0
-        statical_config = 0x00,
-        bootp_config    = 0x01,
-        dhcp_config     = 0x02,
+        statical_config = 0,
+        bootp_config    = 1,
+        dhcp_config     = 2
+        //  3 (0x3) to 15 (0xF) is reserved
+    }configuration_control_attributes_e;
 
-        //other configuration
-        dns_enable = SET_BIT_N_TO_X(4,1)
-    }configuration_control_attributes;
+    typedef union
+    {
+        struct
+        {
+            CipUdint configuration_method:4;
+            CipUdint dns_enable:1;
+            CipUdint reserved:27;
+        };
+        CipUdint value;
+    }configuration_control_attributes_t;
 
 
 
@@ -111,9 +136,9 @@ public:
 
 private:
     //Instance attributes
-    CipDword status;
-    CipDword configuration_capability;
-    CipDword configuration_control;
+    instance_status_t status;
+    configuration_capability_attributes_t configuration_capability;
+    configuration_control_attributes_t configuration_control;
     physical_link_object_t physical_link_object;
     interface_configuration_t interface_configuration;
     CipString host_name;

@@ -45,21 +45,29 @@ public:
      *  Transport 5 - nonblocking & fragmented
      *  Transport 6 - multicast & fragmented
      */
-    typedef enum {
+    typedef enum
+    {
         kConnectionTriggerTransportClass0 = 0,
         kConnectionTriggerTransportClass1 = 1,
         kConnectionTriggerTransportClass2 = 2,
         kConnectionTriggerTransportClass3 = 3,
         kConnectionTriggerTransportClass4 = 4,
         kConnectionTriggerTransportClass5 = 5,
-        kConnectionTriggerTransportClass6 = 6,
+        kConnectionTriggerTransportClass6 = 6
+    }connection_trigger_transport_class_e;
+
+    typedef enum
+    {
         kConnectionTriggerProductionTriggerCyclic         = 0,
         kConnectionTriggerProductionTriggerChangeOfState  = 1,
-        kConnectionTriggerProductionTriggerApplicationObj = 2,
-        kConnectionTriggerProductionTriggerMask           = SET_BIT_N_TO_X (4,1) | SET_BIT_N_TO_X (5,1) | SET_BIT_N_TO_X (6,1),
-        kConnectionTriggerDirectionClient                 = 0,
-        kConnectionTriggerDirectionServer                 = 1
-    } ConnectionTriggerType_e;
+        kConnectionTriggerProductionTriggerApplicationObj = 2
+    }connection_trigger_transport_production_e;
+
+    typedef enum
+    {
+        kConnectionTriggerDirectionClient = 0,
+        kConnectionTriggerDirectionServer = 1
+    }connection_trigger_transport_direction_e;
 
     typedef struct
     {

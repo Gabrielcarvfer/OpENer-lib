@@ -76,7 +76,8 @@ typedef unsigned long long MicroSeconds;
 /** @brief EIP stack status enum
  *
  */
-typedef enum {
+typedef enum
+{
     kCipStatusOk = 0, /**< Stack is ok */
     kCipStatusOkSend = 1, /**< Stack is ok, after send */
     kCipStatusError = -1 /**< Stack is in error */
@@ -84,11 +85,11 @@ typedef enum {
 
 class CipStatus
 {
-public:
-    CipStatus(CipUsint status=kCipStatusOk, CipUsint extended_status=0x00){status = status; extended_status = extended_status;};
-    ~CipStatus(){};
-    CipUsint status;
-    CipUdint extended_status;
+    public:
+        CipStatus(CipUsint status=kCipStatusOk, CipUsint extended_status=0x00){status = status; extended_status = extended_status;};
+        ~CipStatus(){};
+        CipUsint status;
+        CipUdint extended_status;
 };
 
 /** @brief Communication direction of an UDP socket; consuming is receiver,
@@ -96,7 +97,8 @@ public:
  *
  * These are used as array indexes, watch out if changing these values
  */
-typedef enum {
+typedef enum
+{
     kUdpCommuncationDirectionConsuming = 0, /**< Consuming direction; receiver */
     kUdpCommuncationDirectionProducing = 1 /**< Producing direction; sender */
 } UdpCommuncationDirection;
