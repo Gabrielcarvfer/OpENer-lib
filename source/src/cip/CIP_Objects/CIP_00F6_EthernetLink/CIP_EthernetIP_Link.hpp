@@ -20,13 +20,16 @@ public:
     CIP_TCPIP_Interface * associatedInterface;
 private:
     //Definitions
-    typedef struct {
+    typedef struct
+    {
         CipUdint interface_speed;
         CipUdint interface_flags;
         CipUsint physical_address[6];
     } CipEthernetLinkObject;
 
-    typedef union {
+    typedef union
+    {
+        CipUdint value;
         struct
         {
             CipUdint link_status:1;
@@ -35,8 +38,7 @@ private:
             CipUdint manual_setting_requires_reset:1;
             CipUdint local_hardware_fault:1;
             CipUdint reserved:26;
-        };
-        CipUdint value;
+        }bitfield_u;
     }interface_flags_t;
 
     typedef enum {
@@ -86,12 +88,12 @@ private:
 
     typedef union
     {
+        CipUint value;
         struct{
             CipUint auto_negotiate:1;
             CipUint forced_duplex_mode:1;
             CipUint reserved:14;
-        };
-        CipUint value;
+        }bitfield_u;
     }interface_control_bits_t;
 
     typedef struct {

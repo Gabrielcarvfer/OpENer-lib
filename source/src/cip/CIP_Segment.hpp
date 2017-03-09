@@ -9,7 +9,9 @@
 
 class CIP_Segment
 {
-    typedef enum {
+private:
+    typedef enum
+    {
         segtype_port_segment          = 0, //
         segtype_logical_segment       = 1, // Packed and padded epaths + electronic keys
         segtype_network_segment       = 2, // Specify network parameters to send messages through network
@@ -20,7 +22,8 @@ class CIP_Segment
         // 7 is reserved
     }segment_type_e;
 
-    typedef enum {
+    typedef enum
+    {
         logical_classid         = 0,
         logical_instanceid      = 1,
         logical_memberid        = 2,
@@ -31,14 +34,16 @@ class CIP_Segment
         // 7 is reserved
     }segment_logical_type_e;
 
-    typedef enum{
+    typedef enum
+    {
         logical_8bitaddress  = 0,
         logical_16bitaddress = 1,
         logical_32bitaddress = 2,
         // 3 is reserved
     }segment_logical_format_e;
 
-    typedef enum{
+    typedef enum
+    {
         //  0 to 15 (0xF) payload size is limited to a single byte
         //  0 is reserved
         network_schedule_segment  = 1, //C-2.1 Vol4
@@ -52,7 +57,8 @@ class CIP_Segment
         network_extended_segment = 31
     }segment_network_subtype_e;
 
-    typedef enum {
+    typedef enum
+    {
         data_simple_segment = 0,
         //  1 (0x01) to 16 (0x10) is reserved
         data_ansi_extended_segment = 17
@@ -61,6 +67,8 @@ class CIP_Segment
 
     typedef union
     {
+
+        CipUsint value;
         struct
         {
             CipUsint seg_type:3;   // look at segment_type_e
@@ -100,10 +108,10 @@ class CIP_Segment
                 //if data segment
                 CipUsint data_subtype:5;        // look at segment_data_subtype_e
             };
-        };
-        CipUsint value;
+        }bitfield_u;
     }segment_header_t;
 
+public:
     //Instance values
     segment_header_t segment_header;    // Specifies the Segment Type
     std::vector<CipUsint> segment_payload; // Contents of segment

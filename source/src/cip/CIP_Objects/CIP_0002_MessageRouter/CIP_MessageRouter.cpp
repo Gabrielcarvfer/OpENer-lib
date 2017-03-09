@@ -6,6 +6,8 @@
 
 //Includes
 #include <cip/ciptypes.hpp>
+#include <cip/CIP_Segment.hpp>
+#include <cip/CIP_ElectronicKey.hpp>
 #include "CIP_MessageRouter.hpp"
 
 //Static variables
@@ -225,9 +227,25 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
 {
     CipStatus stat;
 
-    //Process eletronic key segment (if exists)
+    CIP_Segment * segment = (CIP_Segment*)&request->request_data[0];
 
-    //Process network segment (if exists)
+    switch(segment->segment_header.bitfield_u.seg_type)
+    {
+        case CIP_Segment::segtype_logical_segment:
+            //Process eletronic key segment
+            CIP_ElectronicKey * key = (CIP_ElectronicKey*)&segment->segment_payload[0];
+            stat = key->validate_key ();
+            //check if return was ok and then proceed, or return error
+            break;
+        case CIP_Segment::segtype_network_segment:
+            //Process network segment
+            break;
+        default:
+            //the electronic key is optional, but i'm assuming it's obligatory on non network segment scenarios
+            //todo:return error
+            break;
+    }
+
 
     //Parse Epath
 

@@ -237,7 +237,7 @@ typedef struct
     CipUsint service;
     CipUsint request_path_size;
     CipEpath request_path;
-    std::vector<CipOctet> request_data;
+    std::vector<CipUsint> request_data;
 } CipMessageRouterRequest_t;
 
 /** @brief CIP Message Router Response
@@ -250,7 +250,7 @@ typedef struct
     CipUsint  general_status;            // One of the General Status codes listed in CIP Specification Volume 1, Appendix B
     CipUsint  size_additional_status;    // Number of additional 16 bit words in Additional Status Array
     CipUint*  additional_status;         // Array of 16 bit words; If SizeOfAdditionalStatus is 0. there is no Additional Status
-    std::vector<CipOctet> response_data; // Array of octet; Response data per object definition from request
+    std::vector<CipUsint> response_data; // Array of octet; Response data per object definition from request
 } CipMessageRouterResponse_t;
 
 

@@ -71,7 +71,9 @@ public:
         CipUdint value;
     }instance_status_t;
 
-    typedef union {
+    typedef union
+    {
+        CipUdint value;
         struct
         {
             CipUdint bootp_client:1;
@@ -83,11 +85,11 @@ public:
             CipUdint interface_change_requires_reset:1;
             CipUdint acd_capable:1;
             CipUdint reserved:24;
-        };
-        CipUdint value;
+        }bitfield_u;
     }configuration_capability_attributes_t;
 
-    typedef enum {
+    typedef enum
+    {
         //configuration methods bits 3-0
         statical_config = 0,
         bootp_config    = 1,
@@ -97,13 +99,14 @@ public:
 
     typedef union
     {
+
+        CipUdint value;
         struct
         {
             CipUdint configuration_method:4;
             CipUdint dns_enable:1;
             CipUdint reserved:27;
-        };
-        CipUdint value;
+        }bitfield_u;
     }configuration_control_attributes_t;
 
 
