@@ -199,10 +199,9 @@ typedef struct
  */
 typedef struct
 {
-    CipUsint path_size;
-    // Size of the Path in 16-bit words */ /* TODO: Fix, should be UINT(EIP_UINT16)
-    CipUint class_id; // Class ID of the linked object */
-    CipUint instance_number; // Requested Instance Number of the linked object */
+    CipUsint path_size;        // Size of the Path in 16-bit words TODO: Fix, should be UINT(EIP_UINT16)
+    CipUint class_id;         // Class ID of the linked object */
+    CipUint instance_number;  // Requested Instance Number of the linked object */
     CipUint attribute_number; // Requested Attribute Number of the linked object */
 } CipEpath;
 

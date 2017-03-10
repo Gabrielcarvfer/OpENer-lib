@@ -4,6 +4,15 @@
 
 #include "CIP_Connection_LinkProducer.hpp"
 
+CIP_Connection_LinkProducer::CIP_Connection_LinkProducer()
+{
+
+}
+CIP_Connection_LinkProducer::~CIP_Connection_LinkProducer ()
+{
+
+}
+
 //Class services
 
 CipStatus CIP_Connection_LinkProducer::Init()
@@ -24,8 +33,8 @@ CipStatus CIP_Connection_LinkProducer::Create()
 
     CIP_Connection_LinkProducer *instance = new CIP_Connection_LinkProducer();
     //Chapter 3-4.4 vol 1
-    instance->InsertAttribute( 1, kCipUsint, &State        , kGetableSingleAndAll);
-    instance->InsertAttribute( 2, kCipUint , &Connection_id, kGetableSingleAndAll);
+    instance->InsertAttribute( 1, kCipUsint, &instance->State        , kGetableSingleAndAll);
+    instance->InsertAttribute( 2, kCipUint , &instance->Connection_id, kGetableSingleAndAll);
 
     object_Set.emplace(object_Set.size(), instance);
 
@@ -42,6 +51,12 @@ CipStatus CIP_Connection_LinkProducer::Delete(CIP_Connection_LinkProducer * link
 
 //Instance services
 CipStatus CIP_Connection_LinkProducer::Send()
+{
+
+}
+
+
+CipStatus CIP_Connection_LinkProducer::InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)
 {
 
 }

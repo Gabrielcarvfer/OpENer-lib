@@ -4,6 +4,7 @@
  *
  ******************************************************************************/
 #include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
+#include <cip/ciptypes.hpp>
 #include "CIP_CommonPacket.hpp"
 #include "../CIP_Common.hpp"
 #include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
@@ -70,50 +71,52 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
         OPENER_TRACE_ERR("notifyConnectedCPF: error from createCPFstructure\n");
         return return_value.status;
     }
-    else
+
+    // For connected explicit messages status always has to be 0
+    return_value.status = kCipStatusError;
+
+    // check if ConnectedAddressItem received, otherwise it is no connected message and should not be here
+    if (common_packet_data.address_item.type_id != kCipItemIdConnectionAddress)
     {
-        // For connected explicit messages status always has to be 0
-        return_value.status = kCipStatusError;
-
-        // check if ConnectedAddressItem received, otherwise it is no connected message and should not be here
-        if (common_packet_data.address_item.type_id != kCipItemIdConnectionAddress)
-        {
-            OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_nullptr\n");
-            return return_value.status;
-        }
-
-        // ConnectedAddressItem item
-        CIP_Connection* connection_object = CIP_ConnectionManager::GetConnectedObject(common_packet_data.address_item.data.connection_identifier);
-        if (nullptr == connection_object)
-        {
-            OPENER_TRACE_ERR("notifyConnectedCPF: connection with given ID could not be found\n");
-            return return_value.status;
-        }
-
-        // reset the watchdog timer
-        connection_object->inactivity_watchdog_timer = (connection_object->o_to_t_requested_packet_interval / 1000)
-                << (2 + connection_object->connection_timeout_multiplier);
-
-        //TODO check connection id  and sequence count
-        if (common_packet_data.data_item.type_id != kCipItemIdConnectedDataItem)
-        {
-            /* wrong data item detected*/
-            OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_UNCONNECTEDMESSAGE\n");
-            return return_value.status;
-        }
-
-        // connected data item received
-        CipUsint* pnBuf = common_packet_data.data_item.data;
-        common_packet_data.address_item.data.sequence_number = (CipUdint)NET_Endianconv::GetIntFromMessage(&pnBuf);
-        return_value = CIP_MessageRouter::NotifyMR(pnBuf, common_packet_data.data_item.length - 2);
-
-        if (return_value.status != kCipStatusError)
-        {
-            common_packet_data.address_item.data.connection_identifier = connection_object->CIP_produced_connection_id;
-            return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data,reply_buffer);
-        }
-
+        OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_nullptr\n");
+        return return_value.status;
     }
+
+    // ConnectedAddressItem item
+    CIP_ConnectionManager* connection_manager_object = CIP_ConnectionManager::GetConnectionManagerObject(common_packet_data.address_item.data.connection_identifier);
+    if (nullptr == connection_manager_object)
+    {
+        OPENER_TRACE_ERR("notifyConnectedCPF: connection with given ID could not be found\n");
+        return return_value.status;
+    }
+
+    // reset the watchdog timer
+    connection_manager_object->inactivity_watchdog_timer = (connection_manager_object->o_to_t_requested_packet_interval / 1000)
+            << (2 + connection_manager_object->connection_timeout_multiplier);
+
+    //TODO check connection id  and sequence count
+    if (common_packet_data.data_item.type_id != kCipItemIdConnectedDataItem)
+    {
+        /* wrong data item detected*/
+        OPENER_TRACE_ERR("notifyConnectedCPF: got something besides the expected CIP_ITEM_ID_UNCONNECTEDMESSAGE\n");
+        return return_value.status;
+    }
+
+    // connected data item received
+    CipUsint* pnBuf = common_packet_data.data_item.data;
+    common_packet_data.address_item.data.sequence_number = (CipUdint)NET_Endianconv::GetIntFromMessage(&pnBuf);
+    return_value = CIP_MessageRouter::NotifyMR(pnBuf, common_packet_data.data_item.length - 2);
+
+    if (return_value.status != kCipStatusError)
+    {
+        CIP_Connection * connection_object =
+                connection_manager_object->producing_instance->id == common_packet_data.address_item.data.connection_identifier
+                ? connection_manager_object->producing_instance : connection_manager_object->consuming_instance;
+
+        common_packet_data.address_item.data.connection_identifier = connection_object->CIP_produced_connection_id;
+        return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
+    }
+
     return return_value.status;
 }
 
@@ -325,8 +328,8 @@ int CIP_CommonPacket::EncodeDataItemData(PacketFormat* common_packet_format_data
 }
 
 int CIP_CommonPacket::EncodeConnectedDataItemLength(CipMessageRouterResponse_t* message_router_response, CipUsint** message, int size)
-{
-    size += NET_Endianconv::AddIntToMessage((CipUint)(message_router_response->data_length + 4 + 2 + (2 * message_router_response->size_additional_status)), message);
+{//todo:recheck
+    size += NET_Endianconv::AddIntToMessage((CipUint)(message_router_response->size_additional_status + 4 + 2 + (2 * message_router_response->size_additional_status)), message);
     return size;
 }
 
@@ -379,16 +382,17 @@ int CIP_CommonPacket::EncodeExtendedStatus(int size, CipUsint** message, CipMess
 
 int CIP_CommonPacket::EncodeUnconnectedDataItemLength(int size, CipMessageRouterResponse_t* message_router_response, CipUsint** message)
 {
-    // Unconnected Item
-    size += NET_Endianconv::AddIntToMessage((CipUint)(message_router_response->data_length + 4 + (2 * message_router_response->size_additional_status)), message);
+    // Unconnected Item //todo:recheck
+    size += NET_Endianconv::AddIntToMessage((CipUint)(message_router_response->size_additional_status + 4 + (2 * message_router_response->size_additional_status)), message);
     return size;
 }
 
 int CIP_CommonPacket::EncodeMessageRouterResponseData(int size, CipMessageRouterResponse_t* message_router_response, CipUsint** message)
 {
-    for (int i = 0; i < message_router_response->data_length; i++)
+    //todo:recheck
+    for (int i = 0; i < message_router_response->size_additional_status; i++)
     {
-        size += NET_Endianconv::AddSintToMessage((message_router_response->data)[i], &*message);
+        size += NET_Endianconv::AddSintToMessage((message_router_response->additional_status)[i], &*message);
     }
     return size;
 }

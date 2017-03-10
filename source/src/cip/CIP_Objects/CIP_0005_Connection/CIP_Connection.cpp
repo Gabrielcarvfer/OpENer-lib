@@ -45,25 +45,25 @@ CipStatus CIP_Connection::Create()
 {
     CIP_Connection *instance = new CIP_Connection();
     //Chapter 3-4.4 vol 1
-    instance->InsertAttribute( 1, kCipUsint, &State                                 , kGetableSingleAndAll);
-    instance->InsertAttribute( 2, kCipUsint, &Instance_type                         , kGetableSingleAndAll);
-    instance->InsertAttribute( 3, kCipByte , &TransportClass_trigger                , kGetableSingleAndAll);
-    instance->InsertAttribute( 4, kCipUint , &DeviceNet_produced_connection_id      , kGetableSingleAndAll);
-    instance->InsertAttribute( 5, kCipUint , &DeviceNet_consumed_connection_id      , kGetableSingleAndAll);
-    instance->InsertAttribute( 6, kCipByte , &DeviceNet_initial_comm_characteristics, kGetableSingleAndAll);
-    instance->InsertAttribute( 7, kCipUint , &Produced_connection_size              , kGetableSingleAndAll);
-    instance->InsertAttribute( 8, kCipUint , &Consumed_connection_size              , kGetableSingleAndAll);
-    instance->InsertAttribute( 9, kCipUint , &Expected_packet_rate                  , kGetableSingleAndAll);
-    instance->InsertAttribute(10, kCipUdint, &CIP_produced_connection_id            , kGetableSingleAndAll);
-    instance->InsertAttribute(11, kCipUdint, &CIP_consumed_connection_id            , kGetableSingleAndAll);
-    instance->InsertAttribute(12, kCipUsint, &Watchdog_timeout_action               , kGetableSingleAndAll);
-    instance->InsertAttribute(13, kCipUint , &Produced_connection_path_length       , kGetableSingleAndAll);
-    instance->InsertAttribute(14, kCipEpath, &Produced_connection_path              , kGetableSingleAndAll);
-    instance->InsertAttribute(15, kCipUint , &Consumed_connection_path_length       , kGetableSingleAndAll);
-    instance->InsertAttribute(16, kCipEpath, &Consumed_connection_path              , kGetableSingleAndAll);
-    instance->InsertAttribute(17, kCipUint , &Production_inhibit_time               , kGetableSingleAndAll);
-    instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier         , kGetableSingleAndAll);
-    instance->InsertAttribute(19, kCipUdint, &Connection_binding_list               , kGetableSingleAndAll);
+    instance->InsertAttribute( 1, kCipUsint, &instance->State                                 , kGetableSingleAndAll);
+    instance->InsertAttribute( 2, kCipUsint, &instance->Instance_type                         , kGetableSingleAndAll);
+    instance->InsertAttribute( 3, kCipByte , &instance->TransportClass_trigger                , kGetableSingleAndAll);
+    instance->InsertAttribute( 4, kCipUint , &instance->DeviceNet_produced_connection_id      , kGetableSingleAndAll);
+    instance->InsertAttribute( 5, kCipUint , &instance->DeviceNet_consumed_connection_id      , kGetableSingleAndAll);
+    instance->InsertAttribute( 6, kCipByte , &instance->DeviceNet_initial_comm_characteristics, kGetableSingleAndAll);
+    instance->InsertAttribute( 7, kCipUint , &instance->Produced_connection_size              , kGetableSingleAndAll);
+    instance->InsertAttribute( 8, kCipUint , &instance->Consumed_connection_size              , kGetableSingleAndAll);
+    instance->InsertAttribute( 9, kCipUint , &instance->Expected_packet_rate                  , kGetableSingleAndAll);
+    instance->InsertAttribute(10, kCipUdint, &instance->CIP_produced_connection_id            , kGetableSingleAndAll);
+    instance->InsertAttribute(11, kCipUdint, &instance->CIP_consumed_connection_id            , kGetableSingleAndAll);
+    instance->InsertAttribute(12, kCipUsint, &instance->Watchdog_timeout_action               , kGetableSingleAndAll);
+    instance->InsertAttribute(13, kCipUint , &instance->Produced_connection_path_length       , kGetableSingleAndAll);
+    instance->InsertAttribute(14, kCipEpath, &instance->Produced_connection_path              , kGetableSingleAndAll);
+    instance->InsertAttribute(15, kCipUint , &instance->Consumed_connection_path_length       , kGetableSingleAndAll);
+    instance->InsertAttribute(16, kCipEpath, &instance->Consumed_connection_path              , kGetableSingleAndAll);
+    instance->InsertAttribute(17, kCipUint , &instance->Production_inhibit_time               , kGetableSingleAndAll);
+    instance->InsertAttribute(18, kCipUsint, &instance->Connection_timeout_multiplier         , kGetableSingleAndAll);
+    instance->InsertAttribute(19, kCipUdint, &instance->Connection_binding_list               , kGetableSingleAndAll);
 
 
     object_Set.emplace(object_Set.size(), instance);
@@ -173,7 +173,6 @@ CipStatus CIP_Connection::ProducingLookup(CipEpath producing_application_path, C
     const CIP_Connection * obj_ptr;
 
     //Check every connection to check out if active and producing
-    CipUint k;
     for (unsigned int i = 0; i < j; i++)
     {
         obj_ptr = GetInstance(i);
@@ -182,7 +181,7 @@ CipStatus CIP_Connection::ProducingLookup(CipEpath producing_application_path, C
             if (strcmp(producing_application_path, obj_ptr->Produced_connection_path) == 0)
             {
                 (*instance_count)++;
-                connection_instance_list->push_back(k = obj_ptr->id);
+                connection_instance_list->push_back (obj_ptr);
             }
         }
     }
@@ -254,13 +253,13 @@ CipStatus CIP_Connection::Behaviour()
         case kConnectionTypeExplicit:
             //If explicit connection
             //check direction
-            switch (TransportClass_trigger.direction)
+            switch (TransportClass_trigger.bitfield_u.direction)
             {
                 case kConnectionTriggerDirectionServer:
                     //todo: fix placeholders
                     CipByte * last_msg_ptr, *recv_data_ptr, recv_data_len;
                     CipNotification notification;
-                    switch (TransportClass_trigger.transport_class)
+                    switch (TransportClass_trigger.bitfield_u.transport_class)
                     {
                         case kConnectionTriggerTransportClass0:
                             //Link_consumer consumes a message and then notifies application
@@ -295,10 +294,10 @@ CipStatus CIP_Connection::Behaviour()
                     }
                     break;
                 case kConnectionTriggerDirectionClient:
-                    switch (TransportClass_trigger.transport_class)
+                    switch (TransportClass_trigger.bitfield_u.transport_class)
                     {
                         case kConnectionTriggerTransportClass0:
-                            switch(TransportClass_trigger.production_trigger)
+                            switch(TransportClass_trigger.bitfield_u.production_trigger)
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;
@@ -312,7 +311,7 @@ CipStatus CIP_Connection::Behaviour()
                             }
                             break;
                         case kConnectionTriggerTransportClass1:
-                            switch(TransportClass_trigger.production_trigger)
+                            switch(TransportClass_trigger.bitfield_u.production_trigger)
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;
@@ -326,7 +325,7 @@ CipStatus CIP_Connection::Behaviour()
                             }
                             break;
                         case kConnectionTriggerTransportClass2:
-                            switch(TransportClass_trigger.production_trigger)
+                            switch(TransportClass_trigger.bitfield_u.production_trigger)
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;
@@ -340,7 +339,7 @@ CipStatus CIP_Connection::Behaviour()
                             }
                             break;
                         case kConnectionTriggerTransportClass3:
-                            switch(TransportClass_trigger.production_trigger)
+                            switch(TransportClass_trigger.bitfield_u.production_trigger)
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;

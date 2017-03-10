@@ -147,13 +147,14 @@ class CIP_Object
 
     virtual CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)=0;
 
+    //Instance stuff
+    int id;
     protected:
         //Class stuff
         static T * class_ptr;
         static std::map<CipUdint, const T *> object_Set;
 
-        //Instance stuff
-        int id;
+
 };
 
 #include "CIP_Object_impl.hpp"

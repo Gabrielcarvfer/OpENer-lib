@@ -6,6 +6,7 @@
 
 #include "CIP_ConnectionManager.hpp"
 #include <cstring>
+#include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
 #include "../../connection/CIP_Class3Connection.hpp"
 #include "../CIP_0001_Identity/CIP_Identity.hpp"
 #include "../../connection/CIP_IOConnection.hpp"
@@ -105,42 +106,42 @@ CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_ConnectionMana
     {
         return kCipStatusError;
     }
-    else
+
+    // check if connected address item or sequenced address item  received, otherwise it is no connected message and should not be here
+    if ((CIP_CommonPacket::common_packet_data.address_item.type_id == CIP_CommonPacket::kCipItemIdConnectionAddress) || (CIP_CommonPacket::common_packet_data.address_item.type_id == CIP_CommonPacket::kCipItemIdSequencedAddressItem))
     {
-        // check if connected address item or sequenced address item  received, otherwise it is no connected message and should not be here
-        if ((CIP_CommonPacket::common_packet_data.address_item.type_id == CIP_CommonPacket::kCipItemIdConnectionAddress) || (CIP_CommonPacket::common_packet_data.address_item.type_id == CIP_CommonPacket::kCipItemIdSequencedAddressItem))
+        // found connected address item or found sequenced address item -> for now the sequence number will be ignored
+        if (CIP_CommonPacket::common_packet_data.data_item.type_id == CIP_CommonPacket::kCipItemIdConnectedDataItem)
         {
-            // found connected address item or found sequenced address item -> for now the sequence number will be ignored
-            if (CIP_CommonPacket::common_packet_data.data_item.type_id == CIP_CommonPacket::kCipItemIdConnectedDataItem)
+            // connected data item received
+            //CIP_ConnectionManager *connection_object = GetConnectedObject (CIP_CommonPacket::common_packet_data.address_item.data.connection_identifier);
+            //if (connection_object == nullptr)
+            //    return kCipStatusError;
+
+            // only handle the data if it is coming from the originator
+            if (((struct sockaddr_in*)(connection_object->netConn->originator_address))->sin_addr.s_addr == from_address->sin_addr.s_addr)
             {
-                // connected data item received
-                //CIP_ConnectionManager *connection_object = GetConnectedObject (CIP_CommonPacket::common_packet_data.address_item.data.connection_identifier);
-                //if (connection_object == nullptr)
-                //    return kCipStatusError;
-
-                // only handle the data if it is coming from the originator
-                if (((struct sockaddr_in*)(connection_object->netConn->originator_address))->sin_addr.s_addr == from_address->sin_addr.s_addr)
+                if (SEQ_GT32(CIP_CommonPacket::common_packet_data.address_item.data.sequence_number, connection_manager_instance->eip_level_sequence_count_consuming))
                 {
-                    if (SEQ_GT32(CIP_CommonPacket::common_packet_data.address_item.data.sequence_number, connection_manager_instance->eip_level_sequence_count_consuming))
-                    {
-                        // reset the watchdog timer
-                        connection_manager_instance->inactivity_watchdog_timer
-                                = (connection_manager_instance->o_to_t_requested_packet_interval / 1000)
-                                << (2 + connection_manager_instance->connection_timeout_multiplier);
+                    // reset the watchdog timer
+                    connection_manager_instance->inactivity_watchdog_timer
+                            = (connection_manager_instance->o_to_t_requested_packet_interval / 1000)
+                            << (2 + connection_manager_instance->connection_timeout_multiplier);
 
-                        // only inform assembly object if the sequence counter is greater or equal
-                        connection_manager_instance->eip_level_sequence_count_consuming = CIP_CommonPacket::common_packet_data.address_item.data.sequence_number;
+                    // only inform assembly object if the sequence counter is greater or equal
+                    connection_manager_instance->eip_level_sequence_count_consuming = CIP_CommonPacket::common_packet_data.address_item.data.sequence_number;
 
-                        //TODO: fix handles per IO Type
-                        //return HandleReceivedIoConnectionData (CIP_CommonPacket::common_packet_data.data_item.data, CIP_CommonPacket::common_packet_data.data_item.length);
-                    }
-                } else
-                {
-                    OPENER_TRACE_WARN("Connected Message Data Received with wrong address information\n");
+                    //TODO: fix handles per IO Type
+                    //return HandleReceivedIoConnectionData (CIP_CommonPacket::common_packet_data.data_item.data, CIP_CommonPacket::common_packet_data.data_item.length);
                 }
+            }
+            else
+            {
+                OPENER_TRACE_WARN("Connected Message Data Received with wrong address information\n");
             }
         }
     }
+
     return kCipStatusOk;
 }
 
@@ -303,7 +304,8 @@ void CIP_ConnectionManager::GeneralConnectionConfiguration (CIP_ConnectionManage
     connection_instance->Expected_packet_rate = 0; // default value
 
     // Client Type Connection requested
-    if ((connection_manager_instance->transport_type_class_trigger & 0x80) == 0x00)
+    if (connection_manager_instance->consuming_instance->TransportClass_trigger.bitfield_u.direction
+        == CIP_Connection::kConnectionTriggerDirectionClient)
     {
         connection_instance->Expected_packet_rate = (CipUint) ((connection_manager_instance->t_to_o_requested_packet_interval) / 1000);
         // As soon as we are ready we should produce the connection. With the 0 here we will produce with the next timer tick which should be sufficient.
@@ -421,7 +423,8 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
         {
             // we have a consuming connection check inactivity watchdog timer or all sever connections have to maintain an inactivity watchdog timer
             if ( (0 != connection_manager_instance->consuming_instance)
-                ||  (connection_manager_instance->transport_type_class_trigger & 0x80) )
+                ||  (connection_manager_instance->consuming_instance->TransportClass_trigger.bitfield_u.direction
+                     == CIP_Connection::kConnectionTriggerDirectionClient) )
             {
                 connection_manager_instance->inactivity_watchdog_timer -= elapsed_time;
                 if (connection_manager_instance->inactivity_watchdog_timer <= 0)
@@ -439,8 +442,8 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
                 if ((connection_instance->Expected_packet_rate != 0)
                     && (kEipInvalidSocket != connection_instance->netConn->sock)) // only produce for the master connection
                 {
-                    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic
-                        != (connection_manager_instance->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
+                    if (connection_manager_instance->producing_instance->TransportClass_trigger.bitfield_u.production_trigger
+                        != CIP_Connection::kConnectionTriggerProductionTriggerCyclic)
                     {
                         // non cyclic connections have to decrement production inhibit timer
                         if (0 <= connection_manager_instance->production_inhibit_timer)
@@ -460,8 +463,8 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
                         }
                         // reload the timer value
                         connection_manager_instance->transmission_trigger_timer = connection_instance->Expected_packet_rate;
-                        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic
-                            != (connection_manager_instance->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
+                        if (connection_manager_instance->producing_instance->TransportClass_trigger.bitfield_u.production_trigger
+                                != CIP_Connection::kConnectionTriggerProductionTriggerCyclic)
                         {
                             // non cyclic connections have to reload the production inhibit timer
                             connection_manager_instance->production_inhibit_timer = connection_manager_instance->production_inhibit_time;
@@ -662,13 +665,31 @@ CIP_Connection *CIP_ConnectionManager::GetConnectedObject (CipUdint connection_i
 
     for (unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size (); i++)
     {
-        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];
+        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];//todo: fix
 
         if (active_connection_object_list_item->State == CIP_Connection::kConnectionStateEstablished)
         {
             if (active_connection_object_list_item->CIP_consumed_connection_id == connection_id)
                 return active_connection_object_list_item;
         }
+    }
+    return nullptr;
+}
+
+CIP_ConnectionManager *CIP_ConnectionManager::GetConnectionManagerObject (CipUdint connection_id)
+{
+    CIP_ConnectionManager *active_connection_manager;
+
+    for (unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size (); i++)
+    {
+        active_connection_manager = (CIP_ConnectionManager*)active_connections_set[i];
+
+        if (CIP_Connection::GetInstanceNumber(active_connection_manager->producing_instance) == connection_id)
+            return active_connection_manager;
+
+        if (CIP_Connection::GetInstanceNumber(active_connection_manager->consuming_instance) == connection_id)
+            return active_connection_manager;
+
     }
     return nullptr;
 }
@@ -737,51 +758,52 @@ CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, Ci
         *extended_status = kConnectionManagerStatusCodeErrorVendorIdOrProductcodeError;
         return kCipStatusError;
     }
+
+
+    // VendorID and ProductCode are correct
+
+    // Check DeviceType, must match or 0
+    if ((key_data->device_type != CIP_Identity::device_type_) && (key_data->device_type != 0))
+    {
+        *extended_status = kConnectionManagerStatusCodeErrorDeviceTypeError;
+        return kCipStatusError;
+    }
+
+
+    // VendorID, ProductCode and DeviceType are correct
+
+    if (!compatiblity_mode)
+    {
+        // Major = 0 is valid
+        if (0 == key_data->major_revision)
+        {
+            return (kCipStatusOk);
+        }
+
+        // Check Major / Minor Revision, Major must match, Minor match or 0
+        if ((key_data->major_revision != CIP_Identity::revision_.major_revision) || ((key_data->minor_revision != CIP_Identity::revision_.minor_revision) && (key_data->minor_revision != 0)))
+        {
+            *extended_status = kConnectionManagerStatusCodeErrorRevisionMismatch;
+            return kCipStatusError;
+        }
+    }
     else
     {
-        // VendorID and ProductCode are correct
+        // Compatibility mode is set
 
-        // Check DeviceType, must match or 0
-        if ((key_data->device_type != CIP_Identity::device_type_) && (key_data->device_type != 0))
+        // Major must match, Minor != 0 and <= MinorRevision
+        if ((key_data->major_revision == CIP_Identity::revision_.major_revision) && (key_data->minor_revision > 0) && (key_data->minor_revision <= CIP_Identity::revision_.minor_revision))
         {
-            *extended_status = kConnectionManagerStatusCodeErrorDeviceTypeError;
-            return kCipStatusError;
+            return (kCipStatusOk);
         }
         else
         {
-            // VendorID, ProductCode and DeviceType are correct
-
-            if (!compatiblity_mode)
-            {
-                // Major = 0 is valid
-                if (0 == key_data->major_revision)
-                {
-                    return (kCipStatusOk);
-                }
-
-                // Check Major / Minor Revision, Major must match, Minor match or 0
-                if ((key_data->major_revision != CIP_Identity::revision_.major_revision) || ((key_data->minor_revision != CIP_Identity::revision_.minor_revision) && (key_data->minor_revision != 0)))
-                {
-                    *extended_status = kConnectionManagerStatusCodeErrorRevisionMismatch;
-                    return kCipStatusError;
-                }
-            } else
-            {
-                // Compatibility mode is set
-
-                // Major must match, Minor != 0 and <= MinorRevision
-                if ((key_data->major_revision == CIP_Identity::revision_.major_revision) && (key_data->minor_revision > 0) && (key_data->minor_revision <= CIP_Identity::revision_.minor_revision))
-                {
-                    return (kCipStatusOk);
-                }
-                else
-                {
-                    *extended_status = kConnectionManagerStatusCodeErrorRevisionMismatch;
-                    return kCipStatusError;
-                }
-            } // end if CompatiblityMode handling
+            *extended_status = kConnectionManagerStatusCodeErrorRevisionMismatch;
+            return kCipStatusError;
         }
-    }
+    } // end if CompatiblityMode handling
+
+
 
     return (*extended_status == kConnectionManagerStatusCodeSuccess) ? kCipStatusOk : kCipStatusError;
 }
@@ -844,7 +866,8 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
             {
                 return kCipErrorConnectionFailure;
             }
-        } else
+        }
+        else
         {
             OPENER_TRACE_INFO("no key\n");
         }
@@ -1143,6 +1166,6 @@ CipStatus CIP_ConnectionManager::InstanceServices(int service,
     //Instance services
     else
     {
-	return kCipStatusError;
+	    return kCipStatusError;
     }
 }

@@ -231,13 +231,15 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
 
     switch(segment->segment_header.bitfield_u.seg_type)
     {
-        case CIP_Segment::segtype_logical_segment:
+        case (CIP_Segment::segtype_logical_segment):
+        {
             //Process eletronic key segment
-            CIP_ElectronicKey * key = (CIP_ElectronicKey*)&segment->segment_payload[0];
+            CIP_ElectronicKey *key = (CIP_ElectronicKey *) &segment->segment_payload[0];
             stat = key->validate_key ();
             //check if return was ok and then proceed, or return error
             break;
-        case CIP_Segment::segtype_network_segment:
+        }
+        case (CIP_Segment::segtype_network_segment):
             //Process network segment
             break;
         default:
@@ -246,18 +248,30 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
             break;
     }
 
-
-    //Parse Epath
-
     //Find registered class/CIP_Object
+    if (registered_objects.find(request->request_path.class_id) == registered_objects.end())
+    {
+        //todo: class not registered, return error
+    }
+
+    CIP_Object * ptr = (CIP_Object*)registered_objects.at(request->request_path.class_id);
 
     //Pick the instance of CIP_Object
+    if(ptr->GetInstance (request->request_path.instance_number) == nullptr)
+    {
+        //todo: instance doesnt exist, return error
+    }
+
+    CIP_Object * instance = (CIP_Object*)ptr->GetInstance (request->request_path.instance_number);
 
     //Routes service to specified object
+    //todo: check if service exists and then execute, else return error
+    stat = instance->InstanceServices (request->service, request, response);
 
-    //Interpret service directed to it
+    //Interpret service directed to it (??)
 
     //Routes response back to originator
+    //todo: return message to sender
 }
 
 CipStatus CIP_MessageRouter::symbolic_translation(CipEpath *symbolic_epath, CipEpath *logical_epath)

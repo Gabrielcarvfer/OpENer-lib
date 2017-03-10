@@ -15,18 +15,20 @@ class CIP_Connection : public CIP_Object<CIP_Connection>
 {
 public:
     /** @brief States of a connection */
-    typedef enum {
-        kConnectionStateNonExistent = 0,
-        kConnectionStateConfiguring = 1,
+    typedef enum
+    {
+        kConnectionStateNonExistent    = 0,
+        kConnectionStateConfiguring    = 1,
         kConnectionStateWaitingForConnectionId = 2, // only used in DeviceNet
-        kConnectionStateEstablished = 3,
-        kConnectionStateTimedOut = 4,
+        kConnectionStateEstablished    = 3,
+        kConnectionStateTimedOut       = 4,
         kConnectionStateDeferredDelete = 5, // only used in DeviceNet
-        kConnectionStateClosing = 6
+        kConnectionStateClosing        = 6
     } ConnectionState;
 
 /** @brief instance_type attributes */
-    typedef enum {
+    typedef enum
+    {
         kConnectionTypeExplicit = 0x00,
         kConnectionTypeIo = 0x01,
         kConnectionTypeBridged = 0x02
@@ -69,22 +71,22 @@ public:
         kConnectionTriggerDirectionServer = 1
     }connection_trigger_transport_direction_e;
 
-    typedef struct
+    typedef union
     {
-        union
+        CipUsint val;
+        struct
         {
-            struct
-            {
-                CipUsint transport_class    : 4;
-                CipUsint production_trigger : 3;
-                CipUsint direction          : 1;
-            };
-            CipUsint val;
-        };
+            CipUsint transport_class    : 4;
+            CipUsint production_trigger : 3;
+            CipUsint direction          : 1;
+        }bitfield_u;
+
+
     } ConnectionTriggerType_t;
 
 /** @brief Possible values for the watch dog time out action of a connection */
-    typedef enum {
+    typedef enum
+    {
         kWatchdogTimeoutActionTransitionToTimedOut = 0, // invalid for explicit message connections
         kWatchdogTimeoutActionAutoDelete = 1, // Default for explicit message connections, default for I/O connections on EIP
         kWatchdogTimeoutActionAutoReset = 2, // Invalid for explicit message connections

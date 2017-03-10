@@ -9,7 +9,7 @@
 
 class CIP_Segment
 {
-private:
+public:
     typedef enum
     {
         segtype_port_segment          = 0, //
@@ -111,7 +111,6 @@ private:
         }bitfield_u;
     }segment_header_t;
 
-public:
     //Instance values
     segment_header_t segment_header;    // Specifies the Segment Type
     std::vector<CipUsint> segment_payload; // Contents of segment

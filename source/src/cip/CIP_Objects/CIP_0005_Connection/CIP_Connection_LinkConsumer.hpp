@@ -11,6 +11,9 @@
 class CIP_Connection_LinkConsumer : public CIP_Object<CIP_Connection_LinkConsumer>
 {
 public:
+    CIP_Connection_LinkConsumer();
+    ~CIP_Connection_LinkConsumer ();
+
     //Class services
     static CipStatus Init();
     static CipStatus Create();
@@ -29,6 +32,9 @@ public:
 
     //Instance services
     CipStatus Receive();
+
+    private:
+        CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response);
 
 };
 

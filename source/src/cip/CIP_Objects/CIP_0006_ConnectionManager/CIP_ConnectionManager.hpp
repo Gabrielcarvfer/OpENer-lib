@@ -109,6 +109,7 @@ public:
      *           0 .. connection not present in device
      */
     static CIP_Connection* GetConnectedObject(CipUdint connection_id);
+    static CIP_ConnectionManager* GetConnectionManagerObject(CipUdint connection_id);
 
     /**  Get a connection object for a given output assembly.
      *
@@ -177,10 +178,10 @@ public:
      * data can not be accessed with CIP means.
      */
 
-    typedef struct {
+    typedef struct
+    {
         CipUint NumconnEntries;
         CipBool ConnOpenBits[32];//todo: get size from connection max_instances
-
     }connection_entry_list_t;
 
     //CIP Attributes
@@ -209,7 +210,6 @@ public:
     CipUint o_to_t_network_connection_parameter;
     CipUdint t_to_o_requested_packet_interval;
     CipUint t_to_o_network_connection_parameter;
-    CipByte transport_type_class_trigger;
     CipUsint connection_path_size;
     CIP_ElectronicKey electronic_key;
     CipConnectionPath connection_path; // padded EPATH
