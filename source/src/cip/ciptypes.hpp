@@ -194,16 +194,34 @@ typedef struct
     CipByte* string; // Pointer to the string data */
 } CipString;
 
-/** @brief Struct for padded EPATHs
+/** @brief Class for padded EPATHs
  *
  */
-typedef struct
+class CipEpath
 {
-    CipUsint path_size;        // Size of the Path in 16-bit words TODO: Fix, should be UINT(EIP_UINT16)
+public:
+    CipUsint path_size;       // Size of the Path in 16-bit words TODO: Fix, should be UINT(EIP_UINT16)
     CipUint class_id;         // Class ID of the linked object */
     CipUint instance_number;  // Requested Instance Number of the linked object */
     CipUint attribute_number; // Requested Attribute Number of the linked object */
-} CipEpath;
+
+    static bool check_if_equal(CipEpath* path0, CipEpath* path1)
+    {
+        if (path0->path_size != path1->path_size)
+            return false;
+
+        if (path0->class_id != path1-> class_id)
+            return false;
+
+        if (path0->instance_number != path1->instance_number)
+            return false;
+
+        if (path0->attribute_number != path1->attribute_number)
+            return false;
+
+        return true;
+    }
+};
 
 /** @brief CIP Connection Path
  *

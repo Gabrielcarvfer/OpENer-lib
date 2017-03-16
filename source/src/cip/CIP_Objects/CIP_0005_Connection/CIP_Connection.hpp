@@ -11,6 +11,9 @@
 #include <vector>
 #include <cip/connection/network/NET_Connection.hpp>
 
+
+#define MAX_BOUND_CONN 10
+
 class CIP_Connection : public CIP_Object<CIP_Connection>
 {
 public:
@@ -84,6 +87,12 @@ public:
 
     } ConnectionTriggerType_t;
 
+    typedef struct
+    {
+        CipUint num_connections;
+        std::vector<CipUint> connections_list;
+    }connection_binding_list_t;
+
 /** @brief Possible values for the watch dog time out action of a connection */
     typedef enum
     {
@@ -112,7 +121,7 @@ public:
     CipEpath Consumed_connection_path;
     CipUint Production_inhibit_time;
     CipUsint Connection_timeout_multiplier;
-    std::vector<CipUint> Connection_binding_list;
+    connection_binding_list_t Connection_binding_list;
 
     //Links
     CIP_Connection_LinkConsumer * Link_consumer;
@@ -130,7 +139,7 @@ public:
 
 
     static CipStatus Bind(CipUint bound_instances[2]);
-    static CipStatus ProducingLookup(CipEpath producing_application_path, CipUint *instance_count, std::vector<CipUint> connection_instance_list[]);
+    static CipStatus ProducingLookup(CipEpath * producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list);
     static CipStatus SafetyClose();
     static CipStatus SafetyOpen();
 

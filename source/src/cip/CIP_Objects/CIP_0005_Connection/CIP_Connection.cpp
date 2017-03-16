@@ -98,11 +98,12 @@ CipStatus CIP_Connection::GetAttributeSingle()
 CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
 {
     CipStatus status;
-    if (GetInstance(bound_instances[0]) != nullptr
-        | GetInstance(bound_instances[1]) != nullptr)
+    const CIP_Connection * conn0, * conn1;
+    if ( (conn0 = GetInstance(bound_instances[0])) == nullptr
+         | (conn1 = GetInstance(bound_instances[1])) == nullptr)
     {
 
-        //One or both connections dont exist
+        //One or both connections don't exist
         status.extended_status = 0x01;
         status.status = kCipErrorResourceUnavailable;
         return status;
@@ -110,7 +111,8 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
 
     //if both connections exist, then
     //check if there are resources to bound
-    if ()
+    if (conn0->Connection_binding_list.num_connections == MAX_BOUND_CONN
+         | conn1->Connection_binding_list.num_connections == MAX_BOUND_CONN)
     {
         //Class or instance out of resources to bind
         status.extended_status = 0x02;
@@ -118,8 +120,8 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
         return status;
     }
 
-    if (GetInstance(bound_instances[0])->State != kConnectionStateEstablished
-        | GetInstance(bound_instances[1])->State != kConnectionStateEstablished)
+    if (conn0->State != kConnectionStateEstablished
+        | conn1->State != kConnectionStateEstablished)
     {
         //Both instances exist, but at least one is not in Established state
         status.extended_status = 0x01;
@@ -127,8 +129,7 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
         return status;
     }
 
-
-    if (bound_instances[0] == bound_instances[1])
+    if (conn0 == conn1)
     {
         //Both connections are the same
         status.extended_status = 0x01;
@@ -137,7 +138,8 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
     }
 
     //check if one or both instances are not dynamically created I/O conn
-    if ()
+    //todo: allow I/O conn created statically
+    if (false)
     {
         //At least one connection is not dynamically created
         status.extended_status = 0x01;
@@ -146,7 +148,8 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
     }
 
     //check if connections are created internaly and device prevent bind
-    if ()
+    //todo: fix this
+    if (false)
     {
         //Device prevent binding
         status.extended_status = 0x02;
@@ -155,33 +158,35 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
     }
 
     //all checks passed
-    status.status=kCipStatusOk;
+    status.status = kCipStatusOk;
     return status;
 
 }
 
-CipStatus CIP_Connection::ProducingLookup(CipEpath producing_application_path, CipUint *instance_count, std::vector<CipUint> connection_instance_list[])
+CipStatus CIP_Connection::ProducingLookup(CipEpath *producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list)
 {
-    int j;
+    CipUdint j;
     CipStatus status;
-    if ( ( j = object_Set.size() ) < 1)
+    
+    if ( ( j = (CipUdint) object_Set.size() ) < 1)
     {
         status.status = 0x02;
         status.extended_status = 0x01;
         return status;
     }
-    const CIP_Connection * obj_ptr;
+    
+    CIP_Connection * conn;
 
     //Check every connection to check out if active and producing
-    for (unsigned int i = 0; i < j; i++)
+    for (CipUdint i = 0; i < j; i++)
     {
-        obj_ptr = GetInstance(i);
-        if (obj_ptr->is_active & obj_ptr->is_producing)
+        conn = (CIP_Connection*)GetInstance(i);
+        if (conn->State == kConnectionStateEstablished)
         {
-            if (strcmp(producing_application_path, obj_ptr->Produced_connection_path) == 0)
+            if (CipEpath::check_if_equal (producing_application_path, &conn->Produced_connection_path))
             {
                 (*instance_count)++;
-                connection_instance_list->push_back (obj_ptr);
+                connection_instance_list->push_back (conn->id);
             }
         }
     }
@@ -278,14 +283,14 @@ CipStatus CIP_Connection::Behaviour()
                             // and then delivers the message to the application, that checks for dupes and then do something
                             Link_consumer->Receive();
                             Link_producer->Send();
-                            CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
+                            //todo: fix CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
                             break;
                         case kConnectionTriggerTransportClass3:
                             //Link_consumer consumes a message, then check for dupes and notify the application, that
                             // tells the connection to produce a message with Link_producer, and then send it
                             Link_consumer->Receive();
                             check_for_duplicate(last_msg_ptr, recv_data_ptr) ? notification = kCipNotificationDuplicate : notification = kCipNotificationReceived;
-                            CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
+                            //todo: fix CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
                             break;
                         default:
                             //Unknown transport class, return error
