@@ -8,7 +8,7 @@
 #include <iostream>
 #include "CIP_Common.hpp"
 #include "connection/CIP_CommonPacket.hpp"
-#include "CIP_Appcontype.hpp"
+#include "CIP_AppConnType.hpp"
 #include "connection/network/NET_Endianconv.hpp"
 #include "CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
@@ -59,7 +59,7 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
 void CIP_Common::ShutdownCipStack (void)
 {
     /* First close all connections */
-    CIP_Appcontype::CloseAllConnections ();
+    CIP_AppConnType::CloseAllConnections ();
 
     /*clean the data needed for the assembly object's attribute 3*/
     CIP_Assembly::ShutdownAssemblies ();

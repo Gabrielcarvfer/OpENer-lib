@@ -7,7 +7,7 @@
 //Includes
 #include <cstring>
 #include "../../trace.hpp"
-#include "../CIP_Appcontype.hpp"
+#include "cip/CIP_AppConnType.hpp"
 #include "CIP_IOConnection.hpp"
 #include "network/NET_Endianconv.hpp"
 #include "network/NET_NetworkHandler.hpp"

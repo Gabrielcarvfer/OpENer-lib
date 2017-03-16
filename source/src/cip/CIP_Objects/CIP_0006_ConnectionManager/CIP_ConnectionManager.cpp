@@ -8,11 +8,12 @@
 #include <cstring>
 #include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
 #include <cip/ciptypes.hpp>
+#include <cip/CIP_Segment.hpp>
 #include "../../connection/CIP_Class3Connection.hpp"
 #include "../CIP_0001_Identity/CIP_Identity.hpp"
 #include "../../connection/CIP_IOConnection.hpp"
 #include "../../connection/network/NET_Endianconv.hpp"
-#include "../../CIP_Appcontype.hpp"
+#include "cip/CIP_AppConnType.hpp"
 
 
 #define CIP_CONN_TYPE_MASK 0x6000 /**< Bit mask filter on bit 13 & 14 */
@@ -81,7 +82,7 @@ CipStatus CIP_ConnectionManager::Init ()
     if (number_of_instances == 0)
     {
         CIP_Class3conn::InitializeClass3ConnectionData();
-        CIP_Appcontype::InitializeIoConnectionData();
+        CIP_AppConnType::InitializeIoConnectionData();
 
         class_id = kCipConnectionManagerClassCode;
         class_name = "Connection Manager";
@@ -234,7 +235,7 @@ CipStatus CIP_ConnectionManager::ForwardOpen (CIP_Connection * connection_object
 
     //todo: fix transport_type_class_trigger = &message_router_request->request_data[0]++;
     //check if the trigger type value is ok
-    if (0x40 & transport_type_class_trigger)
+    if (0x40 & producing_instance->TransportClass_trigger.bitfield_u.production_trigger)
     {
         return AssembleForwardOpenResponse ( connection_object,
                                              message_router_response,
@@ -737,12 +738,12 @@ CIP_ConnectionManager *CIP_ConnectionManager::CheckForExistingConnection (CIP_Co
     return nullptr;
 }
 
-CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, CipKeyData *key_data, CipUint *extended_status)
+CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, CIP_ElectronicKey *key_data, CipUint *extended_status)
 {
-    CipByte compatiblity_mode = (CipByte) (key_data->major_revision & 0x80);
+    CipByte compatiblity_mode = (CipByte) (key_data->data.major_revision & 0x80);
 
     // Remove compatibility bit
-    key_data->major_revision &= 0x7F;
+    key_data->data.major_revision &= 0x7F;
 
     // Default return value
     *extended_status = kConnectionManagerStatusCodeSuccess;
@@ -755,7 +756,8 @@ CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, Ci
     }
 
     // Check VendorID and ProductCode, must match, or 0
-    if (((key_data->vendor_id != CIP_Identity::vendor_id_) && (key_data->vendor_id != 0)) || ((key_data->product_code != CIP_Identity::product_code_) && (key_data->product_code != 0)))
+    if (((key_data->data.vendor_id != CIP_Identity::vendor_id_) && (key_data->data.vendor_id != 0))
+        || ((key_data->data.product_code != CIP_Identity::product_code_) && (key_data->data.product_code != 0)))
     {
         *extended_status = kConnectionManagerStatusCodeErrorVendorIdOrProductcodeError;
         return kCipStatusError;
@@ -765,7 +767,7 @@ CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, Ci
     // VendorID and ProductCode are correct
 
     // Check DeviceType, must match or 0
-    if ((key_data->device_type != CIP_Identity::device_type_) && (key_data->device_type != 0))
+    if ((key_data->data.device_type != CIP_Identity::device_type_) && (key_data->data.device_type != 0))
     {
         *extended_status = kConnectionManagerStatusCodeErrorDeviceTypeError;
         return kCipStatusError;
@@ -777,13 +779,14 @@ CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, Ci
     if (!compatiblity_mode)
     {
         // Major = 0 is valid
-        if (0 == key_data->major_revision)
+        if (0 == key_data->data.major_revision)
         {
             return (kCipStatusOk);
         }
 
         // Check Major / Minor Revision, Major must match, Minor match or 0
-        if ((key_data->major_revision != CIP_Identity::revision_.major_revision) || ((key_data->minor_revision != CIP_Identity::revision_.minor_revision) && (key_data->minor_revision != 0)))
+        if ((key_data->data.major_revision != CIP_Identity::revision_.major_revision)
+            || ((key_data->data.minor_revision != CIP_Identity::revision_.minor_revision) && (key_data->data.minor_revision != 0)))
         {
             *extended_status = kConnectionManagerStatusCodeErrorRevisionMismatch;
             return kCipStatusError;
@@ -794,8 +797,8 @@ CipStatus CIP_ConnectionManager::CheckElectronicKeyData (CipUsint key_format, Ci
         // Compatibility mode is set
 
         // Major must match, Minor != 0 and <= MinorRevision
-        if ((key_data->major_revision == CIP_Identity::revision_.major_revision)
-            && (key_data->minor_revision > 0) && (key_data->minor_revision <= CIP_Identity::revision_.minor_revision))
+        if ((key_data->data.major_revision == CIP_Identity::revision_.major_revision)
+            && (key_data->data.minor_revision > 0) && (key_data->data.minor_revision <= CIP_Identity::revision_.minor_revision))
         {
             return (kCipStatusOk);
         }
@@ -849,15 +852,27 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
             }
 
             // logical electronic key found
-            electronic_key.segment_type = 0x34;
+            electronic_key.segment_header.bitfield_u.seg_type = CIP_Segment::segtype_logical_segment;
+            electronic_key.segment_header.bitfield_u.logical_u.logical_format = CIP_Segment::logical_special;
+            electronic_key.segment_header.bitfield_u.logical_u.logical_type = CIP_Segment::logical_8bitaddress;
+            electronic_key.segment_payload.reserve(5); //electronic_key.segment_type = 0x34;
             message++;
-            electronic_key.key_format = *message++;
-            electronic_key.key_data.vendor_id = NET_Endianconv::GetIntFromMessage (message);
-            electronic_key.key_data.device_type = NET_Endianconv::GetIntFromMessage (message);
-            electronic_key.key_data.product_code = NET_Endianconv::GetIntFromMessage (message);
-            electronic_key.key_data.major_revision = *message++;
-            electronic_key.key_data.minor_revision = *message++;
-            remaining_path_size -= 5; //length of the electronic key
+
+            CIP_ElectronicKey * key = (CIP_ElectronicKey*)&electronic_key.segment_payload[0];
+            key->key_format = *message++;
+
+            key->data.vendor_id = NET_Endianconv::GetIntFromMessage (message);
+            message += 2;
+
+            key->data.device_type = NET_Endianconv::GetIntFromMessage (message);
+            message += 2;
+
+            key->data.product_code = NET_Endianconv::GetIntFromMessage (message);
+            message += 2;
+
+            key->data.major_revision = *message++;
+            key->data.minor_revision = *message++;
+
             OPENER_TRACE_INFO("key: ven ID %d, dev type %d, prod code %d, major %d, minor %d\n",
                               connection_object->electronic_key.key_data.vendor_id,
                               connection_object->electronic_key.key_data.device_type,
@@ -865,7 +880,7 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
                               connection_object->electronic_key.key_data.major_revision,
                               connection_object->electronic_key.key_data.minor_revision);
 
-            if (kCipStatusOk != CheckElectronicKeyData (electronic_key.key_format, &(electronic_key.key_data), extended_error).status)
+            if (kCipStatusOk != CheckElectronicKeyData (key->key_format, key, extended_error).status)
             {
                 return kCipErrorConnectionFailure;
             }
@@ -934,7 +949,8 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
             OPENER_TRACE_INFO("no config data\n");
         }
 
-        if (0x03 == (transport_type_class_trigger & 0x03))
+        if (producing_instance->TransportClass_trigger.bitfield_u.transport_class
+            == CIP_Connection::kConnectionTriggerTransportClass3)
         {
             //we have Class 3 connection
             if (remaining_path_size > 0)
@@ -1031,7 +1047,8 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
                         break;
                         // TODO do we have to handle ANSI extended symbol data segments too?
                     case kProductionTimeInhibitTimeNetworkSegment:
-                        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
+                        if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic
+                            != producing_instance->TransportClass_trigger.bitfield_u.production_trigger)
                         {
                             // only non cyclic connections may have a production inhibit
                             production_inhibit_time = message[1];
@@ -1067,20 +1084,21 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
 void CIP_ConnectionManager::CloseConnection (CIP_ConnectionManager * connection_manager_instance)
 {
     CIP_Connection * connection_instance;
-    connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
+    connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (connection_manager_instance->id);
 
     connection_instance->State = CIP_Connection::kConnectionStateNonExistent;
-    if (0x03 != (connection_manager_instance->transport_type_class_trigger & 0x03))
+    if (connection_instance->TransportClass_trigger.bitfield_u.transport_class != CIP_Connection::kConnectionTriggerTransportClass3)
     {
         // only close the UDP connection for not class 3 connections
         //IApp_CloseSocket_udp (pa_pstConnObj->netConn->GetSocketHandle());
         //netConn->SetSocketHandle(kEipInvalidSocket);
         connection_instance->netConn->CloseSocket ();
     }
+    //todo: close all bounded connections
     RemoveFromActiveConnections (connection_manager_instance);
 }
 
-void CIP_ConnectionManager::CopyConnectionData (const CIP_Connection *pa_pstDst,const  CIP_Connection *pa_pstSrc)
+void CIP_ConnectionManager::CopyConnectionData (CIP_Connection *pa_pstDst,const  CIP_Connection *pa_pstSrc)
 {
     memcpy (pa_pstDst, pa_pstSrc, sizeof (CIP_Connection));
 }
@@ -1131,7 +1149,7 @@ CipStatus CIP_ConnectionManager::TriggerConnections (CipUdint pa_unOutputAssembl
             && (pa_unInputAssembly == pstRunner->connection_path.connection_point[1]))
         {
             if (CIP_Connection::kConnectionTriggerProductionTriggerApplicationObj
-                == (pstRunner->transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
+                == pstRunner->producing_instance->TransportClass_trigger.bitfield_u.production_trigger)
             {
                 // produce at the next allowed occurrence
                 pstRunner->transmission_trigger_timer = pstRunner->production_inhibit_timer;

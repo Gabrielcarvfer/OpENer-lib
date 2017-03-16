@@ -3,18 +3,18 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#include "CIP_Appcontype.hpp"
+#include "CIP_AppConnType.hpp"
 
 //Static variables
-CIP_Appcontype::ExclusiveOwnerConnection * CIP_Appcontype::g_exlusive_owner_connections;
+CIP_AppConnType::ExclusiveOwnerConnection * CIP_AppConnType::g_exlusive_owner_connections;
 
-CIP_Appcontype::InputOnlyConnection * CIP_Appcontype::g_input_only_connections;
+CIP_AppConnType::InputOnlyConnection * CIP_AppConnType::g_input_only_connections;
 
-CIP_Appcontype::ListenOnlyConnection * CIP_Appcontype::g_listen_only_connections;
+CIP_AppConnType::ListenOnlyConnection * CIP_AppConnType::g_listen_only_connections;
 
 //Methods
 
-void CIP_Appcontype::ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number,
+void CIP_AppConnType::ConfigureExclusiveOwnerConnectionPoint(unsigned int connection_number,
     unsigned int output_assembly, unsigned int input_assembly, unsigned int config_assembly)
 {
     if (OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS > connection_number)
@@ -25,7 +25,7 @@ void CIP_Appcontype::ConfigureExclusiveOwnerConnectionPoint(unsigned int connect
     }
 }
 
-void CIP_Appcontype::ConfigureInputOnlyConnectionPoint(unsigned int connection_number, unsigned int output_assembly, unsigned int input_assembly, unsigned int config_assembly)
+void CIP_AppConnType::ConfigureInputOnlyConnectionPoint(unsigned int connection_number, unsigned int output_assembly, unsigned int input_assembly, unsigned int config_assembly)
 {
     if (OPENER_CIP_NUM_INPUT_ONLY_CONNS > connection_number)
     {
@@ -35,7 +35,7 @@ void CIP_Appcontype::ConfigureInputOnlyConnectionPoint(unsigned int connection_n
     }
 }
 
-void CIP_Appcontype::ConfigureListenOnlyConnectionPoint(unsigned int connection_number,
+void CIP_AppConnType::ConfigureListenOnlyConnectionPoint(unsigned int connection_number,
     unsigned int output_assembly,
     unsigned int input_assembly,
     unsigned int config_assembly)
@@ -48,7 +48,7 @@ void CIP_Appcontype::ConfigureListenOnlyConnectionPoint(unsigned int connection_
     }
 }
 
-const  CIP_Connection* CIP_Appcontype::GetIoConnectionForConnectionData(const CIP_Connection* connection_object, CipUint* extended_error)
+const  CIP_Connection* CIP_AppConnType::GetIoConnectionForConnectionData(const CIP_Connection* connection_object, CipUint* extended_error)
 {
     const CIP_Connection* io_connection = nullptr;
     *extended_error = 0;
@@ -74,30 +74,30 @@ const  CIP_Connection* CIP_Appcontype::GetIoConnectionForConnectionData(const CI
                     }
                     else
                     {
-                        ((CIP_Connection*)connection_object)->Instance_type = CIP_Connection::kConnectionTypeIoListenOnly;
+                        ((CIP_Connection*)connection_object)->Instance_type = CIP_Connection::kConnectionTypeIo;//CIP_AppConnType::kAppConnTypeIoListenOnly;
                     }
                 }
             }
             else
             {
-                ((CIP_Connection*)connection_object)->Instance_type = CIP_Connection::kConnectionTypeIoInputOnly;
+                ((CIP_Connection*)connection_object)->Instance_type = CIP_Connection::kConnectionTypeIo; //CIP_AppConnType::kAppConnTypeIoInputOnly;
             }
         }
     }
     else
     {
-        ((CIP_Connection*)connection_object)->Instance_type = CIP_Connection::kConnectionTypeIoExclusiveOwner;
+        ((CIP_Connection*)connection_object)->Instance_type = CIP_Connection::kConnectionTypeIo; //CIP_AppConnType::kAppConnTypeIoExclusiveOwner;
     }
 
     if (nullptr != io_connection)
     {
-        CIP_ConnectionManager::CopyConnectionData(io_connection, connection_object);
+        CIP_ConnectionManager::CopyConnectionData((CIP_Connection*)io_connection, connection_object);
     }
 
     return io_connection;
 }
 
-const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error)
+const  CIP_Connection* CIP_AppConnType::GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error)
 {
     CIP_Connection* exclusive_owner_connection = nullptr;
     int i;
@@ -115,15 +115,14 @@ const  CIP_Connection* CIP_Appcontype::GetExclusiveOwnerConnection(const CIP_Con
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
                 break;
             }
-            exclusive_owner_connection = (g_exlusive_owner_connections[i]
-                                               .connection_data);
+            exclusive_owner_connection = (g_exlusive_owner_connections[i].connection_data);
             break;
         }
     }
     return exclusive_owner_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetInputOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
+const CIP_Connection* CIP_AppConnType::GetInputOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
 {
     CIP_Connection* input_only_connection = nullptr;
     int i, j;
@@ -145,7 +144,7 @@ const CIP_Connection* CIP_Appcontype::GetInputOnlyConnection(const CIP_Connectio
 
             for (j = 0; j < OPENER_CIP_NUM_INPUT_ONLY_CONNS_PER_CON_PATH; j++)
             {
-                if (CIP_ConnectionManager::kConnectionStateNonExistent == g_input_only_connections[i].connection_data[j].state)
+                if (CIP_Connection::kConnectionStateNonExistent == g_input_only_connections[i].connection_data[j].State)
                 {
                     return (&g_input_only_connections[i].connection_data[j]);
                 }
@@ -157,12 +156,12 @@ const CIP_Connection* CIP_Appcontype::GetInputOnlyConnection(const CIP_Connectio
     return input_only_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetListenOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
+const CIP_Connection* CIP_AppConnType::GetListenOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error)
 {
     CIP_Connection* listen_only_connection = nullptr;
     int i, j;
 
-    if (CIP_ConnectionManager::kRoutingTypeMulticastConnection != (connection_object->t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
+    if (CIP_ConnectionManager::kRoutingTypeMulticastConnection != connection_object->t_to_o_network_connection_parameter)
     {
         /* a listen only connection has to be a multicast connection. */
         *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened; /* maybe not the best error message however there is no suitable definition in the cip spec */
@@ -192,7 +191,7 @@ const CIP_Connection* CIP_Appcontype::GetListenOnlyConnection(const CIP_Connecti
 
             for (j = 0; j < OPENER_CIP_NUM_LISTEN_ONLY_CONNS_PER_CON_PATH; j++)
             {
-                if (CIP_ConnectionManager::kConnectionStateNonExistent == g_listen_only_connections[i].connection_data[j].state)
+                if (CIP_Connection::kConnectionStateNonExistent == g_listen_only_connections[i].connection_data[j].State)
                 {
                     return &g_listen_only_connections[i].connection_data[j];
                 }
@@ -204,7 +203,7 @@ const CIP_Connection* CIP_Appcontype::GetListenOnlyConnection(const CIP_Connecti
     return listen_only_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetExistingProducerMulticastConnection(CipUdint input_point)
+const CIP_Connection* CIP_AppConnType::GetExistingProducerMulticastConnection(CipUdint input_point)
 {
     const CIP_Connection* producer_multicast_connection;
 
@@ -212,7 +211,7 @@ const CIP_Connection* CIP_Appcontype::GetExistingProducerMulticastConnection(Cip
     {
         producer_multicast_connection = CIP_ConnectionManager::active_connections_set[i];
 
-        if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == producer_multicast_connection->Instance_type) || (CIP_Connection::kConnectionTypeIoInputOnly   == producer_multicast_connection->Instance_type))
+        if ((CIP_Connection::kConnectionTypeIo; //CIP_AppConnType::kAppConnTypeIoExclusiveOwner == producer_multicast_connection->Instance_type) || (CIP_Connection::kConnectionTypeIo; //CIP_AppConnType::kAppConnTypeIoInputOnly   == producer_multicast_connection->Instance_type))
         {
             if ((input_point == producer_multicast_connection->connection_path.connection_point[1])
                 && (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (producer_multicast_connection->t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
@@ -228,7 +227,7 @@ const CIP_Connection* CIP_Appcontype::GetExistingProducerMulticastConnection(Cip
     return producer_multicast_connection;
 }
 
-const CIP_Connection* CIP_Appcontype::GetNextNonControlMasterConnection(CipUdint input_point)
+const CIP_Connection* CIP_AppConnType::GetNextNonControlMasterConnection(CipUdint input_point)
 {
     CIP_Connection* next_non_control_master_connection;
 
@@ -236,8 +235,8 @@ const CIP_Connection* CIP_Appcontype::GetNextNonControlMasterConnection(CipUdint
     {
         next_non_control_master_connection = (CIP_Connection*)CIP_ConnectionManager::active_connections_set[i];
 
-        if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == next_non_control_master_connection->Instance_type)
-            || (CIP_Connection::kConnectionTypeIoInputOnly == next_non_control_master_connection->Instance_type))
+        if ((CIP_Connection::kConnectionTypeIo; //CIP_AppConnType::kAppConnTypeIoExclusiveOwner == next_non_control_master_connection->Instance_type)
+            || (CIP_Connection::kConnectionTypeIo; //CIP_AppConnType::kAppConnTypeIoInputOnly == next_non_control_master_connection->Instance_type))
         {
             if ((input_point == next_non_control_master_connection->connection_path.connection_point[1])
                 && (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (next_non_control_master_connection->t_to_o_network_connection_parameter
@@ -254,56 +253,56 @@ const CIP_Connection* CIP_Appcontype::GetNextNonControlMasterConnection(CipUdint
     return next_non_control_master_connection;
 }
 
-void CIP_Appcontype::CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_ConnectionManager::ConnectionType Instance_type)
+void CIP_AppConnType::CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_Connection::ConnectionType Instance_type)
 {
-    const CIP_Connection* connection;
+    const CIP_ConnectionManager* connection_manager;
     const CIP_Connection* connection_to_delete;
 
     for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        connection = CIP_ConnectionManager::active_connections_set[i];
+        connection_manager = CIP_ConnectionManager::active_connections_set[i];
 
-        if ((Instance_type == connection->Instance_type) && (input_point == connection->connection_path.connection_point[1]))
+        if ((Instance_type == connection_manager->Instance_type) && (input_point == connection_manager->connection_path.connection_point[1]))
         {
 
-            //TODO:CheckIoConnectionEvent(connection->connection_path.connection_point[0], connection->connection_path.connection_point[1], kIoConnectionEventClosed);
+            //TODO:CheckIoConnectionEvent(connection_manager->connection_path.connection_point[0], connection_manager->connection_path.connection_point[1], kIoConnectionEventClosed);
 
             /* FIXME check if this is ok */
             //connection_to_delete->connection_close_function(connection_to_delete);
-            ((CIP_Connection*)connection)->CloseConnection (); /*will remove the connection from the active connection list */
+            ((CIP_Connection*)connection_manager)->CloseConnection (); /*will remove the connection from the active connection list */
         }
     }
 }
 
-void CIP_Appcontype::CloseAllConnections(void)
+void CIP_AppConnType::CloseAllConnections(void)
 {
-    const  CIP_Connection* connection;
+    CIP_ConnectionManager* connection_manager;
     for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        connection = CIP_ConnectionManager::active_connections_set[i];
+        connection_manager = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set[i];
         /*FIXME check if m_pfCloseFunc would be suitable*/
-        ((CIP_Connection*)connection)->CloseConnection();
+        ((CIP_Connection*)connection_manager)->CloseConnection();
         /* Close connection will remove the connection from the list therefore we
      * need to get again the start until there is no connection left
      */
     }
 }
 
-CipBool CIP_Appcontype::ConnectionWithSameConfigPointExists(CipUdint config_point)
+CipBool CIP_AppConnType::ConnectionWithSameConfigPointExists(CipUdint config_point)
 {
-    CIP_Connection* connection;
+    CIP_Connection* connection_manager;
     for(unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
     {
-        connection = (CIP_Connection*)CIP_ConnectionManager::active_connections_set[i];
+        connection_manager = (CIP_Connection*)CIP_ConnectionManager::active_connections_set[i];
 
-        if (config_point == connection->connection_path.connection_point[2]) {
+        if (config_point == connection_manager->connection_path.connection_point[2]) {
             break;
         }
     }
-    return (CipBool) (nullptr != connection);
+    return (CipBool) (nullptr != connection_manager);
 }
 
-void CIP_Appcontype::InitializeIoConnectionData(void)
+void CIP_AppConnType::InitializeIoConnectionData(void)
 {
     g_exlusive_owner_connections = new ExclusiveOwnerConnection[OPENER_CIP_NUM_EXLUSIVE_OWNER_CONNS]();
 

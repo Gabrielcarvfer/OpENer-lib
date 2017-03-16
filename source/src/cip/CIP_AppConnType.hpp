@@ -11,10 +11,19 @@
 #include "ciptypes.hpp"
 #include "../opener_user_conf.hpp"
 
-class CIP_Appcontype;
-class CIP_Appcontype : public CIP_Object<CIP_Appcontype>
+class CIP_AppConnType;
+class CIP_AppConnType : public CIP_Object<CIP_AppConnType>
 {
 public:
+
+    typedef enum
+    {
+        kAppConnTypeListenOnly,
+        kAppConnTypeInputOnly,
+        kAppConnTypeExclusiveOwner,
+        kAppConnTypeRedundantOwner
+    }AppConnType_type_e;
+
     static void InitializeIoConnectionData (void);
 
 /** @brief check if for the given connection data received in a forward_open request
