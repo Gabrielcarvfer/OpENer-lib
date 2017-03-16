@@ -13,11 +13,9 @@ NET_Endianconv::OpENerEndianess NET_Endianconv::g_opENer_platform_endianess;
  *   @param buffer pointer where data should be read.
  *   @return EIP_UINT8 data value
  */
-CipUsint NET_Endianconv::GetSintFromMessage(CipUsint** buffer)
+CipUsint NET_Endianconv::GetSintFromMessage(CipUsint* buffer)
 {
-    unsigned char* buffer_address = *buffer;
-    CipUint data = buffer_address[0];
-    *buffer += 1;
+    CipUint data = buffer[0];
     return (CipUsint) data;
 }
 
@@ -28,11 +26,10 @@ CipUsint NET_Endianconv::GetSintFromMessage(CipUsint** buffer)
  *   @param buffer pointer where data should be reed.
  *   @return EIP_UINT16 data value
  */
-CipUint NET_Endianconv::GetIntFromMessage(CipUsint** buffer)
+CipUint NET_Endianconv::GetIntFromMessage(CipUsint* buffer)
 {
-    unsigned char* buffer_address = *buffer;
-    CipUint data = buffer_address[0] | buffer_address[1] << 8;
-    *buffer += 2;
+    CipUint data = *(CipUint*)buffer; // for Little endian only
+    // = buffer[0] | buffer[1] << 8;
     return data;
 }
 
@@ -41,11 +38,10 @@ CipUint NET_Endianconv::GetIntFromMessage(CipUsint** buffer)
  *   @param buffer pointer where data should be reed.
  *   @return EIP_UNÍT32 value
  */
-CipUdint NET_Endianconv::GetDintFromMessage(CipUsint** buffer)
+CipUdint NET_Endianconv::GetDintFromMessage(CipUsint* buffer)
 {
-    unsigned char* p = *buffer;
-    CipUdint data = p[0] | p[1] << 8 | p[2] << 16 | p[3] << 24;
-    *buffer += 4;
+    CipUdint data = *(CipUdint*)buffer; // for Little endian only
+    //buffer[0] | buffer[1] << 8 | buffer[2] << 16 | buffer[3] << 24;
     return data;
 }
 
@@ -54,12 +50,9 @@ CipUdint NET_Endianconv::GetDintFromMessage(CipUsint** buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int NET_Endianconv::AddSintToMessage(CipUsint data, CipUsint** buffer)
+int NET_Endianconv::AddSintToMessage(CipUsint data, CipUsint* buffer)
 {
-    unsigned char* p = *buffer;
-
-    p[0] = (unsigned char)data;
-    *buffer += 1;
+    buffer[0] = (unsigned char)data;
     return 1;
 }
 
@@ -68,13 +61,11 @@ int NET_Endianconv::AddSintToMessage(CipUsint data, CipUsint** buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int NET_Endianconv::AddIntToMessage(CipUint data, CipUsint** buffer)
+int NET_Endianconv::AddIntToMessage(CipUint data, CipUsint* buffer)
 {
-    unsigned char* p = *buffer;
-
-    p[0] = (unsigned char)data;
-    p[1] = (unsigned char)(data >> 8);
-    *buffer += 2;
+    *(CipUint*)buffer = data; //for Little endian only
+    //buffer[0] = (unsigned char)data;
+    //bugger[1] = (unsigned char)(data >> 8);
     return 2;
 }
 
@@ -83,16 +74,18 @@ int NET_Endianconv::AddIntToMessage(CipUint data, CipUsint** buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int NET_Endianconv::AddDintToMessage(CipUdint data, CipUsint** buffer)
+int NET_Endianconv::AddDintToMessage(CipUdint data, CipUsint* buffer)
 {
-    unsigned char* p = *buffer;
+    *(CipUdint*)buffer = data; //for Little endian only
 
+    /*
+    unsigned char* p = *buffer;
     p[0] = (unsigned char)data;
     p[1] = (unsigned char)(data >> 8);
     p[2] = (unsigned char)(data >> 16);
     p[3] = (unsigned char)(data >> 24);
     *buffer += 4;
-
+    */
     return 4;
 }
 
@@ -103,7 +96,7 @@ int NET_Endianconv::AddDintToMessage(CipUdint data, CipUsint** buffer)
  *   @param pa_buf pointer where data should be reed.
  *   @return CipUlint value
  */
-CipUlint UTIL_Endianconv::GetLintFromMessage(CipUsint** buffer)
+CipUlint UTIL_Endianconv::GetLintFromMessage(CipUsint* buffer)
 {
     CipUsint* buffer_address = *buffer;
     CipUlint data = ((((CipUlint)buffer_address[0]) << 56)
@@ -124,7 +117,7 @@ CipUlint UTIL_Endianconv::GetLintFromMessage(CipUsint** buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int UTIL_Endianconv::AddLintToMessage(CipUlint data, CipUsint** buffer)
+int UTIL_Endianconv::AddLintToMessage(CipUlint data, CipUsint* buffer)
 {
     CipUsint* buffer_address = *buffer;
     buffer_address[0] = (CipUsint)(data >> 56) & 0xFF;
@@ -172,18 +165,18 @@ int NET_Endianconv::GetEndianess()
     return g_opENer_platform_endianess;
 }
 
-void NET_Endianconv::MoveMessageNOctets(int amount_of_bytes_moved, CipOctet** message_runner)
+void NET_Endianconv::MoveMessageNOctets(int amount_of_bytes_moved, CipOctet* message_runner)
 {
-    (*message_runner) += amount_of_bytes_moved;
+    (message_runner) += amount_of_bytes_moved;
 }
 
-int NET_Endianconv::FillNextNMessageOctetsWith(CipOctet value, unsigned int amount_of_bytes_written, CipOctet** message)
+int NET_Endianconv::FillNextNMessageOctetsWith(CipOctet value, unsigned int amount_of_bytes_written, CipOctet* message)
 {
-    memset(*message, value, amount_of_bytes_written);
+    memset(message, value, amount_of_bytes_written);
     return amount_of_bytes_written;
 }
 
-int NET_Endianconv::FillNextNMessageOctetsWithValueAndMoveToNextPosition(CipOctet value, unsigned int amount_of_filled_bytes, CipOctet** message)
+int NET_Endianconv::FillNextNMessageOctetsWithValueAndMoveToNextPosition(CipOctet value, unsigned int amount_of_filled_bytes, CipOctet* message)
 {
     FillNextNMessageOctetsWith(value, amount_of_filled_bytes, message);
     MoveMessageNOctets(amount_of_filled_bytes, message);

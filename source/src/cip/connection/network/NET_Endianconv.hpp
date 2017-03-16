@@ -26,7 +26,7 @@ public:
  *   @param buffer pointer where data should be reed.
  *   @return EIP_UINT8 data value
  */
-    static CipUsint GetSintFromMessage (CipUsint **buffer);
+    static CipUsint GetSintFromMessage (CipUsint *buffer);
 
 /** @ingroup ENCAP
  *
@@ -34,7 +34,7 @@ public:
  * @param buffer Pointer to the network buffer array. This pointer will be incremented by 2!
  * @return Extracted 16 bit integer value
  */
-    static CipUint GetIntFromMessage (CipUsint **buffer);
+    static CipUint GetIntFromMessage (CipUsint *buffer);
 
 /** @ingroup ENCAP
  *
@@ -42,7 +42,7 @@ public:
  * @param buffer pointer to the network buffer array. This pointer will be incremented by 4!
  * @return Extracted 32 bit integer value
  */
-    static CipUdint GetDintFromMessage (CipUsint **buffer);
+    static CipUdint GetDintFromMessage (CipUsint *buffer);
 
 /** @ingroup ENCAP
  *
@@ -50,7 +50,7 @@ public:
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-    static  int AddSintToMessage (CipUsint data, CipUsint **buffer);
+    static  int AddSintToMessage (CipUsint data, CipUsint *buffer);
 
 /** @ingroup ENCAP
  *
@@ -60,7 +60,7 @@ public:
  *
  * @return Length in bytes of the encoded message
  */
-    static  int AddIntToMessage (CipUint data, CipUsint **buffer);
+    static  int AddIntToMessage (CipUint data, CipUsint *buffer);
 
 /** @ingroup ENCAP
  *
@@ -70,7 +70,7 @@ public:
  *
  * @return Length in bytes of the encoded message
  */
-    static  int AddDintToMessage (CipUdint data, CipUsint **buffer);
+    static  int AddDintToMessage (CipUdint data, CipUsint *buffer);
 
 #ifdef OPENER_SUPPORT_64BIT_DATATYPES
 
@@ -101,11 +101,11 @@ public:
  */
     static int GetEndianess (void);
 
-    static void MoveMessageNOctets (int n, CipOctet **message_runner);
+    static void MoveMessageNOctets (int n, CipOctet *message_runner);
 
-    static int FillNextNMessageOctetsWith (CipOctet value, unsigned int n, CipOctet **message);
+    static int FillNextNMessageOctetsWith (CipOctet value, unsigned int n, CipOctet *message);
 
-    static int FillNextNMessageOctetsWithValueAndMoveToNextPosition (CipOctet value, unsigned int n, CipOctet **message);
+    static int FillNextNMessageOctetsWithValueAndMoveToNextPosition (CipOctet value, unsigned int n, CipOctet *message);
 
 
 };

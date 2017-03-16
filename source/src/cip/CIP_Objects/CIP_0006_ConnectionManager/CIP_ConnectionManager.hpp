@@ -313,7 +313,7 @@ public:
         return kCipStatusOk;
     }
 
-    static unsigned int GetPaddedLogicalPath(unsigned char** logical_path_segment);
+    static unsigned int GetPaddedLogicalPath(unsigned char* logical_path_segment);
 
     /** @ingroup CIP_API
       * @brief Trigger the production of an application triggered connection.

@@ -137,25 +137,25 @@ public:
  */
    static PacketFormat common_packet_data; /**< CPF global data items */
 private:
-    static int EncodeSockaddrInfoLength(int size, int j, PacketFormat* common_packet_format_data_item, CipUsint** message);
-    static int EncodeSockaddrInfoItemTypeId(int size, int item_type, PacketFormat* common_packet_format_data_item, CipUsint** message);
-    static int EncodeMessageRouterResponseData(int size, CipMessageRouterResponse_t* message_router_response, CipUsint** message);
-    static int EncodeUnconnectedDataItemLength(int size, CipMessageRouterResponse_t* message_router_response, CipUsint** message);
-    static int EncodeExtendedStatus(int size, CipUsint** message, CipMessageRouterResponse_t* message_router_response);
-    static int EncodeDataItemData(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
-    static int EncodeConnectedDataItemLength(CipMessageRouterResponse_t* message_router_response, CipUsint** message, int size);
-    static int EncodeSequenceNumber(int size, const PacketFormat* common_packet_format_data_item, CipUsint** message);
-    static int EncodeReplyService(int size, CipUsint** message, CipMessageRouterResponse_t* message_router_response);
-    static int EncodeReservedFieldOfLengthByte(int size, CipUsint** message, CipMessageRouterResponse_t* message_router_response);
-    static int EncodeGeneralStatus(int size, CipUsint** message, CipMessageRouterResponse_t* message_router_response);
-    static int EncodeExtendedStatusLength(int size, CipUsint** message, CipMessageRouterResponse_t* message_router_response);
-    static int EncodeExtendedStatusDataItems(int size, CipMessageRouterResponse_t* message_router_response, CipUsint** message);
-    static int EncodeNullAddressItem(CipUsint** message, int size);
-    static int EncodeConnectedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size);
-    static int EncodeSequencedAddressItem(CipUsint** message, PacketFormat* common_packet_format_data_item, int size);
-    static int EncodeItemCount(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
-    static int EncodeDataItemType(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
-    static int EncodeDataItemLength(PacketFormat* common_packet_format_data_item, CipUsint** message, int size);
+    static int EncodeSockaddrInfoLength(int size, int j, PacketFormat* common_packet_format_data_item, CipUsint* message);
+    static int EncodeSockaddrInfoItemTypeId(int size, int item_type, PacketFormat* common_packet_format_data_item, CipUsint* message);
+    static int EncodeMessageRouterResponseData(int size, CipMessageRouterResponse_t* message_router_response, CipUsint* message);
+    static int EncodeUnconnectedDataItemLength(int size, CipMessageRouterResponse_t* message_router_response, CipUsint* message);
+    static int EncodeExtendedStatus(int size, CipUsint* message, CipMessageRouterResponse_t* message_router_response);
+    static int EncodeDataItemData(PacketFormat* common_packet_format_data_item, CipUsint* message, int size);
+    static int EncodeConnectedDataItemLength(CipMessageRouterResponse_t* message_router_response, CipUsint* message, int size);
+    static int EncodeSequenceNumber(int size, const PacketFormat* common_packet_format_data_item, CipUsint* message);
+    static int EncodeReplyService(int size, CipUsint* message, CipMessageRouterResponse_t* message_router_response);
+    static int EncodeReservedFieldOfLengthByte(int size, CipUsint* message, CipMessageRouterResponse_t* message_router_response);
+    static int EncodeGeneralStatus(int size, CipUsint* message, CipMessageRouterResponse_t* message_router_response);
+    static int EncodeExtendedStatusLength(int size, CipUsint* message, CipMessageRouterResponse_t* message_router_response);
+    static int EncodeExtendedStatusDataItems(int size, CipMessageRouterResponse_t* message_router_response, CipUsint* message);
+    static int EncodeNullAddressItem(CipUsint* message, int size);
+    static int EncodeConnectedAddressItem(CipUsint* message, PacketFormat* common_packet_format_data_item, int size);
+    static int EncodeSequencedAddressItem(CipUsint* message, PacketFormat* common_packet_format_data_item, int size);
+    static int EncodeItemCount(PacketFormat* common_packet_format_data_item, CipUsint* message, int size);
+    static int EncodeDataItemType(PacketFormat* common_packet_format_data_item, CipUsint* message, int size);
+    static int EncodeDataItemLength(PacketFormat* common_packet_format_data_item, CipUsint* message, int size);
 
 };
 #endif /* OPENER_CPF_H_ */
