@@ -11,6 +11,13 @@
 #include "CIP_MessageRouter.hpp"
 
 #define ROUTER_MESSAGE_BUFFER_SIZE 100
+
+
+CipMessageRouterRequest_t  *CIP_MessageRouter::g_message_router_request;
+CipMessageRouterResponse_t *CIP_MessageRouter::g_message_router_response;
+std::vector<CipUsint>      *CIP_MessageRouter::g_message_data_reply_buffer;
+std::map<CipUdint, void*> *CIP_MessageRouter::registered_objects;
+
 //Methods
 CipStatus CIP_MessageRouter::Init()
 {
@@ -19,10 +26,6 @@ CipStatus CIP_MessageRouter::Init()
     if (number_of_instances == 0)
     {
         //Init static variables
-        g_message_router_request = new CipMessageRouterRequest_t();
-        g_message_router_response = new CipMessageRouterResponse_t();
-
-        g_message_data_reply_buffer = new std::vector<CipUsint>();
         g_message_data_reply_buffer->reserve (ROUTER_MESSAGE_BUFFER_SIZE);
 
         registered_objects = new std::map<CipUdint, void*>();

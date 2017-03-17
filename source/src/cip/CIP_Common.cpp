@@ -15,7 +15,9 @@
 #include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
 #include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "CIP_Objects/CIP_Objects.hpp"
+
 //Static variables
+
 std::map <CipUsint,CipByteArray*> CIP_Common::message_data_reply_buffer;
 
 //Methods

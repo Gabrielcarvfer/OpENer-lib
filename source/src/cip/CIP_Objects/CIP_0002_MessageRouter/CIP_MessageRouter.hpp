@@ -123,4 +123,6 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
     static CipStatus symbolic_translation(CipEpath *symbolic_epath, CipEpath *logical_epath);
     static std::map<CipUdint, void*> *registered_objects;
 };
+
+
 #endif /* OPENER_CIPMESSAGEROUTER_H_ */

@@ -13,7 +13,10 @@
 #include "network/NET_NetworkHandler.hpp"
 #include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
 
+CipUsint* CIP_IOConnection::g_config_data_buffer; /**< buffers for the config data coming with a forward open request. */
+unsigned int CIP_IOConnection::g_config_data_length;
 
+CipUdint CIP_IOConnection::g_run_idle_state; /**< buffer for holding the run idle information. */
 
 //Methods
 void CIP_IOConnection::InitializeIOConnectionData()

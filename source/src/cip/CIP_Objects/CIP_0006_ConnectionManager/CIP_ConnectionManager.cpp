@@ -26,6 +26,11 @@ const int g_kForwardOpenHeaderLength = 36; /**< the length in bytes of the forwa
 static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_SPECIFIC_CONNECTABLE_OBJECTS;
 
 
+std::map<CipUdint, const CIP_ConnectionManager *> *CIP_ConnectionManager::active_connections_set;
+std::map<CipUdint, ConnectionManagementHandling> *CIP_ConnectionManager::g_astConnMgmList;
+CIP_ConnectionManager * CIP_ConnectionManager::g_dummy_connection_object;
+CipUdint CIP_ConnectionManager::g_incarnation_id;
+
 
 
 /** @brief gets the padded logical path TODO: enhance documentation
@@ -67,19 +72,11 @@ CipUdint CIP_ConnectionManager::GetConnectionId (void)
     return (g_incarnation_id | (connection_id & 0x0000FFFF));
 }
 
-
 CipStatus CIP_ConnectionManager::Init ()
 {
     if (number_of_instances == 0)
     {
-        //Allocate static variables
-        active_connections_set = new std::map<CipUdint, const CIP_ConnectionManager *> ();
 
-        g_astConnMgmList = new std::map<CipUdint, ConnectionManagementHandling> ();
-
-        g_dummy_connection_object = nullptr;
-
-        CipUdint g_incarnation_id = 0;
 
         //Initialization procedures
         //CIP_Class3conn::InitializeClass3ConnectionData();
@@ -88,6 +85,8 @@ CipStatus CIP_ConnectionManager::Init ()
         class_id = kCipConnectionManagerClassCode;
         class_name = "Connection Manager";
         revision = 1;
+        CIP_ConnectionManager *instance = new CIP_ConnectionManager();
+        object_Set.emplace(object_Set.size(), instance);
 
         //g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
     }
@@ -1163,7 +1162,6 @@ CipStatus CIP_ConnectionManager::TriggerConnections (CipUdint pa_unOutputAssembl
 }
 
 CipStatus CIP_ConnectionManager::InstanceServices(int service,
-                                                  CIP_Connection * connection_object,
                                                   CipMessageRouterRequest_t* message_router_request,
                                                   CipMessageRouterResponse_t* message_router_response)
 {
@@ -1173,7 +1171,7 @@ CipStatus CIP_ConnectionManager::InstanceServices(int service,
         switch(service)
         {
             case kForwardOpen:
-		return ForwardOpen(connection_object, message_router_request, message_router_response);
+		//todo: fix return ForwardOpen(connection_object, message_router_request, message_router_response);
                 break;
             case kForwardClose:
 		return ForwardClose(message_router_request, message_router_response);

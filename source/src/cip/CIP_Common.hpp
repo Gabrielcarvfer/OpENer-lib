@@ -79,4 +79,5 @@ class CIP_Common
 
 };
 
-#endif
+
+#endif// OPENER_CIP_COMMON_H

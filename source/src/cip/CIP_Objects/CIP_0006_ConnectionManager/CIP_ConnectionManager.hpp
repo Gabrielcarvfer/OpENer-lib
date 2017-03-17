@@ -40,7 +40,6 @@ public:
     CipMessageRouterRequest_t g_message_router_request;
     CipMessageRouterResponse_t g_message_router_response;
     CipStatus InstanceServices(int service,
-                               CIP_Connection * connection_object,
                                CipMessageRouterRequest_t* message_router_request,
                                CipMessageRouterResponse_t* message_router_response
                             );
@@ -377,4 +376,4 @@ public:
 
 //CipStatus (*OpenConnectionPtr) (CIP_ConnectionManager* connection_object, CipUint* extended_error);
 
-#endif
+#endif // OPENER_CIP_CONNECTION_H

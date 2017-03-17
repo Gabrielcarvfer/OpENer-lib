@@ -179,7 +179,7 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
     CipByte get_mask;
 
     CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
-    CipByte* message = &message_router_response->response_data[0];
+    CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     message_router_response->reply_service = (0x80 | message_router_request->service);
     message_router_response->general_status = kCipErrorAttributeNotSupported;
@@ -230,7 +230,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
     CipOctet* reply;
 
     // pointer into the reply
-    reply = message_router_response->response_data;
+    reply = (CipOctet*)&message_router_response->response_data[0];
 
     if (this->id == 2)
     {

@@ -27,7 +27,6 @@ private:
 	unsigned char data_type;
 	unsigned char instance;
 	unsigned long long sensor_clock;
-	static unsigned int class_revision;
 
 
 public:
