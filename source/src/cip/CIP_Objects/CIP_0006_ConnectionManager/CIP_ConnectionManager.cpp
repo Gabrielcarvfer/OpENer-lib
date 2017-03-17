@@ -333,6 +333,14 @@ void CIP_ConnectionManager::GeneralConnectionConfiguration (CIP_ConnectionManage
     connection_instance->Produced_connection_size = (CipUint)(connection_manager_instance->t_to_o_network_connection_parameter & 0x01FF);
 }
 
+void CIP_ConnectionManager::GeneralConnectionConfiguration(CIP_Connection * connection_instance)
+{
+    //Search connection_manager_instance managing the connection instance
+    CIP_ConnectionManager * conn_mgr = GetConnectionManagerObject (connection_instance->id);
+
+    return GeneralConnectionConfiguration (conn_mgr);
+}
+
 CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest_t *message_router_request, CipMessageRouterResponse_t *message_router_response)
 {
 

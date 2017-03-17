@@ -8,7 +8,6 @@
 #include "CIP_Class3Connection.hpp"
 
 
-
 //Methods
 CipStatus CIP_Class3conn::EstablishClass3Connection(CipUint* extended_error)
 {

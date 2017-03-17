@@ -6,32 +6,27 @@
 
 //Includes
 #include <cstring>
+#include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
+#include <cip/ciptypes.hpp>
 #include "../../trace.hpp"
 #include "cip/CIP_AppConnType.hpp"
 #include "CIP_IOConnection.hpp"
 #include "network/NET_Endianconv.hpp"
 #include "network/NET_NetworkHandler.hpp"
 #include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
-
+const int CIP_IOConnection::kOpENerEipIoUdpPort = 0x08AE;
 CipUsint* CIP_IOConnection::g_config_data_buffer; /**< buffers for the config data coming with a forward open request. */
 unsigned int CIP_IOConnection::g_config_data_length;
-
 CipUdint CIP_IOConnection::g_run_idle_state; /**< buffer for holding the run idle information. */
 
 //Methods
 void CIP_IOConnection::InitializeIOConnectionData()
 {
-    //Allocate static variables
-    const int CIP_IOConnection::kOpENerEipIoUdpPort = 0x08AE;
-    CipUsint* CIP_IOConnection::g_config_data_buffer;
-    unsigned int CIP_IOConnection::g_config_data_length;
-    CipUdint CIP_IOConnection::g_run_idle_state;
-
     //init variables
     g_config_data_buffer = nullptr;
     g_config_data_length = 0;
 }
-CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
+CipStatus CIP_IOConnection::EstablishIoConnection (CIP_Connection * connection_instance, CipUint *extended_error)
 {
     int originator_to_target_connection_type, target_to_originator_connection_type;
     CipStatus eip_status = kCipStatusOk;
@@ -39,10 +34,10 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
     // currently we allow I/O connections only to assembly objects
     // we don't need to check for zero as this is handled in the connection path parsing
-    const CIP_Object<CIP_Assembly>* assembly_class = CIP_Assembly::GetClass();
-    const CIP_Object* instance = nullptr;
+    const CIP_Assembly* assembly_class = CIP_Assembly::GetClass();
+    CIP_ConnectionManager* instance = (CIP_ConnectionManager*)CIP_ConnectionManager::GetConnectionManagerObject (connection_instance->id);
 
-   CIP_Appcontype::GetIoConnectionForConnectionData(this, extended_error);
+   CIP_AppConnType::GetIoConnectionForConnectionData(instance, extended_error);
 
     //if (nullptr == this)
     {
@@ -51,17 +46,18 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
 
     // TODO: add check for transport type trigger
 
-    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic != (transport_type_class_trigger & CIP_Connection::kConnectionTriggerProductionTriggerMask))
+    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic
+        != connection_instance->TransportClass_trigger.bitfield_u.production_trigger)
     {
-        if (256 == production_inhibit_time)
+        if (256 == instance->production_inhibit_time)
         {
             //there was no PIT segment in the connection path set PIT to one fourth of RPI
-            production_inhibit_time = (CipUint) ((CipUint)(t_to_o_requested_packet_interval) / 4000);
+            instance->production_inhibit_time = (CipUint) ((CipUint)(instance->t_to_o_requested_packet_interval) / 4000);
         }
         else
         {
             // if production inhibit time has been provided it needs to be smaller than the RPI
-            if (production_inhibit_time > ((CipUint)((t_to_o_requested_packet_interval) / 1000)))
+            if (instance->production_inhibit_time > ((CipUint)((instance->t_to_o_requested_packet_interval) / 1000)))
             {
                 // see section C-1.4.3.3
                 *extended_error = 0x111; //< RPI not supported. Extended Error code deprecated
@@ -75,10 +71,9 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
     //connection_send_data_function = SendConnectedData;
     //connection_receive_data_function = HandleReceivedIoConnectionData;
 
-    GeneralConnectionConfiguration ();
-
-    originator_to_target_connection_type = (o_to_t_network_connection_parameter & 0x6000) >> 13;
-    target_to_originator_connection_type = (t_to_o_network_connection_parameter & 0x6000) >> 13;
+    CIP_ConnectionManager::GeneralConnectionConfiguration (instance);
+    originator_to_target_connection_type = (instance->o_to_t_network_connection_parameter & 0x6000) >> 13;
+    target_to_originator_connection_type = (instance->t_to_o_network_connection_parameter & 0x6000) >> 13;
 
     if ((originator_to_target_connection_type == 0) && (target_to_originator_connection_type == 0))
     {
@@ -99,36 +94,36 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
             producing_index = 1;
         }
 
-        consuming_instance = 0;
-        Consumed_connection_path_length = 0;
-        producing_instance = 0;
-        Produced_connection_path_length = 0;
+        instance->consuming_instance = 0;
+        connection_instance->Consumed_connection_path_length = 0;
+        instance->producing_instance = 0;
+        connection_instance->Produced_connection_path_length = 0;
 
         if (originator_to_target_connection_type != 0)
         {
             //setup consumer side
-            if (0 == (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance (connection_path.connection_point[0])))
+            if (nullptr == (instance = (CIP_ConnectionManager*) CIP_Assembly::GetInstance (instance->connection_path.connection_point[0])))
             {
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidConsumingApllicationPath;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
             // consuming Connection Point is present
-            consuming_instance = instance;
+            instance->consuming_instance = connection_instance;
 
-            Consumed_connection_path_length = 6;
-            Consumed_connection_path.path_size = 6;
-            Consumed_connection_path.class_id = (CipUint) connection_path.class_id;
-            Consumed_connection_path.instance_number = (CipUint) connection_path.connection_point[0];
-            Consumed_connection_path.attribute_number = 3;
+            connection_instance->Consumed_connection_path_length = 6;
+            connection_instance->Consumed_connection_path.path_size = 6;
+            connection_instance->Consumed_connection_path.class_id = (CipUint) instance->connection_path.class_id;
+            connection_instance->Consumed_connection_path.instance_number = (CipUint) instance->connection_path.connection_point[0];
+            connection_instance->Consumed_connection_path.attribute_number = 3;
 
-            attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
+            attribute = instance->GetCipAttribute (3);
             OPENER_ASSERT(attribute != nullptr);
             // an assembly object should always have an attribute 3
-            data_size = Consumed_connection_size;
+            data_size = connection_instance->Consumed_connection_size;
             diff_size = 0;
             is_heartbeat = (((CipByteArray*)attribute->getData ())->length == 0);
 
-            if ((transport_type_class_trigger & 0x0F) == 1)
+            if (connection_instance->TransportClass_trigger.bitfield_u.transport_class == kConnectionTriggerTransportClass1)//transport_type_class_trigger & 0x0F) == 1)
             {
                 // class 1 connection
                 data_size -= 2; // remove 16-bit sequence count length
@@ -145,7 +140,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
             if (((CipByteArray*)attribute->getData())->length != data_size)
             {
                 /*wrong connection size */
-                correct_originator_to_target_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
+                instance->correct_originator_to_target_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
@@ -154,27 +149,27 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         if (target_to_originator_connection_type != 0)
         {
             //setup producer side
-            if (0 == (instance = (const CIP_Object<CIP_ConnectionManager>*) CIP_Assembly::GetInstance(connection_path.connection_point[producing_index])))
+            if (0 == (instance = (CIP_ConnectionManager*) CIP_Assembly::GetInstance(instance->connection_path.connection_point[producing_index])))
             {
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
-            producing_instance = instance;
+            instance->producing_instance = connection_instance;
 
-            Produced_connection_path_length = 6;
-            Produced_connection_path.path_size = 6;
-            Produced_connection_path.class_id = (CipUint) connection_path.class_id;
-            Produced_connection_path.instance_number = (CipUint) connection_path.connection_point[producing_index];
-            Produced_connection_path.attribute_number = 3;
+            connection_instance->Produced_connection_path_length = 6;
+            connection_instance->Produced_connection_path.path_size = 6;
+            connection_instance->Produced_connection_path.class_id = (CipUint) instance->connection_path.class_id;
+            connection_instance->Produced_connection_path.instance_number = (CipUint) instance->connection_path.connection_point[producing_index];
+            connection_instance->Produced_connection_path.attribute_number = 3;
 
             attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
             OPENER_ASSERT(attribute != nullptr);
             // an assembly object should always have an attribute 3
-            data_size = Produced_connection_size;
+            data_size = connection_instance->Produced_connection_size;
             diff_size = 0;
             is_heartbeat = (((CipByteArray*)attribute->getData())->length == 0);
 
-            if ((transport_type_class_trigger & 0x0F) == 1)
+            if (connection_instance->TransportClass_trigger.bitfield_u.transport_class == kConnectionTriggerTransportClass1)
             {
                 // class 1 connection
                 data_size -= 2; //remove 16-bit sequence count length
@@ -191,7 +186,7 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
             if (((CipByteArray*)attribute->getData())->length != data_size)
             {
                 /*wrong connection size*/
-                correct_target_to_originator_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
+                instance->correct_target_to_originator_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
                 *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize;
                 return (CipStatus) kCipErrorConnectionFailure;
             }
@@ -217,8 +212,8 @@ CipStatus CIP_IOConnection::EstablishIoConnection (CipUint *extended_error)
         }
     }
 
-    CIP_ConnectionManager::AddNewActiveConnection((CIP_Connection*)this);
-    //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventOpened);
+    CIP_ConnectionManager::AddNewActiveConnection(connection_instance);
+    //todo:CheckIoConnectionEvent(connection_manager->connection_path.connection_point[0], connection_manager->connection_path.connection_point[1], kIoConnectionEventOpened);
     return eip_status;
 }
 
@@ -311,7 +306,7 @@ CipStatus CIP_IOConnection::OpenProducingPointToPointConnection(CIP_CommonPacket
 
 CipStatus CIP_IOConnection::OpenProducingMulticastConnection(CIP_CommonPacket::PacketFormat* cpf_data)
 {
-    CIP_Connection* existing_connection_object = (CIP_Connection*)CIP_Appcontype::GetExistingProducerMulticastConnection(connection_path.connection_point[1]);
+    CIP_Connection* existing_connection_object = (CIP_Connection*)CIP_AppConnType::GetExistingProducerMulticastConnection(connection_manager->connection_path.connection_point[1]);
     int j;
 
     if (nullptr == existing_connection_object)
@@ -451,7 +446,7 @@ CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
 
     if (0 != g_config_data_length)
     {
-        if (CIP_Appcontype::ConnectionWithSameConfigPointExists(connection_path.connection_point[2]))
+        if (CIP_AppConnType::ConnectionWithSameConfigPointExists(connection_manager->connection_path.connection_point[2]))
         {
             // there is a connected connection with the same config point
             // we have to have the same data as already present in the config point
@@ -488,14 +483,14 @@ CipUint CIP_IOConnection::HandleConfigData(CIP_Assembly* assembly_class)
 void CIP_IOConnection::CloseIoConnection()
 {
 
-    //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventClosed);
+    //todo:CheckIoConnectionEvent(connection_manager->connection_path.connection_point[0], connection_manager->connection_path.connection_point[1], kIoConnectionEventClosed);
 
     if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == Instance_type) 
         || (CIP_Connection::kConnectionTypeIoInputOnly == Instance_type))
     {
         if ((CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
         {
-            CIP_Connection* next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+            CIP_Connection* next_non_control_master_connection = (CIP_Connection*)CIP_AppConnType::GetNextNonControlMasterConnection(connection_manager->connection_path.connection_point[1]);
             if (nullptr != next_non_control_master_connection)
             {
                 next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
@@ -513,7 +508,7 @@ void CIP_IOConnection::CloseIoConnection()
             else
             {
                 // this was the last master connection close all listen only connections listening on the port
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
             }
         }
     }
@@ -524,21 +519,23 @@ void CIP_IOConnection::CloseIoConnection()
 void CIP_IOConnection::HandleIoConnectionTimeOut()
 {
     CIP_Connection* next_non_control_master_connection;
-    //todo:CheckIoConnectionEvent(connection_path.connection_point[0], connection_path.connection_point[1], kIoConnectionEventTimedOut);
+    //todo:CheckIoConnectionEvent(connection_manager->connection_path.connection_point[0], connection_manager->connection_path.connection_point[1], kIoConnectionEventTimedOut);
 
-    if (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
+    CIP_ConnectionManager* connection_manager = CIP_ConnectionManager::GetConnectionManagerObject (next_non_control_master_connection->id);
+
+    if (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (connection_manager->t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
     {
         switch (Instance_type)
         {
             case CIP_Connection::kConnectionTypeIoExclusiveOwner:
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
-                CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
+                CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
                 break;
             case CIP_Connection::kConnectionTypeIoInputOnly:
                 if (kEipInvalidSocket != netConn->GetSocketHandle ())
                 {
                     // we are the controlling input only connection find a new controller
-                    next_non_control_master_connection = (CIP_Connection*)CIP_Appcontype::GetNextNonControlMasterConnection(connection_path.connection_point[1]);
+                    next_non_control_master_connection = (CIP_Connection*)CIP_AppConnType::GetNextNonControlMasterConnection(connection_manager->connection_path.connection_point[1]);
                     if (nullptr != next_non_control_master_connection)
                     {
                         next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
@@ -548,7 +545,7 @@ void CIP_IOConnection::HandleIoConnectionTimeOut()
                     else
                     {
                         //this was the last master connection close all listen only connections listening on the port
-                        CIP_Appcontype::CloseAllConnectionsForInputWithSameType(connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                        CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
                     }
                 }
                 break;
@@ -621,12 +618,12 @@ CipStatus CIP_IOConnection::SendConnectedData()
     if ((transport_type_class_trigger & 0x0F) == 1)
     {
         cpf_data->data_item.length += 2;
-        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
-        NET_Endianconv::AddIntToMessage(sequence_count_producing, &message_data_reply_buffer);
+        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, message_data_reply_buffer);
+        NET_Endianconv::AddIntToMessage(sequence_count_producing, message_data_reply_buffer);
     }
     else
     {
-        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, &message_data_reply_buffer);
+        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, message_data_reply_buffer);
     }
 
     if (kOpENerProducedDataHasRunIdleHeader)
@@ -646,7 +643,7 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUi
     /* check class 1 sequence number*/
     if ((transport_type_class_trigger & 0x0F) == 1)
     {
-        CipUint sequence_buffer = NET_Endianconv::GetIntFromMessage(&(data));
+        CipUint sequence_buffer = NET_Endianconv::GetIntFromMessage(data);
         if (SEQ_LEQ16(sequence_buffer, sequence_count_consuming))
         {
             return kCipStatusOk; // no new data for the assembly
@@ -659,7 +656,7 @@ CipStatus CIP_IOConnection::HandleReceivedIoConnectionData(CipUsint* data, CipUi
         // we have no heartbeat connection
         if (kOpENerConsumedDataHasRunIdleHeader)
         {
-            CipUdint nRunIdleBuf = NET_Endianconv::GetDintFromMessage(&(data));
+            CipUdint nRunIdleBuf = NET_Endianconv::GetDintFromMessage(data);
             //todo: update idle state
             /*
             if (g_run_idle_state != nRunIdleBuf)
@@ -685,12 +682,14 @@ CipStatus CIP_IOConnection::OpenCommunicationChannels()
 {
 
     CipStatus eip_status = kCipStatusOk;
+    CIP_ConnectionManager * connection_manager = CIP_ConnectionManager::GetConnectionManagerObject (this->id);
+
     //get pointer to the CPF data, currently we have just one global instance of the struct. This may change in the future
     CIP_CommonPacket::PacketFormat* cpf_data = &CIP_CommonPacket::common_packet_data;
 
-    int originator_to_target_connection_type = (o_to_t_network_connection_parameter & 0x6000) >> 13;
+    int originator_to_target_connection_type = (connection_manager->o_to_t_network_connection_parameter & 0x6000) >> 13;
 
-    int target_to_originator_connection_type = (t_to_o_network_connection_parameter & 0x6000) >> 13;
+    int target_to_originator_connection_type = (connection_manager->t_to_o_network_connection_parameter & 0x6000) >> 13;
 
     // open a connection "point to point" or "multicast" based on the ConnectionParameter
     if (originator_to_target_connection_type == 1) //TODO: Fix magic number; Multicast consuming

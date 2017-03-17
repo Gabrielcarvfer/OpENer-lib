@@ -143,6 +143,7 @@ public:
      *up.
      */
     static void GeneralConnectionConfiguration(CIP_ConnectionManager * connection_manager_instance);
+    static void GeneralConnectionConfiguration(CIP_Connection * connection_instance);
 
     /** @brief Insert the given connection object to the list of currently active
      *  and managed connections.

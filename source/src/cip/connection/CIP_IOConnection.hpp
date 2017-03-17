@@ -58,7 +58,7 @@ class CIP_IOConnection : public CIP_Connection
          *    - EIP_OK ... on success
          *    - On an error the general status code to be put into the response
          */
-         CipStatus EstablishIoConnection (CipUint *extended_error);
+         static CipStatus EstablishIoConnection (CIP_Connection *connection, CipUint *extended_error);
 
         /** @brief Take the data given in the connection object structure and open the necessary communication channels
          *
