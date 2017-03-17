@@ -111,7 +111,7 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
             /* eip_status = EIP_OK; */
         }
     }
-    message_router_response->response_data.clear ();
+    message_router_response->response_data->clear ();
     return eip_status;
 }
 
@@ -162,4 +162,9 @@ CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest_t 
             return kCipStatusError;
             break;
     }
+}
+
+CipStatus CIP_Identity::Shut(void)
+{
+
 }

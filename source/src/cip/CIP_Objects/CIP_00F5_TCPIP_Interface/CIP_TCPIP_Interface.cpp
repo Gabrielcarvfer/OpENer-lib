@@ -110,7 +110,7 @@ CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest_t* 
     }
 
     message_router_response->size_additional_status = 0;
-    message_router_response->response_data.clear();
+    message_router_response->response_data->clear();
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     return kCipStatusOkSend;
 }
@@ -158,6 +158,12 @@ CipStatus CIP_TCPIP_Interface::Init()
     return kCipStatusOk;
 }
 
+CipStatus CIP_TCPIP_Interface::Shut()
+{
+    CipStatus stat;
+    stat.status = kCipStatusOk;
+    return stat;
+}
 
 CipStatus CIP_TCPIP_Interface::Create()
 {
@@ -209,12 +215,12 @@ CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
 {
 
     CipStatus status = kCipStatusOkSend;
-    CipByte* message = &message_router_response->response_data[0];
+    CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     if (9 == message_router_request->request_path.attribute_number)
     { 
         // attribute 9 can not be easily handled with the default mechanism therefore we will do it by hand
-        message_router_response->response_data.clear ();
+        message_router_response->response_data->clear ();
         message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
         message_router_response->general_status = kCipErrorSuccess;
         message_router_response->size_additional_status = 0;
@@ -237,7 +243,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
 CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
 
-    CipUsint* response = &message_router_response->response_data[0]; // pointer into the reply
+    CipUsint* response = (CipUsint*)&message_router_response->response_data[0]; // pointer into the reply
     CIP_Attribute* attribute;
 
     for (int j = 0; j < this->attributes.size(); j++) // for each instance attribute of this class
@@ -265,7 +271,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
             //message_router_response->response_data += message_router_response->response_data.size();
         }
     }
-    message_router_response->response_data.emplace (message_router_response->response_data.begin(), *response);
+    //message_router_response->response_data = response;
 
     return kCipStatusOkSend;
 }

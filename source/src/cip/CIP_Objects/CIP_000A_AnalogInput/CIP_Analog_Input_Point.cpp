@@ -127,8 +127,11 @@ unsigned char CIP_AnalogInputPoint::get_value(void)
 }
 
 
-
-
-
+CipStatus CIP_AnalogInputPoint::Shut()
+{
+	CipStatus stat;
+	stat.status = kCipStatusOk;
+	return stat;
+}
 
 

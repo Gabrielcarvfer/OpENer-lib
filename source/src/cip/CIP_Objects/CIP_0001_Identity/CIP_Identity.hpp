@@ -8,7 +8,7 @@
 
 #include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
-
+class CIP_Identity;
 class CIP_Identity : public CIP_Object<CIP_Identity>
 {
 public:
@@ -36,6 +36,7 @@ public:
  * @returns EipError if the class could not be created, otherwise EipOk
  */
     static CipStatus Init (void);
+    static CipStatus Shut (void);
 private:
     /** @brief Status of the CIP Identity object */
     typedef enum

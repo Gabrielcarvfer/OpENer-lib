@@ -39,7 +39,7 @@ public:
  *          data given in pa_pstConnData.
  *        - on error: nullptr
  */
-    static const CIP_Connection* GetIoConnectionForConnectionData (const CIP_Connection *connection_object, CipUint *extended_error);
+    static const CIP_Connection* GetIoConnectionForConnectionData (const CIP_ConnectionManager *connection_object, CipUint *extended_error);
 
 /** @brief Check if there exists already an exclusive owner or listen only connection
  *         which produces the input assembly.
@@ -161,10 +161,10 @@ private:
 
     static ListenOnlyConnection *g_listen_only_connections;
 
-    static const CIP_Connection* GetExclusiveOwnerConnection(const CIP_Connection* connection_object, CipUint* extended_error);
+    static const CIP_Connection* GetExclusiveOwnerConnection(const CIP_ConnectionManager* connection_manager, CipUint* extended_error);
 
-    static const CIP_Connection* GetInputOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error);
+    static const CIP_Connection* GetInputOnlyConnection(const CIP_ConnectionManager* connection_manager, CipUint* extended_error);
 
-    static const CIP_Connection* GetListenOnlyConnection(const CIP_Connection* connection_object, CipUint* extended_error);
+    static const CIP_Connection* GetListenOnlyConnection(const CIP_ConnectionManager* connection_manager, CipUint* extended_error);
 };
 #endif

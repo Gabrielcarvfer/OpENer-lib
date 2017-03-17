@@ -9,14 +9,14 @@
 #include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
 #include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
-
+class CIP_EthernetIP_Link;
 class CIP_EthernetIP_Link : public CIP_Object<CIP_EthernetIP_Link>
 {
 public:
     /** @brief Initialize the Ethernet Link Objects data
     */
     static CipStatus Init();
-    static CipStatus Shutdown();
+    static CipStatus Shut();
     CIP_TCPIP_Interface * associatedInterface;
 private:
     //Definitions

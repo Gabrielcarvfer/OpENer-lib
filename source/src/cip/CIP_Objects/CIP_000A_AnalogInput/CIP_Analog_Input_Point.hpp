@@ -19,7 +19,6 @@
 #include "../template/CIP_Object.hpp"
 
 class CIP_AnalogInputPoint;
-
 class CIP_AnalogInputPoint : public CIP_Object<CIP_AnalogInputPoint>
 {
 private:
@@ -33,6 +32,7 @@ private:
 
 public:
 	static CipStatus Init();
+	static CipStatus Shut();
 	static void handle_class_inquiry(unsigned char*, unsigned char*);
 	void handle_explicit(unsigned char*, unsigned char*);
 	unsigned char get_value(void);

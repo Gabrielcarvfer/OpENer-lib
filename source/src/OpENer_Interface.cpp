@@ -47,7 +47,7 @@ bool OpENer_Interface::OpENer_Initialize()
     CipStackInit(unique_connection_id);
 
     // Setup Network Handles
-    if (kCipStatusOk == NET_NetworkHandler::NetworkHandlerInitialize ())
+    if (kCipStatusOk == NET_NetworkHandler::NetworkHandlerInitialize ().status)
     {
         g_end_stack = 0;
 
@@ -93,7 +93,7 @@ void OpENer_Interface::OpENerWorker()
 #endif
 
         //Check every pending connection and timer, send and receive data
-        if (kCipStatusOk != NET_NetworkHandler::NetworkHandlerProcessOnce ())
+        if (kCipStatusOk != NET_NetworkHandler::NetworkHandlerProcessOnce ().status)
         {
 #ifdef USETHREAD
             break;
@@ -110,7 +110,7 @@ void OpENer_Interface::OpENerWorker()
     alarmRang = false;
 
     #ifdef WIN32
-        DWORD_PTR ptr = nullptr;
+        DWORD_PTR ptr = (DWORD_PTR) nullptr;
         timeSetEvent(smallerInterval, smallerInterval, (LPTIMECALLBACK)alarmRinging, ptr, TIME_ONESHOT);
     #else
         alarm(smallerInterval);

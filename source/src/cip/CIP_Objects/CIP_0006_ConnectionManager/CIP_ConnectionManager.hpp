@@ -35,6 +35,7 @@ class CIP_ConnectionManager :   public CIP_Object<CIP_ConnectionManager>
 
 public:
     static CipStatus Init();
+    static CipStatus Shut();
 
     CipMessageRouterRequest_t g_message_router_request;
     CipMessageRouterResponse_t g_message_router_response;
@@ -159,12 +160,12 @@ public:
     static void RemoveFromActiveConnections(CIP_ConnectionManager * connection_object);
 
 
-    static std::map<CipUdint, const CIP_ConnectionManager *> active_connections_set;
+    static std::map<CipUdint, const CIP_ConnectionManager *> * active_connections_set;
 
     /** List holding information on the object classes and open/close function
      * pointers to which connections may be established.
      */
-    static std::map<CipUdint, ConnectionManagementHandling> g_astConnMgmList;
+    static std::map<CipUdint, ConnectionManagementHandling> *g_astConnMgmList;
 
     /** buffer connection object needed for forward open */
     static CIP_ConnectionManager *g_dummy_connection_object;

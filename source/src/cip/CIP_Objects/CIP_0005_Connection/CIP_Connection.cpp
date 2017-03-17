@@ -389,9 +389,9 @@ bool CIP_Connection::check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_
         return false; //Not a dupe
 }
 
-
-
-
-
-
-
+CipStatus CIP_Connection::Shut()
+{
+    CipStatus stat;
+    stat.status = kCipStatusOk;
+    return stat;
+}

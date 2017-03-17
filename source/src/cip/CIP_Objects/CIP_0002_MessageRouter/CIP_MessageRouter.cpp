@@ -10,18 +10,24 @@
 #include <cip/CIP_ElectronicKey.hpp>
 #include "CIP_MessageRouter.hpp"
 
-//Static variables
-CipMessageRouterRequest_t  CIP_MessageRouter::g_message_router_request;
-CipMessageRouterResponse_t CIP_MessageRouter::g_message_router_response;
-
-std::vector<CipOctet> CIP_MessageRouter::g_message_data_reply_buffer;
-
-
+#define ROUTER_MESSAGE_BUFFER_SIZE 100
 //Methods
 CipStatus CIP_MessageRouter::Init()
 {
+
+
     if (number_of_instances == 0)
     {
+        //Init static variables
+        g_message_router_request = new CipMessageRouterRequest_t();
+        g_message_router_response = new CipMessageRouterResponse_t();
+
+        g_message_data_reply_buffer = new std::vector<CipUsint>();
+        g_message_data_reply_buffer->reserve (ROUTER_MESSAGE_BUFFER_SIZE);
+
+        registered_objects = new std::map<CipUdint, void*>();
+
+        //Build class instance
         max_instances = 1;
         revision = 1;
         class_name = "message router";
@@ -41,10 +47,10 @@ CipStatus CIP_MessageRouter::Init()
 
 
         /* reserved for future use -> set to zero */
-        g_message_router_response.reserved = 0;
+        g_message_router_response->reserved = 0;
 
         // set reply buffer, using a fixed buffer (about 100 bytes)
-        g_message_router_response.response_data = g_message_data_reply_buffer;
+        g_message_router_response->response_data = g_message_data_reply_buffer;
     }
     return kCipStatusOk;
 }
@@ -78,21 +84,21 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     CipStatus cip_status = kCipStatusOkSend;
     CipStatus nStatus;
 
-    g_message_router_response.response_data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
+    g_message_router_response->response_data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
 
     OPENER_TRACE_INFO("notifyMR: routing unconnected message\n");
     /* error from create MR structure*/
-    nStatus = CreateMessageRouterRequestStructure(data, (CipInt) data_length, &g_message_router_request);
+    nStatus = CreateMessageRouterRequestStructure(data, (CipInt) data_length, g_message_router_request);
 
     if ( kCipErrorSuccess != nStatus.status )
     {
         OPENER_TRACE_ERR("notifyMR: error from createMRRequeststructure\n");
 
-        g_message_router_response.general_status = nStatus.status;
-        g_message_router_response.size_additional_status = 0;
-        g_message_router_response.reserved = 0;
-        //g_message_router_response.data_length = 0;
-        g_message_router_response.reply_service = (CipUsint) (0x80 | g_message_router_request.service);
+        g_message_router_response->general_status = nStatus.status;
+        g_message_router_response->size_additional_status = 0;
+        g_message_router_response->reserved = 0;
+        //g_message_router_response->data_length = 0;
+        g_message_router_response->reply_service = (CipUsint) (0x80 | g_message_router_request->service);
     }
     else
     {
@@ -106,17 +112,17 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
                 "notifyMR: sending CIP_ERROR_OBJECT_DOES_NOT_EXIST reply, class id 0x%x is not registered\n",
                 (unsigned)g_message_router_request.request_path.class_id);
 
-            g_message_router_response.general_status = kCipErrorPathDestinationUnknown; /*according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;*/
-            g_message_router_response.size_additional_status = 0;
-            g_message_router_response.reserved = 0;
-            //g_message_router_response.data_length = 0;
-            g_message_router_response.reply_service = (CipUsint)(0x80 | g_message_router_request.service);
+            g_message_router_response->general_status = kCipErrorPathDestinationUnknown; /*according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;*/
+            g_message_router_response->size_additional_status = 0;
+            g_message_router_response->reserved = 0;
+            //g_message_router_response->data_length = 0;
+            g_message_router_response->reply_service = (CipUsint)(0x80 | g_message_router_request->service);
         }
         else
         {
             /* call notify function from Object with ClassID (gMRRequest.RequestPath.ClassID)
             object will or will not make an reply into gMRResponse*/
-            g_message_router_response.reserved = 0;
+            g_message_router_response->reserved = 0;
             //OPENER_ASSERT(nullptr != registered_object->CIP_ClassInstance);
 
             OPENER_TRACE_INFO("notifyMR: calling notify function of class '%s'\n",
@@ -150,7 +156,7 @@ CipStatus CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data,
     data++; /*TODO: Fix for 16 bit path lengths (+1 */
     data_length--;
 
-    number_of_decoded_bytes = CIP_Common::DecodePaddedEPath( &(message_router_request->request_path), &data );
+    number_of_decoded_bytes = CIP_Common::DecodePaddedEPath( &(message_router_request->request_path), data );
 
     if (number_of_decoded_bytes < 0)
     {
@@ -236,7 +242,13 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
             //Process eletronic key segment
             CIP_ElectronicKey *key = (CIP_ElectronicKey *) &segment->segment_payload[0];
             stat = key->validate_key ();
+
             //check if return was ok and then proceed, or return error
+            if (stat.status != kCipStatusOk)
+            {
+                return kCipStatusError;
+            }
+
             break;
         }
         case (CIP_Segment::segtype_network_segment):
@@ -249,12 +261,12 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
     }
 
     //Find registered class/CIP_Object
-    if (registered_objects.find(request->request_path.class_id) == registered_objects.end())
+    if (registered_objects->find(request->request_path.class_id) == registered_objects->end())
     {
         //todo: class not registered, return error
     }
 
-    CIP_Object * ptr = (CIP_Object*)registered_objects.at(request->request_path.class_id);
+    CIP_Object * ptr = (CIP_Object*)registered_objects->at(request->request_path.class_id);
 
     //Pick the instance of CIP_Object
     if(ptr->GetInstance (request->request_path.instance_number) == nullptr)
@@ -283,4 +295,9 @@ CipStatus CIP_MessageRouter::symbolic_translation(CipEpath *symbolic_epath, CipE
     stat.extended_status = kCipSymbolicPathUnknown;
     stat.status = kCipStatusError;
     return stat;
+}
+
+CipStatus CIP_MessageRouter::Shut()
+{
+
 }

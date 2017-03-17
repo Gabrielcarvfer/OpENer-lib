@@ -37,7 +37,7 @@ CipStatus CIP_Assembly::Init(void)
     return kCipStatusOk;
 }
 
-void CIP_Assembly::ShutdownAssemblies(void)
+CipStatus CIP_Assembly::Shut(void)
 {
     if (CIP_Assembly::GetClass() != nullptr)
     {
@@ -56,6 +56,9 @@ void CIP_Assembly::ShutdownAssemblies(void)
             }
         }
     }
+    CipStatus stat;
+    stat.status = kCipStatusOk;
+    return stat;
 }
 
 CIP_Assembly::CIP_Assembly(CipByte* data, CipUint data_length)

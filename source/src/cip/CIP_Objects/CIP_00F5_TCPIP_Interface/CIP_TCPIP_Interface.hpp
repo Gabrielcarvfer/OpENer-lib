@@ -12,7 +12,7 @@
 
 #include "../template/CIP_Object.hpp"
 #include "../../ciptypes.hpp"
-
+class CIP_TCPIP_Interface;
 class CIP_TCPIP_Interface : public CIP_Object<CIP_TCPIP_Interface>
 {
 public:
@@ -115,6 +115,7 @@ public:
 /** @brief Initializing the data structures of the TCP/IP interface object
  */
     static CipStatus Init();
+    static CipStatus Shut();
     static CipStatus Create();
 
 /** @brief Clean up the allocated data of the TCP/IP interface object.

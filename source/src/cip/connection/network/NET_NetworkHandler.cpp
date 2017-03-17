@@ -605,11 +605,11 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
     CIP_Connection* current_connection_instance = nullptr;
 
     // see a message on one of the registered UDP sockets has been received
-    for (int i = 0; i < CIP_ConnectionManager::active_connections_set.size(); i++)
+    for (int i = 0; i < CIP_ConnectionManager::active_connections_set->size(); i++)
     {
 
         // do this at the beginning as the close function may can make the entry invalid
-        connection_manager_instance = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set[i];
+        connection_manager_instance = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set->at(i);
         current_connection_instance = (CIP_Connection*)CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
 
         if ((-1 != current_connection_instance->netConn->GetSocketHandle(/*todo:kUdpCommuncationDirectionConsuming*/) && (CheckSocketSet( current_connection_instance->netConn->GetSocketHandle (/*todo:kUdpCommuncationDirectionConsuming*/)))))

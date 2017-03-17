@@ -13,15 +13,18 @@
 #include "network/NET_NetworkHandler.hpp"
 #include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
 
-//Static variables
-const int CIP_IOConnection::kOpENerEipIoUdpPort = 0x08AE;
-CipUsint* CIP_IOConnection::g_config_data_buffer;
-unsigned int CIP_IOConnection::g_config_data_length;
-CipUdint CIP_IOConnection::g_run_idle_state;
+
 
 //Methods
 void CIP_IOConnection::InitializeIOConnectionData()
 {
+    //Allocate static variables
+    const int CIP_IOConnection::kOpENerEipIoUdpPort = 0x08AE;
+    CipUsint* CIP_IOConnection::g_config_data_buffer;
+    unsigned int CIP_IOConnection::g_config_data_length;
+    CipUdint CIP_IOConnection::g_run_idle_state;
+
+    //init variables
     g_config_data_buffer = nullptr;
     g_config_data_length = 0;
 }

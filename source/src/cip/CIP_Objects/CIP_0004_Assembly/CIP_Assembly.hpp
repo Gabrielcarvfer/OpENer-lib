@@ -8,7 +8,7 @@
 
 #include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
-
+class CIP_Assembly;
 class CIP_Assembly : public CIP_Object<CIP_Assembly>
 {
     public:
@@ -20,7 +20,9 @@ class CIP_Assembly : public CIP_Object<CIP_Assembly>
 		 *
 		 * Creates the Assembly Class with zero instances and sets up all services.
 		 */
-		static CipStatus Init();
+
+		static CipStatus Init (void);
+
 
 		/** @brief clean up the data allocated in the assembly object instances
 		 *
@@ -29,7 +31,7 @@ class CIP_Assembly : public CIP_Object<CIP_Assembly>
 		 * is not freed neither the assembly object instances. These are handled in the
 		 * main shutdown function.
 		 */
-		static void ShutdownAssemblies(void);
+		static CipStatus Shut (void);
 
 		/** @brief notify an Assembly object that data has been received for it.
 		 *

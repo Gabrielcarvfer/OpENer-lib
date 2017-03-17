@@ -43,7 +43,7 @@ class CIP_Common
 		 *  @param message CIP Message to decode
 		 *  @return Number of decoded bytes
 		 */
-		static int DecodePaddedEPath(CipEpath* epath, CipUsint** data);
+		static int DecodePaddedEPath(CipEpath* epath, CipUsint* data);
 
 		static void CipStackInit(CipUint unique_connection_id);
 		static void ShutdownCipStack(void);
@@ -57,10 +57,10 @@ class CIP_Common
      *  @return length of attribute in bytes
      *          -1 .. error
      */
-	static int EncodeData(CipUsint cip_type, void* data, CipUsint** message);
+	static int EncodeData(CipUsint cip_type, void* data, CipUsint* message);
 	private:
 		static const CipUint kCipUintZero = 0;
-		static int EncodeEPath(CipEpath* epath, CipUsint** message);
+		static int EncodeEPath(CipEpath* epath, CipUsint* message);
 
 
 
@@ -75,7 +75,7 @@ class CIP_Common
 		 *  @return length of taken bytes
 		 *          -1 .. error
 		 */
-		static int DecodeData(CipUsint cip_type, void* data, CipUsint** message);
+		static int DecodeData(CipUsint cip_type, void* data, CipUsint* message);
 
 };
 

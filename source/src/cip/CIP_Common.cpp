@@ -33,7 +33,7 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
         case (0):
             break;
         default:
-            std::cout << "Failed to initialize CIP Object with code " << pointOfFail << std::end;
+            std::cout << "Failed to initialize CIP Object with code " << pointOfFail << std::endl;
             exit(-1);
 
     }
@@ -62,7 +62,7 @@ void CIP_Common::ShutdownCipStack (void)
     CIP_AppConnType::CloseAllConnections ();
 
     /*clean the data needed for the assembly object's attribute 3*/
-    CIP_Assembly::ShutdownAssemblies ();
+    CIP_Assembly::Shut ();
 
     NET_Encapsulation::Shutdown ();
 
@@ -126,7 +126,7 @@ CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest_t *message_router_req
     return kCipStatusOkSend;
 }
 */
-int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
+int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)
 {
     int counter = 0;
 
@@ -137,7 +137,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipSint):
         case (kCipUsint):
         case (kCipByte):
-            **message = *(CipUsint *) (data);
+            *message = *(CipUsint *) (data);
             ++(*message);
             counter = 1;
             break;
@@ -177,14 +177,14 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
             CipString *string = (CipString *) data;
 
             NET_Endianconv::AddIntToMessage (* &(string->length), message);
-            memcpy (*message, string->string, string->length);
+            memcpy (message, string->string, string->length);
             *message += string->length;
 
             counter = string->length + 2; /* we have a two byte length field */
             if (counter & 0x01)
             {
                 /* we have an odd byte count */
-                **message = 0;
+                *message = 0;
                 ++(*message);
                 counter++;
             }
@@ -201,10 +201,10 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         {
             CipShortString *short_string = (CipShortString *) data;
 
-            **message = short_string->length;
+            *message = short_string->length;
             ++(*message);
 
-            memcpy (*message, short_string->string, short_string->length);
+            memcpy (message, short_string->string, short_string->length);
             *message += short_string->length;
 
             counter = short_string->length + 1;
@@ -225,9 +225,9 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         {
             CipRevision *revision = (CipRevision *) data;
 
-            **message = revision->major_revision;
+            *message = revision->major_revision;
             ++(*message);
-            **message = revision->minor_revision;
+            *message = revision->minor_revision;
             ++(*message);
             counter = 2;
             break;
@@ -250,7 +250,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCip6Usint):
         {
             CipUsint *p = (CipUsint *) data;
-            memcpy (*message, p, 6);
+            memcpy (message, p, 6);
             counter = 6;
             break;
         }
@@ -263,7 +263,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
             CipByteArray *cip_byte_array;
             OPENER_TRACE_INFO(" -> get attribute byte array\r\n");
             cip_byte_array = (CipByteArray *) data;
-            memcpy (*message, cip_byte_array->data, cip_byte_array->length);
+            memcpy (message, cip_byte_array->data, cip_byte_array->length);
             *message += cip_byte_array->length;
             counter = cip_byte_array->length;
         }
@@ -289,7 +289,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint **message)
     return counter;
 }
 
-int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
+int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint *message)
 {
     int number_of_decoded_bytes = -1;
 
@@ -300,7 +300,7 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
         case (kCipSint):
         case (kCipUsint):
         case (kCipByte):
-            *(CipUsint *) (data) = **message;
+            *(CipUsint *) (data) = *message;
             ++(*message);
             number_of_decoded_bytes = 1;
             break;
@@ -332,7 +332,7 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
         {
             CipString *string = (CipString *) data;
             string->length = NET_Endianconv::GetIntFromMessage (message);
-            memcpy (string->string, *message, string->length);
+            memcpy (string->string, message, string->length);
             *message += string->length;
 
             number_of_decoded_bytes = string->length + 2; /* we have a two byte length field */
@@ -348,10 +348,10 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
         {
             CipShortString *short_string = (CipShortString *) data;
 
-            short_string->length = **message;
+            short_string->length = *message;
             ++(*message);
 
-            memcpy (short_string->string, *message, short_string->length);
+            memcpy (short_string->string, message, short_string->length);
             *message += short_string->length;
 
             number_of_decoded_bytes = short_string->length + 1;
@@ -366,25 +366,25 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint **message)
 }
 
 
-int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
+int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint *message)
 {
     unsigned int length = epath->path_size;
     NET_Endianconv::AddIntToMessage (epath->path_size, message);
 
     if (epath->class_id < 256)
     {
-        **message = 0x20; /*8Bit Class Id */
-        ++(*message);
-        **message = (CipUsint) epath->class_id;
-        ++(*message);
+        *message = 0x20; /*8Bit Class Id */
+        ++(message);
+        *message = (CipUsint) epath->class_id;
+        ++(message);
         length -= 1;
     }
     else
     {
-        **message = 0x21; /*16Bit Class Id */
-        ++(*message);
-        **message = 0; /*pad byte */
-        ++(*message);
+        *message = 0x21; /*16Bit Class Id */
+        ++(message);
+        *message = 0; /*pad byte */
+        ++(message);
         NET_Endianconv::AddIntToMessage (epath->class_id, message);
         length -= 2;
     }
@@ -393,18 +393,18 @@ int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
     {
         if (epath->instance_number < 256)
         {
-            **message = 0x24; /*8Bit Instance Id */
-            ++(*message);
-            **message = (CipUsint) epath->instance_number;
-            ++(*message);
+            *message = 0x24; /*8Bit Instance Id */
+            ++(message);
+            *message = (CipUsint) epath->instance_number;
+            ++(message);
             length -= 1;
         }
         else
         {
-            **message = 0x25; /*16Bit Instance Id */
-            ++(*message);
-            **message = 0; /*padd byte */
-            ++(*message);
+            *message = 0x25; /*16Bit Instance Id */
+            ++(message);
+            *message = 0; /*padd byte */
+            ++(message);
             NET_Endianconv::AddIntToMessage (epath->instance_number, message);
             length -= 2;
         }
@@ -413,18 +413,18 @@ int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
         {
             if (epath->attribute_number < 256)
             {
-                **message = 0x30; /*8Bit Attribute Id */
-                ++(*message);
-                **message = (CipUsint) epath->attribute_number;
-                ++(*message);
+                *message = 0x30; /*8Bit Attribute Id */
+                ++(message);
+                *message = (CipUsint) epath->attribute_number;
+                ++(message);
                 length -= 1;
             }
             else
             {
-                **message = 0x31; /*16Bit Attribute Id */
-                ++(*message);
-                **message = 0; /*pad byte */
-                ++(*message);
+                *message = 0x31; /*16Bit Attribute Id */
+                ++(message);
+                *message = 0; /*pad byte */
+                ++(message);
                 NET_Endianconv::AddIntToMessage (epath->attribute_number, message);
                 length -= 2;
             }
@@ -434,10 +434,10 @@ int CIP_Common::EncodeEPath (CipEpath *epath, CipUsint **message)
     return 2 + epath->path_size * 2; /* path size is in 16 bit chunks according to the specification */
 }
 
-int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
+int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint *message)
 {
     unsigned int number_of_decoded_elements;
-    CipUsint *message_runner = *message;
+    CipUsint *message_runner = message;
 
     epath->path_size = *message_runner;
     message_runner++;
@@ -465,7 +465,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeClassId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->class_id = NET_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->class_id = NET_Endianconv::GetIntFromMessage (message_runner);
                 number_of_decoded_elements++;
                 break;
 
@@ -478,7 +478,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeInstanceId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->instance_number = NET_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->instance_number = NET_Endianconv::GetIntFromMessage (message_runner);
                 number_of_decoded_elements++;
                 break;
 
@@ -491,7 +491,7 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
             case kSegmentTypeLogicalSegment + kLogicalSegmentLogicalTypeAttributeId +
                  kLogicalSegmentLogicalFormatSixteenBitValue:
                 message_runner += 2;
-                epath->attribute_number = NET_Endianconv::GetIntFromMessage (&(message_runner));
+                epath->attribute_number = NET_Endianconv::GetIntFromMessage (message_runner);
                 number_of_decoded_elements++;
                 break;
 
@@ -502,6 +502,6 @@ int CIP_Common::DecodePaddedEPath (CipEpath *epath, CipUsint **message)
         }
     }
 
-    *message = message_runner;
+    message = message_runner;
     return number_of_decoded_elements * 2 + 1; /* i times 2 as every encoding uses 2 bytes */
 }

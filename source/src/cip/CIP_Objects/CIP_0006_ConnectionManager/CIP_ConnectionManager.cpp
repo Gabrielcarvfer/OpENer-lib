@@ -27,15 +27,6 @@ static const int g_kNumberOfConnectableObjects = 2 + OPENER_CIP_NUM_APPLICATION_
 
 
 
-std::map<CipUdint, const CIP_ConnectionManager *> CIP_ConnectionManager::active_connections_set;
-
-std::map<CipUdint, ConnectionManagementHandling> CIP_ConnectionManager::g_astConnMgmList;
-
-CIP_ConnectionManager *CIP_ConnectionManager::g_dummy_connection_object = nullptr;
-
-CipUdint CIP_ConnectionManager::g_incarnation_id;
-
-
 
 /** @brief gets the padded logical path TODO: enhance documentation
  * @param logical_path_segment TheLogical Path Segment
@@ -81,8 +72,18 @@ CipStatus CIP_ConnectionManager::Init ()
 {
     if (number_of_instances == 0)
     {
-        CIP_Class3conn::InitializeClass3ConnectionData();
-        CIP_AppConnType::InitializeIoConnectionData();
+        //Allocate static variables
+        active_connections_set = new std::map<CipUdint, const CIP_ConnectionManager *> ();
+
+        g_astConnMgmList = new std::map<CipUdint, ConnectionManagementHandling> ();
+
+        g_dummy_connection_object = nullptr;
+
+        CipUdint g_incarnation_id = 0;
+
+        //Initialization procedures
+        //CIP_Class3conn::InitializeClass3ConnectionData();
+        //CIP_AppConnType::InitializeIoConnectionData();
 
         class_id = kCipConnectionManagerClassCode;
         class_name = "Connection Manager";
@@ -353,9 +354,9 @@ CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest_t *messag
 
     OPENER_TRACE_INFO("ForwardClose: ConnSerNo %d\n", connection_serial_number);
 
-    for (unsigned int i = 0; i < active_connections_set.size(); i++)
+    for (unsigned int i = 0; i < active_connections_set->size(); i++)
     {
-        connection_manager_instance = (CIP_ConnectionManager*)active_connections_set[i];
+        connection_manager_instance = (CIP_ConnectionManager*)active_connections_set->at(i);
         connection_instance = (CIP_Connection*)CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
         /* this check should not be necessary as only established connections should be in the active connection list */
         if ((connection_instance->State == CIP_Connection::kConnectionStateEstablished)
@@ -386,9 +387,9 @@ ConnectionManagementHandling* CIP_ConnectionManager::GetConnMgmEntry(CipUdint cl
 
     for (i = 0; i < g_kNumberOfConnectableObjects; ++i)
     {
-        if (class_id == g_astConnMgmList[i].class_id)
+        if (class_id == g_astConnMgmList->at(i).class_id)
         {
-            pstRetVal = &(g_astConnMgmList[i]);
+            pstRetVal = &(g_astConnMgmList->at(i));
             break;
         }
     }
@@ -416,7 +417,7 @@ CipStatus CIP_ConnectionManager::ManageConnections (MilliSeconds elapsed_time)
     //todo:HandleApplication ();
     NET_EthIP_Encap::ManageEncapsulationMessages (elapsed_time);
 
-    for (unsigned int i = 0; i < active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < active_connections_set->size (); i++)
     {
         connection_manager_instance = (CIP_ConnectionManager*)object_Set[i];
         connection_instance = (CIP_Connection*)CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
@@ -501,7 +502,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
 {
     /* write reply information in CPF struct dependent of pa_status */
     CIP_CommonPacket::PacketFormat *cip_common_packet_format_data = &CIP_CommonPacket::common_packet_data;
-    CipByte *message = &message_router_response->response_data[0];
+    CipByte *message = (CipByte*)&message_router_response->response_data[0];
     cip_common_packet_format_data->item_count = 2;
     cip_common_packet_format_data->data_item.type_id = CIP_CommonPacket::kCipItemIdUnconnectedDataItem;
 
@@ -513,7 +514,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
     if (kCipErrorSuccess == general_status)
     {
         OPENER_TRACE_INFO("assembleFWDOpenResponse: sending success response\n");
-        message_router_response->response_data.reserve (26); /* if there is no application specific data */
+        message_router_response->response_data->reserve (26); /* if there is no application specific data */
         message_router_response->size_additional_status = 0;
 
         if (cip_common_packet_format_data->address_info_item[0].type_id != 0)
@@ -533,7 +534,7 @@ CipStatus CIP_ConnectionManager::AssembleForwardOpenResponse (CIP_Connection * c
         /* we have an connection creation error */
         OPENER_TRACE_INFO("assembleFWDOpenResponse: sending error response\n");
         connection_object->State = CIP_Connection::kConnectionStateNonExistent;
-        message_router_response->response_data.reserve (10);
+        message_router_response->response_data->reserve (10);
 
         switch (general_status)
         {
@@ -627,13 +628,13 @@ CipStatus CIP_ConnectionManager::AssembleForwardCloseResponse (CipUint connectio
 {
     // write reply information in CPF struct dependent of pa_status
     CIP_CommonPacket::PacketFormat *common_data_packet_format_data = &CIP_CommonPacket::common_packet_data;
-    CipByte *message = &message_router_response->response_data[0];
+    CipByte *message = (CipByte*)&message_router_response->response_data[0];
     common_data_packet_format_data->item_count = 2;
     common_data_packet_format_data->data_item.type_id = CIP_CommonPacket::kCipItemIdUnconnectedDataItem;
 
     AddNullAddressItem (common_data_packet_format_data);
 
-    message_router_response->response_data.reserve (10); // if there is no application specific data
+    message_router_response->response_data->reserve (10); // if there is no application specific data
     
     NET_Endianconv::AddIntToMessage (connection_serial_number, message);
     NET_Endianconv::AddIntToMessage (originatior_vendor_id, message);
@@ -666,9 +667,9 @@ CIP_Connection *CIP_ConnectionManager::GetConnectedObject (CipUdint connection_i
 {
     CIP_Connection *active_connection_object_list_item;;
 
-    for (unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set->size (); i++)
     {
-        active_connection_object_list_item = (CIP_Connection*)active_connections_set[i];//todo: fix
+        active_connection_object_list_item = (CIP_Connection*)active_connections_set->at(i);//todo: fix
 
         if (active_connection_object_list_item->State == CIP_Connection::kConnectionStateEstablished)
         {
@@ -683,9 +684,9 @@ CIP_ConnectionManager *CIP_ConnectionManager::GetConnectionManagerObject (CipUdi
 {
     CIP_ConnectionManager *active_connection_manager;
 
-    for (unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set->size (); i++)
     {
-        active_connection_manager = (CIP_ConnectionManager*)active_connections_set[i];
+        active_connection_manager = (CIP_ConnectionManager*)active_connections_set->at(i);
 
         if (CIP_Connection::GetInstanceNumber(active_connection_manager->producing_instance) == connection_id)
             return active_connection_manager;
@@ -702,9 +703,9 @@ CIP_ConnectionManager *CIP_ConnectionManager::GetConnectedOutputAssembly (CipUdi
     CIP_ConnectionManager * active_connection_manager_instance;
     CIP_Connection * connection_instance;
 
-    for (unsigned int i = 0; i < active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < active_connections_set->size (); i++)
     {
-        active_connection_manager_instance = (CIP_ConnectionManager*)active_connections_set[i];
+        active_connection_manager_instance = (CIP_ConnectionManager*)active_connections_set->at(i);
         connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (active_connection_manager_instance->connection_serial_number);
 
         if (connection_instance->State == CIP_Connection::kConnectionStateEstablished)
@@ -720,9 +721,9 @@ CIP_ConnectionManager *CIP_ConnectionManager::CheckForExistingConnection (CIP_Co
 {
     CIP_ConnectionManager * active_connection_manager_instance;
     CIP_Connection * connection_instance;
-    for (unsigned int i = 0; i < active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < active_connections_set->size (); i++)
     {
-        active_connection_manager_instance = (CIP_ConnectionManager*)active_connections_set[i];
+        active_connection_manager_instance = (CIP_ConnectionManager*)active_connections_set->at(i);
         connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (active_connection_manager_instance->connection_serial_number);
 
         if (connection_instance->State == CIP_Connection::kConnectionStateEstablished)
@@ -1113,7 +1114,7 @@ void CIP_ConnectionManager::RemoveFromActiveConnections (CIP_ConnectionManager *
     CIP_Connection * connection_instance;
     connection_instance = (CIP_Connection*) CIP_Connection::GetInstance (connection_manager_instance->connection_serial_number);
     connection_instance->State = CIP_Connection::kConnectionStateNonExistent;
-    active_connections_set.erase ((const unsigned int &) connection_manager_instance->id);
+    active_connections_set->erase ((const unsigned int &) connection_manager_instance->id);
 }
 
 CipBool CIP_ConnectionManager::IsConnectedOutputAssembly (CipUdint pa_nInstanceNr)
@@ -1122,9 +1123,9 @@ CipBool CIP_ConnectionManager::IsConnectedOutputAssembly (CipUdint pa_nInstanceN
 
     CIP_ConnectionManager *pstRunner;
 
-    for (unsigned int i = 0; i < active_connections_set.size (); i++)
+    for (unsigned int i = 0; i < active_connections_set->size (); i++)
     {
-        pstRunner = (CIP_ConnectionManager*)active_connections_set[i];
+        pstRunner = (CIP_ConnectionManager*)active_connections_set->at(i);
         if (pa_nInstanceNr == pstRunner->connection_path.connection_point[0])
         {
             bRetVal = (CipBool)true;
@@ -1141,9 +1142,9 @@ CipStatus CIP_ConnectionManager::TriggerConnections (CipUdint pa_unOutputAssembl
 
     CIP_ConnectionManager *pstRunner;
 
-    for (int i = 0; i < active_connections_set.size (); i++)
+    for (int i = 0; i < active_connections_set->size (); i++)
     {
-        pstRunner = (CIP_ConnectionManager*)active_connections_set[i];
+        pstRunner = (CIP_ConnectionManager*)active_connections_set->at(i);
 
         if ((pa_unOutputAssembly == pstRunner->connection_path.connection_point[0])
             && (pa_unInputAssembly == pstRunner->connection_path.connection_point[1]))
@@ -1189,4 +1190,11 @@ CipStatus CIP_ConnectionManager::InstanceServices(int service,
     {
 	    return kCipStatusError;
     }
+}
+
+CipStatus CIP_ConnectionManager::Shut()
+{
+    CipStatus stat;
+    stat.status = kCipStatusOk;
+    return stat;
 }

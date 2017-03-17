@@ -37,7 +37,7 @@ CipStatus CIP_EthernetIP_Link::Init()
     return kCipStatusOk;
 }
 
-CipStatus CIP_EthernetIP_Link::Shutdown ()
+CipStatus CIP_EthernetIP_Link::Shut ()
 {
 	return kCipStatusOk;
 }

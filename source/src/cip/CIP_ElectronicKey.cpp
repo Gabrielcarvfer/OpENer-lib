@@ -6,5 +6,7 @@
 
 CipStatus CIP_ElectronicKey::validate_key()
 {
-
+    CipStatus stat;
+    stat = kCipStatusOk;
+    return stat;
 }

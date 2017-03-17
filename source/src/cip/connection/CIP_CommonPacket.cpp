@@ -56,7 +56,7 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
         return return_value.extended_status;
     }
 
-    return_value.extended_status = (CipUdint) AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
+    return_value.extended_status = (CipUdint) AssembleLinearMessage(CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
     return return_value.extended_status;
 
 }
@@ -114,7 +114,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
                 ? connection_manager_object->producing_instance : connection_manager_object->consuming_instance;
 
         common_packet_data.address_item.data.connection_identifier = connection_object->CIP_produced_connection_id;
-        return_value = AssembleLinearMessage(&CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
+        return_value = AssembleLinearMessage(CIP_MessageRouter::g_message_router_response, &common_packet_data, reply_buffer);
     }
 
     return return_value.status;

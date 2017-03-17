@@ -121,7 +121,7 @@ CipStatus CIP_DeviceNET_Link::GetAttributeSingleDeviceNetInterface(CipMessageRou
 {
 
     CipStatus status = kCipStatusOkSend;
-    CipByte* message = &message_router_response->response_data[0];
+    CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     status = this->GetAttributeSingle(message_router_request,   message_router_response);
 

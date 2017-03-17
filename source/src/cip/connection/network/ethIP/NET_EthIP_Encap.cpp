@@ -568,7 +568,7 @@ void NET_EthIP_Encap::EncapsulationShutDown(void)
             g_registered_sessions[i] = kEipInvalidSocket;
         }
     }
-    CIP_EthernetIP_Link::Shutdown();
+    CIP_EthernetIP_Link::Shut();
 }
 
 void NET_EthIP_Encap::ManageEncapsulationMessages(MilliSeconds elapsed_time)
