@@ -65,7 +65,7 @@ public:
  * @param input_point  the input point
  * @param instance_type the connection application type
  */
-    static void CloseAllConnectionsForInputWithSameType (CipUdint input_point, CIP_Connection::ConnectionType instance_type);
+    static void CloseAllConnectionsForInputWithSameType (CipUdint input_point, CIP_Connection::ConnectionType_e instance_type);
 
 /**@ brief close all open connections.
  *

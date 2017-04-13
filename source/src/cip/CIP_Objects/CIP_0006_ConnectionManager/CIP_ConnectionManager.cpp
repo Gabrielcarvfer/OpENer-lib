@@ -6,15 +6,11 @@
 
 #include "CIP_ConnectionManager.hpp"
 #include <cstring>
-#include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
-#include <cip/ciptypes.hpp>
-#include <cip/CIP_Segment.hpp>
-#include "../../connection/CIP_Class3Connection.hpp"
 #include "../CIP_0001_Identity/CIP_Identity.hpp"
-#include "../../connection/CIP_IOConnection.hpp"
 #include "../../connection/network/NET_Endianconv.hpp"
 #include "cip/CIP_AppConnType.hpp"
-
+#include "network/NET_NetworkHandler.hpp"
+#include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
 
 #define CIP_CONN_TYPE_MASK 0x6000 /**< Bit mask filter on bit 13 & 14 */
 
@@ -31,31 +27,15 @@ std::map<CipUdint, ConnectionManagementHandling> *CIP_ConnectionManager::g_astCo
 CIP_ConnectionManager * CIP_ConnectionManager::g_dummy_connection_object;
 CipUdint CIP_ConnectionManager::g_incarnation_id;
 
-CipStatus EstablishConnection()
+/*TEMPORARY EXPLICIT CONN STUFF*/
+CipStatus EstablishExplicitConnection()
 {
-    CipStatus eip_status;
-    eip_status.status = kCipStatusOk;
-
-    CipUdint produced_connection_id_buffer;
-
-<<<<<<< Updated upstream
-    CipStatus connCreateStatus = CIP_Connection::Create();
-    CIP_Connection* connection = (CIP_Connection*)( connCreateStatus.status==kCipStatusOk ?
-                                          CIP_Connection::GetInstance (connCreateStatus.extended_status) : nullptr);
-
-=======
-CipStatus EstablishConnection()
-{
-    CipStatus eip_status;
-    eip_status.status = kCipStatusOk;
-
-    CipUdint produced_connection_id_buffer;
+   CipStatus eip_status;
+    eip_status.status = kCipStatusError;
 
     CipStatus connCreateStatus = CIP_Connection::Create();
     CIP_Connection* connection = (CIP_Connection*)( connCreateStatus.status==kCipStatusOk ?
                                           CIP_Connection::GetInstance (connCreateStatus.extended_status) : nullptr);
-
->>>>>>> Stashed changes
     if (nullptr == connection)
     {
         eip_status.status = kCipErrorConnectionFailure;
@@ -79,6 +59,731 @@ CipStatus EstablishConnection()
     }
     return eip_status;
 }
+
+/*TEMPORARY IO CONN STUFF*/
+
+//Includes
+
+const int CIP_ConnectionManager::kOpENerEipIoUdpPort = 0x08AE;
+CipUsint* CIP_ConnectionManager::g_config_data_buffer; /**< buffers for the config data coming with a forward open request. */
+unsigned int CIP_ConnectionManager::g_config_data_length;
+CipUdint CIP_ConnectionManager::g_run_idle_state; /**< buffer for holding the run idle information. */
+
+//Methods
+void CIP_ConnectionManager::InitializeIOConnectionData()
+{
+    //init variables
+    g_config_data_buffer = nullptr;
+    g_config_data_length = 0;
+}
+CipStatus CIP_ConnectionManager::EstablishIoConnection (CIP_Connection * connection_instance, CipUint *extended_error)
+{
+    int originator_to_target_connection_type, target_to_originator_connection_type;
+    CipStatus eip_status = kCipStatusOk;
+    CIP_Attribute* attribute;
+
+    // currently we allow I/O connections only to assembly objects
+    // we don't need to check for zero as this is handled in the connection path parsing
+    const CIP_Assembly* assembly_class = CIP_Assembly::GetClass();
+    CIP_ConnectionManager* instance = (CIP_ConnectionManager*)CIP_ConnectionManager::GetConnectionManagerObject (connection_instance->id);
+
+    CIP_AppConnType::GetIoConnectionForConnectionData(instance, extended_error);
+
+    //if (nullptr == this)
+    {
+        //return (CipStatus) kCipErrorConnectionFailure;
+    }
+
+    // TODO: add check for transport type trigger
+
+    if (CIP_Connection::kConnectionTriggerProductionTriggerCyclic
+        != connection_instance->TransportClass_trigger.bitfield_u.production_trigger)
+    {
+        if (256 == instance->production_inhibit_time)
+        {
+            //there was no PIT segment in the connection path set PIT to one fourth of RPI
+            instance->production_inhibit_time = (CipUint) ((CipUint)(instance->t_to_o_requested_packet_interval) / 4000);
+        }
+        else
+        {
+            // if production inhibit time has been provided it needs to be smaller than the RPI
+            if (instance->production_inhibit_time > ((CipUint)((instance->t_to_o_requested_packet_interval) / 1000)))
+            {
+                // see section C-1.4.3.3
+                *extended_error = 0x111; //< RPI not supported. Extended Error code deprecated
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+        }
+    }
+    // set the connection call backs
+    //connection_close_function = CloseIoConnection;
+    //connection_timeout_function = HandleIoConnectionTimeOut;
+    //connection_send_data_function = SendConnectedData;
+    //connection_receive_data_function = HandleReceivedIoConnectionData;
+
+    CIP_ConnectionManager::GeneralConnectionConfiguration (instance);
+    originator_to_target_connection_type = (instance->o_to_t_network_connection_parameter & 0x6000) >> 13;
+    target_to_originator_connection_type = (instance->t_to_o_network_connection_parameter & 0x6000) >> 13;
+
+    if ((originator_to_target_connection_type == 0) && (target_to_originator_connection_type == 0))
+    {
+        // this indicates an re-configuration of the connection currently not supported and
+        // we should not come here as this is handled in the forwardopen function
+
+    }
+    else
+    {
+        int producing_index = 0;
+        int data_size;
+        int diff_size;
+        int is_heartbeat;
+
+        if ((originator_to_target_connection_type != 0) && (target_to_originator_connection_type != 0))
+        {
+            // we have a producing and consuming connection
+            producing_index = 1;
+        }
+
+        instance->consuming_instance = 0;
+        connection_instance->Consumed_connection_path_length = 0;
+        instance->producing_instance = 0;
+        connection_instance->Produced_connection_path_length = 0;
+
+        if (originator_to_target_connection_type != 0)
+        {
+            //setup consumer side
+            if (nullptr == (instance = (CIP_ConnectionManager*) CIP_Assembly::GetInstance (instance->connection_path.connection_point[0])))
+            {
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidConsumingApllicationPath;
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+            // consuming Connection Point is present
+            instance->consuming_instance = connection_instance;
+
+            connection_instance->Consumed_connection_path_length = 6;
+            connection_instance->Consumed_connection_path.path_size = 6;
+            connection_instance->Consumed_connection_path.class_id = (CipUint) instance->connection_path.class_id;
+            connection_instance->Consumed_connection_path.instance_number = (CipUint) instance->connection_path.connection_point[0];
+            connection_instance->Consumed_connection_path.attribute_number = 3;
+
+            attribute = instance->GetCipAttribute (3);
+            OPENER_ASSERT(attribute != nullptr);
+            // an assembly object should always have an attribute 3
+            data_size = connection_instance->Consumed_connection_size;
+            diff_size = 0;
+            is_heartbeat = (((CipByteArray*)attribute->getData ())->length == 0);
+
+            if (connection_instance->TransportClass_trigger.bitfield_u.transport_class == kConnectionTriggerTransportClass1)//transport_type_class_trigger & 0x0F) == 1)
+            {
+                // class 1 connection
+                data_size -= 2; // remove 16-bit sequence count length
+                diff_size += 2;
+            }
+
+            if ((kOpENerConsumedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
+            {
+                // we only have an run idle header if it is not an heartbeat connection
+                data_size -= 4; // remove the 4 bytes needed for run/idle header
+                diff_size += 4;
+            }
+
+            if (((CipByteArray*)attribute->getData())->length != data_size)
+            {
+                /*wrong connection size */
+                instance->correct_originator_to_target_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidOToTConnectionSize;
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+        }
+
+        if (target_to_originator_connection_type != 0)
+        {
+            //setup producer side
+            if (0 == (instance = (CIP_ConnectionManager*) CIP_Assembly::GetInstance(instance->connection_path.connection_point[producing_index])))
+            {
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+            instance->producing_instance = connection_instance;
+
+            connection_instance->Produced_connection_path_length = 6;
+            connection_instance->Produced_connection_path.path_size = 6;
+            connection_instance->Produced_connection_path.class_id = (CipUint) instance->connection_path.class_id;
+            connection_instance->Produced_connection_path.instance_number = (CipUint) instance->connection_path.connection_point[producing_index];
+            connection_instance->Produced_connection_path.attribute_number = 3;
+
+            attribute = ((CIP_Object*)instance)->GetCipAttribute (3);
+            OPENER_ASSERT(attribute != nullptr);
+            // an assembly object should always have an attribute 3
+            data_size = connection_instance->Produced_connection_size;
+            diff_size = 0;
+            is_heartbeat = (((CipByteArray*)attribute->getData())->length == 0);
+
+            if (connection_instance->TransportClass_trigger.bitfield_u.transport_class == kConnectionTriggerTransportClass1)
+            {
+                // class 1 connection
+                data_size -= 2; //remove 16-bit sequence count length
+                diff_size += 2;
+            }
+
+            if ((kOpENerProducedDataHasRunIdleHeader) && (data_size > 0) && (!is_heartbeat))
+            {
+                // we only have an run idle header if it is not an heartbeat connection
+                data_size -= 4; // remove the 4 bytes needed for run/idle header
+                diff_size += 4;
+            }
+
+            if (((CipByteArray*)attribute->getData())->length != data_size)
+            {
+                /*wrong connection size*/
+                instance->correct_target_to_originator_size = (CipUint) (((CipByteArray*)attribute->getData())->length + diff_size);
+                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorInvalidTToOConnectionSize;
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+        }
+
+        if (nullptr != g_config_data_buffer)
+        {
+            // config data has been sent with this forward open request
+            *extended_error = HandleConfigData((CIP_Assembly*)assembly_class);
+            if (0 != *extended_error)
+            {
+                return (CipStatus) kCipErrorConnectionFailure;
+            }
+        }
+
+        eip_status = OpenCommunicationChannels();
+        if (kCipStatusOk != eip_status.status)
+        {
+            *extended_error = 0; //TODO find out the correct extended error code
+            return eip_status;
+        }
+    }
+
+    CIP_ConnectionManager::AddNewActiveConnection(connection_instance);
+    //todo:CheckIoConnectionEvent(connection_manager->connection_path.connection_point[0], connection_manager->connection_path.connection_point[1], kIoConnectionEventOpened);
+    return eip_status;
+}
+
+/*   @brief Open a Point2Point connection dependent on pa_direction.
+ *   @param this Pointer to registered Object in ConnectionManager.
+ *   @param cpf_data Index of the connection object
+ *   @return status
+ *               0 .. success
+ *              -1 .. error
+ */
+CipStatus CIP_ConnectionManager::OpenConsumingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data)
+{
+    //static EIP_UINT16 nUDPPort = 2222; //TODO think on improving the udp port assigment for point to point connections
+    int j = 0;
+    struct sockaddr_in *addr = new struct sockaddr_in();
+    int socket;
+
+    if (cpf_data->address_info_item[0].type_id == 0)
+    {
+        // it is not used yet
+        j = 0;
+    }
+    else if (cpf_data->address_info_item[1].type_id == 0)
+    {
+        j = 1;
+    }
+
+    ///todo: create UDP socket only with CIP_Connectio
+    addr->sin_family = AF_INET;
+    addr->sin_addr.s_addr = INADDR_ANY;
+    //addr.in_port = htons(nUDPPort++);
+    addr->sin_port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort);
+
+    // the address is only needed for bind used if consuming
+    netConn->SetSocketHandle (NET_NetworkHandler::CreateUdpSocket(kUdpCommuncationDirectionConsuming, (struct sockaddr*)&addr));
+    if (netConn->GetSocketHandle () == kEipInvalidSocket)
+    {
+        OPENER_TRACE_ERR("cannot create UDP socket in OpenPointToPointConnection\n");
+        return kCipStatusError;
+    }
+
+    netConn->originator_address = (struct sockaddr *)addr; // store the address of the originator for packet scanning
+
+    cpf_data->address_info_item[j].length = 16;
+    cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget;
+
+    cpf_data->address_info_item[j].sin_port = addr->sin_port;
+    //TODO should we add our own address here?
+    cpf_data->address_info_item[j].sin_addr = addr->sin_addr.s_addr;
+    memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
+    cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
+
+    return kCipStatusOk;
+}
+
+CipStatus CIP_ConnectionManager::OpenProducingPointToPointConnection(CIP_CommonPacket::PacketFormat* cpf_data)
+{
+    int socket;
+    in_port_t port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort); /* the default port to be used if no port information is part of the forward open request */
+
+    if (CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator == cpf_data->address_info_item[0].type_id)
+    {
+        port = cpf_data->address_info_item[0].sin_port;
+    }
+    else
+    {
+        if (CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator == cpf_data->address_info_item[1].type_id)
+        {
+            port = cpf_data->address_info_item[1].sin_port;
+        }
+    }
+
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_family = AF_INET;
+    // we don't know the address of the originate will be set in the IApp_CreateUDPSocket
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_addr.s_addr = 0;
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_port = port;
+
+    socket = NET_NetworkHandler::CreateUdpSocket (kUdpCommuncationDirectionProducing, (struct sockaddr*)&netConn->remote_address); /* the address is only needed for bind used if consuming */
+
+    if (socket == kEipInvalidSocket)
+    {
+        OPENER_TRACE_ERR("cannot create UDP socket in OpenPointToPointConnection\n");
+        // *pa_pnExtendedError = 0x0315; //miscellaneous
+        return (CipStatus) kCipErrorConnectionFailure;
+    }
+    netConn->SetSocketHandle (socket);
+
+    return kCipStatusOk;
+}
+
+CipStatus CIP_ConnectionManager::OpenProducingMulticastConnection(CIP_CommonPacket::PacketFormat* cpf_data)
+{
+    CIP_Connection* existing_connection_object = (CIP_Connection*)CIP_AppConnType::GetExistingProducerMulticastConnection(connection_manager->connection_path.connection_point[1]);
+    int j;
+
+    if (nullptr == existing_connection_object)
+    {
+        // we are the first connection producing for the given Input Assembly
+        return OpenMulticastConnection(kUdpCommuncationDirectionProducing, cpf_data);
+    }
+    else
+    {
+        // we need to inform our originator on the correct connection id
+        CIP_produced_connection_id = existing_connection_object->CIP_produced_connection_id;
+    }
+
+    // we have a connection reuse the data and the socket
+
+    // allocate an unused sockaddr struct to use
+    j = 0;
+
+    if (CIP_CommonPacket::common_packet_data.address_info_item[0].type_id == 0)
+    {
+        // it is not used yet
+        j = 0;
+    }
+    else if (CIP_CommonPacket::common_packet_data.address_info_item[1].type_id == 0)
+    {
+        j = 1;
+    }
+
+    if (CIP_Connection::kConnectionTypeIoExclusiveOwner == Instance_type)
+    {
+        //exclusive owners take the socket and further manage the connection
+        //especially in the case of time outs.
+
+        netConn->SetSocketHandle (existing_connection_object->netConn->GetSocketHandle ());
+        existing_connection_object->netConn->SetSocketHandle (kEipInvalidSocket);
+    }
+    else
+    {
+        // this connection will not produce the data
+        netConn->SetSocketHandle (kEipInvalidSocket);
+    }
+
+    cpf_data->address_info_item[j].length = 16;
+    cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_family = AF_INET;
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_port = cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons(
+            (uint16_t) kOpENerEipIoUdpPort);
+    ((struct sockaddr_in*)(netConn->remote_address))->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr = CIP_TCPIP_Interface::g_multicast_configuration.starting_multicast_address;
+    memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
+    cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
+
+    return kCipStatusOk;
+}
+
+/**  @brief Open a Multicast connection dependent on @var direction.
+ *
+ *   @param direction Flag to indicate if consuming or producing.
+ *   @param this  pointer to registered Object in ConnectionManager.
+ *   @param cpf_data     received CPF Data Item.
+ *   @return status
+ *               0 .. success
+ *              -1 .. error
+ */
+CipStatus CIP_ConnectionManager::OpenMulticastConnection(UdpCommuncationDirection direction, CIP_CommonPacket::PacketFormat* cpf_data)
+{
+    int j = 0;
+    int socket;
+
+    if (0 != CIP_CommonPacket::common_packet_data.address_info_item[0].type_id) {
+        if ((kUdpCommuncationDirectionConsuming == direction) && (CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget == cpf_data->address_info_item[0].type_id))
+        {
+            // for consuming connection points the originator can choose the multicast address to use
+            // we have a given address type so use it
+        }
+        else
+        {
+            j = 1;
+            /* if the type is not zero (not used) or if a given type it has to be the correct one */
+            if ((0 != CIP_CommonPacket::common_packet_data.address_info_item[1].type_id) && (!((kUdpCommuncationDirectionConsuming == direction)
+                                                                                               && (CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget == cpf_data->address_info_item[0].type_id))))
+            {
+                OPENER_TRACE_ERR("no suitable addr info item available\n");
+                return kCipStatusError;
+            }
+        }
+    }
+
+    if (0 == cpf_data->address_info_item[j].type_id)
+    {
+        // we are using an unused item initialize it with the default multicast address
+        cpf_data->address_info_item[j].sin_family = NET_Connection::endian_htons(AF_INET);
+        cpf_data->address_info_item[j].sin_port = NET_Connection::endian_htons((uint16_t) kOpENerEipIoUdpPort);
+        cpf_data->address_info_item[j].sin_addr = CIP_TCPIP_Interface::g_multicast_configuration.starting_multicast_address;
+        memset(cpf_data->address_info_item[j].nasin_zero, 0, 8);
+        cpf_data->address_info_item[j].length = 16;
+    }
+
+    if (NET_Connection::endian_htons(AF_INET) != cpf_data->address_info_item[j].sin_family)
+    {
+        OPENER_TRACE_ERR("Sockaddr Info Item with wrong sin family value recieved\n");
+        return kCipStatusError;
+    }
+
+    /* allocate an unused sockaddr struct to use */
+    struct sockaddr_in *socket_address = new struct sockaddr_in();
+    socket_address->sin_family = NET_Connection::endian_ntohs((uint16_t) cpf_data->address_info_item[j].sin_family);
+    socket_address->sin_addr.s_addr = cpf_data->address_info_item[j].sin_addr;
+    socket_address->sin_port = cpf_data->address_info_item[j].sin_port;
+
+    // the address is only needed for bind used if consuming
+    netConn->SetSocketHandle ( NET_NetworkHandler::CreateUdpSocket (direction, (struct sockaddr*)socket_address));
+
+    if (netConn->GetSocketHandle () == kEipInvalidSocket)
+    {
+        OPENER_TRACE_ERR("cannot create UDP socket in OpenMulticastConnection\n");
+        return kCipStatusError;
+    }
+
+    if (direction == kUdpCommuncationDirectionConsuming)
+    {
+        cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoOriginatorToTarget;
+        netConn->originator_address = (struct sockaddr*)socket_address;
+    }
+    else
+    {
+        cpf_data->address_info_item[j].type_id = CIP_CommonPacket::kCipItemIdSocketAddressInfoTargetToOriginator;
+        netConn->remote_address = (struct sockaddr*)socket_address;
+    }
+
+    return kCipStatusOk;
+}
+
+CipUint CIP_ConnectionManager::HandleConfigData(CIP_Assembly* assembly_class)
+{
+    CipUint connection_manager_status = 0;
+    const CIP_Object* config_instance = (const CIP_Object<CIP_ConnectionManager>*)CIP_Assembly::GetClass();
+
+    if (0 != g_config_data_length)
+    {
+        if (CIP_AppConnType::ConnectionWithSameConfigPointExists(connection_manager->connection_path.connection_point[2]))
+        {
+            // there is a connected connection with the same config point
+            // we have to have the same data as already present in the config point
+            CipByteArray* p = (CipByteArray*)GetCipAttribute(3)->getData ();
+            if (p->length != g_config_data_length)
+            {
+                connection_manager_status = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
+            }
+            else
+            {
+                /*FIXME check if this is correct */
+                if (memcmp(p->data, g_config_data_buffer, g_config_data_length))
+                {
+                    connection_manager_status = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
+                }
+            }
+        }
+        else
+        {
+            // put the data on the configuration assembly object with the current
+            // design this can be done rather efficiently
+            /*todo:
+            if (kCipStatusOk != NotifyAssemblyConnectedDataReceived(config_instance, g_config_data_buffer, g_config_data_length))
+            {
+                OPENER_TRACE_WARN("Configuration data was invalid\n");
+                connection_manager_status = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidConfigurationApplicationPath;
+            }
+             */
+        }
+    }
+    return connection_manager_status;
+}
+
+void CIP_ConnectionManager::CloseIoConnection()
+{
+
+    //todo:CheckIoConnectionEvent(connection_manager->connection_path.connection_point[0], connection_manager->connection_path.connection_point[1], kIoConnectionEventClosed);
+
+    if ((CIP_Connection::kConnectionTypeIoExclusiveOwner == Instance_type)
+        || (CIP_Connection::kConnectionTypeIoInputOnly == Instance_type))
+    {
+        if ((CIP_ConnectionManager::kRoutingTypeMulticastConnection == (t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection)) && (kEipInvalidSocket != netConn->sock))
+        {
+            CIP_Connection* next_non_control_master_connection = (CIP_Connection*)CIP_AppConnType::GetNextNonControlMasterConnection(connection_manager->connection_path.connection_point[1]);
+            if (nullptr != next_non_control_master_connection)
+            {
+                next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
+
+                memcpy(&(next_non_control_master_connection->netConn->remote_address),
+                       &(netConn->remote_address),
+                       sizeof(next_non_control_master_connection->netConn->remote_address));
+
+                next_non_control_master_connection->eip_level_sequence_count_producing = eip_level_sequence_count_producing;
+
+                next_non_control_master_connection->sequence_count_producing = sequence_count_producing;
+                netConn->SetSocketHandle (kEipInvalidSocket);
+                next_non_control_master_connection->transmission_trigger_timer = transmission_trigger_timer;
+            }
+            else
+            {
+                // this was the last master connection close all listen only connections listening on the port
+                CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+            }
+        }
+    }
+
+    CloseCommunicationChannelAndRemoveFromActiveConnectionsList();
+}
+
+void CIP_ConnectionManager::HandleIoConnectionTimeOut()
+{
+    CIP_Connection* next_non_control_master_connection;
+    //todo:CheckIoConnectionEvent(connection_manager->connection_path.connection_point[0], connection_manager->connection_path.connection_point[1], kIoConnectionEventTimedOut);
+
+    CIP_ConnectionManager* connection_manager = CIP_ConnectionManager::GetConnectionManagerObject (next_non_control_master_connection->id);
+
+    if (CIP_ConnectionManager::kRoutingTypeMulticastConnection == (connection_manager->t_to_o_network_connection_parameter & CIP_ConnectionManager::kRoutingTypeMulticastConnection))
+    {
+        switch (Instance_type)
+        {
+            case CIP_Connection::kConnectionTypeIoExclusiveOwner:
+                CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoInputOnly);
+                CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                break;
+            case CIP_Connection::kConnectionTypeIoInputOnly:
+                if (kEipInvalidSocket != netConn->GetSocketHandle ())
+                {
+                    // we are the controlling input only connection find a new controller
+                    next_non_control_master_connection = (CIP_Connection*)CIP_AppConnType::GetNextNonControlMasterConnection(connection_manager->connection_path.connection_point[1]);
+                    if (nullptr != next_non_control_master_connection)
+                    {
+                        next_non_control_master_connection->netConn->SetSocketHandle (netConn->GetSocketHandle ());
+                        netConn->SetSocketHandle (kEipInvalidSocket);
+                        next_non_control_master_connection->transmission_trigger_timer = transmission_trigger_timer;
+                    }
+                    else
+                    {
+                        //this was the last master connection close all listen only connections listening on the port
+                        CIP_AppConnType::CloseAllConnectionsForInputWithSameType(connection_manager->connection_path.connection_point[1], CIP_Connection::kConnectionTypeIoListenOnly);
+                    }
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    //OPENER_ASSERT(nullptr != CloseConnection ());
+    CloseConnection();
+}
+
+CipStatus CIP_ConnectionManager::SendConnectedData()
+{
+    CIP_CommonPacket::PacketFormat* cpf_data;
+    CipUint reply_length;
+    CipUsint* message_data_reply_buffer;
+
+    /* TODO think of adding an own send buffer to each connection object in order to preset up the whole message on connection opening and just change the variable data items e.g., sequence number */
+
+    cpf_data = &CIP_CommonPacket::common_packet_data; /* TODO think on adding a CPF data item to the S_CIP_CIP_Connection in order to remove the code here or even better allocate memory in the connection object for storing the message to send and just change the application data*/
+
+    eip_level_sequence_count_producing++;
+
+    /* assembleCPFData */
+    cpf_data->item_count = 2;
+    if ((transport_type_class_trigger & 0x0F) != 0)
+    {
+        // use Sequenced Address Items if not Connection Class 0
+        cpf_data->address_item.type_id = CIP_CommonPacket::kCipItemIdSequencedAddressItem;
+        cpf_data->address_item.length = 8;
+        cpf_data->address_item.data.sequence_number = eip_level_sequence_count_producing;
+    }
+    else
+    {
+        cpf_data->address_item.type_id = CIP_CommonPacket::kCipItemIdConnectionAddress;
+        cpf_data->address_item.length = 4;
+    }
+    cpf_data->address_item.data.connection_identifier = CIP_produced_connection_id;
+
+    cpf_data->data_item.type_id = CIP_CommonPacket::kCipItemIdConnectedDataItem;
+
+    CipByteArray* producing_instance_attributes = (CipByteArray*)(((CIP_Object*)producing_instance)->attributes[0]->getData());
+    cpf_data->data_item.length = 0;
+
+    //todo: verify data before sending
+    // notify the application that data will be sent immediately after the call
+    /*
+    if (BeforeAssemblyDataSend(producing_instance))
+    {
+        // the data has changed increase sequence counter
+        sequence_count_producing++;
+    }
+     */
+
+    // set AddressInfo Items to invalid Type
+    cpf_data->address_info_item[0].type_id = 0;
+    cpf_data->address_info_item[1].type_id = 0;
+
+    reply_length = (CipUint) CIP_CommonPacket::AssembleIOMessage(cpf_data, (CipUsint*)CIP_Common::message_data_reply_buffer[0]);
+
+    message_data_reply_buffer = (CipUsint*)CIP_Common::message_data_reply_buffer[reply_length - 2];
+    cpf_data->data_item.length = producing_instance_attributes->length;
+
+    if (kOpENerProducedDataHasRunIdleHeader)
+    {
+        cpf_data->data_item.length += 4;
+    }
+
+    if ((transport_type_class_trigger & 0x0F) == 1)
+    {
+        cpf_data->data_item.length += 2;
+        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, message_data_reply_buffer);
+        NET_Endianconv::AddIntToMessage(sequence_count_producing, message_data_reply_buffer);
+    }
+    else
+    {
+        NET_Endianconv::AddIntToMessage(cpf_data->data_item.length, message_data_reply_buffer);
+    }
+
+    if (kOpENerProducedDataHasRunIdleHeader)
+    {
+        NET_Endianconv::AddDintToMessage(g_run_idle_state, &(message_data_reply_buffer));
+    }
+
+    memcpy(message_data_reply_buffer, producing_instance_attributes->data, producing_instance_attributes->length);
+
+    reply_length += cpf_data->data_item.length;
+    return NET_NetworkHandler::SendUdpData(netConn->remote_address, netConn->sock, (CipUsint*)CIP_Common::message_data_reply_buffer[0], reply_length);
+}
+
+CipStatus CIP_ConnectionManager::HandleReceivedIoConnectionData(CipUsint* data, CipUint data_length)
+{
+
+    /* check class 1 sequence number*/
+    if ((transport_type_class_trigger & 0x0F) == 1)
+    {
+        CipUint sequence_buffer = NET_Endianconv::GetIntFromMessage(data);
+        if (SEQ_LEQ16(sequence_buffer, sequence_count_consuming))
+        {
+            return kCipStatusOk; // no new data for the assembly
+        }
+        sequence_count_consuming = sequence_buffer;
+        data_length -= 2;
+    }
+
+    if (data_length > 0) {
+        // we have no heartbeat connection
+        if (kOpENerConsumedDataHasRunIdleHeader)
+        {
+            CipUdint nRunIdleBuf = NET_Endianconv::GetDintFromMessage(data);
+            //todo: update idle state
+            /*
+            if (g_run_idle_state != nRunIdleBuf)
+            {
+                RunIdleChanged(nRunIdleBuf);
+            }
+            */
+            g_run_idle_state = nRunIdleBuf;
+            data_length -= 4;
+        }
+
+        /*todo:
+        if (NotifyAssemblyConnectedDataReceived(consuming_instance, data, data_length) != 0)
+        {
+            return kCipStatusError;
+        }
+         */
+    }
+    return kCipStatusOk;
+}
+
+CipStatus CIP_ConnectionManager::OpenCommunicationChannels()
+{
+
+    CipStatus eip_status = kCipStatusOk;
+    CIP_ConnectionManager * connection_manager = CIP_ConnectionManager::GetConnectionManagerObject (this->id);
+
+    //get pointer to the CPF data, currently we have just one global instance of the struct. This may change in the future
+    CIP_CommonPacket::PacketFormat* cpf_data = &CIP_CommonPacket::common_packet_data;
+
+    int originator_to_target_connection_type = (connection_manager->o_to_t_network_connection_parameter & 0x6000) >> 13;
+
+    int target_to_originator_connection_type = (connection_manager->t_to_o_network_connection_parameter & 0x6000) >> 13;
+
+    // open a connection "point to point" or "multicast" based on the ConnectionParameter
+    if (originator_to_target_connection_type == 1) //TODO: Fix magic number; Multicast consuming
+    {
+        if (kCipStatusError == OpenMulticastConnection(kUdpCommuncationDirectionConsuming, cpf_data).status)
+        {
+            OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
+            return (CipStatus) kCipErrorConnectionFailure;
+        }
+    } else if (originator_to_target_connection_type == 2) // TODO: Fix magic number; Point to Point consuming
+    {
+        if (kCipStatusError == OpenConsumingPointToPointConnection(cpf_data).status)
+        {
+            OPENER_TRACE_ERR("error in PointToPoint consuming connection\n");
+            return (CipStatus) kCipErrorConnectionFailure;
+        }
+    }
+
+    if (target_to_originator_connection_type == 1) // TODO: Fix magic number; Multicast producing
+    {
+        if (kCipStatusError == OpenProducingMulticastConnection(cpf_data).status)
+        {
+            OPENER_TRACE_ERR("error in OpenMulticast Connection\n");
+            return (CipStatus) kCipErrorConnectionFailure;
+        }
+    }
+    else if (target_to_originator_connection_type == 2) // TODO: Fix magic number; Point to Point producing
+    {
+
+        if (kCipStatusOk == OpenProducingPointToPointConnection(cpf_data).status)
+        {
+            OPENER_TRACE_ERR("error in PointToPoint producing connection\n");
+            return (CipStatus) kCipErrorConnectionFailure;
+        }
+    }
+
+    return eip_status;
+}
+
+void CIP_ConnectionManager::CloseCommunicationChannelAndRemoveFromActiveConnectionsList()
+{
+    netConn->CloseSocket ();
+    RemoveFromActiveConnections();
+}
+
+/*END OF TEMPORARY IO CONN STUFF*/
 
 /** @brief gets the padded logical path TODO: enhance documentation
  * @param logical_path_segment TheLogical Path Segment
@@ -1091,8 +1796,8 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
                 }
             }
 
-            CIP_IOConnection::g_config_data_length = 0;
-            CIP_IOConnection::g_config_data_buffer = nullptr;
+            CIP_ConnectionManager::g_config_data_length = 0;
+            CIP_ConnectionManager::g_config_data_buffer = nullptr;
 
             while (remaining_path_size > 0)
             {
@@ -1102,10 +1807,10 @@ CipUsint CIP_ConnectionManager::ParseConnectionPath (CipMessageRouterRequest_t *
                 {
                     case kDataSegmentTypeSimpleDataMessage:
                         // we have a simple data segment
-                        CIP_IOConnection::g_config_data_length = (unsigned int) (message[1] * 2); //data segments store length 16-bit word wise
-                        CIP_IOConnection::g_config_data_buffer = &(message[2]);
-                        remaining_path_size -= (CIP_IOConnection::g_config_data_length + 2);
-                        message += (CIP_IOConnection::g_config_data_length + 2);
+                        CIP_ConnectionManager::g_config_data_length = (unsigned int) (message[1] * 2); //data segments store length 16-bit word wise
+                        CIP_ConnectionManager::g_config_data_buffer = &(message[2]);
+                        remaining_path_size -= (CIP_ConnectionManager::g_config_data_length + 2);
+                        message += (CIP_ConnectionManager::g_config_data_length + 2);
                         break;
                         // TODO do we have to handle ANSI extended symbol data segments too?
                     case kProductionTimeInhibitTimeNetworkSegment:

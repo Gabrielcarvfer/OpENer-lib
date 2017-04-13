@@ -6,6 +6,7 @@
 
 CipStatus CIP_ElectronicKey::validate_key()
 {
+    //TODO: implement key validation
     CipStatus stat;
     stat = kCipStatusOk;
     return stat;

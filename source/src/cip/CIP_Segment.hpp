@@ -48,21 +48,21 @@ public:
         //  0 is reserved
         network_schedule_segment  = 1, //C-2.1 Vol4
         network_fixed_tag_segment = 2, //C-2.1 Vol4
-        network_inhibit_time      = 3, // time in mlliseconds (1 to 255) between successive transmissions; 0 means not inhibit C-1.4.3.3
-        //  4 (0x04) to 15 F  is reserved
+        network_inhibit_time      = 3, // time in milliseconds (1 to 255) between successive transmissions; 0 means not inhibit C-1.4.3.3
+        //  4 (0x04) to 15 F  are reserved
 
         // 16 (0x10) to 31 (0x1F) payload may have multiple bytes, defined by first byte of payload
         network_safety_segment = 16,
-        // 17 (0x11) to 30 (0x1E) is reserved
+        // 17 (0x11) to 30 (0x1E) are reserved
         network_extended_segment = 31
     }segment_network_subtype_e;
 
     typedef enum
     {
         data_simple_segment = 0,
-        //  1 (0x01) to 16 (0x10) is reserved
+        //  1 (0x01) to 16 (0x10) are reserved
         data_ansi_extended_segment = 17
-        // 17 (0x11) to 31 (0x1F) is reserved
+        // 17 (0x11) to 31 (0x1F) are reserved
     }segment_data_subtype_e;
 
     typedef union
@@ -112,7 +112,7 @@ public:
     }segment_header_t;
 
     //Instance values
-    segment_header_t segment_header;    // Specifies the Segment Type
+    segment_header_t segment_header;       // Specifies the Segment Type
     std::vector<CipUsint> segment_payload; // Contents of segment
 };
 
