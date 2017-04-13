@@ -26,8 +26,18 @@ public:
         kConnectionStateEstablished    = 3,
         kConnectionStateTimedOut       = 4,
         kConnectionStateDeferredDelete = 5, // only used in DeviceNet
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         kConnectionStateClosing        = 6
     } ConnectionState;
+=======
+        kConnectionStateClosing = 6
+    } ConnectionState_e;
+>>>>>>> Stashed changes
+=======
+        kConnectionStateClosing = 6
+    } ConnectionState_e;
+>>>>>>> Stashed changes
 
 /** @brief instance_type attributes */
     typedef enum
@@ -35,7 +45,19 @@ public:
         kConnectionTypeExplicit = 0x00,
         kConnectionTypeIo = 0x01,
         kConnectionTypeBridged = 0x02
-    } ConnectionType;
+    } ConnectionType_e;
+
+    typedef enum {
+        kConnectionServiceCreate,
+        kConnectionServiceDelete,
+        kConnectionServiceReset,
+        kConnectionServiceFindNextInstance,
+        kConnectionServiceGetAttributeSingle,
+        kConnectionInstServiceBind,
+        kConnectionInstServiceProducingLookup,
+        kConnectionInstServiceSafetyClose,
+        kConnectionInstServiceSafetyOpen
+    } ConnectionServices_e;
 
     /** #brief transportClass_trigger
      *  byte\bits   7           6   5   4           3   2   1   0
@@ -50,14 +72,23 @@ public:
      *  Transport 5 - nonblocking & fragmented
      *  Transport 6 - multicast & fragmented
      */
+<<<<<<< Updated upstream
     typedef enum
     {
+=======
+    typedef enum {
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         kConnectionTriggerTransportClass0 = 0,
         kConnectionTriggerTransportClass1 = 1,
         kConnectionTriggerTransportClass2 = 2,
         kConnectionTriggerTransportClass3 = 3,
         kConnectionTriggerTransportClass4 = 4,
         kConnectionTriggerTransportClass5 = 5,
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
         kConnectionTriggerTransportClass6 = 6
     }connection_trigger_transport_class_e;
 
@@ -92,6 +123,35 @@ public:
         CipUint num_connections;
         std::vector<CipUint> connections_list;
     }connection_binding_list_t;
+=======
+=======
+>>>>>>> Stashed changes
+        kConnectionTriggerTransportClass6 = 6,
+        kConnectionTriggerProductionTriggerCyclic         = 0,
+        kConnectionTriggerProductionTriggerChangeOfState  = 1,
+        kConnectionTriggerProductionTriggerApplicationObj = 2,
+        kConnectionTriggerProductionTriggerMask           = SET_BIT_N_TO_X (4,1) | SET_BIT_N_TO_X (5,1) | SET_BIT_N_TO_X (6,1),
+        kConnectionTriggerDirectionClient                 = 0,
+        kConnectionTriggerDirectionServer                 = 1
+    } ConnectionTriggerType_e;
+
+    typedef struct
+    {
+        union
+        {
+            struct
+            {
+                CipUsint transport_class    : 4;
+                CipUsint production_trigger : 3;
+                CipUsint direction          : 1;
+            };
+            CipUsint val;
+        };
+    } ConnectionTriggerType_t;
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
 /** @brief Possible values for the watch dog time out action of a connection */
     typedef enum
@@ -103,8 +163,18 @@ public:
     } WatchdogTimeoutAction;
 
     //Instance attributes (ids 1 to 19)
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     ConnectionState State;
     ConnectionType Instance_type;
+=======
+    ConnectionState_e State;
+    ConnectionType_e Instance_type;
+>>>>>>> Stashed changes
+=======
+    ConnectionState_e State;
+    ConnectionType_e Instance_type;
+>>>>>>> Stashed changes
     ConnectionTriggerType_t TransportClass_trigger;
     CipUint DeviceNet_produced_connection_id;
     CipUint DeviceNet_consumed_connection_id;

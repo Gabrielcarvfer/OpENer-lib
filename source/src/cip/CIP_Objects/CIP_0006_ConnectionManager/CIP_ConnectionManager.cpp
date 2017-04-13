@@ -31,7 +31,54 @@ std::map<CipUdint, ConnectionManagementHandling> *CIP_ConnectionManager::g_astCo
 CIP_ConnectionManager * CIP_ConnectionManager::g_dummy_connection_object;
 CipUdint CIP_ConnectionManager::g_incarnation_id;
 
+CipStatus EstablishConnection()
+{
+    CipStatus eip_status;
+    eip_status.status = kCipStatusOk;
 
+    CipUdint produced_connection_id_buffer;
+
+<<<<<<< Updated upstream
+    CipStatus connCreateStatus = CIP_Connection::Create();
+    CIP_Connection* connection = (CIP_Connection*)( connCreateStatus.status==kCipStatusOk ?
+                                          CIP_Connection::GetInstance (connCreateStatus.extended_status) : nullptr);
+
+=======
+CipStatus EstablishConnection()
+{
+    CipStatus eip_status;
+    eip_status.status = kCipStatusOk;
+
+    CipUdint produced_connection_id_buffer;
+
+    CipStatus connCreateStatus = CIP_Connection::Create();
+    CIP_Connection* connection = (CIP_Connection*)( connCreateStatus.status==kCipStatusOk ?
+                                          CIP_Connection::GetInstance (connCreateStatus.extended_status) : nullptr);
+
+>>>>>>> Stashed changes
+    if (nullptr == connection)
+    {
+        eip_status.status = kCipErrorConnectionFailure;
+        eip_status.extended_status = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorNoMoreConnectionsAvailable;
+    }
+    else
+    {
+        CIP_ConnectionManager::CopyConnectionData(connection, this);
+
+        produced_connection_id_buffer = connection->CIP_produced_connection_id;
+        CIP_ConnectionManager::GeneralConnectionConfiguration (connection);
+        connection->CIP_produced_connection_id = produced_connection_id_buffer;
+        connection->Instance_type = CIP_Connection::kConnectionTypeExplicit;
+        connection->netConn->SetSocketHandle (kEipInvalidSocket);
+        /* set the connection call backs */
+        connection->connection_close_function = CIP_ConnectionManager::RemoveFromActiveConnections;
+        /* explicit connection have to be closed on time out*/
+        connection->connection_timeout_function = CIP_ConnectionManager::RemoveFromActiveConnections;
+
+        CIP_ConnectionManager::AddNewActiveConnection(connection);
+    }
+    return eip_status;
+}
 
 /** @brief gets the padded logical path TODO: enhance documentation
  * @param logical_path_segment TheLogical Path Segment
@@ -76,11 +123,18 @@ CipStatus CIP_ConnectionManager::Init ()
 {
     if (number_of_instances == 0)
     {
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
         //Initialization procedures
         //CIP_Class3conn::InitializeClass3ConnectionData();
         //CIP_AppConnType::InitializeIoConnectionData();
+=======
+=======
+>>>>>>> Stashed changes
+        CIP_Appcontype::InitializeIoConnectionData();
+>>>>>>> Stashed changes
 
         class_id = kCipConnectionManagerClassCode;
         class_name = "Connection Manager";

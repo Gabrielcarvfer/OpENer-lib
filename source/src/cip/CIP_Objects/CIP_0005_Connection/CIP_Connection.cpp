@@ -45,6 +45,8 @@ CipStatus CIP_Connection::Create()
 {
     CIP_Connection *instance = new CIP_Connection();
     //Chapter 3-4.4 vol 1
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     instance->InsertAttribute( 1, kCipUsint, &instance->State                                 , kGetableSingleAndAll);
     instance->InsertAttribute( 2, kCipUsint, &instance->Instance_type                         , kGetableSingleAndAll);
     instance->InsertAttribute( 3, kCipByte , &instance->TransportClass_trigger                , kGetableSingleAndAll);
@@ -64,6 +66,32 @@ CipStatus CIP_Connection::Create()
     instance->InsertAttribute(17, kCipUint , &instance->Production_inhibit_time               , kGetableSingleAndAll);
     instance->InsertAttribute(18, kCipUsint, &instance->Connection_timeout_multiplier         , kGetableSingleAndAll);
     instance->InsertAttribute(19, kCipUdint, &instance->Connection_binding_list               , kGetableSingleAndAll);
+=======
+=======
+>>>>>>> Stashed changes
+    instance->InsertAttribute( 1, kCipUsint, &State                                 , kGetableSingleAndAll);
+    instance->InsertAttribute( 2, kCipUsint, &Instance_type                         , kGetableSingleAndAll);
+    instance->InsertAttribute( 3, kCipByte , &TransportClass_trigger                , kGetableSingleAndAll);
+    instance->InsertAttribute( 4, kCipUint , &DeviceNet_produced_connection_id      , kGetableSingleAndAll);
+    instance->InsertAttribute( 5, kCipUint , &DeviceNet_consumed_connection_id      , kGetableSingleAndAll);
+    instance->InsertAttribute( 6, kCipByte , &DeviceNet_initial_comm_characteristics, kGetableSingleAndAll);
+    instance->InsertAttribute( 7, kCipUint , &Produced_connection_size              , kGetableSingleAndAll);
+    instance->InsertAttribute( 8, kCipUint , &Consumed_connection_size              , kGetableSingleAndAll);
+    instance->InsertAttribute( 9, kCipUint , &Expected_packet_rate                  , kGetableSingleAndAll);
+    instance->InsertAttribute(10, kCipUdint, &CIP_produced_connection_id            , kGetableSingleAndAll);
+    instance->InsertAttribute(11, kCipUdint, &CIP_consumed_connection_id            , kGetableSingleAndAll);
+    instance->InsertAttribute(12, kCipUsint, &Watchdog_timeout_action               , kGetableSingleAndAll);
+    instance->InsertAttribute(13, kCipUint , &Produced_connection_path_length       , kGetableSingleAndAll);
+    instance->InsertAttribute(14, kCipEpath, &Produced_connection_path              , kGetableSingleAndAll);
+    instance->InsertAttribute(15, kCipUint , &Consumed_connection_path_length       , kGetableSingleAndAll);
+    instance->InsertAttribute(16, kCipEpath, &Consumed_connection_path              , kGetableSingleAndAll);
+    instance->InsertAttribute(17, kCipUint , &Production_inhibit_time               , kGetableSingleAndAll);
+    instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier         , kGetableSingleAndAll);
+    instance->InsertAttribute(19, kCipUdint, &Connection_binding_list               , kGetableSingleAndAll);
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
 
     object_Set.emplace(object_Set.size(), instance);
@@ -258,6 +286,8 @@ CipStatus CIP_Connection::Behaviour()
         case kConnectionTypeExplicit:
             //If explicit connection
             //check direction
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
             switch (TransportClass_trigger.bitfield_u.direction)
             {
                 case kConnectionTriggerDirectionServer:
@@ -270,27 +300,69 @@ CipStatus CIP_Connection::Behaviour()
                             //Link_consumer consumes a message and then notifies application
                             Link_consumer->Receive();
                             CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, notification);//
+=======
+            switch (TransportClass_trigger.direction)
+            {
+                case kConnectionTriggerDirectionServer:
+=======
+            switch (TransportClass_trigger.direction)
+            {
+                case kConnectionTriggerDirectionServer:
+>>>>>>> Stashed changes
+                    switch (TransportClass_trigger.transport_class)
+                    {
+                        case kConnectionTriggerTransportClass0:
+                            //Link_consumer consumes a message and then notifies application
+                            //todo: implement class 0 server behaviour
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
                             break;
                         case kConnectionTriggerTransportClass1:
                             //Link_consumer consumes a message, check for duplicates (based on last received sequence count,
                             // notifying the application if dupe happened(and dropping the message), or if the message was received
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             Link_consumer->Receive ();
                             check_for_duplicate(last_msg_ptr, recv_data_ptr) ? notification = kCipNotificationDuplicate : notification = kCipNotificationReceived;
                             CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, notification);
+=======
+                            //todo: implement class 1 server behaviour
+>>>>>>> Stashed changes
+=======
+                            //todo: implement class 1 server behaviour
+>>>>>>> Stashed changes
                             break;
                         case kConnectionTriggerTransportClass2:
                             //Link_consumer consumes a message, automatically invokes Link_producer, prepending incoming sequence count,
                             // and then delivers the message to the application, that checks for dupes and then do something
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             Link_consumer->Receive();
                             Link_producer->Send();
                             //todo: fix CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
+=======
+                            //todo: implement class 2 server behaviour
+>>>>>>> Stashed changes
+=======
+                            //todo: implement class 2 server behaviour
+>>>>>>> Stashed changes
                             break;
                         case kConnectionTriggerTransportClass3:
                             //Link_consumer consumes a message, then check for dupes and notify the application, that
                             // tells the connection to produce a message with Link_producer, and then send it
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             Link_consumer->Receive();
                             check_for_duplicate(last_msg_ptr, recv_data_ptr) ? notification = kCipNotificationDuplicate : notification = kCipNotificationReceived;
                             //todo: fix CIP_MessageRouter::route_message(Consumed_connection_path, Consumed_connection_path_length, recv_data_ptr, recv_data_len);//
+=======
+                            //todo: implement class 3 server behaviour
+>>>>>>> Stashed changes
+=======
+                            //todo: implement class 3 server behaviour
+>>>>>>> Stashed changes
                             break;
                         default:
                             //Unknown transport class, return error
@@ -299,10 +371,23 @@ CipStatus CIP_Connection::Behaviour()
                     }
                     break;
                 case kConnectionTriggerDirectionClient:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                     switch (TransportClass_trigger.bitfield_u.transport_class)
                     {
                         case kConnectionTriggerTransportClass0:
                             switch(TransportClass_trigger.bitfield_u.production_trigger)
+=======
+=======
+>>>>>>> Stashed changes
+                    switch (TransportClass_trigger.transport_class)
+                    {
+                        case kConnectionTriggerTransportClass0:
+                            switch(TransportClass_trigger.production_trigger)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;
@@ -316,7 +401,15 @@ CipStatus CIP_Connection::Behaviour()
                             }
                             break;
                         case kConnectionTriggerTransportClass1:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             switch(TransportClass_trigger.bitfield_u.production_trigger)
+=======
+                            switch(TransportClass_trigger.production_trigger)
+>>>>>>> Stashed changes
+=======
+                            switch(TransportClass_trigger.production_trigger)
+>>>>>>> Stashed changes
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;
@@ -330,7 +423,15 @@ CipStatus CIP_Connection::Behaviour()
                             }
                             break;
                         case kConnectionTriggerTransportClass2:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             switch(TransportClass_trigger.bitfield_u.production_trigger)
+=======
+                            switch(TransportClass_trigger.production_trigger)
+>>>>>>> Stashed changes
+=======
+                            switch(TransportClass_trigger.production_trigger)
+>>>>>>> Stashed changes
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;
@@ -344,7 +445,15 @@ CipStatus CIP_Connection::Behaviour()
                             }
                             break;
                         case kConnectionTriggerTransportClass3:
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
                             switch(TransportClass_trigger.bitfield_u.production_trigger)
+=======
+                            switch(TransportClass_trigger.production_trigger)
+>>>>>>> Stashed changes
+=======
+                            switch(TransportClass_trigger.production_trigger)
+>>>>>>> Stashed changes
                             {
                                 case kConnectionTriggerProductionTriggerCyclic:
                                     break;
@@ -376,6 +485,8 @@ CipStatus CIP_Connection::Behaviour()
         default:
             //Unknown connection type
             break;
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
     }
 }
@@ -394,4 +505,26 @@ CipStatus CIP_Connection::Shut()
     CipStatus stat;
     stat.status = kCipStatusOk;
     return stat;
+=======
+
+    }
+>>>>>>> Stashed changes
 }
+=======
+
+    }
+}
+
+
+
+
+
+
+
+
+
+<<<<<<< Updated upstream
+
+>>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes

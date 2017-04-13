@@ -103,6 +103,8 @@ public:
 #define SEQ_GEQ16(a, b) ((short)((a) - (b)) >= 0)
 
 
+    static CipStatus EstablishConnection();
+
     /** @brief Get a connected object dependent on requested ConnectionID.
      *
      *   @param connection_id  requested @var connection_id of opened connection
