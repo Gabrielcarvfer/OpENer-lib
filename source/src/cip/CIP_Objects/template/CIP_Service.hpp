@@ -8,16 +8,18 @@
 #include "../../ciptypes.hpp"
 #include <string>
 
+typedef CipStatus CipServiceFunction(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+
 class CIP_Service
 {
     public:
         //Constructor and deconstructor
-        CIP_Service(CipUsint service_number, CipServiceFunction* service_function, std::string name);
+        CIP_Service(CipUsint service_number, CipServiceFunction service_function, std::string name);
         ~CIP_Service ();
 
         //Functions avaiable
         CipUsint getNumber();
-        //CipServiceFunction getService();
+        CipServiceFunction * getService();
         std::string getName();
 
     private:

@@ -4,7 +4,7 @@
 
 #include "CIP_Service.hpp"
 
-CIP_Service::CIP_Service(CipUsint service_number, CipServiceFunction* service_function, std::string name)
+CIP_Service::CIP_Service(CipUsint service_number, CipServiceFunction service_function, std::string name)
 {
     // fill in function number
     this->service_number = service_number;
@@ -25,12 +25,12 @@ CipUsint CIP_Service::getNumber()
 {
     return this->service_number;
 }
-/*
-CipServiceFunction CIP_Service::getService()
+
+CipServiceFunction* CIP_Service::getService()
 {
     return this->service_function;
 }
-*/
+
 std::string CIP_Service::getName()
 {
     return this->name;

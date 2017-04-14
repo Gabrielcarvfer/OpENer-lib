@@ -1,5 +1,6 @@
 //
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 18/11/2016.
+// (code fom GetAttribute functions originally from OpENer)
 //
 #ifndef CIP_OBJECT_IMPL_H
 #define CIP_OBJECT_IMPL_H
@@ -132,27 +133,27 @@ void CIP_Object<T>::InsertAttribute(CipUint attribute_number, CipUsint cip_type,
     /* trying to insert too many attributes*/
 }
 
-/*
- * template <class T>
-void CIP_Object::InsertService(CipUsint service_number, CipServiceFunction * service_function, std::string service_name)
+template <class T>
+void CIP_Object<T>::InsertService(bool classService, CipUsint service_number, CipServiceFunction service_function, std::string service_name)
 {
-    auto it = this->services.find(service_number);
+    std::map<CipUsint, CIP_Service*>::iterator it;
+    classService ? it = classServices.find(service_number) : it = instanceServices.find(service_number);
 
     // cant add service that already exists
-    if (it == std::map::end())
+    if (it == ( classService? classServices.end() : instanceServices.end() ) )
     {
         OPENER_ASSERT(true);
     }
     else
     {
         CIP_Service* p = new CIP_Service(service_number, service_function, service_name);
-        this->services.emplace(service_number, p);
+        classService ? classServices.emplace(service_number, p) : instanceServices.emplace(service_number,p);
 
         return;
     }
     OPENER_ASSERT(0);
     // adding more services than were declared is a no-no
-}*/
+}
 
 template <class T>
 CIP_Attribute* CIP_Object<T>::GetCipAttribute(CipUint attribute_number)
@@ -227,10 +228,10 @@ template <class T>
 CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
     int i, j;
-    CipOctet* reply;
+    CipUsint* reply;
 
     // pointer into the reply
-    reply = (CipOctet*)&message_router_response->response_data[0];
+    reply = (CipUsint*) &message_router_response->response_data[0];
 
     if (this->id == 2)
     {
@@ -239,12 +240,19 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
 
     CIP_Service * service;
     CIP_Attribute* attribute;
-    for (i = 0; i < this->services.size(); i++) /* hunt for the GET_ATTRIBUTE_SINGLE service*/
+    std::map<CipUsint, CIP_Service*>* servicePtr;
+
+    if (id == 0)
+        servicePtr = &classServices;
+    else
+        servicePtr = &instanceServices;
+
+    for (i = 0; i < servicePtr->size(); i++) /* hunt for the GET_ATTRIBUTE_SINGLE service*/
     {
         // found the service
-        if (this->services[i]->getNumber () == kGetAttributeSingle)
+        if (servicePtr->at(i)->getNumber () == kGetAttributeSingle)
         {
-            service = this->services[i];
+            service = servicePtr->at(i);
             if (0 == this->attributes.size())
             {
                 //there are no attributes to be sent back
@@ -265,7 +273,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
                         message_router_request->request_path.attribute_number = attrNum;
                         if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
                         {
-                            message_router_response->response_data = reply;
+                            message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
 
                             return CipStatus(kCipStatusError);
                         }
@@ -273,7 +281,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
                     }
                 }
                 //message_router_response->data_length = message_router_response->data - reply;
-                message_router_response->response_data = reply;
+                message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
             }
             return CipStatus(kCipStatusOkSend);
         }
@@ -281,4 +289,33 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
     return CipStatus(kCipStatusOk); /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
 }
 
+template <class T>
+CipStatus CIP_Object<T>::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request,
+                                           CipMessageRouterResponse_t* msg_router_response)
+{
+    //Class services
+    if (this->id == 0)
+    {
+        if (classServices.find(service) != classServices.end())
+        {
+            return classServices.at(service)->getService()(msg_router_request, msg_router_response);
+        }
+        else
+        {
+            return kCipStatusError;
+        }
+    }
+        //Instance services
+    else
+    {
+        if (instanceServices.find(service) != instanceServices.end())
+        {
+            return instanceServices.at(service)->getService()(msg_router_request, msg_router_response);
+        }
+        else
+        {
+            return kCipStatusError;
+        }
+    }
+}
 #endif

@@ -40,8 +40,9 @@ class CIP_Object
         static CipUint  maximum_id_number_class_attributes;
         static CipUint  maximum_id_number_instance_attributes;
 
-        std::map< CipUdint, CIP_Attribute * > attributes;
-        std::map< CipUdint, CIP_Service * > services;
+        std::map< CipUsint, CIP_Attribute*> attributes;
+        static std::map< CipUsint, CIP_Service*> classServices;
+        static std::map< CipUsint, CIP_Service*> instanceServices;
 
 
         /** @ingroup CIP_API
@@ -104,7 +105,8 @@ class CIP_Object
     * @param service_function pointer to function which represents the service.
     * @param service_name name of the service
     */
-    //void InsertService(CipUsint service_number, CIP_Service service_function, std::string service_name);
+    static void InsertService(bool classService, CipUsint service_number,
+                              CipServiceFunction service_function, std::string service_name);
 
 
     /** @ingroup CIP_API
@@ -129,7 +131,8 @@ class CIP_Object
      * @return length of data stream >0 .. success
      *              0 .. no reply to send
      */
-    CipStatus GetAttributeAll(CipMessageRouterRequest_t * message_router_request,CipMessageRouterResponse_t* message_router_response);
+    CipStatus GetAttributeAll(CipMessageRouterRequest_t * message_router_request,
+                              CipMessageRouterResponse_t* message_router_response);
 
 
     /** @brief Generic implementation of the GetAttributeSingle CIP service
@@ -142,10 +145,12 @@ class CIP_Object
      * @return status  >0 .. success
      *          -1 .. requested attribute not available
      */
-    CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,CipMessageRouterResponse_t* message_router_response);
+    CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
+                                 CipMessageRouterResponse_t* message_router_response);
     /* type definition of CIP service structure */
 
-    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)=0;
+    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,
+                                       CipMessageRouterResponse_t* msg_router_response)=0;
 
     //Instance stuff
     CipUint id;

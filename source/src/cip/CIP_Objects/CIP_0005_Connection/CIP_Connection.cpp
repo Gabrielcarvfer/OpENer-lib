@@ -34,19 +34,25 @@ CipStatus CIP_Connection::Init()
 
 
         object_Set.emplace(object_Set.size(), instance);
-
         //Class services
+        InsertService(true, kConnectionServiceCreate            , Create           , "Create"          );
+        InsertService(true, kConnectionClassNInstServiceDelete  , Delete           , "Delete"          );
+        InsertService(true, kConnectionClassNInstServiceReset   , Reset            , "Reset"           );
+        InsertService(true, kConnectionServiceFindNextInstance  , FindNextInstance , "FindNextInstance");
+        InsertService(true, kConnectionClassNInstServiceGetAttributeSingle, GetAttributeSingle, "GetAttributeSingle");
+        InsertService(true, kConnectionServiceBind              , Bind             , "Bind"            );
+        InsertService(true, kConnectionServiceProducingLookup   , ProducingLookup  , "ProducingLookup" );
+        InsertService(true, kConnectionServiceSafetyClose       , SafetyClose      , "SafetyClose"     );
+        InsertService(true, kConnectionServiceSafetyOpen        , SafetyOpen       , "SafetyOpen"      );
+
     }
     return kCipStatusOk;
 }
-
 //Class services
 CipStatus CIP_Connection::Create()
 {
     CIP_Connection *instance = new CIP_Connection();
     //Chapter 3-4.4 vol 1
-
-
     instance->InsertAttribute( 1, kCipUsint, &instance->State                                 , kGetableSingleAndAll);
     instance->InsertAttribute( 2, kCipUsint, &instance->Instance_type                         , kGetableSingleAndAll);
     instance->InsertAttribute( 3, kCipByte , &instance->TransportClass_trigger                , kGetableSingleAndAll);
@@ -66,30 +72,6 @@ CipStatus CIP_Connection::Create()
     instance->InsertAttribute(17, kCipUint , &instance->Production_inhibit_time               , kGetableSingleAndAll);
     instance->InsertAttribute(18, kCipUsint, &instance->Connection_timeout_multiplier         , kGetableSingleAndAll);
     instance->InsertAttribute(19, kCipUdint, &instance->Connection_binding_list               , kGetableSingleAndAll);
-
-
-    instance->InsertAttribute( 1, kCipUsint, &State                                 , kGetableSingleAndAll);
-    instance->InsertAttribute( 2, kCipUsint, &Instance_type                         , kGetableSingleAndAll);
-    instance->InsertAttribute( 3, kCipByte , &TransportClass_trigger                , kGetableSingleAndAll);
-    instance->InsertAttribute( 4, kCipUint , &DeviceNet_produced_connection_id      , kGetableSingleAndAll);
-    instance->InsertAttribute( 5, kCipUint , &DeviceNet_consumed_connection_id      , kGetableSingleAndAll);
-    instance->InsertAttribute( 6, kCipByte , &DeviceNet_initial_comm_characteristics, kGetableSingleAndAll);
-    instance->InsertAttribute( 7, kCipUint , &Produced_connection_size              , kGetableSingleAndAll);
-    instance->InsertAttribute( 8, kCipUint , &Consumed_connection_size              , kGetableSingleAndAll);
-    instance->InsertAttribute( 9, kCipUint , &Expected_packet_rate                  , kGetableSingleAndAll);
-    instance->InsertAttribute(10, kCipUdint, &CIP_produced_connection_id            , kGetableSingleAndAll);
-    instance->InsertAttribute(11, kCipUdint, &CIP_consumed_connection_id            , kGetableSingleAndAll);
-    instance->InsertAttribute(12, kCipUsint, &Watchdog_timeout_action               , kGetableSingleAndAll);
-    instance->InsertAttribute(13, kCipUint , &Produced_connection_path_length       , kGetableSingleAndAll);
-    instance->InsertAttribute(14, kCipEpath, &Produced_connection_path              , kGetableSingleAndAll);
-    instance->InsertAttribute(15, kCipUint , &Consumed_connection_path_length       , kGetableSingleAndAll);
-    instance->InsertAttribute(16, kCipEpath, &Consumed_connection_path              , kGetableSingleAndAll);
-    instance->InsertAttribute(17, kCipUint , &Production_inhibit_time               , kGetableSingleAndAll);
-    instance->InsertAttribute(18, kCipUsint, &Connection_timeout_multiplier         , kGetableSingleAndAll);
-    instance->InsertAttribute(19, kCipUdint, &Connection_binding_list               , kGetableSingleAndAll);
-
-
-
 
     object_Set.emplace(object_Set.size(), instance);
 
@@ -188,7 +170,8 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
 
 }
 
-CipStatus CIP_Connection::ProducingLookup(CipEpath *producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list)
+CipStatus CIP_Connection::ProducingLookup(CipEpath *producing_application_path, CipUint *instance_count,
+                                          std::vector<CipUint> *connection_instance_list)
 {
     CipUdint j;
     CipStatus status;
@@ -231,50 +214,7 @@ CipStatus CIP_Connection::SafetyOpen()
 
 }
 
-CipStatus CIP_Connection::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response)
-{
-    //Class services
-    if (this->id == 0)
-    {
-        switch (service)
-        {/*
-            case (kConnectionServiceCreate):
-                break;
-            case (kConnectionServiceDelete):
-                break;
-            case (kConnectionServiceReset):
-                break;
-            case (kConnectionServiceFindNextInstance):
-                break;
-            case (kConnectionServiceGetAttributeSingle):
-                break;
-                */
-            default:
-                return kCipStatusError;
-        }
-        return kCipStatusOk;
-    }
-    //Instance services
-    else
-    {
-        switch(service)
-        {
-            /*
-            case (kConnectionInstServiceBind):
-                break;
-            case (kConnectionInstServiceProducingLookup):
-                break;
-            case (kConnectionInstServiceSafetyClose):
-                break;
-            case (kConnectionInstServiceSafetyOpen):
-                break;
-                */
-            default:
-                return kCipStatusError;
-        }
-        return kCipStatusOk;
-    }
-}
+
 
 CipStatus CIP_Connection::Behaviour()
 {
@@ -283,8 +223,6 @@ CipStatus CIP_Connection::Behaviour()
         case kConnectionTypeExplicit:
             //If explicit connection
             //check direction
-
-
             switch (TransportClass_trigger.bitfield_u.direction)
             {
                 case kConnectionTriggerDirectionServer:

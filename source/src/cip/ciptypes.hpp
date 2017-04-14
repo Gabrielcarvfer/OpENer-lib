@@ -287,7 +287,6 @@ typedef struct
  *  @return EIP_OK_SEND if service could be executed successfully and a response
  *should be sent
  */
-typedef CipStatus (*CipServiceFunction)(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
 /**
  * @brief Struct for saving TCP/IP interface information
