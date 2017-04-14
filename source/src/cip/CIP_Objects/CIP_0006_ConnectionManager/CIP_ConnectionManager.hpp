@@ -37,27 +37,23 @@ public:
     static CipStatus Init();
     static CipStatus Shut();
 
-    CipMessageRouterRequest_t g_message_router_request;
+    CipMessageRouterRequest_t  g_message_router_request;
     CipMessageRouterResponse_t g_message_router_response;
-    CipStatus InstanceServices(int service,
-                               CipMessageRouterRequest_t* message_router_request,
-                               CipMessageRouterResponse_t* message_router_response
-                            );
-
-
 
     /**
  * @brief Sets the routing type of a connection, either
  * - Point-to-point connections (unicast)
  * - Multicast connection
  */
-    typedef enum {
+    typedef enum
+    {
         kRoutingTypePointToPointConnection = 0x4000,
         kRoutingTypeMulticastConnection = 0x2000
     } RoutingType;
 
 /** @brief Connection Manager Error codes */
-    typedef enum {
+    typedef enum
+    {
         kConnectionManagerStatusCodeSuccess = 0x00,
         kConnectionManagerStatusCodeErrorConnectionInUse = 0x0100,
         kConnectionManagerStatusCodeErrorTransportTriggerNotSupported = 0x0103,
@@ -79,7 +75,22 @@ public:
         kConnectionManagerStatusCodeErrorParameterErrorInUnconnectedSendService = 0x0205,
         kConnectionManagerStatusCodeErrorInvalidSegmentTypeInPath = 0x0315,
         kConnectionManagerStatusCodeTargetObjectOutOfConnections = 0x011A
-    } ConnectionManagerStatusCode;
+    } ConnectionManagerStatusCode_e;
+
+    typedef enum
+    {
+        kConnMgrServiceGetAttributeAll      = 0x01,
+        kConnMgrServiceSetAttributeAll      = 0x02,
+        kConnMgrServiceGetAttributeSingle   = 0x0E,
+        kConnMgrServiceSetAttributeSingle   = 0x10,
+        kConnMgrServiceUnconnectedSend      = 0x52,
+        kConnMgrServiceForwardOpen          = 0x54,
+        kConnMgrServiceGetConnectionData    = 0x56,
+        kConnMgrServiceSearchConnectionData = 0x57,
+        kConnMgrServiceObsolete             = 0x59,
+        kConnMgrServiceGetConnectionOwner   = 0x5A,
+        kConnMgrServiceLargeForwardOpen     = 0x5B,
+    } ConnectionManagerServiceCodes_e;
 
 
 
@@ -331,13 +342,30 @@ public:
     CipUint correct_target_to_originator_size;
 
 
-    /* private functions */
-    CipStatus ForwardOpen(CIP_Connection * connection_object, CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+    /* public functions */
+public:
+    CipStatus ForwardClose(CipMessageRouterRequest_t* message_router_request,
+                           CipMessageRouterResponse_t* message_router_response);
 
-    CipStatus ForwardClose(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+    CipStatus UnconnectedSend(CipMessageRouterRequest_t* message_router_request,
+                              CipMessageRouterResponse_t* message_router_response);
 
-    CipStatus GetConnectionOwner(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+    CipStatus ForwardOpen(CipMessageRouterRequest_t* message_router_request,
+                          CipMessageRouterResponse_t* message_router_response);
 
+    CipStatus GetConnectionData(CipMessageRouterRequest_t* message_router_request,
+                                CipMessageRouterResponse_t* message_router_response);
+
+    CipStatus SearchConnectionData(CipMessageRouterRequest_t* message_router_request,
+                                   CipMessageRouterResponse_t* message_router_response);
+
+    CipStatus GetConnectionOwner(CipMessageRouterRequest_t* message_router_request,
+                                 CipMessageRouterResponse_t* message_router_response);
+
+    CipStatus LargeForwardOpen(CipMessageRouterRequest_t* message_router_request,
+                               CipMessageRouterResponse_t* message_router_response);
+
+private:
     CipStatus AssembleForwardOpenResponse(CIP_Connection * connection_object, CipMessageRouterResponse_t* message_router_response, CipUsint general_status, CipUint extended_status);
 
     CipStatus AssembleForwardCloseResponse(

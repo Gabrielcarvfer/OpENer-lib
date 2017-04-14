@@ -25,7 +25,6 @@ template<class T> CipUint     CIP_Object<T>::maximum_id_number_instance_attribut
 template<class T> std::map<CipUdint, const T *> CIP_Object<T>::object_Set;
 
 //Methods
-
 template <class T>
 CIP_Object<T>::CIP_Object()
 {
@@ -174,7 +173,8 @@ CIP_Attribute* CIP_Object<T>::GetCipAttribute(CipUint attribute_number)
 
 /* TODO: this needs to check for buffer overflow*/
 template <class T>
-CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
+CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_router_request,
+                                            CipMessageRouterResponse_t* message_router_response)
 {
     // Mask for filtering get-ability
     CipByte get_mask;
@@ -225,9 +225,9 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
 }
 
 template <class T>
-CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
+CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_router_request,
+                                         CipMessageRouterResponse_t* message_router_response)
 {
-    int i, j;
     CipUsint* reply;
 
     // pointer into the reply
@@ -247,51 +247,48 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
     else
         servicePtr = &instanceServices;
 
-    for (i = 0; i < servicePtr->size(); i++) /* hunt for the GET_ATTRIBUTE_SINGLE service*/
+    auto it = servicePtr->find(kGetAttributeSingle);
+    if ( it != servicePtr->end())
     {
-        // found the service
-        if (servicePtr->at(i)->getNumber () == kGetAttributeSingle)
+        service = it->second;
+        if (0 == this->attributes.size())
         {
-            service = servicePtr->at(i);
-            if (0 == this->attributes.size())
-            {
-                //there are no attributes to be sent back
-                message_router_response->reply_service = (0x80 | message_router_request->service);
-                message_router_response->general_status = kCipErrorServiceNotSupported;
-                message_router_response->size_additional_status = 0;
-            }
-            else
-            {
-                for (j = 0; j < class_ptr->attributes.size(); j++) /* for each instance attribute of this class */
-                {
-                    attribute = attributes[j];
-                    int attrNum = attribute->getNumber();
-
-                    // only return attributes that are flagged as being part of GetAttributeALl
-                    if (attrNum < 32 && (class_ptr->get_all_class_attributes_mask & 1 << attrNum))
-                    {
-                        message_router_request->request_path.attribute_number = attrNum;
-                        if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
-                        {
-                            message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
-
-                            return CipStatus(kCipStatusError);
-                        }
-                        //message_router_response->data += message_router_response->data_length;
-                    }
-                }
-                //message_router_response->data_length = message_router_response->data - reply;
-                message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
-            }
-            return CipStatus(kCipStatusOkSend);
+            //there are no attributes to be sent back
+            message_router_response->reply_service = (0x80 | message_router_request->service);
+            message_router_response->general_status = kCipErrorServiceNotSupported;
+            message_router_response->size_additional_status = 0;
         }
+        else
+        {
+            for (int j = 0; j < class_ptr->attributes.size(); j++) /* for each instance attribute of this class */
+            {
+                attribute = attributes[j];
+                int attrNum = attribute->getNumber();
+
+                // only return attributes that are flagged as being part of GetAttributeALl
+                if (attrNum < 32 && (class_ptr->get_all_class_attributes_mask & 1 << attrNum))
+                {
+                    message_router_request->request_path.attribute_number = attrNum;
+                    if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
+                    {
+                        message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
+
+                        return CipStatus(kCipStatusError);
+                    }
+                    //message_router_response->data += message_router_response->data_length;
+                }
+            }
+            //message_router_response->data_length = message_router_response->data - reply;
+            message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
+        }
+        return CipStatus(kCipStatusOkSend);
     }
     return CipStatus(kCipStatusOk); /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
 }
 
 template <class T>
 CipStatus CIP_Object<T>::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request,
-                                           CipMessageRouterResponse_t* msg_router_response)
+                                          CipMessageRouterResponse_t* msg_router_response)
 {
     //Class services
     if (this->id == 0)
@@ -318,4 +315,19 @@ CipStatus CIP_Object<T>::InstanceServices(int service, CipMessageRouterRequest_t
         }
     }
 }
+
+template <class T>
+CipStatus CIP_Object<T>::SetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
+                                            CipMessageRouterResponse_t* message_router_response)
+{
+    return kCipStatusOk;
+}
+
+template <class T>
+CipStatus CIP_Object<T>::SetAttributeAll(CipMessageRouterRequest_t * message_router_request,
+                                         CipMessageRouterResponse_t* message_router_response)
+{
+    return kCipStatusOk;
+}
+
 #endif

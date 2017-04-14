@@ -19,7 +19,7 @@ class CIP_Object
         static const T * GetInstance(CipUdint instance_number);
         static const T * GetClass();
         static CipUdint GetNumberOfInstances();
-        static CipDint GetInstanceNumber(const T * instance);
+        static CipDint  GetInstanceNumber(const T * instance);
         static bool AddClassInstance(T * instance, CipUdint position);
         static bool RemoveClassInstance(T * instance);
         static bool RemoveClassInstance(CipUdint position);
@@ -147,10 +147,15 @@ class CIP_Object
      */
     CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
                                  CipMessageRouterResponse_t* message_router_response);
-    /* type definition of CIP service structure */
 
-    virtual CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,
-                                       CipMessageRouterResponse_t* msg_router_response)=0;
+    CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,
+                                       CipMessageRouterResponse_t* msg_router_response);
+
+    CipStatus SetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
+                                 CipMessageRouterResponse_t* message_router_response);
+
+    CipStatus SetAttributeAll(CipMessageRouterRequest_t * message_router_request,
+                              CipMessageRouterResponse_t* message_router_response);
 
     //Instance stuff
     CipUint id;

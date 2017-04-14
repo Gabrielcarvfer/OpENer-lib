@@ -43,11 +43,11 @@ public:
         kConnectionClassNInstServiceReset  = 0x05,
         kConnectionServiceFindNextInstance = 0x11,
         kConnectionClassNInstServiceGetAttributeSingle = 0x0E,
-        kConnectionServiceBind            = 0x4B,
-        kConnectionServiceProducingLookup = 0x4C,
-        kConnectionServiceSafetyClose     = 0x4E,
-        kConnectionServiceSafetyOpen      = 0x54,
-        kConnectionInstSetAttributeSingle = 0x10,
+        kConnectionServiceBind             = 0x4B,
+        kConnectionServiceProducingLookup  = 0x4C,
+        kConnectionServiceSafetyClose      = 0x4E,
+        kConnectionServiceSafetyOpen       = 0x54,
+        kConnectionInstSetAttributeSingle  = 0x10,
     } ConnectionServices_e;
 
     /** #brief transportClass_trigger

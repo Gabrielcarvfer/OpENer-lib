@@ -826,30 +826,24 @@ CipUdint CIP_ConnectionManager::GetConnectionId (void)
 
 CipStatus CIP_ConnectionManager::Init ()
 {
+    CipStatus status;
     if (number_of_instances == 0)
     {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
-
-        //Initialization procedures
-        //CIP_Class3conn::InitializeClass3ConnectionData();
-        //CIP_AppConnType::InitializeIoConnectionData();
-=======
-=======
->>>>>>> Stashed changes
-        CIP_Appcontype::InitializeIoConnectionData();
->>>>>>> Stashed changes
 
         class_id = kCipConnectionManagerClassCode;
         class_name = "Connection Manager";
         revision = 1;
+        max_instances = 1;
+        maximum_id_number_class_attributes = 8;
+        maximum_id_number_instance_attributes = 13;
+
         CIP_ConnectionManager *instance = new CIP_ConnectionManager();
         object_Set.emplace(object_Set.size(), instance);
 
         //g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
+        return kCipStatusOk;
     }
-    return kCipStatusOk;
+    return kCipStatusError;
 }
 
 CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_ConnectionManager * connection_manager_instance,
@@ -912,10 +906,8 @@ CipStatus CIP_ConnectionManager::HandleReceivedConnectedData (CIP_ConnectionMana
  * 		@return >0 .. success, 0 .. no reply to send back
  *      	-1 .. error
  */
-CipStatus CIP_ConnectionManager::ForwardOpen (CIP_Connection * connection_object,
-                                              CipMessageRouterRequest_t *message_router_request,
-                                              CipMessageRouterResponse_t *message_router_response
-                                            )
+CipStatus CIP_ConnectionManager::ForwardOpen (CipMessageRouterRequest_t *message_router_request,
+                                              CipMessageRouterResponse_t *message_router_response)
 {
     CipUint connection_status = kConnectionManagerStatusCodeSuccess;
     ConnectionManagementHandling *connection_management_entry;
@@ -1104,7 +1096,7 @@ CipStatus CIP_ConnectionManager::ForwardClose (CipMessageRouterRequest_t *messag
 {
 
     // check connection_serial_number && originator_vendor_id && originator_serial_number if connection is established
-    ConnectionManagerStatusCode connection_status = kConnectionManagerStatusCodeErrorConnectionNotFoundAtTargetApplication;
+    ConnectionManagerStatusCode_e connection_status = kConnectionManagerStatusCodeErrorConnectionNotFoundAtTargetApplication;
     CIP_ConnectionManager *connection_manager_instance;
     CIP_Connection * connection_instance;
 
