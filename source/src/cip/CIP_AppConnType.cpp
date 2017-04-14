@@ -70,7 +70,7 @@ const  CIP_Connection* CIP_AppConnType::GetIoConnectionForConnectionData(const C
                     {
                         /* no application connection type was found that suits the given data */
                         /* TODO check error code VS */
-                        *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
+                        *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeInconsistentApplicationPathCombo;
                     }
                     else
                     {
@@ -112,7 +112,7 @@ const  CIP_Connection* CIP_AppConnType::GetExclusiveOwnerConnection(const CIP_Co
             /* check if on other connection point with the same output assembly is currently connected */
             if (nullptr != CIP_ConnectionManager::GetConnectedOutputAssembly(connection_manager->connection_path.connection_point[0]))
             {
-                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeErrorOwnershipConflict;
+                *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeErrorOwnershipConflict;
                 break;
             }
             exclusive_owner_connection = (g_exlusive_owner_connections[i].connection_data);
@@ -133,12 +133,12 @@ const CIP_Connection* CIP_AppConnType::GetInputOnlyConnection(const CIP_Connecti
         { /* we have the same output assembly */
             if (g_input_only_connections[i].input_assembly != connection_manager->connection_path.connection_point[1])
             {
-                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
+                *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeInvalidProducingApplicationPath;
                 break;
             }
             if (g_input_only_connections[i].config_assembly!= connection_manager->connection_path.connection_point[2])
             {
-                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
+                *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeInconsistentApplicationPathCombo;
                 break;
             }
 
@@ -149,7 +149,7 @@ const CIP_Connection* CIP_AppConnType::GetInputOnlyConnection(const CIP_Connecti
                     return (&g_input_only_connections[i].connection_data[j]);
                 }
             }
-            *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeTargetObjectOutOfConnections;
+            *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeTargetObjectOutOfConnections;
             break;
         }
     }
@@ -164,7 +164,7 @@ const CIP_Connection* CIP_AppConnType::GetListenOnlyConnection(const CIP_Connect
     if (CIP_ConnectionManager::kRoutingTypeMulticastConnection != connection_manager->t_to_o_network_connection_parameter)
     {
         /* a listen only connection has to be a multicast connection. */
-        *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened; /* maybe not the best error message however there is no suitable definition in the cip spec */
+        *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeNonListenOnlyConnectionNotOpened; /* maybe not the best error message however there is no suitable definition in the cip spec */
         return nullptr;
     }
 
@@ -174,18 +174,18 @@ const CIP_Connection* CIP_AppConnType::GetListenOnlyConnection(const CIP_Connect
         { /* we have the same output assembly */
             if (g_listen_only_connections[i].input_assembly != connection_manager->connection_path.connection_point[1])
             {
-                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInvalidProducingApplicationPath;
+                *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeInvalidProducingApplicationPath;
                 break;
             }
             if (g_listen_only_connections[i].config_assembly != connection_manager->connection_path.connection_point[2])
             {
-                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeInconsistentApplicationPathCombo;
+                *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeInconsistentApplicationPathCombo;
                 break;
             }
 
             if (nullptr == GetExistingProducerMulticastConnection(connection_manager->connection_path.connection_point[1]))
             {
-                *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeNonListenOnlyConnectionNotOpened;
+                *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeNonListenOnlyConnectionNotOpened;
                 break;
             }
 
@@ -196,7 +196,7 @@ const CIP_Connection* CIP_AppConnType::GetListenOnlyConnection(const CIP_Connect
                     return &g_listen_only_connections[i].connection_data[j];
                 }
             }
-            *extended_error = CIP_ConnectionManager::kConnectionManagerStatusCodeTargetObjectOutOfConnections;
+            *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeTargetObjectOutOfConnections;
             break;
         }
     }

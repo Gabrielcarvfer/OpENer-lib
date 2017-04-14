@@ -49,7 +49,8 @@ CipStatus CIP_Connection::Init()
     return kCipStatusOk;
 }
 //Class services
-CipStatus CIP_Connection::Create()
+CipStatus CIP_Connection::Create(CipMessageRouterRequest_t* message_router_request,
+                                 CipMessageRouterResponse_t* message_router_response)
 {
     CIP_Connection *instance = new CIP_Connection();
     //Chapter 3-4.4 vol 1
@@ -81,28 +82,33 @@ CipStatus CIP_Connection::Create()
     return stat;
 }
 
-CipStatus CIP_Connection::Delete()
+CipStatus CIP_Connection::Delete(CipMessageRouterRequest_t* message_router_request,
+                                 CipMessageRouterResponse_t* message_router_response)
 {
 
 }
 
-CipStatus CIP_Connection::Reset()
+CipStatus CIP_Connection::Reset(CipMessageRouterRequest_t* message_router_request,
+                                CipMessageRouterResponse_t* message_router_response)
 {
 
 }
 
-CipStatus CIP_Connection::FindNextInstance()
+CipStatus CIP_Connection::FindNextInstance(CipMessageRouterRequest_t* message_router_request,
+                                           CipMessageRouterResponse_t* message_router_response)
 {
 
 }
 
-CipStatus CIP_Connection::GetAttributeSingle()
+CipStatus CIP_Connection::GetAttributeSingle(CipMessageRouterRequest_t* message_router_request,
+                                             CipMessageRouterResponse_t* message_router_response)
 {
 
 }
 
 //Instance services
-CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
+CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request,
+                               CipMessageRouterResponse_t* message_router_response)//(CipUint bound_instances[2])
 {
     CipStatus status;
     const CIP_Connection * conn0, * conn1;
@@ -170,8 +176,9 @@ CipStatus CIP_Connection::Bind(CipUint bound_instances[2])
 
 }
 
-CipStatus CIP_Connection::ProducingLookup(CipEpath *producing_application_path, CipUint *instance_count,
-                                          std::vector<CipUint> *connection_instance_list)
+CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_router_request,
+                                          CipMessageRouterResponse_t* message_router_response)
+//(CipEpath *producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list)
 {
     CipUdint j;
     CipStatus status;
@@ -204,12 +211,14 @@ CipStatus CIP_Connection::ProducingLookup(CipEpath *producing_application_path, 
     return status;
 }
 
-CipStatus CIP_Connection::SafetyClose()
+CipStatus CIP_Connection::SafetyClose(CipMessageRouterRequest_t* message_router_request,
+                                      CipMessageRouterResponse_t* message_router_response)
 {
 
 }
 
-CipStatus CIP_Connection::SafetyOpen()
+CipStatus CIP_Connection::SafetyOpen(CipMessageRouterRequest_t* message_router_request,
+                                     CipMessageRouterResponse_t* message_router_response)
 {
 
 }

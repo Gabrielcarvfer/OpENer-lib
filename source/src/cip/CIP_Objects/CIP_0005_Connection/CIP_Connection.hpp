@@ -143,21 +143,35 @@ public:
 
     static CipStatus Init();
     static CipStatus Shut();
-    CipStatus InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request,
-                               CipMessageRouterResponse_t* msg_router_response);
 
     //Class services
-    static CipStatus Create();
-    static CipStatus Delete();
-    static CipStatus Reset();
-    static CipStatus FindNextInstance();
-    static CipStatus GetAttributeSingle();
+    static CipStatus Create(CipMessageRouterRequest_t* message_router_request,
+                            CipMessageRouterResponse_t* message_router_response);
 
+    static CipStatus Delete(CipMessageRouterRequest_t* message_router_request,
+                            CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus Bind(CipUint bound_instances[2]);
-    static CipStatus ProducingLookup(CipEpath * producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list);
-    static CipStatus SafetyClose();
-    static CipStatus SafetyOpen();
+    static CipStatus Reset(CipMessageRouterRequest_t* message_router_request,
+                           CipMessageRouterResponse_t* message_router_response);
+
+    static CipStatus FindNextInstance(CipMessageRouterRequest_t* message_router_request,
+                                      CipMessageRouterResponse_t* message_router_response);
+
+    static CipStatus GetAttributeSingle(CipMessageRouterRequest_t* message_router_request,
+                                        CipMessageRouterResponse_t* message_router_response);
+
+    static CipStatus Bind(CipMessageRouterRequest_t* message_router_request,
+                          CipMessageRouterResponse_t* message_router_response);//CipUint bound_instances[2]);
+
+    static CipStatus ProducingLookup(CipMessageRouterRequest_t* message_router_request,
+                                     CipMessageRouterResponse_t* message_router_response);//CipEpath * producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list);
+
+    static CipStatus SafetyClose(CipMessageRouterRequest_t* message_router_request,
+                                 CipMessageRouterResponse_t* message_router_response);
+
+    static CipStatus SafetyOpen(CipMessageRouterRequest_t* message_router_request,
+                                CipMessageRouterResponse_t* message_router_response);
+
 
     //Temporary
     NET_Connection * netConn;
