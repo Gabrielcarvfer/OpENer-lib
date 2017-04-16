@@ -32,9 +32,9 @@ public:
 /** @brief instance_type attributes */
     typedef enum
     {
-        kConnectionTypeExplicit = 0x00,
-        kConnectionTypeIo = 0x01,
-        kConnectionTypeBridged = 0x02
+        kConnectionTypeExplicit = 0,
+        kConnectionTypeIo = 1,
+        kConnectionTypeBridged = 2
     } ConnectionType_e;
 
     typedef enum {

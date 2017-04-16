@@ -195,31 +195,60 @@ private:
 
     typedef enum
     {
-        kConnMgrForwardOpenSizeFixed = 0,
+        kConnMgrForwardOpenSizeFixed    = 0,
         kConnMgrForwardOpenSizeVariable = 1
     } forwardOpenSizeFixedOrVariable_e;
 
     typedef enum
     {
-        kConnMgrForwardOpenPriorityLow       = 0x00,
-        kConnMgrForwardOpenPriorityHigh      = 0x01,
-        kConnMgrForwardOpenPriorityScheduled = 0x10,
-        kConnMgrForwardOpenPriorityUrgent    = 0x11
+        kConnMgrForwardOpenPriorityLow       = 0,
+        kConnMgrForwardOpenPriorityHigh      = 1,
+        kConnMgrForwardOpenPriorityScheduled = 2,
+        kConnMgrForwardOpenPriorityUrgent    = 3
     } forwardOpenPriority_e;
 
     typedef enum
     {
-        kConnMgrForwardOpenConnTypeNull      = 0x00,
-        kConnMgrForwardOpenConnTypeMulticast = 0x01,
-        kConnMgrForwardOpenConnTypeP2P       = 0x10,
-        kConnMgrForwardOpenConnTypeReserved  = 0x11
+        kConnMgrForwardOpenConnTypeNull      = 0,
+        kConnMgrForwardOpenConnTypeMulticast = 1,
+        kConnMgrForwardOpenConnTypeP2P       = 2,
+        kConnMgrForwardOpenConnTypeReserved  = 3
     } forwardOpenConnType_e;
 
     typedef enum
     {
         kConnMgrForwardOpenRedundantOwnerNo  = 0, // Exclusive-owner, input/listen only
-        kConnMgrForwardOpenRedundantOwnerYes = 1 // multiple owners can make a connection simultaniously
+        kConnMgrForwardOpenRedundantOwnerYes = 1  // multiple owners can make a connection simultaniously
     } forwardOpenRedundantOwner_e;
+
+    typedef enum
+    {
+        tick_1ms_forUpTo_255ms         = 0,
+        tick_2ms_forUpTo_510ms         = 1,
+        tick_4ms_forUpTo_1020ms        = 2,
+        tick_8ms_forUpTo_2040ms        = 3,
+        tick_16ms_forUpTo_4080ms       = 4,
+        tick_32ms_forUpTo_8160ms       = 5,
+        tick_64ms_forUpTo_16320ms      = 6,
+        tick_128ms_forUpTo_32640ms     = 7,
+        tick_256ms_forUpTo_65280ms     = 8,
+        tick_512ms_forUpTo_130560ms    = 9,
+        tick_1024ms_forUpTo_261120ms   = 10,
+        tick_2048ms_forUpTo_522240ms   = 11,
+        tick_4096ms_forUpTo_1044480ms  = 12,
+        tick_8192ms_forUpTo_2088960ms  = 13,
+        tick_16384ms_forUpTo_4177920ms = 14,
+        tick_32768ms_forUpTo_8355840ms = 15,
+    } timeTick_e;
+
+    typedef enum
+    {
+        kConnMgrLastActionNoOwner = 0,
+        kConnMgrLastActionIdleOwner = 1,
+        kConnMgrLastActionRunningOwner = 2,
+        //3 to 254 are reserved
+        kconnMgrLastActionNotSupported = 255
+    } lastAction_e;
 
 };
 #endif // OPENER_CIP_CONNECTION_H
