@@ -183,14 +183,14 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
     CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     message_router_response->reply_service = (0x80 | message_router_request->service);
-    message_router_response->general_status = kCipErrorAttributeNotSupported;
+    message_router_response->general_status = kCipGeneralStatusCodeAttributeNotSupported;
     message_router_response->size_additional_status = 0;
 
     // set filter according to service: get_attribute_all or get_attribute_single
     if (kGetAttributeAll == message_router_request->service)
     {
         get_mask = kGetableAll;
-        message_router_response->general_status = kCipErrorSuccess;
+        message_router_response->general_status = kCipGeneralStatusCodeSuccess;
     }
     else
     {
@@ -217,11 +217,11 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
                 //BeforeAssemblyDataSend(this);
             }
             //message_router_response->data_length = (CipInt)CIP_Common::EncodeData(attribute->getType(), attribute->getData(), &message);
-            message_router_response->general_status = kCipErrorSuccess;
+            message_router_response->general_status = kCipGeneralStatusCodeSuccess;
         }
     }
 
-    return CipStatus(kCipStatusOkSend);
+    return CipStatus(kCipGeneralStatusCodeSuccess);
 }
 
 template <class T>
@@ -255,7 +255,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
         {
             //there are no attributes to be sent back
             message_router_response->reply_service = (0x80 | message_router_request->service);
-            message_router_response->general_status = kCipErrorServiceNotSupported;
+            message_router_response->general_status = kCipGeneralStatusCodeServiceNotSupported;
             message_router_response->size_additional_status = 0;
         }
         else
@@ -269,7 +269,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
                 if (attrNum < 32 && (class_ptr->get_all_class_attributes_mask & 1 << attrNum))
                 {
                     message_router_request->request_path.attribute_number = attrNum;
-                    if (kCipStatusOkSend != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
+                    if (kCipGeneralStatusCodeSuccess != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
                     {
                         message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
 
@@ -281,9 +281,9 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
             //message_router_response->data_length = message_router_response->data - reply;
             message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
         }
-        return CipStatus(kCipStatusOkSend);
+        return CipStatus(kCipGeneralStatusCodeSuccess);
     }
-    return CipStatus(kCipStatusOk); /* Return kCipStatusOk if cannot find GET_ATTRIBUTE_SINGLE service*/
+    return CipStatus(kCipGeneralStatusCodeSuccess); /* Return kCipGeneralStatusCodeSuccess if cannot find GET_ATTRIBUTE_SINGLE service*/
 }
 
 template <class T>
@@ -320,14 +320,14 @@ template <class T>
 CipStatus CIP_Object<T>::SetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
                                             CipMessageRouterResponse_t* message_router_response)
 {
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 template <class T>
 CipStatus CIP_Object<T>::SetAttributeAll(CipMessageRouterRequest_t * message_router_request,
                                          CipMessageRouterResponse_t* message_router_response)
 {
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 #endif

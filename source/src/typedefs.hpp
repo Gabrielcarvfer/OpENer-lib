@@ -79,7 +79,7 @@ typedef unsigned long long MicroSeconds;
 typedef enum
 {
     kCipStatusOk = 0, /**< Stack is ok */
-    kCipStatusOkSend = 1, /**< Stack is ok, after send */
+    kCipStatusSend = 1, /**< Stack is ok, after send */
     kCipStatusError = -1 /**< Stack is in error */
 } kCipStatus;
 

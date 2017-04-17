@@ -25,7 +25,7 @@ CipStatus CIP_Connection_LinkConsumer::Init()
 
         //Class services
     }
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_Connection_LinkConsumer::Create()
@@ -39,7 +39,7 @@ CipStatus CIP_Connection_LinkConsumer::Create()
     object_Set.emplace(object_Set.size(), instance);
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     stat.extended_status = (CipUsint) instance->id;
     return stat;
 }

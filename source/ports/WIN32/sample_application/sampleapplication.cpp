@@ -49,7 +49,7 @@ CipStatus ApplicationInitialization(void)
     ConfigureInputOnlyConnectionPoint(0, DEMO_APP_HEARBEAT_INPUT_ONLY_ASSEMBLY_NUM, DEMO_APP_INPUT_ASSEMBLY_NUM, DEMO_APP_CONFIG_ASSEMBLY_NUM);
     ConfigureListenOnlyConnectionPoint(0, DEMO_APP_HEARBEAT_LISTEN_ONLY_ASSEMBLY_NUM, DEMO_APP_INPUT_ASSEMBLY_NUM, DEMO_APP_CONFIG_ASSEMBLY_NUM);
 
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 void HandleApplication(void)
@@ -68,7 +68,7 @@ void CheckIoConnectionEvent(unsigned int pa_unOutputAssembly, unsigned int pa_un
 
 CipStatus AfterAssemblyDataReceived(CIP_Assembly* pa_pstInstance)
 {
-    CipStatus nRetVal = kCipStatusOk;
+    CipStatus nRetVal = kCipGeneralStatusCodeSuccess;
 
     //handle the data received e.g., update outputs of the device 
     switch (CIP_Assembly::GetInstanceNumber(pa_pstInstance))
@@ -88,7 +88,7 @@ CipStatus AfterAssemblyDataReceived(CIP_Assembly* pa_pstInstance)
        * However in order to pass the test we accept any data given.
        * EIP_ERROR
        
-        nRetVal = kCipStatusOk;
+        nRetVal = kCipGeneralStatusCodeSuccess;
         break;
     }
     return nRetVal;
@@ -112,7 +112,7 @@ CipBool BeforeAssemblyDataSend(CIP_Assembly* pa_pstInstance)
 CipStatus ResetDevice(void)
 {
     // add reset code here
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus ResetDeviceToInitialConfiguration(void)
@@ -121,7 +121,7 @@ CipStatus ResetDeviceToInitialConfiguration(void)
 
     //than perform device reset
     ResetDevice();
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 void* CipCalloc(unsigned pa_nNumberOfElements, unsigned pa_nSizeOfElement)

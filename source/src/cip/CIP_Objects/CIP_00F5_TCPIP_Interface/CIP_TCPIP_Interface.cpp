@@ -46,7 +46,7 @@ CipStatus CIP_TCPIP_Interface::ConfigureNetworkInterface(const char* ip_address,
 
     g_multicast_configuration.starting_multicast_address = htonl(ntohl(inet_addr("239.192.1.0")) + (host_id << 5));
 
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 void CIP_TCPIP_Interface::ConfigureDomainName(CipString * domain_name)
@@ -101,18 +101,18 @@ CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest_t* 
         // it is an attribute we currently support, however no attribute is setable
         // TODO: if you like to have a device that can be configured via this CIP object add your code here
         // TODO: check for flags associated with attributes
-        message_router_response->general_status = kCipErrorAttributeNotSetable;
+        message_router_response->general_status = kCipGeneralStatusCodeAttributeNotSetable;
     }
     else
     {
         // we don't have this attribute
-        message_router_response->general_status = kCipErrorAttributeNotSupported;
+        message_router_response->general_status = kCipGeneralStatusCodeAttributeNotSupported;
     }
 
     message_router_response->size_additional_status = 0;
     message_router_response->response_data->clear();
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
-    return kCipStatusOkSend;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_TCPIP_Interface::Init()
@@ -155,13 +155,13 @@ CipStatus CIP_TCPIP_Interface::Init()
         return kCipStatusError;
     }
 
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_TCPIP_Interface::Shut()
 {
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -187,7 +187,7 @@ CipStatus CIP_TCPIP_Interface::Create()
     object_Set.emplace(instance_ptr->id, instance_ptr);
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     stat.extended_status = (CipUsint) instance_ptr->id;
     return stat;
 }
@@ -214,7 +214,7 @@ void CIP_TCPIP_Interface::ShutdownTcpIpInterface(void)
 CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
 
-    CipStatus status = kCipStatusOkSend;
+    CipStatus status = kCipGeneralStatusCodeSuccess;
     CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     if (9 == message_router_request->request_path.attribute_number)
@@ -222,7 +222,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
         // attribute 9 can not be easily handled with the default mechanism therefore we will do it by hand
         message_router_response->response_data->clear ();
         message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
-        message_router_response->general_status = kCipErrorSuccess;
+        message_router_response->general_status = kCipGeneralStatusCodeSuccess;
         message_router_response->size_additional_status = 0;
 
         //message_router_response->response_data.size() += CIP_Common::EncodeData(kCipUsint, &(g_multicast_configuration.alloc_control), &message);
@@ -263,7 +263,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
                 //message_router_response->response_data += 6;
             }
 
-            if (kCipStatusOkSend != this->GetAttributeSingleTcpIpInterface(message_router_request, message_router_response).status)
+            if (kCipGeneralStatusCodeSuccess != this->GetAttributeSingleTcpIpInterface(message_router_request, message_router_response).status)
             {
                 //message_router_response->response_data = response;
                 return kCipStatusError;
@@ -273,7 +273,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
     }
     //message_router_response->response_data = response;
 
-    return kCipStatusOkSend;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_TCPIP_Interface::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response)
@@ -358,7 +358,7 @@ CipStatus CIP_TCPIP_Interface::ScanInterfaces()
 
     delete[] *interfaces;
     free(interfaces);
-	return kCipStatusOk;
+	return kCipGeneralStatusCodeSuccess;
 }
 
 #ifdef WIN32

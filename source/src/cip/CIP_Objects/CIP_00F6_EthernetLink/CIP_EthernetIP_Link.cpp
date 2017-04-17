@@ -34,12 +34,12 @@ CipStatus CIP_EthernetIP_Link::Init()
         instance->InsertAttribute (2, kCipDword,  &instance->g_ethernet_link.interface_flags,  kGetableSingleAndAll);
         instance->InsertAttribute (3, kCip6Usint, &instance->g_ethernet_link.physical_address, kGetableSingleAndAll);
     }
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_EthernetIP_Link::Shut ()
 {
-	return kCipStatusOk;
+	return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_EthernetIP_Link::InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)

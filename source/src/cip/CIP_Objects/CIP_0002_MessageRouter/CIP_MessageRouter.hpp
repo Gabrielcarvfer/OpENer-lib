@@ -21,15 +21,13 @@ class CIP_MessageRouter;
 class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 {
     public:
-        typedef struct {
-            CipUint number;
-            std::vector<CipUint> classes;
-        } object_list_t;
 
-        typedef enum {
-           kCipSymbolicPathUnknown = 0, //path not recognized by processing node
+
+        typedef enum
+        {
+           kCipSymbolicPathUnknown                = 0, //path not recognized by processing node
            kCipSymbolicPathDestinationNotAssigned = 1, //recognized but not associated
-           kCipSymbolicPathSegmentError = 2 //syntax can't be understood by the node
+           kCipSymbolicPathSegmentError           = 2 //syntax can't be understood by the node
         } CipSymbolicPath_e;
 
         static CipMessageRouterRequest_t  *g_message_router_request;
@@ -37,7 +35,7 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 
         static std::vector<CipUsint> *g_message_data_reply_buffer;
         /** @brief Initialize the data structures of the message router
-         *  @return kCipStatusOk if class was initialized, otherwise kCipStatusError
+         *  @return kCipGeneralStatusCodeSuccess if class was initialized, otherwise kCipStatusError
          */
         static CipStatus Init (void);
         static CipStatus Shut (void);
@@ -111,16 +109,22 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
         static CipStatus notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification notification);
         static CipStatus route_message( CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response );
 
+    typedef struct
+    {
+        CipUint number;
+        std::vector<CipUint> classes;
+    } object_list_t;
+
     //CIP attributes
     //Class attributes are only the ones already specified in the template
     //Instance attributes
     object_list_t object_list;
-    CipUint number_avaiable;
+    CipUint number_available;
     CipUint number_active;
     std::vector<CipUint>active_connections;
 
     //CIP services
-    static CipStatus symbolic_translation(CipEpath *symbolic_epath, CipEpath *logical_epath);
+    static CipStatus symbolic_translation(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response);
     static std::map<CipUdint, void*> *registered_objects;
 };
 

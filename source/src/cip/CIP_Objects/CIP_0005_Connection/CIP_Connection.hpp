@@ -33,8 +33,8 @@ public:
     typedef enum
     {
         kConnectionTypeExplicit = 0,
-        kConnectionTypeIo = 1,
-        kConnectionTypeBridged = 2
+        kConnectionTypeIo       = 1,
+        kConnectionTypeBridged  = 2
     } ConnectionType_e;
 
     typedef enum {

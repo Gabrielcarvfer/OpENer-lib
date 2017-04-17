@@ -42,20 +42,20 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
     /*
     // The message router is the first CIP object be initialized!!!
     eip_status = CIP_MessageRouter::CipMessageRouterInit ();
-    OPENER_ASSERT(kCipStatusOk == eip_status);
+    OPENER_ASSERT(kCipGeneralStatusCodeSuccess == eip_status);
 
     eip_status = CIP_Identity::CipIdentityInit ();
-    OPENER_ASSERT(kCipStatusOk == eip_status);
+    OPENER_ASSERT(kCipGeneralStatusCodeSuccess == eip_status);
 
     eip_status = CIP_ConnectionManager::ConnectionManagerInit (unique_connection_id);
-    OPENER_ASSERT(kCipStatusOk == eip_status);
+    OPENER_ASSERT(kCipGeneralStatusCodeSuccess == eip_status);
 
     eip_status = CIP_Assembly::CipAssemblyInitialize ();
-    OPENER_ASSERT(kCipStatusOk == eip_status);
+    OPENER_ASSERT(kCipGeneralStatusCodeSuccess == eip_status);
 */
     /* the application has to be initialized at last */
     //eip_status = ApplicationInitialization ();
-    //OPENER_ASSERT(kCipStatusOk == eip_status);
+    //OPENER_ASSERT(kCipGeneralStatusCodeSuccess == eip_status);
 }
 
 void CIP_Common::ShutdownCipStack (void)
@@ -107,14 +107,14 @@ CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest_t *message_router_req
             }
         }
         OPENER_TRACE_WARN("notify: service 0x%x not supported\n", message_router_request->service);
-        message_router_response->general_status = kCipErrorServiceNotSupported; // if no services or service not found, return an error reply
+        message_router_response->general_status = kCipGeneralStatusCodeServiceNotSupported; // if no services or service not found, return an error reply
     }
     else
     {
         OPENER_TRACE_WARN("notify: instance number %d unknown\n", instance_number);
         // if instance not found, return an error reply
         //according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;
-        message_router_response->general_status = kCipErrorPathDestinationUnknown;
+        message_router_response->general_status = kCipGeneralStatusCodePathDestinationUnknown;
     }
 
     // handle error replies
@@ -125,7 +125,7 @@ CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest_t *message_router_req
 
     // except the reply code is an echo of the command + the reply flag
     message_router_response->reply_service = (CipUsint)(0x80 | message_router_request->service);
-    return kCipStatusOkSend;
+    return kCipGeneralStatusCodeSuccess;
 }
 */
 int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)

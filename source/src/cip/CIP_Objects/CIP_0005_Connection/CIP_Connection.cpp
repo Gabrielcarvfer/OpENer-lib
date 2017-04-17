@@ -6,6 +6,7 @@
 #include <vector>
 #include <cstring>
 #include <cip/CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
+#include <cip/ciptypes.hpp>
 #include "CIP_Connection.hpp"
 
 CipStatus CIP_Connection::Init()
@@ -46,7 +47,7 @@ CipStatus CIP_Connection::Init()
         InsertService(true, kConnectionServiceSafetyOpen        , SafetyOpen       , "SafetyOpen"      );
 
     }
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 //Class services
 CipStatus CIP_Connection::Create(CipMessageRouterRequest_t* message_router_request,
@@ -77,7 +78,7 @@ CipStatus CIP_Connection::Create(CipMessageRouterRequest_t* message_router_reque
     object_Set.emplace(object_Set.size(), instance);
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     stat.extended_status = (CipUsint) instance->id;
     return stat;
 }
@@ -100,25 +101,27 @@ CipStatus CIP_Connection::FindNextInstance(CipMessageRouterRequest_t* message_ro
 
 }
 
-CipStatus CIP_Connection::GetAttributeSingle(CipMessageRouterRequest_t* message_router_request,
-                                             CipMessageRouterResponse_t* message_router_response)
-{
-
-}
-
 //Instance services
 CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request,
                                CipMessageRouterResponse_t* message_router_response)//(CipUint bound_instances[2])
 {
+    typedef struct
+    {
+        CipUint bound_instances[2];
+    }bindRequestParams_t;
+
+    bindRequestParams_t * bindArgs;
+    bindArgs = (bindRequestParams_t*)&message_router_request->request_data[0];
+
     CipStatus status;
     const CIP_Connection * conn0, * conn1;
-    if ( (conn0 = GetInstance(bound_instances[0])) == nullptr
-         | (conn1 = GetInstance(bound_instances[1])) == nullptr)
+    if ( (conn0 = GetInstance(bindArgs->bound_instances[0])) == nullptr
+         | (conn1 = GetInstance(bindArgs->bound_instances[1])) == nullptr)
     {
 
         //One or both connections don't exist
         status.extended_status = 0x01;
-        status.status = kCipErrorResourceUnavailable;
+        status.status = kCipGeneralStatusCodeResourceUnavailable;
         return status;
     }
 
@@ -129,7 +132,7 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
     {
         //Class or instance out of resources to bind
         status.extended_status = 0x02;
-        status.status = kCipErrorResourceUnavailable;
+        status.status = kCipGeneralStatusCodeResourceUnavailable;
         return status;
     }
 
@@ -138,7 +141,7 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
     {
         //Both instances exist, but at least one is not in Established state
         status.extended_status = 0x01;
-        status.status = kCipErrorObjectStateConflict;
+        status.status = kCipGeneralStatusCodeObjectStateConflict;
         return status;
     }
 
@@ -146,7 +149,7 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
     {
         //Both connections are the same
         status.extended_status = 0x01;
-        status.status = kCipErrorInvalidParameter;
+        status.status = kCipGeneralStatusCodeInvalidParameter;
         return status;
     }
 
@@ -171,7 +174,7 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
     }
 
     //all checks passed
-    status.status = kCipStatusOk;
+    status.status = kCipGeneralStatusCodeSuccess;
     return status;
 
 }
@@ -388,7 +391,7 @@ bool CIP_Connection::check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_
 CipStatus CIP_Connection::Shut()
 {
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 
 }

@@ -55,7 +55,7 @@ CipStatus CIP_MessageRouter::Init()
         // set reply buffer, using a fixed buffer (about 100 bytes)
         g_message_router_response->response_data = g_message_data_reply_buffer;
     }
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 void * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
@@ -76,7 +76,7 @@ CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance)
     //message_router_registered_classes.insert(message_router_registered_classes.size(), CIP_ClassInstance);
 
     //if (ret::second)
-        return kCipStatusOk;
+        return kCipGeneralStatusCodeSuccess;
     //else
         //return kCipStatusError;
 
@@ -84,7 +84,7 @@ CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance)
 
 CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
 {
-    CipStatus cip_status = kCipStatusOkSend;
+    CipStatus cip_status = kCipGeneralStatusCodeSuccess;
     CipStatus nStatus;
 
     g_message_router_response->response_data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
@@ -93,7 +93,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     /* error from create MR structure*/
     nStatus = CreateMessageRouterRequestStructure(data, (CipInt) data_length, g_message_router_request);
 
-    if ( kCipErrorSuccess != nStatus.status )
+    if ( kCipGeneralStatusCodeSuccess != nStatus.status )
     {
         OPENER_TRACE_ERR("notifyMR: error from createMRRequeststructure\n");
 
@@ -115,7 +115,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
                 "notifyMR: sending CIP_ERROR_OBJECT_DOES_NOT_EXIST reply, class id 0x%x is not registered\n",
                 (unsigned)g_message_router_request.request_path.class_id);
 
-            g_message_router_response->general_status = kCipErrorPathDestinationUnknown; /*according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;*/
+            g_message_router_response->general_status = kCipGeneralStatusCodePathDestinationUnknown; /*according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;*/
             g_message_router_response->size_additional_status = 0;
             g_message_router_response->reserved = 0;
             //g_message_router_response->data_length = 0;
@@ -139,7 +139,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
                 case (kCipStatusError):
                     OPENER_TRACE_ERR("notifyMR: notify function of class '%s' returned an error\n", registered_object->CIP_ClassInstance->class_name);
                     break;
-                case (kCipStatusOK):
+                case (kCipGeneralStatusCodeSuccess):
                     OPENER_TRACE_INFO("notifyMR: notify function of class '%s' returned no reply\n", registered_object->CIP_ClassInstance->class_name);
                     break;
                 default:
@@ -163,16 +163,16 @@ CipStatus CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data,
 
     if (number_of_decoded_bytes < 0)
     {
-        return kCipErrorPathSegmentError;
+        return kCipGeneralStatusCodePathSegmentError;
     }
 
     message_router_request->request_data.emplace (message_router_request->request_data.begin(), *data);
     //message_router_request->data_length = (CipInt) (data_length - number_of_decoded_bytes);
 
     if (message_router_request->request_data.size() - number_of_decoded_bytes < 0)
-        return kCipErrorPathSizeInvalid;
+        return kCipGeneralStatusCodePathSizeInvalid;
     else
-        return kCipErrorSuccess;
+        return kCipGeneralStatusCodeSuccess;
 }
 
 void CIP_MessageRouter::DeleteAllClasses(void)
@@ -247,9 +247,10 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
             stat = key->validate_key ();
 
             //check if return was ok and then proceed, or return error
-            if (stat.status != kCipStatusOk)
+            if (stat.status != kCipGeneralStatusCodeSuccess)
             {
-                return kCipStatusError;
+                //build response with kCipGeneralStatusCodeKeyFailureInPath + ExtendedStatusCode VendorID_or_productCodeMismatch|DeviceTypeMismatch|RevisionMismatch
+                return stat;
             }
 
             break;
@@ -258,8 +259,6 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
             //Process network segment
             break;
         default:
-            //the electronic key is optional, but i'm assuming it's obligatory on non network segment scenarios
-            //todo:return error
             break;
     }
 
@@ -289,8 +288,11 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
     //todo: return message to sender
 }
 
-CipStatus CIP_MessageRouter::symbolic_translation(CipEpath *symbolic_epath, CipEpath *logical_epath)
+CipStatus CIP_MessageRouter::symbolic_translation(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response)
+//CipEpath *symbolic_epath, CipEpath *logical_epath)
 {
+    CipEpath *symbolic_path = (CipEpath*)&request->request_data[0];
+    CipEpath logical_epath; // copy to response->response_data after translation
     CipStatus stat;
 
     //todo: implement translation

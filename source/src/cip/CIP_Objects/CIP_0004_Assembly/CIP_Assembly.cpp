@@ -34,7 +34,7 @@ CipStatus CIP_Assembly::Init(void)
 
         object_Set.emplace(object_Set.size(), instance);
     }
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_Assembly::Shut(void)
@@ -57,7 +57,7 @@ CipStatus CIP_Assembly::Shut(void)
         }
     }
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -100,7 +100,7 @@ CipStatus CIP_Assembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipU
         /* call the application that new data arrived */
     }
 
-    return kCipStatusOk;//TODO:OpENer_Interface::AfterAssemblyDataReceived(this);
+    return kCipGeneralStatusCodeSuccess;//TODO:OpENer_Interface::AfterAssemblyDataReceived(this);
 }
 
 CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest_t* message_router_request,
@@ -112,7 +112,7 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest_t* me
 
     router_request_data = &message_router_request->request_data[0];
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
-    message_router_response->general_status = kCipErrorAttributeNotSupported;
+    message_router_response->general_status = kCipGeneralStatusCodeAttributeNotSupported;
     message_router_response->size_additional_status = 0;
 
     attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
@@ -127,27 +127,27 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest_t* me
             if (CIP_ConnectionManager::IsConnectedOutputAssembly((CipUdint) GetInstanceNumber(this)) != 0)
             {
                 OPENER_TRACE_WARN("Assembly AssemblyAttributeSingle: received data for connected output assembly\n\r");
-                message_router_response->general_status = kCipErrorAttributeNotSetable;
+                message_router_response->general_status = kCipGeneralStatusCodeAttributeNotSetable;
             }
             else
             {
                 if (message_router_request->request_data.size() < data->length)
                 {
                     OPENER_TRACE_INFO("Assembly setAssemblyAttributeSingle: not enough data received.\r\n");
-                    message_router_response->general_status = kCipErrorNotEnoughData;
+                    message_router_response->general_status = kCipGeneralStatusCodeNotEnoughData;
                 }
                 else
                 {
                     if (message_router_request->request_data.size() > data->length)
                     {
                         OPENER_TRACE_INFO("Assembly setAssemblyAttributeSingle: too much data received.\r\n");
-                        message_router_response->general_status = kCipErrorTooMuchData;
+                        message_router_response->general_status = kCipGeneralStatusCodeTooMuchData;
                     }
                     else
                     {
                         memcpy(data->data, router_request_data, data->length);
 
-                        if (kCipStatusError)//OpENer_Interface::AfterAssemblyDataReceived(instance) != kCipStatusOk)
+                        if (kCipStatusError)//OpENer_Interface::AfterAssemblyDataReceived(instance) != kCipGeneralStatusCodeSuccess)
                         {
                             /* punt early without updating the status... though I don't know
                * how much this helps us here, as the attribute's data has already
@@ -157,11 +157,11 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest_t* me
                * take the data. In addition we have to inform the sender that the
                * data was not ok.
                */
-                            message_router_response->general_status = kCipErrorInvalidAttributeValue;
+                            message_router_response->general_status = kCipGeneralStatusCodeInvalidAttributeValue;
                         }
                         else
                         {
-                            message_router_response->general_status = kCipErrorSuccess;
+                            message_router_response->general_status = kCipGeneralStatusCodeSuccess;
                         }
                     }
                 }
@@ -170,16 +170,16 @@ CipStatus CIP_Assembly::SetAssemblyAttributeSingle(CipMessageRouterRequest_t* me
         else
         {
             /* the attribute was zero we are a heartbeat assembly */
-            message_router_response->general_status = kCipErrorTooMuchData;
+            message_router_response->general_status = kCipGeneralStatusCodeTooMuchData;
         }
     }
 
     if ((attribute != nullptr) && (4 == message_router_request->request_path.attribute_number))
     {
-        message_router_response->general_status = kCipErrorAttributeNotSetable;
+        message_router_response->general_status = kCipGeneralStatusCodeAttributeNotSetable;
     }
 
-    return kCipStatusOkSend;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_Assembly::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response)

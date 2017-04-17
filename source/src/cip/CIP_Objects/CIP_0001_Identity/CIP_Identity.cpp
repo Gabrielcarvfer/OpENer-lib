@@ -66,11 +66,11 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
 {
     CipStatus eip_status;
 
-    eip_status = kCipStatusOkSend;
+    eip_status = kCipGeneralStatusCodeSuccess;
 
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     message_router_response->size_additional_status = 0;
-    message_router_response->general_status = kCipErrorSuccess;
+    message_router_response->general_status = kCipGeneralStatusCodeSuccess;
 
     if (message_router_request->request_data.size() == 1)
     {
@@ -79,21 +79,21 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
         case 0: /* Reset type 0 -> emulate device reset / Power cycle */
             if (kCipStatusError == OpENer_Interface::ResetDevice().status)
             {
-                message_router_response->general_status = kCipErrorInvalidParameter;
+                message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
             }
             break;
 
         case 1: /* Reset type 1 -> reset to device settings */
             if (kCipStatusError == OpENer_Interface::ResetDeviceToInitialConfiguration().status)
             {
-                message_router_response->general_status = kCipErrorInvalidParameter;
+                message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
             }
             break;
 
         /* case 2: Not supported Reset type 2 -> Return to factory defaults except communications parameters */
 
         default:
-            message_router_response->general_status = kCipErrorInvalidParameter;
+            message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
             break;
         }
     }
@@ -104,7 +104,7 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
 
         if (kCipStatusError == OpENer_Interface::ResetDevice().status)
         {
-            message_router_response->general_status = kCipErrorInvalidParameter;
+            message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
         }
         else
         {
@@ -148,7 +148,7 @@ CipStatus CIP_Identity::Init()
         instance->InsertAttribute(6, kCipUdint, &serial_number_, kGetableSingleAndAll);
         instance->InsertAttribute(7, kCipShortString, &product_name_, kGetableSingleAndAll);
     }
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_Identity::InstanceServices(int service, CipMessageRouterRequest_t *msg_router_request, CipMessageRouterResponse_t *msg_router_response)

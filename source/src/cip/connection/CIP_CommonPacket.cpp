@@ -30,7 +30,7 @@ int CIP_CommonPacket::NotifyCommonPacketFormat(EncapsulationData* recv_data, Cip
     }
 
     // In cases of errors we normally need to send an error response
-    return_value.status = kCipStatusOk;
+    return_value.status = kCipGeneralStatusCodeSuccess;
     // check if NullAddressItem received, otherwise it is no unconnected message and should not be here
     if (common_packet_data.address_item.type_id != kCipItemIdNullAddress)
     {
@@ -126,7 +126,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
  * @param data_length	Length of data in pa_Data.
  * @param common_packet_format_data	Pointer to structure of CPF data item.
  *
- *   @return kCipStatusOk .. success
+ *   @return kCipGeneralStatusCodeSuccess .. success
  * 	       kCipStatusError .. error
  */
 CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
@@ -199,7 +199,7 @@ CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
     if (length_count == data_length)
     {
         // length of data is equal to length of Addr and length of Data
-        return kCipStatusOk;
+        return kCipGeneralStatusCodeSuccess;
     }
     else
     {
@@ -207,7 +207,7 @@ CipStatus CIP_CommonPacket::CreateCommonPacketFormatStructure(
         if (common_packet_format_data->item_count > 2)
         {
             // there is an optional packet in data stream which is not sockaddr item
-            return kCipStatusOk;
+            return kCipGeneralStatusCodeSuccess;
         }
         else
         {

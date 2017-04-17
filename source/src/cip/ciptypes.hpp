@@ -17,55 +17,62 @@
  * Bits 7-5 in the Segment Type/Format byte
  *
  */
-typedef enum {
+typedef enum
+{
     /* Segments */
-    kSegmentTypePortSegment = 0x00, // Port segment */
-    kSegmentTypeLogicalSegment = 0x20, // Logical segment */
-    kSegmentTypeNetworkSegment = 0x40, // Network segment */
-    kSegmentTypeSymbolicSegment = 0x60, // Symbolic segment */
-    kSegmentTypeDataSegment = 0x80, // Data segment */
+    kSegmentTypePortSegment         = 0x00, // Port segment */
+    kSegmentTypeLogicalSegment      = 0x20, // Logical segment */
+    kSegmentTypeNetworkSegment      = 0x40, // Network segment */
+    kSegmentTypeSymbolicSegment     = 0x60, // Symbolic segment */
+    kSegmentTypeDataSegment         = 0x80, // Data segment */
     kSegmentTypeDataTypeConstructed = 0xA0, // Data type constructed */
-    kSegmentTypeDataTypeElementary = 0xC0, // Data type elementary */
+    kSegmentTypeDataTypeElementary  = 0xC0, // Data type elementary */
     kSegmentTypeSegmentTypeReserved = 0xE0
 } SegmentType;
 
 /** @brief Port Segment flags */
-typedef enum {
+typedef enum
+{
     kPortSegmentFlagExtendedLinkAddressSize = 0x10 // Extended Link Address Size flag, Port segment */
 } PortSegmentFlag;
 
 /** @brief Enum containing values which kind of logical segment is encoded */
-typedef enum {
-    kLogicalSegmentLogicalTypeClassId = 0x00, // Class ID */
-    kLogicalSegmentLogicalTypeInstanceId = 0x04, // Instance ID */
-    kLogicalSegmentLogicalTypeMemberId = 0x08, // Member ID */
+typedef enum
+{
+    kLogicalSegmentLogicalTypeClassId         = 0x00, // Class ID */
+    kLogicalSegmentLogicalTypeInstanceId      = 0x04, // Instance ID */
+    kLogicalSegmentLogicalTypeMemberId        = 0x08, // Member ID */
     kLogicalSegmentLogicalTypeConnectionPoint = 0x0C, // Connection Point */
-    kLogicalSegmentLogicalTypeAttributeId = 0x10, // Attribute ID */
-    kLogicalSegmentLogicalTypeSpecial = 0x14, // Special */
-    kLogicalSegmentLogicalTypeService = 0x18, // Service ID */
+    kLogicalSegmentLogicalTypeAttributeId     = 0x10, // Attribute ID */
+    kLogicalSegmentLogicalTypeSpecial         = 0x14, // Special */
+    kLogicalSegmentLogicalTypeService         = 0x18, // Service ID */
     kLogicalSegmentLogicalTypeExtendedLogical = 0x1C // Extended Logical */
 } LogicalSegmentLogicalType;
 
 /** @brief Enum containing values how long the encoded value will be (8, 16, or
  * 32 bit) */
-typedef enum {
-    kLogicalSegmentLogicalFormatEightBitValue = 0x00,
-    kLogicalSegmentLogicalFormatSixteenBitValue = 0x01,
+typedef enum
+{
+    kLogicalSegmentLogicalFormatEightBitValue     = 0x00,
+    kLogicalSegmentLogicalFormatSixteenBitValue   = 0x01,
     kLogicalSegmentLogicalFormatThirtyTwoBitValue = 0x02
 } LogicalSegmentLogicalFormat;
 
-typedef enum {
+typedef enum
+{
     kProductionTimeInhibitTimeNetworkSegment = 0x43 // identifier indicating a production inhibit time network segment */
 } NetworkSegmentSubType;
 
-typedef enum {
-    kDataSegmentTypeSimpleDataMessage = kSegmentTypeDataSegment + 0x00,
+typedef enum
+{
+    kDataSegmentTypeSimpleDataMessage         = kSegmentTypeDataSegment + 0x00,
     kDataSegmentTypeAnsiExtendedSymbolMessage = kSegmentTypeDataSegment + 0x11
 } DataSegmentType;
 
 /** @brief Enum containing the encoding values for CIP data types for CIP
  * Messages */
-typedef enum cip_data_types {
+typedef enum cip_data_types
+{
     kCipAny         = 0x00, // data type that can not be directly encoded */
     kCipBool        = 0xC1, // boolean data type */
     kCipSint        = 0xC2, // 8-bit signed integer */
@@ -152,11 +159,11 @@ typedef enum
 typedef enum
 { /* TODO: Rework */
     kNotSetOrGetable = 0x00, // Neither set-able nor get-able */
-    kGetableAll = 0x01, // Get-able, also part of Get Attribute All service */
-    kGetableSingle = 0x02, // Get-able via Get Attribute */
-    kSetable = 0x04, // Set-able via Set Attribute */
+    kGetableAll      = 0x01, // Get-able, also part of Get Attribute All service */
+    kGetableSingle   = 0x02, // Get-able via Get Attribute */
+    kSetable         = 0x04, // Set-able via Set Attribute */
     /* combined for convenience */
-    kSetAndGetAble = 0x07, // both set and get-able */
+    kSetAndGetAble   = 0x07, // both set and get-able */
     kGetableSingleAndAll = 0x03 // both single and all */
 } CipAttributeFlag;
 
@@ -329,13 +336,13 @@ typedef struct
 
 typedef enum
 {
-    kCipIdentityClassCode = 0x01,
-    kCipMessageRouterClassCode = 0x02,
-    kCipDeviceNetLinkClassCode = 0x03,
-    kCipAssemblyClassCode = 0x04,       //Assembly Class Code
+    kCipIdentityClassCode          = 0x01,
+    kCipMessageRouterClassCode     = 0x02,
+    kCipDeviceNetLinkClassCode     = 0x03,
+    kCipAssemblyClassCode          = 0x04,       //Assembly Class Code
     kCipConnectionManagerClassCode = 0x06,
-    kCipTcpIpInterfaceClassCode = 0xF5, // TCP/IP Interface Object class code
-    kCipEthernetLinkClassCode = 0xF6,
+    kCipTcpIpInterfaceClassCode    = 0xF5, // TCP/IP Interface Object class code
+    kCipEthernetLinkClassCode      = 0xF6,
 
 } CipClassCodes;
 

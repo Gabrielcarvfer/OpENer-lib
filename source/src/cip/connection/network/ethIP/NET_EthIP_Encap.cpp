@@ -61,7 +61,7 @@ void NET_EthIP_Encap::EncapsulationInit(void)
 int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
     unsigned int length, int* remaining_bytes)
 {
-    CipStatus return_value = kCipStatusOk;
+    CipStatus return_value = kCipGeneralStatusCodeSuccess;
     EncapsulationData encapsulation_data;
     /* eat the encapsulation header*/
     /* the structure contains a pointer to the encapsulated data*/
@@ -74,12 +74,12 @@ int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
         {
             /* full package or more received */
             encapsulation_data.status = kEncapsulationProtocolSuccess;
-            return_value = kCipStatusOkSend;
+            return_value = kCipGeneralStatusCodeSuccess;
             /* most of these functions need a reply to be send */
             switch (encapsulation_data.command_code) {
                 case (kEncapsulationCommandNoOperation):
                     /* NOP needs no reply and does nothing */
-                    return_value = kCipStatusOk;
+                    return_value = kCipGeneralStatusCodeSuccess;
                     break;
 
                 case (kEncapsulationCommandListServices):
@@ -118,7 +118,7 @@ int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
                     break;
             }
             /* if nRetVal is greater than 0 data has to be sent */
-            if (kCipStatusOk < return_value.status)
+            if (kCipGeneralStatusCodeSuccess < return_value.status)
             {
                 return_value = (CipStatus)EncapsulateData(&encapsulation_data);
             }
@@ -130,7 +130,7 @@ int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
 
 int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
 {
-    CipStatus status = kCipStatusOk;
+    CipStatus status = kCipGeneralStatusCodeSuccess;
     EncapsulationData encapsulation_data;
     /* eat the encapsulation header*/
     /* the structure contains a pointer to the encapsulated data*/
@@ -143,7 +143,7 @@ int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* f
         {
             /* full package or more received */
             encapsulation_data.status = kEncapsulationProtocolSuccess;
-            status = kCipStatusOkSend;
+            status = kCipGeneralStatusCodeSuccess;
             /* most of these functions need a reply to be send */
             switch (encapsulation_data.command_code)
             {
@@ -158,7 +158,7 @@ int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* f
                     } else
                     {
                         HandleReceivedListIdentityCommandUdp (socket, (struct sockaddr_in*)from_address, &encapsulation_data);
-                        status = kCipStatusOk;
+                        status = kCipGeneralStatusCodeSuccess;
                     } /* as the response has to be delayed do not send it now */
                     break;
 
@@ -399,14 +399,14 @@ CipStatus NET_EthIP_Encap::HandleReceivedUnregisterSessionCommand(
         {
             //IApp_CloseSocket_tcp(g_registered_sessions[i]);
             g_registered_sessions[i] = kEipInvalidSocket;
-            return kCipStatusOk;
+            return kCipGeneralStatusCodeSuccess;
         }
     }
 
     /* no such session registered */
     receive_data->data_length = 0;
     receive_data->status = kEncapsulationProtocolInvalidSessionHandle;
-    return kCipStatusOkSend;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 /** @brief Call Connection Manager.
@@ -415,7 +415,7 @@ CipStatus NET_EthIP_Encap::HandleReceivedUnregisterSessionCommand(
 CipStatus NET_EthIP_Encap::HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data)
 {
     CipInt send_size;
-    CipStatus return_value = kCipStatusOkSend;
+    CipStatus return_value = kCipGeneralStatusCodeSuccess;
 
     if (receive_data->data_length >= 6) {
         /* Command specific data UDINT .. Interface Handle, UINT .. Timeout, CPF packets */
@@ -455,7 +455,7 @@ CipStatus NET_EthIP_Encap::HandleReceivedSendRequestResponseDataCommand(
     EncapsulationData* receive_data)
 {
     CipInt send_size;
-    CipStatus return_value = kCipStatusOkSend;
+    CipStatus return_value = kCipGeneralStatusCodeSuccess;
 
     if (receive_data->data_length >= 6) {
         /* Command specific data UDINT .. Interface Handle, UINT .. Timeout, CPF packets */

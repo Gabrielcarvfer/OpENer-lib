@@ -41,7 +41,10 @@ public:
         kRoutingTypeMulticastConnection    = 0x2000
     } RoutingType;
 
-/** @brief Connection Manager Error codes */
+/** @brief Connection Manager Error codes
+ * Error descriptions in Vol.1 3-5.6
+ * */
+
     typedef enum
     {
         kConnMgrStatusCodeSuccess                             = 0x00,

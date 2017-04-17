@@ -114,13 +114,13 @@ CipStatus CIP_DeviceNET_Link::Init()
         //Active Node Table (ARRAY'o'bool)
 		object_Set.emplace(instance_ptr->id, instance_ptr);
     }
-	return kCipStatusOk;
+	return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus CIP_DeviceNET_Link::GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
 
-    CipStatus status = kCipStatusOkSend;
+    CipStatus status = kCipGeneralStatusCodeSuccess;
     CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     status = this->GetAttributeSingle(message_router_request,   message_router_response);

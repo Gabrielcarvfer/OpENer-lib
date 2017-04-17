@@ -47,7 +47,7 @@ bool OpENer_Interface::OpENer_Initialize()
     CipStackInit(unique_connection_id);
 
     // Setup Network Handles
-    if (kCipStatusOk == NET_NetworkHandler::NetworkHandlerInitialize ().status)
+    if (kCipGeneralStatusCodeSuccess == NET_NetworkHandler::NetworkHandlerInitialize ().status)
     {
         g_end_stack = 0;
 
@@ -93,7 +93,7 @@ void OpENer_Interface::OpENerWorker()
 #endif
 
         //Check every pending connection and timer, send and receive data
-        if (kCipStatusOk != NET_NetworkHandler::NetworkHandlerProcessOnce ().status)
+        if (kCipGeneralStatusCodeSuccess != NET_NetworkHandler::NetworkHandlerProcessOnce ().status)
         {
 #ifdef USETHREAD
             break;
@@ -195,22 +195,22 @@ OpENer_ExplicitConnection * OpENer_Interface::GetOpENerExplicitConnection(CipUdi
 
 CipStatus OpENer_Interface::ResetDevice()
 {
-	return kCipStatusOk;
+	return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus OpENer_Interface::ResetDeviceToInitialConfiguration()
 {
-	return kCipStatusOk;
+	return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus OpENer_Interface::AfterDataReceived(void *)
 {
-	return kCipStatusOk;
+	return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus OpENer_Interface::ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask, const char* gateway_address)
 {
-	return kCipStatusOk;
+	return kCipGeneralStatusCodeSuccess;
 }
 
 void OpENer_Interface::ConfigureMacAddress(const CipUsint* mac_address)

@@ -6,12 +6,6 @@
 
 #include "CIP_ConnectionManager.hpp"
 #include <cstring>
-#include <cip/ciptypes.hpp>
-#include "../CIP_0001_Identity/CIP_Identity.hpp"
-#include "../../connection/network/NET_Endianconv.hpp"
-#include "cip/CIP_AppConnType.hpp"
-#include "network/NET_NetworkHandler.hpp"
-#include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
 
 std::map<CipUdint, const CIP_ConnectionManager *> *CIP_ConnectionManager::active_connections_set;
 CipUdint CIP_ConnectionManager::g_incarnation_id;
@@ -47,7 +41,7 @@ CipStatus CIP_ConnectionManager::Init ()
         object_Set.emplace(object_Set.size(), instance);
 
         //g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
-        return kCipStatusOk;
+        return kCipGeneralStatusCodeSuccess;
     }
     return kCipStatusError;
 }
@@ -56,7 +50,7 @@ CipStatus CIP_ConnectionManager::Init ()
 CipStatus CIP_ConnectionManager::Shut()
 {
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -81,7 +75,7 @@ CipStatus CIP_ConnectionManager::ForwardClose(CipMessageRouterRequest_t* message
     //sucessfull if conn triad matches an existing connection parameters
     //todo: free structures
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
 
 
     //if no match, no conn is released and target shall return an errror with gen status code 0x01 and extended status 0x0107
@@ -159,7 +153,7 @@ CipStatus CIP_ConnectionManager::UnconnectedSend(CipMessageRouterRequest_t* mess
     unconnectedSendArgs = (unconnectedSendRequestParams_t*)&message_router_request->request_data[0];
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -171,12 +165,12 @@ CipStatus CIP_ConnectionManager::ForwardOpen(CipMessageRouterRequest_t* message_
         CipUint val;
         struct
         {
-            CipUint redundantOwner:1;
-            CipUint connectionType:2;
-            CipUint reserved:1;
-            CipUint priority:2;
+            CipUint redundantOwner :1;
+            CipUint connectionType :2;
+            CipUint reserved       :1;
+            CipUint priority       :2;
             CipUint fixedOrVariable:1;
-            CipUint connectionSize:8;
+            CipUint connectionSize :8;
         }bitfield_u;
     }forwardOpenParams_t;
 
@@ -184,7 +178,7 @@ CipStatus CIP_ConnectionManager::ForwardOpen(CipMessageRouterRequest_t* message_
     forwardOpenArgs = (forwardOpenParams_t*)&message_router_request->request_data[0];
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -224,7 +218,7 @@ CipStatus CIP_ConnectionManager::GetConnectionData(CipMessageRouterRequest_t* me
     } getConnectionDataResponseParams_t;
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -242,8 +236,9 @@ CipStatus CIP_ConnectionManager::SearchConnectionData(CipMessageRouterRequest_t*
     searchConnectionDataRequestParams_t * searchConnectionDataArgs;
     searchConnectionDataArgs = (searchConnectionDataRequestParams_t*)&message_router_request->request_data[0];
 
+    //Response format = getConnectionDataResponseParams_t
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -272,7 +267,7 @@ CipStatus CIP_ConnectionManager::GetConnectionOwner(CipMessageRouterRequest_t* m
     } getConnectionOwnerResponseSuccessful_t;
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
 
@@ -284,13 +279,13 @@ CipStatus CIP_ConnectionManager::LargeForwardOpen(CipMessageRouterRequest_t* mes
         CipUdint val;
         struct
         {
-            CipUdint redundantOwner:1;
-            CipUdint connectionType:2;
-            CipUdint reserved:1;
-            CipUdint priority:2;
-            CipUdint fixedOrVariable:1;
-            CipUdint reserved2:9;
-            CipUdint connectionSize:16;
+            CipUdint redundantOwner :1 ;
+            CipUdint connectionType :2 ;
+            CipUdint reserved       :1 ;
+            CipUdint priority       :2 ;
+            CipUdint fixedOrVariable:1 ;
+            CipUdint reserved2      :9 ;
+            CipUdint connectionSize :16;
         }bitfield_u;
     }largeForwardOpenParams_t;
 
@@ -298,6 +293,6 @@ CipStatus CIP_ConnectionManager::LargeForwardOpen(CipMessageRouterRequest_t* mes
     largeForwardOpenArgs = (largeForwardOpenParams_t*)&message_router_request->request_data[0];
 
     CipStatus stat;
-    stat.status = kCipStatusOk;
+    stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }

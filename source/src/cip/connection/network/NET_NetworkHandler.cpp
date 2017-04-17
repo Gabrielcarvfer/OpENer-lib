@@ -148,7 +148,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
     g_last_time = GetMilliSeconds(); // initialize time keeping
     g_elapsed_time = 0;
 
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 
@@ -210,7 +210,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
     {
         if (EINTR == errno) // we have somehow been interrupted. The default behavior is to go back into the select loop.
         {
-            return kCipStatusOk;
+            return kCipGeneralStatusCodeSuccess;
         }
         else
         {
@@ -254,7 +254,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
         CIP_ConnectionManager::ManageConnections(g_elapsed_time);
         g_elapsed_time = 0;
     }
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 //todo:move to CIP_ConnectionManager
@@ -272,7 +272,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerFinish(void)
     netStats[tcp_listener]->CloseSocket ();
     netStats[udp_ucast_listener]->CloseSocket ();
     netStats[udp_global_bcast_listener]->CloseSocket ();
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 void NET_NetworkHandler::CheckAndHandleUdpGlobalBroadcastSocket(void)
@@ -395,7 +395,7 @@ CipStatus NET_NetworkHandler::SendUdpData(struct sockaddr* address, int socket, 
         return kCipStatusError;
     }
 
-    return kCipStatusOk;
+    return kCipGeneralStatusCodeSuccess;
 }
 
 CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
@@ -456,7 +456,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
                 data_sent = (long) data_size;
             }
         } while (0 != data_size); /* TODO: fragile end statement */
-        return kCipStatusOk;
+        return kCipGeneralStatusCodeSuccess;
     }
 
     number_of_read_bytes = recv(socket, (char*) &g_ethernet_communication_buffer[4], (int) data_size, 0);
@@ -502,7 +502,7 @@ CipStatus NET_NetworkHandler::HandleDataOnTcpSocket(int socket)
             }
         }
 
-        return kCipStatusOk;
+        return kCipGeneralStatusCodeSuccess;
     }
     else
     {

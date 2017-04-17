@@ -35,14 +35,14 @@ void CIP_AnalogInputPoint::handle_class_inquiry(unsigned char request[], unsigne
 			break;
 
 		default:
-			error = kCipErrorAttributeNotSupported; 
+			error = kCipGeneralStatusCodeAttributeNotSupported;
 			break;
 		}
 		break;
 
 
 	default: 
-		error = kCipErrorServiceNotSupported;
+		error = kCipGeneralStatusCodeServiceNotSupported;
 		break;
 	}
 
@@ -98,13 +98,13 @@ void CIP_AnalogInputPoint::handle_explicit(unsigned char request[], unsigned cha
 			break;
 
 		default:
-			error = kCipErrorAttributeNotSupported;
+			error = kCipGeneralStatusCodeAttributeNotSupported;
 			break;
 		}
 		break;
 
 	default:
-		error = kCipErrorServiceNotSupported;
+		error = kCipGeneralStatusCodeServiceNotSupported;
 		break;
 	}
 	if (error)
@@ -130,7 +130,7 @@ unsigned char CIP_AnalogInputPoint::get_value(void)
 CipStatus CIP_AnalogInputPoint::Shut()
 {
 	CipStatus stat;
-	stat.status = kCipStatusOk;
+	stat.status = kCipGeneralStatusCodeSuccess;
 	return stat;
 }
 
