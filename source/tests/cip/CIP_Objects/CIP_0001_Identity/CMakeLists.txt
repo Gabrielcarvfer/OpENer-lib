@@ -1,0 +1,7 @@
+opENer_common_includes()
+
+set( CIP_TEST_SRC ./TEST_Cip_Identity.cpp)
+
+add_executable( TEST_CIP_CLASS0001_IDENTITY ${CIP_TEST_SRC})
+
+add_test(UNITTEST_CIP_CLASS0001_IDENTITY TEST_CIP_CLASS0001_IDENTITY )

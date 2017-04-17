@@ -9,6 +9,7 @@ cmake_minimum_required( VERSION 2.8.9 )
 project(OpENerMain CXX)
 add_definitions(-std=c++11)
 add_definitions(-DWIN32)
+set(runtests ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
 unset(CMAKE_LINK_LIBRARY_SUFFIX)
@@ -76,6 +77,10 @@ set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall" )
 #######################################
 opener_common_includes()
 
+if (runtests)
+  enable_testing()
+  add_subdirectory(tests)
+endif(runtests)
 
 add_subdirectory( src )
 add_executable(OpENerMain src/main.cpp)

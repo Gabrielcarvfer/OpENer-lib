@@ -111,7 +111,7 @@ bool CIP_Object<T>::RemoveClassInstance(CipUdint position)
 
 //Methods
 template <class T>
-void CIP_Object<T>::InsertAttribute(CipUint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
+void CIP_Object<T>::InsertAttribute(CipUsint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
 {
     auto it = this->attributes.find(attribute_number);
 
@@ -155,7 +155,7 @@ void CIP_Object<T>::InsertService(bool classService, CipUsint service_number, Ci
 }
 
 template <class T>
-CIP_Attribute* CIP_Object<T>::GetCipAttribute(CipUint attribute_number)
+CIP_Attribute* CIP_Object<T>::GetCipAttribute(CipUsint attribute_number)
 {
     if (this->attributes.find(attribute_number) == this->attributes.end ())
     {

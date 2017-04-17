@@ -236,7 +236,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
 {
     CipStatus stat;
 
-    CIP_Segment * segment = (CIP_Segment*)&request->request_data[0];
+    CIP_Segment * segment = (CIP_Segment*)&request->request_path;
 
     switch(segment->segment_header.bitfield_u.seg_type)
     {
@@ -266,6 +266,9 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
     if (registered_objects->find(request->request_path.class_id) == registered_objects->end())
     {
         //todo: class not registered, return error
+        stat.extended_status = 0;
+        stat.status = kCipGeneralStatusCodeObjectDoesNotExist;
+        return stat;
     }
 
     CIP_Object * ptr = (CIP_Object*)registered_objects->at(request->request_path.class_id);
@@ -274,6 +277,9 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
     if(ptr->GetInstance (request->request_path.instance_number) == nullptr)
     {
         //todo: instance doesnt exist, return error
+        stat.extended_status = 0;
+        stat.status = kCipGeneralStatusCodeObjectDoesNotExist;
+        return stat;
     }
 
     CIP_Object * instance = (CIP_Object*)ptr->GetInstance (request->request_path.instance_number);
@@ -285,7 +291,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
     //Interpret service directed to it (??)
 
     //Routes response back to originator
-    //todo: return message to sender
+    //todo: reverse CipEpath and return response to sender
 }
 
 CipStatus CIP_MessageRouter::symbolic_translation(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response)

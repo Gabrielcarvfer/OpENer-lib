@@ -89,7 +89,7 @@ class CIP_Object
      *  @param cip_data pointer to data of attribute.
      *  @param cip_flags flags to indicate set-ability and get-ability of attribute.
      */
-    void InsertAttribute(CipUint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
+    void InsertAttribute(CipUsint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
 
 
     /** @ingroup CIP_API
@@ -119,7 +119,7 @@ class CIP_Object
      * @return pointer to attribute
      *          0 if instance is not in the object
      */
-    CIP_Attribute* GetCipAttribute(CipUint attribute_number);
+    CIP_Attribute* GetCipAttribute(CipUsint attribute_number);
 
 
     /** @brief Generic implementation of the GetAttributeAll CIP service
@@ -145,7 +145,7 @@ class CIP_Object
      * @return status  >0 .. success
      *          -1 .. requested attribute not available
      */
-    CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
+     CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
                                  CipMessageRouterResponse_t* message_router_response);
 
     CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,

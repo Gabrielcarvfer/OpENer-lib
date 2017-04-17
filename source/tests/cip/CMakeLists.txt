@@ -3,4 +3,4 @@
 #######################################
 opENer_common_includes()
 
-add_subdirectory( cip )
+add_subdirectory( CIP_Objects )

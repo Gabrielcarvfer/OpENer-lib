@@ -157,8 +157,8 @@ public:
     static CipStatus FindNextInstance(CipMessageRouterRequest_t* message_router_request,
                                       CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus GetAttributeSingle(CipMessageRouterRequest_t* message_router_request,
-                                        CipMessageRouterResponse_t* message_router_response);
+    static CipStatus ApplyAttributes(CipMessageRouterResponse_t* message_router_request,
+                              CipMessageRouterResponse_t* message_router_response);
 
     static CipStatus Bind(CipMessageRouterRequest_t* message_router_request,
                           CipMessageRouterResponse_t* message_router_response);//CipUint bound_instances[2]);
@@ -169,7 +169,7 @@ public:
     static CipStatus SafetyClose(CipMessageRouterRequest_t* message_router_request,
                                  CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus SafetyOpen(CipMessageRouterRequest_t* message_router_request,
+    static  CipStatus SafetyOpen(CipMessageRouterRequest_t* message_router_request,
                                 CipMessageRouterResponse_t* message_router_response);
 
 

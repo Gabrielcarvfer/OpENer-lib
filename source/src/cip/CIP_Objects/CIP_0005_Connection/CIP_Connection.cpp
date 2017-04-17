@@ -35,6 +35,7 @@ CipStatus CIP_Connection::Init()
 
 
         object_Set.emplace(object_Set.size(), instance);
+
         //Class services
         InsertService(true, kConnectionServiceCreate            , Create           , "Create"          );
         InsertService(true, kConnectionClassNInstServiceDelete  , Delete           , "Delete"          );
@@ -81,6 +82,12 @@ CipStatus CIP_Connection::Create(CipMessageRouterRequest_t* message_router_reque
     stat.status = kCipGeneralStatusCodeSuccess;
     stat.extended_status = (CipUsint) instance->id;
     return stat;
+}
+
+CipStatus CIP_Connection::ApplyAttributes(CipMessageRouterResponse_t* message_router_request,
+                          CipMessageRouterResponse_t* message_router_response)
+{
+
 }
 
 CipStatus CIP_Connection::Delete(CipMessageRouterRequest_t* message_router_request,
