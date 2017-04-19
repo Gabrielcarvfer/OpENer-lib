@@ -178,6 +178,8 @@ public:
 private:
     CipStatus Behaviour();
     bool check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_msg_ptr);
+	void * retrieveAttribute(CipUsint attributeNumber);
+	CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 
 

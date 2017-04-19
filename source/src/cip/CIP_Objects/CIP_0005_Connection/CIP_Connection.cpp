@@ -19,33 +19,56 @@ CipStatus CIP_Connection::Init()
 
         CIP_Connection *instance = new CIP_Connection();
 
+		//Setup class attributes
         //Chapter 4 vol 1 - Common CIP attributes added on template itself
-        instance->InsertAttribute(1, kCipUint , &revision                             , kGetableSingleAndAll);
-        instance->InsertAttribute(2, kCipUint , &max_instances                        , kGetableSingleAndAll);
-        instance->InsertAttribute(3, kCipUint , &number_of_instances                  , kGetableSingleAndAll);
-        instance->InsertAttribute(4, kCipUdint, &optional_attribute_list              , kGetableSingleAndAll);
-        instance->InsertAttribute(5, kCipUdint, &optional_service_list                , kGetableSingleAndAll);
-        instance->InsertAttribute(6, kCipUint , &maximum_id_number_class_attributes   , kGetableSingleAndAll);
-        instance->InsertAttribute(7, kCipUint , &maximum_id_number_instance_attributes, kGetableSingleAndAll);
-
+        instance->classAttributesProperties.emplace(1, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "Revision"                         });
+        instance->classAttributesProperties.emplace(2, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "MaxInstances"                     });
+        instance->classAttributesProperties.emplace(3, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "NumberOfInstances"                });
+        instance->classAttributesProperties.emplace(4, CipAttributeProperties_t{ kCipUdint, sizeof(CipUdint), kGetableSingleAndAll, "OptionalAttributeList"            });
+        instance->classAttributesProperties.emplace(5, CipAttributeProperties_t{ kCipUdint, sizeof(CipUdint), kGetableSingleAndAll, "OptionalServiceList"              });
+        instance->classAttributesProperties.emplace(6, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "MaximumIDNumberClassAttributes"   });
+        instance->classAttributesProperties.emplace(7, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "MaximumIDNumberInstanceAttributes"});
+	
         //Chapter 5 vol 5
         //todo: recheck sizes
         //instance->InsertAttribute(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
         //instance->InsertAttribute(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
 
 
+		//Setup instances attributes
+		//Chapter 3-4.4 vol 1
+		instance->instanceAttributesProperties.emplace( 1, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "State"                                 });
+		instance->instanceAttributesProperties.emplace( 2, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Instance_type"                         });
+		instance->instanceAttributesProperties.emplace( 3, CipAttributeProperties_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "TransportClass_trigger"                });
+		instance->instanceAttributesProperties.emplace( 4, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_produced_connection_id"      });
+		instance->instanceAttributesProperties.emplace( 5, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_consumed_connection_id"      });
+		instance->instanceAttributesProperties.emplace( 6, CipAttributeProperties_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "DeviceNet_initial_comm_characteristics"});
+		instance->instanceAttributesProperties.emplace( 7, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_size"              });
+		instance->instanceAttributesProperties.emplace( 8, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_size"              });
+		instance->instanceAttributesProperties.emplace( 9, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Expected_packet_rate"                  });
+		instance->instanceAttributesProperties.emplace(10, CipAttributeProperties_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_produced_connection_id"            });
+		instance->instanceAttributesProperties.emplace(11, CipAttributeProperties_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_consumed_connection_id"            });
+		instance->instanceAttributesProperties.emplace(12, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Watchdog_timeout_action"               });
+		instance->instanceAttributesProperties.emplace(13, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_path_length"       });
+		instance->instanceAttributesProperties.emplace(14, CipAttributeProperties_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Produced_connection_path"              });
+		instance->instanceAttributesProperties.emplace(15, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_path_length"       });
+		instance->instanceAttributesProperties.emplace(16, CipAttributeProperties_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Consumed_connection_path"              });
+		instance->instanceAttributesProperties.emplace(17, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Production_inhibit_time"               });
+		instance->instanceAttributesProperties.emplace(18, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Connection_timeout_multiplier"         });
+		instance->instanceAttributesProperties.emplace(19, CipAttributeProperties_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "Connection_binding_list"               });
+
         object_Set.emplace(object_Set.size(), instance);
 
         //Class services
-        InsertService(true, kConnectionServiceCreate            , Create           , "Create"          );
-        InsertService(true, kConnectionClassNInstServiceDelete  , Delete           , "Delete"          );
-        InsertService(true, kConnectionClassNInstServiceReset   , Reset            , "Reset"           );
-        InsertService(true, kConnectionServiceFindNextInstance  , FindNextInstance , "FindNextInstance");
-        InsertService(true, kConnectionClassNInstServiceGetAttributeSingle, GetAttributeSingle, "GetAttributeSingle");
-        InsertService(true, kConnectionServiceBind              , Bind             , "Bind"            );
-        InsertService(true, kConnectionServiceProducingLookup   , ProducingLookup  , "ProducingLookup" );
-        InsertService(true, kConnectionServiceSafetyClose       , SafetyClose      , "SafetyClose"     );
-        InsertService(true, kConnectionServiceSafetyOpen        , SafetyOpen       , "SafetyOpen"      );
+        classServicesProperties.emplace(kConnectionServiceCreate                      , CipServiceProperties_t{ "Create"            });
+        classServicesProperties.emplace(kConnectionClassNInstServiceDelete            , CipServiceProperties_t{ "Delete"            });
+        classServicesProperties.emplace(kConnectionClassNInstServiceReset             , CipServiceProperties_t{ "Reset"             });
+        classServicesProperties.emplace(kConnectionServiceFindNextInstance            , CipServiceProperties_t{ "FindNextInstance"  });
+        classServicesProperties.emplace(kConnectionClassNInstServiceGetAttributeSingle, CipServiceProperties_t{ "GetAttributeSingle"});
+        classServicesProperties.emplace(kConnectionServiceBind                        , CipServiceProperties_t{ "Bind"              });
+        classServicesProperties.emplace(kConnectionServiceProducingLookup             , CipServiceProperties_t{ "ProducingLookup"   });
+        classServicesProperties.emplace(kConnectionServiceSafetyClose                 , CipServiceProperties_t{ "SafetyClose"       });
+        classServicesProperties.emplace(kConnectionServiceSafetyOpen                  , CipServiceProperties_t{ "SafetyOpen"        });
 
     }
     return kCipGeneralStatusCodeSuccess;
@@ -54,27 +77,7 @@ CipStatus CIP_Connection::Init()
 CipStatus CIP_Connection::Create(CipMessageRouterRequest_t* message_router_request,
                                  CipMessageRouterResponse_t* message_router_response)
 {
-    CIP_Connection *instance = new CIP_Connection();
-    //Chapter 3-4.4 vol 1
-    instance->InsertAttribute( 1, kCipUsint, &instance->State                                 , kGetableSingleAndAll);
-    instance->InsertAttribute( 2, kCipUsint, &instance->Instance_type                         , kGetableSingleAndAll);
-    instance->InsertAttribute( 3, kCipByte , &instance->TransportClass_trigger                , kGetableSingleAndAll);
-    instance->InsertAttribute( 4, kCipUint , &instance->DeviceNet_produced_connection_id      , kGetableSingleAndAll);
-    instance->InsertAttribute( 5, kCipUint , &instance->DeviceNet_consumed_connection_id      , kGetableSingleAndAll);
-    instance->InsertAttribute( 6, kCipByte , &instance->DeviceNet_initial_comm_characteristics, kGetableSingleAndAll);
-    instance->InsertAttribute( 7, kCipUint , &instance->Produced_connection_size              , kGetableSingleAndAll);
-    instance->InsertAttribute( 8, kCipUint , &instance->Consumed_connection_size              , kGetableSingleAndAll);
-    instance->InsertAttribute( 9, kCipUint , &instance->Expected_packet_rate                  , kGetableSingleAndAll);
-    instance->InsertAttribute(10, kCipUdint, &instance->CIP_produced_connection_id            , kGetableSingleAndAll);
-    instance->InsertAttribute(11, kCipUdint, &instance->CIP_consumed_connection_id            , kGetableSingleAndAll);
-    instance->InsertAttribute(12, kCipUsint, &instance->Watchdog_timeout_action               , kGetableSingleAndAll);
-    instance->InsertAttribute(13, kCipUint , &instance->Produced_connection_path_length       , kGetableSingleAndAll);
-    instance->InsertAttribute(14, kCipEpath, &instance->Produced_connection_path              , kGetableSingleAndAll);
-    instance->InsertAttribute(15, kCipUint , &instance->Consumed_connection_path_length       , kGetableSingleAndAll);
-    instance->InsertAttribute(16, kCipEpath, &instance->Consumed_connection_path              , kGetableSingleAndAll);
-    instance->InsertAttribute(17, kCipUint , &instance->Production_inhibit_time               , kGetableSingleAndAll);
-    instance->InsertAttribute(18, kCipUsint, &instance->Connection_timeout_multiplier         , kGetableSingleAndAll);
-    instance->InsertAttribute(19, kCipUdint, &instance->Connection_binding_list               , kGetableSingleAndAll);
+    CIP_Connection *instance = new CIP_Connection();    
 
     object_Set.emplace(object_Set.size(), instance);
 
@@ -405,6 +408,54 @@ CipStatus CIP_Connection::Shut()
 
 
 
+void * CIP_Connection::retrieveAttribute(CipUsint attributeNumber)
+{
+	if (this->id == 0)
+	{
+		switch (attributeNumber)
+		{
+		 case 1: return &revision;
+		 case 2: return &max_instances;
+		 case 3: return &number_of_instances;
+		 case 4: return &optional_attribute_list;
+		 case 5: return &optional_service_list;
+		 case 6: return &maximum_id_number_class_attributes;
+		 case 7: return &maximum_id_number_instance_attributes;
+		 default: return nullptr;
+		}
+	}
+	else
+	{
+		switch (attributeNumber)
+		{
+		case  1: return &this->State;
+		case  2: return &this->Instance_type;
+		case  3: return &this->TransportClass_trigger;
+		case  4: return &this->DeviceNet_produced_connection_id;
+		case  5: return &this->DeviceNet_consumed_connection_id;
+		case  6: return &this->DeviceNet_initial_comm_characteristics;
+		case  7: return &this->Produced_connection_size;
+		case  8: return &this->Consumed_connection_size;
+		case  9: return &this->Expected_packet_rate;
+		case 10: return &this->CIP_produced_connection_id;
+		case 11: return &this->CIP_consumed_connection_id;
+		case 12: return &this->Watchdog_timeout_action;
+		case 13: return &this->Produced_connection_path_length;
+		case 14: return &this->Produced_connection_path;
+		case 15: return &this->Consumed_connection_path_length;
+		case 16: return &this->Consumed_connection_path;
+		case 17: return &this->Production_inhibit_time;
+		case 18: return &this->Connection_timeout_multiplier;
+		case 19: return &this->Connection_binding_list;
+		default: return nullptr;
+		}
+	}
+}
+
+CipStatus CIP_Connection::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+
+}
 
 
 

@@ -32,6 +32,7 @@ CipStatus TEST_Cip_Template1::getProductCode(CipMessageRouterRequest_t * req, Ci
 	stat.extended_status = this->product_code_;
 	return stat;
 }
+
 void * TEST_Cip_Template1::retrieveAttribute(CipUsint attributeNumber)
 {
 	void * attrPtr = nullptr;
@@ -101,14 +102,14 @@ CipStatus TEST_Cip_Template1::Init()
 		TEST_Cip_Template1 *instance = new TEST_Cip_Template1();
 		AddClassInstance(instance, 0);
 		auto f = std::bind(&TEST_Cip_Template1::getProductCode, instance, std::placeholders::_1, std::placeholders::_2);
-		instance->classAttributesProperties.emplace(1, CipAttributeProperties_t{ kCipUint, sizeof(kCipUint), kGetableSingleAndAll, "Vendor ID" });
-		instance->classAttributesProperties.emplace(2, CipAttributeProperties_t{ kCipUint, sizeof(kCipUint), kGetableSingleAndAll, "Product Code" });
+		instance->classAttributesProperties.emplace(1, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Vendor ID" });
+		instance->classAttributesProperties.emplace(2, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Product Code" });
 		instance->classServicesProperties.emplace(1, CipServiceProperties_t{ "GetVendorID" });
 		instance->classServicesProperties.emplace(2, CipServiceProperties_t{"GetProductCode"});
 
 		instance->InstanceServices(2, nullptr, nullptr);
 
-		CipUint * ptr = (CipUint*)instance->GetCipAttribute(2);
+		CipUint * ptr = (CipUint*) instance->GetCipAttribute(2);
 
 		stat.status = kCipGeneralStatusCodeSuccess;
 		stat.extended_status = 0;
