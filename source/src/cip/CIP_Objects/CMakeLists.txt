@@ -1,6 +1,5 @@
 opENer_common_includes()
 
-add_subdirectory(template)
 add_subdirectory(CIP_0001_Identity)
 add_subdirectory(CIP_0002_MessageRouter)
 add_subdirectory(CIP_0003_DeviceNET)
@@ -26,5 +25,4 @@ target_link_libraries(
         CIP_CLASS000A_ANALOGINPUT
         CIP_CLASS00F5_TCPIPINTERFACE
         CIP_CLASS00F6_ETHERNETLINK
-        CIP_CLASS
         )

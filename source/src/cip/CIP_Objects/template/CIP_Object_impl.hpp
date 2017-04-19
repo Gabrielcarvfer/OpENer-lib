@@ -7,10 +7,9 @@
 
 #include "../../../trace.hpp"
 #include "../../CIP_Common.hpp"
-#include "CIP_Attribute.hpp"
 #include "../../../opener_user_conf.hpp"
 #include <utility>
-#include <cip/ciptypes.hpp>
+#include "../../ciptypes.hpp"
 
 //Static variables
 template<class T> CipUdint    CIP_Object<T>::class_id;
@@ -23,6 +22,11 @@ template<class T> CipUdint    CIP_Object<T>::optional_service_list;
 template<class T> CipUint     CIP_Object<T>::maximum_id_number_class_attributes;
 template<class T> CipUint     CIP_Object<T>::maximum_id_number_instance_attributes;
 template<class T> std::map<CipUdint, const T *> CIP_Object<T>::object_Set;
+
+template<class T> std::map<CipUsint, CipAttributeProperties_t> CIP_Object<T>::classAttributesProperties;
+template<class T> std::map<CipUsint, CipServiceProperties_t>   CIP_Object<T>::classServicesProperties;
+template<class T> std::map<CipUsint, CipAttributeProperties_t> CIP_Object<T>::instanceAttributesProperties;
+template<class T> std::map<CipUsint, CipServiceProperties_t>   CIP_Object<T>::instanceServicesProperties;
 
 //Methods
 template <class T>
@@ -109,69 +113,27 @@ bool CIP_Object<T>::RemoveClassInstance(CipUdint position)
     }
 }
 
-//Methods
 template <class T>
-void CIP_Object<T>::InsertAttribute(CipUsint attribute_number, CipUsint cip_type, void * data, CipAttributeFlag cip_flags)
+void * CIP_Object<T>::GetCipAttribute(CipUsint attribute_number)
 {
-    auto it = this->attributes.find(attribute_number);
+	bool isClass = this->id == 0;
+	if (isClass)
+	{
+		if(classAttributesProperties.find(attribute_number) != classAttributesProperties.end())
+			return this->retrieveAttribute(attribute_number);
+	}
+	else
+	{
+		if (instanceAttributesProperties.find(attribute_number) != instanceAttributesProperties.end())
+			return this->retrieveAttribute(attribute_number);
+	}
 
-    /* cant add attribute that already exists */
-    if (it != this->attributes.end())
-    {
-        OPENER_ASSERT(true);
-    }
-    else
-    {
-        CIP_Attribute* attribute_ptr = new CIP_Attribute(attribute_number, cip_type, data, cip_flags);
-
-        this->attributes.emplace(attribute_number, attribute_ptr);
-        return;
-
-    }
-    OPENER_ASSERT(false);
-    /* trying to insert too many attributes*/
+	OPENER_TRACE_WARN("attribute %d not defined\n", attribute_number);
+	return nullptr;
 }
+/*
 
-template <class T>
-void CIP_Object<T>::InsertService(bool classService, CipUsint service_number, CipServiceFunction service_function, std::string service_name)
-{
-    std::map<CipUsint, CIP_Service*>::iterator it;
-    classService ? it = classServices.find(service_number) : it = instanceServices.find(service_number);
-
-    // cant add service that already exists
-    if (it == ( classService? classServices.end() : instanceServices.end() ) )
-    {
-        OPENER_ASSERT(true);
-    }
-    else
-    {
-        CIP_Service* p = new CIP_Service(service_number, service_function, service_name);
-        classService ? classServices.emplace(service_number, p) : instanceServices.emplace(service_number,p);
-
-        return;
-    }
-    OPENER_ASSERT(0);
-    // adding more services than were declared is a no-no
-}
-
-template <class T>
-CIP_Attribute* CIP_Object<T>::GetCipAttribute(CipUsint attribute_number)
-{
-    if (this->attributes.find(attribute_number) == this->attributes.end ())
-    {
-        OPENER_TRACE_WARN("attribute %d not defined\n", attribute_number);
-
-        return 0;
-    }
-    else
-    {
-        return this->attributes[attribute_number];
-    }
-
-
-}
-
-/* TODO: this needs to check for buffer overflow*/
+// TODO: this needs to check for buffer overflow
 template <class T>
 CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_router_request,
                                             CipMessageRouterResponse_t* message_router_response)
@@ -202,11 +164,9 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
         if (attribute->getFlag() & get_mask)
         {
             OPENER_TRACE_INFO("getAttribute %d\n",
-                message_router_request->request_path.attribute_number); /* create a reply message containing the data*/
-            /*TODO think if it is better to put this code in an own
-               * getAssemblyAttributeSingle functions which will call get attribute
-               * single.
-               */
+                message_router_request->request_path.attribute_number); // create a reply message containing the data
+            //TODO think if it is better to put this code in an own getAssemblyAttributeSingle functions which will call get attribute single.
+            
 
             if (attribute->getType() == kCipByteArray && this->class_id == kCipAssemblyClassCode)
             {
@@ -260,7 +220,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
         }
         else
         {
-            for (int j = 0; j < class_ptr->attributes.size(); j++) /* for each instance attribute of this class */
+            for (int j = 0; j < class_ptr->attributes.size(); j++) // for each instance attribute of this class 
             {
                 attribute = attributes[j];
                 int attrNum = attribute->getNumber();
@@ -283,38 +243,36 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
         }
         return CipStatus(kCipGeneralStatusCodeSuccess);
     }
-    return CipStatus(kCipGeneralStatusCodeSuccess); /* Return kCipGeneralStatusCodeSuccess if cannot find GET_ATTRIBUTE_SINGLE service*/
+    return CipStatus(kCipGeneralStatusCodeSuccess); // Return kCipGeneralStatusCodeSuccess if cannot find GET_ATTRIBUTE_SINGLE service
 }
-
+*/
 template <class T>
 CipStatus CIP_Object<T>::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request,
                                           CipMessageRouterResponse_t* msg_router_response)
 {
+	CipStatus stat;
+	stat.status = kCipGeneralStatusCodeServiceNotSupported;
+	stat.extended_status = 0;
+
     //Class services
     if (this->id == 0)
     {
-        if (classServices.find(service) != classServices.end())
+        if (classServicesProperties.find(service) != classServicesProperties.end())
         {
-            return classServices.at(service)->getService()(msg_router_request, msg_router_response);
-        }
-        else
-        {
-            return kCipStatusError;
+			stat = this->retrieveService(service, msg_router_request, msg_router_response);
         }
     }
-        //Instance services
+    //Instance services
     else
     {
-        if (instanceServices.find(service) != instanceServices.end())
+        if (instanceServicesProperties.find(service) != instanceServicesProperties.end())
         {
-            return instanceServices.at(service)->getService()(msg_router_request, msg_router_response);
-        }
-        else
-        {
-            return kCipStatusError;
+            stat = this->retrieveService(service, msg_router_request, msg_router_response);
         }
     }
+	return stat;
 }
+
 
 template <class T>
 CipStatus CIP_Object<T>::SetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
@@ -329,5 +287,7 @@ CipStatus CIP_Object<T>::SetAttributeAll(CipMessageRouterRequest_t * message_rou
 {
     return kCipGeneralStatusCodeSuccess;
 }
+
+
 
 #endif

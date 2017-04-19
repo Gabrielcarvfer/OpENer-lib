@@ -8,9 +8,19 @@
 #include "../../ciptypes.hpp"
 #include <map>
 #include <string>
+typedef struct
+{
+	CipUsint attributeType;
+	CipUsint attributeSize;
+	CipAttributeFlag attributeFlag;
+	std::string attributeName;
+}CipAttributeProperties_t;
 
-#include "CIP_Attribute.hpp"
-#include "CIP_Service.hpp"
+
+typedef struct
+{
+	std::string serviceName;
+}CipServiceProperties_t;
 
 template <class T>
 class CIP_Object
@@ -39,11 +49,14 @@ class CIP_Object
         static CipUdint optional_service_list;
         static CipUint  maximum_id_number_class_attributes;
         static CipUint  maximum_id_number_instance_attributes;
+		
 
-        std::map< CipUsint, CIP_Attribute*> attributes;
-        static std::map< CipUsint, CIP_Service*> classServices;
-        static std::map< CipUsint, CIP_Service*> instanceServices;
+		static std::map<CipUsint, CipAttributeProperties_t> classAttributesProperties;
+		static std::map<CipUsint, CipServiceProperties_t>   classServicesProperties;
+		static std::map<CipUsint, CipAttributeProperties_t> instanceAttributesProperties;
+		static std::map<CipUsint, CipServiceProperties_t>   instanceServicesProperties;
 
+		
 
         /** @ingroup CIP_API
         * @brief Allocate memory for new CIP Class and attributes
@@ -89,7 +102,7 @@ class CIP_Object
      *  @param cip_data pointer to data of attribute.
      *  @param cip_flags flags to indicate set-ability and get-ability of attribute.
      */
-    void InsertAttribute(CipUsint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
+    //void InsertAttribute(CipUsint attribute_number, CipUsint cip_type, void* data, CipAttributeFlag cip_flags);
 
 
     /** @ingroup CIP_API
@@ -105,8 +118,7 @@ class CIP_Object
     * @param service_function pointer to function which represents the service.
     * @param service_name name of the service
     */
-    static void InsertService(bool classService, CipUsint service_number,
-                              CipServiceFunction service_function, std::string service_name);
+    //static void InsertService(bool classService, CipUsint service_number, CipServiceFunction service_function, std::string service_name);
 
 
     /** @ingroup CIP_API
@@ -119,7 +131,7 @@ class CIP_Object
      * @return pointer to attribute
      *          0 if instance is not in the object
      */
-    CIP_Attribute* GetCipAttribute(CipUsint attribute_number);
+     void * GetCipAttribute(CipUsint attribute_number);
 
 
     /** @brief Generic implementation of the GetAttributeAll CIP service
@@ -157,12 +169,16 @@ class CIP_Object
     CipStatus SetAttributeAll(CipMessageRouterRequest_t * message_router_request,
                               CipMessageRouterResponse_t* message_router_response);
 
+	
+
     //Instance stuff
     CipUint id;
     protected:
         //Class stuff
         static T * class_ptr;
         static std::map<CipUdint, const T *> object_Set;
+		virtual void * retrieveAttribute(CipUsint attributeNumber) = 0;
+		virtual CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)  = 0;
 
 
 };

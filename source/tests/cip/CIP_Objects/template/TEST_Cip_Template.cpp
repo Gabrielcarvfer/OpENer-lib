@@ -4,6 +4,7 @@
 
 #include "TEST_Cip_Template.hpp"
 
+#include <functional>
 
 CipUint TEST_Cip_Template1::vendor_id_;
 CipUint TEST_Cip_Template1::device_type_;
@@ -16,7 +17,67 @@ CipShortString TEST_Cip_Template1::product_name_;
 CipUint TEST_Cip_Template2::product_code_;
 CipUint TEST_Cip_Template2::revision_;
 
+CipStatus TEST_Cip_Template1::getVendorId(CipMessageRouterRequest_t * req, CipMessageRouterResponse_t * resp)
+{
+	CipStatus stat;
+	stat.status = kCipGeneralStatusCodeSuccess;
+	stat.extended_status = this->vendor_id_;
+	return stat;
+}
 
+CipStatus TEST_Cip_Template1::getProductCode(CipMessageRouterRequest_t * req, CipMessageRouterResponse_t * resp)
+{
+	CipStatus stat;
+	stat.status = kCipGeneralStatusCodeSuccess;
+	stat.extended_status = this->product_code_;
+	return stat;
+}
+void * TEST_Cip_Template1::retrieveAttribute(CipUsint attributeNumber)
+{
+	void * attrPtr = nullptr;
+	switch (attributeNumber)
+	{
+		case 1: attrPtr = &vendor_id_;	   break;
+		case 2: attrPtr = &device_type_;   break;
+		case 3: attrPtr = &product_code_;  break;
+		case 4: attrPtr = &revision_;	   break;
+		case 5: attrPtr = &status_;		   break;
+		case 6: attrPtr = &serial_number_; break;
+		case 7: attrPtr = &product_name_;  break;
+	default:
+		break;
+	}
+	return attrPtr;
+}
+
+CipStatus TEST_Cip_Template1::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+	CipStatus stat;
+	stat.status = kCipGeneralStatusCodeServiceNotSupported;
+	stat.extended_status = 0;
+
+	//Class services
+	if (this->id == 0)
+		switch (serviceNumber)
+		{
+			case 1: return this->getVendorId(req, resp);
+			case 2: return this->getProductCode(req, resp);
+
+			default:
+				break;
+		}
+	//Instance services
+
+	return stat;
+}
+
+CipStatus TEST_Cip_Template2::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+	CipStatus stat;
+	stat.status = kCipGeneralStatusCodeServiceNotSupported;
+	stat.extended_status = 0;
+	return stat;
+}
 CipStatus TEST_Cip_Template1::Init()
 {
 	CipStatus stat;
@@ -39,14 +100,15 @@ CipStatus TEST_Cip_Template1::Init()
 
 		TEST_Cip_Template1 *instance = new TEST_Cip_Template1();
 		AddClassInstance(instance, 0);
+		auto f = std::bind(&TEST_Cip_Template1::getProductCode, instance, std::placeholders::_1, std::placeholders::_2);
+		instance->classAttributesProperties.emplace(1, CipAttributeProperties_t{ kCipUint, sizeof(kCipUint), kGetableSingleAndAll, "Vendor ID" });
+		instance->classAttributesProperties.emplace(2, CipAttributeProperties_t{ kCipUint, sizeof(kCipUint), kGetableSingleAndAll, "Product Code" });
+		instance->classServicesProperties.emplace(1, CipServiceProperties_t{ "GetVendorID" });
+		instance->classServicesProperties.emplace(2, CipServiceProperties_t{"GetProductCode"});
 
-		instance->InsertAttribute(1, kCipUint, &vendor_id_, kGetableSingleAndAll);
-		instance->InsertAttribute(2, kCipUint, &device_type_, kGetableSingleAndAll);
-		instance->InsertAttribute(3, kCipUint, &product_code_, kGetableSingleAndAll);
-		instance->InsertAttribute(4, kCipUsintUsint, &revision_, kGetableSingleAndAll);
-		instance->InsertAttribute(5, kCipWord, &status_, kGetableSingleAndAll);
-		instance->InsertAttribute(6, kCipUdint, &serial_number_, kGetableSingleAndAll);
-		instance->InsertAttribute(7, kCipShortString, &product_name_, kGetableSingleAndAll);
+		instance->InstanceServices(2, nullptr, nullptr);
+
+		CipUint * ptr = (CipUint*)instance->GetCipAttribute(2);
 
 		stat.status = kCipGeneralStatusCodeSuccess;
 		stat.extended_status = 0;
@@ -56,6 +118,19 @@ CipStatus TEST_Cip_Template1::Init()
 		stat.status = kCipGeneralStatusCodeObjectAlreadyExists;
 	}
 	return stat;
+}
+
+void * TEST_Cip_Template2::retrieveAttribute(CipUsint attributeNumber)
+{
+	void * attrPtr = nullptr;
+	switch (attributeNumber)
+	{
+	case 3: attrPtr = &product_code_;  break;
+	case 4: attrPtr = &revision_;	   break;
+	default:
+		break;
+	}
+	return attrPtr;
 }
 
 CipStatus TEST_Cip_Template2::Init()
@@ -76,8 +151,8 @@ CipStatus TEST_Cip_Template2::Init()
 		TEST_Cip_Template2 *instance = new TEST_Cip_Template2();
 		AddClassInstance(instance, 0);
 
-		instance->InsertAttribute(1, kCipUint, &product_code_, kGetableSingleAndAll);
-		instance->InsertAttribute(2, kCipUsintUsint, &revision_, kGetableSingleAndAll);
+		//instance->InsertAttribute(1, kCipUint, &product_code_, kGetableSingleAndAll);
+		//instance->InsertAttribute(2, kCipUsintUsint, &revision_, kGetableSingleAndAll);
 
 		stat.status = kCipGeneralStatusCodeSuccess;
 		stat.extended_status = 0;
@@ -134,11 +209,11 @@ int main()
 
 
 	//Test values
-	if (0 != *(CipUdint*)(temp1->GetCipAttribute(6)->getData()))//serial number
+	/*if (0 != *(CipUdint*)(temp1->GetCipAttribute(6)->getData()))//serial number
 		return -1;
 
 	if (1 != *(CipUint*)(temp2->GetCipAttribute(2)->getData()))//revision as uint
-		return -1;
+		return -1;*/
 
     //Create instances of the two CIP objects
 	/*

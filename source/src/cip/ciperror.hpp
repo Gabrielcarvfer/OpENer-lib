@@ -6,7 +6,7 @@
 #ifndef OPENER_CIPERROR_H_
 #define OPENER_CIPERROR_H_
 
-#include <typedefs.hpp>
+#include "../typedefs.hpp"
 
 typedef enum 
 {

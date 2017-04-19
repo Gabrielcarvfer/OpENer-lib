@@ -19,9 +19,16 @@ public:
 	static CipUdint serial_number_;
 	static CipShortString product_name_;
 
+	CipStatus getVendorId(CipMessageRouterRequest_t * req, CipMessageRouterResponse_t * resp);
+	CipStatus getProductCode(CipMessageRouterRequest_t * req, CipMessageRouterResponse_t * resp);
+
     static CipStatus Init();
     static CipStatus Shut();
     static CipStatus Create();
+
+	void * retrieveAttribute(CipUsint attributeNumber);
+	CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
+private:
 };
 
 class TEST_Cip_Template2 : public CIP_Object<TEST_Cip_Template2>
@@ -33,6 +40,9 @@ public:
     static CipStatus Init();
     static CipStatus Shut();
     static CipStatus Create();
+
+	void * retrieveAttribute(CipUsint attributeNumber);
+	CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 
 
