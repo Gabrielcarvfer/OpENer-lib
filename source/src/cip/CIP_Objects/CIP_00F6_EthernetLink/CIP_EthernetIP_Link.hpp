@@ -141,8 +141,10 @@ private:
 
 
     CipEthernetLinkObject g_ethernet_link;
-    CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response);
 
+private:
+    void * retrieveAttribute(CipUsint attributeNumber);
+    CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 
 #endif /* OPENER_CIPETHERNETLINK_H_*/

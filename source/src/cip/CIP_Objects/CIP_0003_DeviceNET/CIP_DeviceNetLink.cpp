@@ -49,51 +49,30 @@ CipStatus CIP_DeviceNET_Link::Init()
 		CIP_DeviceNET_Link * class_ptr = new CIP_DeviceNET_Link();
 
         //DeviceNet Object Attribute - Revision
-        class_ptr->InsertAttribute(1, kCipUint,  &revision, kGetableSingle);
+        class_ptr->classAttributesProperties.emplace(1, CipAttributeProperties_t{kCipUint,  sizeof(CipUint), kGetableSingle, "Revision"});
 
         //DeviceNet Object Service - GetAttributeSingle
 		//class_ptr->InsertService(kGetAttributeSingle,    &GetAttributeSingleDeviceNetInterface, "GetAttributeSingleDeviceNetInterface");
         //service code 0E
 		object_Set.emplace(0, class_ptr);
 
-		CIP_DeviceNET_Link * instance_ptr = new CIP_DeviceNET_Link();
-		instance_ptr->class_ptr = class_ptr;
-
         //DeviceNet instance attributes
-
-        //MAC ID (USINT)
-		instance_ptr->InsertAttribute(1, kCipUsint, &instance_ptr->mac_id, kSetAndGetAble); // bind attributes to the instance
-
-        //Baud Rate (USINT)
-		instance_ptr->InsertAttribute(2, kCipUsint, &instance_ptr->baud_rate, kSetAndGetAble);
-
-        //BOI (BOOL)
-		instance_ptr->InsertAttribute(3, kCipBool, &instance_ptr->BOI, kSetAndGetAble);
-
-        //Bus-Off Counter (USINT)
-		instance_ptr->InsertAttribute(4, kCipUsint, &instance_ptr->BOC, kSetAndGetAble);
+		class_ptr->instanceAttributesProperties.emplace( 1, CipAttributeProperties_t{kCipUsint, sizeof(CipUsint), kSetAndGetAble, "mac_id"   }); // bind attributes to the instance
+		class_ptr->instanceAttributesProperties.emplace( 2, CipAttributeProperties_t{kCipUsint, sizeof(CipUsint), kSetAndGetAble, "baud_rate"});
+		class_ptr->instanceAttributesProperties.emplace( 3, CipAttributeProperties_t{kCipBool , sizeof(CipBool ), kSetAndGetAble, "BOI"      });
+		class_ptr->instanceAttributesProperties.emplace( 4, CipAttributeProperties_t{kCipUsint, sizeof(CipUsint), kSetAndGetAble, "BOC"      });
 
         //Allocation Information (STRUCT)
         //Allocation Choice Byte (BYTE)
         //Master MAC ID (USINT)
-
-        //MAC ID Switch Changed (BOOL)
-		instance_ptr->InsertAttribute(6, kCipBool, &instance_ptr->mac_id_switch, kGetableSingleAndAll);
-
-        //Baud Rate Switch Changed (BOOL)
-		instance_ptr->InsertAttribute(7, kCipBool, &instance_ptr->baud_rate_switch, kGetableSingleAndAll);
-
-        //Mac ID Switch Value (USINT)
-		instance_ptr->InsertAttribute(8, kCipUsint, &instance_ptr->mac_id_switch_val, kGetableSingleAndAll);
-
-        //Baud Rate Switch Value (USINT)
-		instance_ptr->InsertAttribute(9, kCipUsint, &instance_ptr->baud_rate_switch_val, kGetableSingleAndAll);
-
-        //Quick Connect (BOOL)
-		instance_ptr->InsertAttribute(10, kCipBool, &instance_ptr->quick_connect, kSetable);
+		class_ptr->instanceAttributesProperties.emplace( 6, CipAttributeProperties_t{kCipBool , sizeof(CipBool ), kGetableSingleAndAll, "mac_id_switch"       });
+		class_ptr->instanceAttributesProperties.emplace( 7, CipAttributeProperties_t{kCipBool , sizeof(CipBool ), kGetableSingleAndAll, "baud_rate_switch"    });
+		class_ptr->instanceAttributesProperties.emplace( 8, CipAttributeProperties_t{kCipUsint, sizeof(CipUsint), kGetableSingleAndAll, "mac_id_switch_val"   });
+		class_ptr->instanceAttributesProperties.emplace( 9, CipAttributeProperties_t{kCipUsint, sizeof(CipUsint), kGetableSingleAndAll, "baud_rate_switch_val"});
+		class_ptr->instanceAttributesProperties.emplace(10, CipAttributeProperties_t{kCipBool , sizeof(CipBool ), kSetable            , "quick_connect"       });
 
         //Safety Network Number
-        //InsertAttribute(3, kCipBool,
+        //instanceAttributesProperties.emplace(3, kCipBool,
         //                &physical_address, kGetableSingleAndAll);
 
         //Diagnostic Counters (STRUCT)
@@ -112,7 +91,7 @@ CipStatus CIP_DeviceNET_Link::Init()
         //Reserved (5xUINT)
 
         //Active Node Table (ARRAY'o'bool)
-		object_Set.emplace(instance_ptr->id, instance_ptr);
+		object_Set.emplace(class_ptr->id, class_ptr);
     }
 	return kCipGeneralStatusCodeSuccess;
 }
@@ -128,15 +107,53 @@ CipStatus CIP_DeviceNET_Link::GetAttributeSingleDeviceNetInterface(CipMessageRou
     return status;
 }
 
-CipStatus CIP_DeviceNET_Link::InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request, CipMessageRouterResponse_t* msg_router_response)
+CipStatus CIP_DeviceNET_Link::Shut()
 {
-	switch (service)
-	{
-		case kGetAttributeSingle:
-			return this->GetAttributeSingleDeviceNetInterface(msg_router_request, msg_router_response);
-			break;
-		default:
-			return kCipStatusError;
-			break;
-	}
+
+}
+
+CipStatus CIP_DeviceNET_Link::Create()
+{
+
+}
+
+CipStatus CIP_DeviceNET_Link::Delete()
+{
+
+}
+
+void * CIP_DeviceNET_Link::retrieveAttribute(CipUsint attributeNumber)
+{
+    if (this->id == 0)
+    {
+        switch(attributeNumber)
+        {
+            case 1: return &this->revision;
+            default: return nullptr;
+        }
+    }
+    else
+    {
+        switch(attributeNumber)
+        {
+            case  1: return &this->mac_id;
+            case  2: return &this->serial;
+            case  3: return &this->baud_rate;
+            case  4: return &this->vendor_id;
+            case  5: return &this->BOI; //bus-off interrup
+            case  6: return &this->BOC; //bus-off counter
+            case  7: return &this->mac_id_switch;
+            case  8: return &this->baud_rate_switch;
+            case  9: return &this->mac_id_switch_val;
+            case 10: return &this->baud_rate_switch_val;
+            case 11: return &this->quick_connect;
+            case 12: return &this->physical_port;
+            default: return nullptr;
+        }
+    }
+}
+
+CipStatus CIP_DeviceNET_Link::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+
 }

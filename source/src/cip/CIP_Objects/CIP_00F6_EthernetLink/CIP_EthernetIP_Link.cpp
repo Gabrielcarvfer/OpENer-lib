@@ -30,10 +30,12 @@ CipStatus CIP_EthernetIP_Link::Init()
 
 
         // bind attributes to the instance
-        instance->InsertAttribute (1, kCipUdint,  &instance->g_ethernet_link.interface_speed,  kGetableSingleAndAll);
-        instance->InsertAttribute (2, kCipDword,  &instance->g_ethernet_link.interface_flags,  kGetableSingleAndAll);
-        instance->InsertAttribute (3, kCip6Usint, &instance->g_ethernet_link.physical_address, kGetableSingleAndAll);
+        instance->instanceAttributesProperties.emplace(1, CipAttributeProperties_t{kCipUdint , sizeof(CipUdint)    , kGetableSingleAndAll, "InterfaceSpeed" } );
+        instance->instanceAttributesProperties.emplace(2, CipAttributeProperties_t{kCipDword , sizeof(CipDword)    , kGetableSingleAndAll, "InterfaceFlags" } );
+        instance->instanceAttributesProperties.emplace(3, CipAttributeProperties_t{kCip6Usint, sizeof(CipByteArray), kGetableSingleAndAll, "PhysicalAddress"} );
+
     }
+
     return kCipGeneralStatusCodeSuccess;
 }
 
@@ -42,7 +44,21 @@ CipStatus CIP_EthernetIP_Link::Shut ()
 	return kCipGeneralStatusCodeSuccess;
 }
 
-CipStatus CIP_EthernetIP_Link::InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)
+void * CIP_EthernetIP_Link::retrieveAttribute (CipUsint attributeNumber)
 {
-    return kCipStatusError;
+    if (this->id == 0)
+    {
+        switch(attributeNumber)
+        {
+            case 1: return &this->g_ethernet_link.interface_speed;
+            case 2: return &this->g_ethernet_link.interface_flags;
+            case 3: return &this->g_ethernet_link.physical_address;
+            default: return nullptr;
+        }
+    }
+}
+
+CipStatus CIP_EthernetIP_Link::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+
 }

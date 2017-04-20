@@ -11,10 +11,8 @@
 class CIP_Assembly;
 class CIP_Assembly : public CIP_Object<CIP_Assembly>
 {
-    public:
-        CIP_Assembly();
-        CIP_Assembly(CipByte* data, CipUint data_length);
-		~CIP_Assembly ();
+public:
+        static CipStatus Create(CipByte* data = nullptr, CipUint data_length = 0);
 
 		/** @brief Setup the Assembly object
 		 *
@@ -47,15 +45,16 @@ class CIP_Assembly : public CIP_Object<CIP_Assembly>
 		 */
 		CipStatus NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUint data_length);
 
-        CipStatus InstanceServices(int service, CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 	private:
-
+		CipByteArray assemblyByteArray;
         /** @brief Implementation of the SetAttributeSingle CIP service for Assembly
              *          Objects.
              *  Currently only supports Attribute 3 (CIP_BYTE_ARRAY) of an Assembly
              */
         CipStatus SetAssemblyAttributeSingle(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+		void * retrieveAttribute(CipUsint attributeNumber);
 
+		CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 
 #endif

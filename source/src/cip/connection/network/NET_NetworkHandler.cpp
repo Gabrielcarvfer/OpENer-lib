@@ -251,7 +251,7 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void)
     if (g_elapsed_time >= kOpENerTimerTickInMilliSeconds)
     {
         /* call manage_connections() in connection manager every OPENER_TIMER_TICK ms */
-        CIP_ConnectionManager::ManageConnections(g_elapsed_time);
+        //CIP_ConnectionManager::ManageConnections(g_elapsed_time);
         g_elapsed_time = 0;
     }
     return kCipGeneralStatusCodeSuccess;
@@ -625,18 +625,18 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void)
             if (0 == received_size)
             {
                 OPENER_TRACE_STATE("connection closed by client\n");
-                CIP_ConnectionManager::CloseConnection (connection_manager_instance);
+                //CIP_ConnectionManager::CloseConnection (connection_manager_instance);
                 continue;
             }
 
             if (0 > received_size)
             {
                 OPENER_TRACE_ERR("networkhandler: error on recv: %s\n", strerror(errno));
-                CIP_ConnectionManager::CloseConnection (connection_manager_instance);
+                //CIP_ConnectionManager::CloseConnection (connection_manager_instance);
                 continue;
             }
 
-            CIP_ConnectionManager::HandleReceivedConnectedData(connection_manager_instance, g_ethernet_communication_buffer, received_size, &from_address);
+            //CIP_ConnectionManager::HandleReceivedConnectedData(connection_manager_instance, g_ethernet_communication_buffer, received_size, &from_address);
         }
     }
 }

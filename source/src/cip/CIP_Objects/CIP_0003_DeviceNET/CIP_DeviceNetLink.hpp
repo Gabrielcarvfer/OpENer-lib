@@ -39,23 +39,28 @@ public:
 	~CIP_DeviceNET_Link();
 
 	static CipStatus Init();
+	static CipStatus Shut();
+	static CipStatus Create();
+	static CipStatus Delete();
 	CipStatus GetAttributeSingleDeviceNetInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
-	CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request, CipMessageRouterResponse_t* msg_router_response);
 
 	private:
 		CipUsint mac_id;
 		CipUdint serial;
 		CipUsint baud_rate;
-		CipUint vendor_id;
-		CipBool BOI; //bus-off interrupt
+		CipUint  vendor_id;
+		CipBool  BOI; //bus-off interrupt
 		CipUsint BOC; //bus-off counter
-		CipBool mac_id_switch;
-		CipBool baud_rate_switch;
+		CipBool  mac_id_switch;
+		CipBool  baud_rate_switch;
 		CipUsint mac_id_switch_val;
 		CipUsint baud_rate_switch_val;
-		CipBool quick_connect;
-		CipByte physical_port;
+		CipBool  quick_connect;
+		CipByte  physical_port;
 		NET_DeviceNetProtocol * associated_can;
+
+    void * retrieveAttribute(CipUsint attributeNumber);
+    CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 
 };
 

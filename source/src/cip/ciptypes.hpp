@@ -179,8 +179,8 @@ typedef enum
  */
 typedef struct
 {
-    CipUint length; // Length of the Byte Array */
-    CipByte* data; // Pointer to the data */
+    CipUint length; // Length of the Byte Array
+    CipByte* data;  // Pointer to the data
 } CipByteArray;
 
 /** @brief CIP Short String
@@ -188,8 +188,8 @@ typedef struct
  */
 typedef struct
 {
-    CipUsint length; // Length of the String (8 bit value) */
-    CipByte* string; // Pointer to the string data */
+    CipUsint length; // Length of the String (8 bit value)
+    CipByte* string; // Pointer to the string data
 } CipShortString;
 
 /** @brief CIP String
