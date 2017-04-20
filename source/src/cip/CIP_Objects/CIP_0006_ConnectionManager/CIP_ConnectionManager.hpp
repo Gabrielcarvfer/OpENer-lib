@@ -253,5 +253,8 @@ private:
         kconnMgrLastActionNotSupported = 255
     } lastAction_e;
 
+private:
+    void * retrieveAttribute(CipUsint attributeNumber);
+    CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 #endif // OPENER_CIP_CONNECTION_H

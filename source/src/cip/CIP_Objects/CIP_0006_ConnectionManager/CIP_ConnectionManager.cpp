@@ -296,3 +296,14 @@ CipStatus CIP_ConnectionManager::LargeForwardOpen(CipMessageRouterRequest_t* mes
     stat.status = kCipGeneralStatusCodeSuccess;
     return stat;
 }
+
+
+void * CIP_ConnectionManager::retrieveAttribute(CipUsint attributeNumber)
+{
+
+}
+
+CipStatus CIP_ConnectionManager::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+
+}

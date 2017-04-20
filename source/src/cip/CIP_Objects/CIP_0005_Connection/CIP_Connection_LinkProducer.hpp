@@ -5,19 +5,13 @@
 #ifndef OPENERMAIN_CIP_CONNECTION_LINKPRODUCER_HPP
 #define OPENERMAIN_CIP_CONNECTION_LINKPRODUCER_HPP
 
+#include "../../ciptypes.hpp"
 
-#include <cip/CIP_Objects/template/CIP_Object.hpp>
-
-class CIP_Connection_LinkProducer : public CIP_Object<CIP_Connection_LinkProducer>
+class CIP_Connection_LinkProducer
 {
 public:
-    CIP_Connection_LinkProducer();
+    CIP_Connection_LinkProducer(CipUsint state = non_existant, CipUint Connection_id = 0);
     ~CIP_Connection_LinkProducer ();
-    //Class services
-    static CipStatus Init();
-    static CipStatus Create();
-    static CipStatus Delete(CIP_Connection_LinkProducer * link_instance);
-
 
     //Instance definitions
     typedef enum {
@@ -31,9 +25,6 @@ public:
 
     //Instance services
     CipStatus Send();
-
-    private:
-        CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response);
 
 };
 

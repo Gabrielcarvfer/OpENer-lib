@@ -4,59 +4,19 @@
 
 #include "CIP_Connection_LinkProducer.hpp"
 
-CIP_Connection_LinkProducer::CIP_Connection_LinkProducer()
+CIP_Connection_LinkProducer::CIP_Connection_LinkProducer(CipUsint state, CipUint Connection_id)
 {
-
+    this->State = state;
+    this->Connection_id = Connection_id;
 }
+
 CIP_Connection_LinkProducer::~CIP_Connection_LinkProducer ()
 {
 
 }
 
-//Class services
-
-CipStatus CIP_Connection_LinkProducer::Init()
-{
-    if (number_of_instances == 0)
-    {
-        CIP_Connection_LinkProducer *instance = new CIP_Connection_LinkProducer();
-
-        object_Set.emplace(object_Set.size(), instance);
-
-        //Class services
-    }
-    return kCipGeneralStatusCodeSuccess;
-}
-
-CipStatus CIP_Connection_LinkProducer::Create()
-{
-
-    CIP_Connection_LinkProducer *instance = new CIP_Connection_LinkProducer();
-    //Chapter 3-4.4 vol 1
-    instance->InsertAttribute( 1, kCipUsint, &instance->State        , kGetableSingleAndAll);
-    instance->InsertAttribute( 2, kCipUint , &instance->Connection_id, kGetableSingleAndAll);
-
-    object_Set.emplace(object_Set.size(), instance);
-
-    CipStatus stat;
-    stat.status = kCipGeneralStatusCodeSuccess;
-    stat.extended_status = (CipUsint) instance->id;
-    return stat;
-}
-
-CipStatus CIP_Connection_LinkProducer::Delete(CIP_Connection_LinkProducer * link_instance)
-{
-
-}
-
-//Instance services
 CipStatus CIP_Connection_LinkProducer::Send()
 {
 
 }
 
-
-CipStatus CIP_Connection_LinkProducer::InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,CipMessageRouterResponse_t* msg_router_response)
-{
-
-}

@@ -13,7 +13,7 @@ add_library( OpENer STATIC ${OPENER_SRC})# ${CIP_SRC} ${UTILS_SRC} )
 
 
 
-if(WIN32)
+if(__WIN32__)
   if(MINGW)
 	target_link_libraries(OpENer OpENer_CIP OpENer_UTILS winmm )
   else ()

@@ -10,7 +10,7 @@
 #include "CIP_TCPIP_Interface.hpp"
 #include "../../connection/network/NET_Connection.hpp"
 
-#ifdef WIN32
+#ifdef __WIN32__
     #include <iostream>
     #include <iphlpapi.h>
     #include <sstream>
@@ -91,7 +91,7 @@ void CIP_TCPIP_Interface::ConfigureHostName(CipString * hostname)
         host_name.string = nullptr;
     }
 }
-
+/*
 CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
     CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
@@ -114,10 +114,10 @@ CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest_t* 
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     return kCipGeneralStatusCodeSuccess;
 }
-
+*/
 CipStatus CIP_TCPIP_Interface::Init()
 {
-    CIP_TCPIP_Interface *class_ptr;
+    CIP_TCPIP_Interface *instance;
 
     if (number_of_instances == 0)
     {
@@ -126,29 +126,34 @@ CipStatus CIP_TCPIP_Interface::Init()
 
         //Static variables
         revision = 0;
-        //tcp_status_ = 0x1;
-        //configuration_capability_ = 0x04 | 0x20;
-        //configuration_control_ = 0;
-        //physical_link_object_ = {2, CIP_ETHERNETLINK_CLASS_CODE, 1, 0};
-        //interface_configuration = {0, 0, 0, 0, 0, {0, nullptr,}};
-        //hostname_ = {0, nullptr};
-        g_multicast_configuration = {0, // us the default allocation algorithm
-                                     0, // reserved
-                                     1, // we currently use only one multicast address
-                                     0 // the multicast address will be allocated on ip address configuration
-        };
         g_time_to_live_value = 1;
 
-        class_ptr = new CIP_TCPIP_Interface ();
+        instance = new CIP_TCPIP_Interface ();
 
         //Class attributes from Vol 2 Chapter 5
-        class_ptr->InsertAttribute (1, kCipUint, (void *) &revision, kGetableSingleAndAll);
-        class_ptr->InsertAttribute (2, kCipUint, (void *) &max_instances, kGetableSingleAndAll);
-        class_ptr->InsertAttribute (3, kCipUint, (void *) &number_of_instances, kGetableSingleAndAll);
+        instance->classAttributesProperties.emplace (1, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Revision" });
+        instance->classAttributesProperties.emplace (2, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "MaxInstances" });
+        instance->classAttributesProperties.emplace (3, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "NumberOfInstances" });
 
         //Class optional attributes (4-7) from Vol 1 Chapter 4
 
-        object_Set.emplace (class_ptr->id, class_ptr);
+        object_Set.emplace (instance->id, instance);
+        
+        //Setup instance attributes
+        //Instance attributes
+        //TODO: fix attribute access
+        instance->instanceAttributesProperties.emplace(1 , CipAttributeProperties_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
+        instance->instanceAttributesProperties.emplace(2 , CipAttributeProperties_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
+        instance->instanceAttributesProperties.emplace(3 , CipAttributeProperties_t{ kCipDword                            , SZ(CipDword)                         , kSetAndGetAble      , "" });
+        instance->instanceAttributesProperties.emplace(4 , CipAttributeProperties_t{ SZ(physical_link_object_t)           , SZ(physical_link_object_t)           , kGetableSingleAndAll, "PhysicalLinkObject" });
+        instance->instanceAttributesProperties.emplace(5 , CipAttributeProperties_t{ SZ(interface_configuration_t)        , SZ(interface_configuration_t)        , kSetAndGetAble      , "InterfaceConfiguration" });
+        instance->instanceAttributesProperties.emplace(6 , CipAttributeProperties_t{ kCipString                           , SZ(CipString)                        , kSetAndGetAble      , "" });
+        //instance->classAttributesProperties.emplace(7, //CipAttributeProperties_t{ TODO:8 octets safety_network_number
+        instance->instanceAttributesProperties.emplace(8 , CipAttributeProperties_t{ kCipUsint                            , SZ(CipUsint)                         , kSetAndGetAble      , "" });
+        instance->instanceAttributesProperties.emplace(9 , CipAttributeProperties_t{ SZ(multicast_address_configuration_t), SZ(multicast_address_configuration_t), kSetAndGetAble      , "MulticastAddressConfiguration"});
+        instance->instanceAttributesProperties.emplace(10, CipAttributeProperties_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
+        instance->instanceAttributesProperties.emplace(11, CipAttributeProperties_t{ SZ(last_conflict_detected_t)         , SZ(last_conflict_detected_t)         , kSetable            , "LastConflictDetected" });
+        instance->instanceAttributesProperties.emplace(12, CipAttributeProperties_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
     }
     else
     {
@@ -167,28 +172,21 @@ CipStatus CIP_TCPIP_Interface::Shut()
 
 CipStatus CIP_TCPIP_Interface::Create()
 {
-    CIP_TCPIP_Interface* instance_ptr = new CIP_TCPIP_Interface();
+    CIP_TCPIP_Interface* instance = new CIP_TCPIP_Interface();
 
-    //Instance attributes
-    //TODO: fix attribute access
-    instance_ptr->InsertAttribute (1 , kCipDword,                     &instance_ptr->status,                   kGetableSingleAndAll);
-    instance_ptr->InsertAttribute (2 , kCipDword,                     &instance_ptr->configuration_capability, kGetableSingleAndAll);
-    instance_ptr->InsertAttribute (3 , kCipDword,                     &instance_ptr->configuration_control,    kSetAndGetAble);
-    instance_ptr->InsertAttribute (4 , SZ(physical_link_object_t),    &instance_ptr->physical_link_object,     kGetableSingleAndAll);
-    instance_ptr->InsertAttribute (5 , SZ(interface_configuration_t), &instance_ptr->interface_configuration,  kSetAndGetAble);
-    instance_ptr->InsertAttribute (6 , kCipString,                    &instance_ptr->host_name,                kSetAndGetAble);
-    //instan_ptrce->InsertAttribute  (7, //TODO:8 octets safety_network_number
-    instance_ptr->InsertAttribute (8 , kCipUsint,                     &instance_ptr->ttl_value,                kSetAndGetAble);
-    instance_ptr->InsertAttribute (9 , SZ(multicast_address_configuration_t), &instance_ptr->multicast_address_configuration, kSetAndGetAble);
-    instance_ptr->InsertAttribute (10, kCipBool,                      &instance_ptr->select_acd,               kSetable);
-    instance_ptr->InsertAttribute (11, SZ(last_conflict_detected_t),  &instance_ptr->last_conflict_detected,   kSetable);
-    instance_ptr->InsertAttribute (12, kCipBool,                      &instance_ptr->quick_connect,            kSetable);
 
-    object_Set.emplace(instance_ptr->id, instance_ptr);
+    instance->status.value = 0x1;
+    instance->configuration_capability.value = 0x04 | 0x20;
+    instance->configuration_control.value = 0;
+    instance->physical_link_object = {2, kCipTcpIpInterfaceClassCode, 1, 0};
+    instance->interface_configuration = {0, 0, 0, 0, 0, {0, nullptr,}};
+    //instance->host_name
+
+    object_Set.emplace(instance->id, instance);
 
     CipStatus stat;
     stat.status = kCipGeneralStatusCodeSuccess;
-    stat.extended_status = (CipUsint) instance_ptr->id;
+    stat.extended_status = (CipUsint) instance->id;
     return stat;
 }
 
@@ -239,7 +237,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
     }
     return status;
 }
-
+/*
 CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
 
@@ -275,36 +273,8 @@ CipStatus CIP_TCPIP_Interface::GetAttributeAllTcpIpInterface(CipMessageRouterReq
 
     return kCipGeneralStatusCodeSuccess;
 }
+*/
 
-CipStatus CIP_TCPIP_Interface::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response)
-{
-    CipStatus returnValue;
-    //Class services
-    if (this->id == 0)
-    {
-        switch(service)
-        {
-            case kGetAttributeSingle:
-                returnValue = this->GetAttributeSingleTcpIpInterface (msg_router_request, msg_router_response);
-                break;
-            case kGetAttributeAll:
-                returnValue = this->GetAttributeAllTcpIpInterface (msg_router_request, msg_router_response);
-                break;
-            case kSetAttributeSingle:
-                returnValue = this->SetAttributeSingleTcp (msg_router_request, msg_router_response);
-                break;
-            default:
-                returnValue = kCipStatusError;
-        }
-
-    }
-    //Instance services
-    else
-    {
-        returnValue = kCipStatusError;
-    }
-    return returnValue;
-}
 
 //Function scans for network interfaces and list them
 //Function scans for network interfaces and list them
@@ -361,7 +331,7 @@ CipStatus CIP_TCPIP_Interface::ScanInterfaces()
 	return kCipGeneralStatusCodeSuccess;
 }
 
-#ifdef WIN32
+#ifdef __WIN32__
 //Windows version based on Silver Moon ( m00n.silv3r@gmail.com ) : http://www.binarytides.com/get-mac-address-from-ip-in-winsock/
 
 //Functions
@@ -567,3 +537,28 @@ int GetInterfacesList(ip_interface **interface_ptr)
     return i;
 }
 #endif
+
+void * CIP_TCPIP_Interface::retrieveAttribute(CipUsint attributeNumber)
+{
+
+}
+
+CipStatus CIP_TCPIP_Interface::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+    if (this->id == 0)
+    {
+        switch(serviceNumber)
+        {
+            case kGetAttributeSingle: return this->GetAttributeSingleTcpIpInterface (req, resp);
+            //case    kGetAttributeAll: return this->GetAttributeAllTcpIpInterface (req, resp);
+            //case kSetAttributeSingle: return this->SetAttributeSingleTcp (req, resp);
+            default:
+                return kCipStatusError;
+        }
+
+    }//Instance services
+    else
+    {
+        return kCipStatusError;
+    }
+}

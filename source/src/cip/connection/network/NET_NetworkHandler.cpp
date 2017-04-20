@@ -29,7 +29,7 @@ NET_Connection *NET_NetworkHandler::netStats[3];
 //Methods
 CipStatus NET_NetworkHandler::NetworkHandlerInitialize()
 {
-    #ifdef WIN32
+    #ifdef __WIN32__
         WORD wVersionRequested;
         WSADATA wsaData;
         wVersionRequested = MAKEWORD(2, 2);
@@ -659,7 +659,7 @@ int NET_NetworkHandler::GetMaxSocket(int socket1, int socket2, int socket3, int 
 
 MicroSeconds NET_NetworkHandler::GetMicroSeconds()
 {
-#ifdef WIN32
+#ifdef __WIN32__
     LARGE_INTEGER performance_counter;
     LARGE_INTEGER performance_frequency;
 

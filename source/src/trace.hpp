@@ -29,7 +29,7 @@
 #define OPENER_TRACE_LEVEL_INFO 0x08
 
 #ifndef OPENER_TRACE_LEVEL
-#ifdef WIN32
+#ifdef __WIN32__
 #pragma message( \
     "OPENER_TRACE_LEVEL was not defined setting it to OPENER_TRACE_LEVEL_ERROR")
 #else

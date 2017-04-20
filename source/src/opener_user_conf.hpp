@@ -21,7 +21,7 @@
  *    - ntohl
  *    - inet_addr
  */
-#ifdef WIN32
+#ifdef __WIN32__
 typedef unsigned short in_port_t;
 #else
 #endif

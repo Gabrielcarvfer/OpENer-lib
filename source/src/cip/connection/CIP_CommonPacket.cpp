@@ -83,7 +83,7 @@ int CIP_CommonPacket::NotifyConnectedCommonPacketFormat(EncapsulationData* recv_
     }
 
     // ConnectedAddressItem item
-    CIP_ConnectionManager* connection_manager_object = CIP_ConnectionManager::GetConnectionManagerObject(common_packet_data.address_item.data.connection_identifier);
+    CIP_ConnectionManager* connection_manager_object;//todo:fix = CIP_ConnectionManager::GetConnectionManagerObject(common_packet_data.address_item.data.connection_identifier);
     if (nullptr == connection_manager_object)
     {
         OPENER_TRACE_ERR("notifyConnectedCPF: connection with given ID could not be found\n");

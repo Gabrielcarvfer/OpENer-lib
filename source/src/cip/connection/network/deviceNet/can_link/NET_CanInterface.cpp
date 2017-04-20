@@ -1,6 +1,6 @@
 #include "NET_CanInterface.hpp"
 
-#ifdef WIN32
+#ifdef __WIN32__
 	#include <windows.h>
 #elif __linux__
 	#include <fcntl.h>
@@ -25,7 +25,7 @@ NET_CanInterface::~NET_CanInterface()
     close_port();
 }
 
-#ifdef WIN32
+#ifdef __WIN32__
 	int NET_CanInterface::open_port(const char *port)
 	{
 		soc =  CreateFile(port, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);

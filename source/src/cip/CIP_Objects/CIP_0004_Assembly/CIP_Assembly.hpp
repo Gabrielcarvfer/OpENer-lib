@@ -51,9 +51,9 @@ public:
              *          Objects.
              *  Currently only supports Attribute 3 (CIP_BYTE_ARRAY) of an Assembly
              */
-        CipStatus SetAssemblyAttributeSingle(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
-		void * retrieveAttribute(CipUsint attributeNumber);
+        //CipStatus SetAssemblyAttributeSingle(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
+	    void * retrieveAttribute(CipUsint attributeNumber);
 		CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 

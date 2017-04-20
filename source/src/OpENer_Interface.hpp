@@ -557,7 +557,7 @@ class OpENer_Interface
         static std::thread *workerThread;
         static bool OpENer_active;
 #else
-    #ifdef WIN32
+    #ifdef __WIN32__
         static void alarmRinging(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
     #elif __linux__
         static void alarmRinging(int signal);

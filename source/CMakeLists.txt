@@ -8,7 +8,7 @@ cmake_minimum_required( VERSION 2.8.9 )
 #######################################
 project(OpENerMain CXX)
 add_definitions(-std=c++11)
-add_definitions(-DWIN32)
+add_definitions(-D__WIN32__)
 #set(runtests ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
@@ -28,7 +28,7 @@ INCLUDE( ${OpENer_BUILDSUPPORT_DIR}/OpENer.cmake )
 #######################################
 # Platform switches                   #
 #######################################
-set( OpENer_KNOWN_PLATFORMS "POSIX" "WIN32" )
+set( OpENer_KNOWN_PLATFORMS "POSIX" "__WIN32__" )
 
 set( OpENer_PLATFORM CACHE STRINGS "Platform OpENer will be built for" )
 set_property(CACHE OpENer_PLATFORM PROPERTY STRINGS ${OpENer_KNOWN_PLATFORMS} )

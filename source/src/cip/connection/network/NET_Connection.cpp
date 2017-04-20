@@ -1,8 +1,8 @@
 //Includes
 
-#ifndef WIN32
+#ifndef __WIN32__
 #include <unistd.h>
-#endif // !WIN32
+#endif // !__WIN32__
 
 #include "../../../trace.hpp"
 #include "NET_Connection.hpp"
@@ -122,7 +122,7 @@ void NET_Connection::CloseSocket()
             if (socket_to_conn_map.find(sock) != socket_to_conn_map.end())
             {
                 FD_CLR(sock, &select_set[kMasterSet]);
-#ifdef WIN32
+#ifdef __WIN32__
 
                 closesocket ( sock);
 #elif __linux__

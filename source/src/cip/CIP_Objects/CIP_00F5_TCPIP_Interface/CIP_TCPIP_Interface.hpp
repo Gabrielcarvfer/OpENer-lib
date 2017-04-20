@@ -67,7 +67,7 @@ public:
             CipUdint interface_configuration_pending:1;
             CipUdint acd_status:1;
             CipUdint reserved:25;
-        };
+        }bitfield_u;
         CipUdint value;
     }instance_status_t;
 
@@ -154,17 +154,17 @@ private:
     CipBool quick_connect;
 
     //Functions
-    CipStatus InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request, CipMessageRouterResponse_t* msg_router_response);
-
-    //Functions
     CipStatus GetAttributeSingleTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
-    CipStatus GetAttributeAllTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+    //CipStatus GetAttributeAllTcpIpInterface(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
     CipStatus ConfigureNetworkInterface(const char* ip_address, const char* subnet_mask, const char* gateway);
     void ConfigureDomainName(CipString * domain_name);
     void ConfigureHostName(CipString * hostname);
-    CipStatus SetAttributeSingleTcp(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
+    //CipStatus SetAttributeSingleTcp(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
+private:
+    void * retrieveAttribute(CipUsint attributeNumber);
+    CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 #endif /* OPENER_CIPTCPIPINTERFACE_H_ */

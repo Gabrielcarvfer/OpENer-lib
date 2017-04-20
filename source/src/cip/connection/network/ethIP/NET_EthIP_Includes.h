@@ -5,7 +5,7 @@
 #ifndef OPENERMAIN_NET_ETHIP_INCLUDES_H
 #define OPENERMAIN_NET_ETHIP_INCLUDES_H
 
-#ifdef WIN32
+#ifdef __WIN32__
     #include <winsock2.h>
     #include <windows.h>
     #include <winsock.h>
