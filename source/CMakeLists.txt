@@ -7,9 +7,12 @@ cmake_minimum_required( VERSION 2.8.9 )
 # Project name                        #
 #######################################
 project(OpENerMain CXX)
+
+
 add_definitions(-std=c++11)
-add_definitions(-D__WIN32__)
-#set(runtests ON)
+set(runtests ON)
+
+
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
 unset(CMAKE_LINK_LIBRARY_SUFFIX)
@@ -28,15 +31,13 @@ INCLUDE( ${OpENer_BUILDSUPPORT_DIR}/OpENer.cmake )
 #######################################
 # Platform switches                   #
 #######################################
-set( OpENer_KNOWN_PLATFORMS "POSIX" "__WIN32__" )
-
+set( OpENer_KNOWN_PLATFORMS "POSIX" "WIN32" )
 set( OpENer_PLATFORM CACHE STRINGS "Platform OpENer will be built for" )
 set_property(CACHE OpENer_PLATFORM PROPERTY STRINGS ${OpENer_KNOWN_PLATFORMS} )
 
-#######################################
-# Platform-dependent functions check  #
-#######################################
-INCLUDE( ${OpENer_BUILDSUPPORT_DIR}/OpENer_function_checks.cmake )
+if (OpENer_PLATFORM STREQUAL WIN32)
+  add_definitions(-D__WIN32__)
+endif()
 
 #######################################
 # OpENer 64-bit data types            #

@@ -285,25 +285,27 @@ int NET_EthIP_Encap::EncapsulateListIdentyResponseMessage(CipByte* const communi
 
     communication_buffer_runner += 8;
 
-    NET_Endianconv::AddIntToMessage(CIP_Identity::vendor_id_, communication_buffer_runner);
+    const CIP_Identity * identity_instance = CIP_Identity::GetInstance(0);
 
-    NET_Endianconv::AddIntToMessage(CIP_Identity::device_type_, communication_buffer_runner);
+    NET_Endianconv::AddIntToMessage(identity_instance->vendor_id, communication_buffer_runner);
 
-    NET_Endianconv::AddIntToMessage(CIP_Identity::product_code_, communication_buffer_runner);
+    NET_Endianconv::AddIntToMessage(identity_instance->device_type, communication_buffer_runner);
 
-    *(communication_buffer_runner)++ = CIP_Identity::revision_.major_revision;
+    NET_Endianconv::AddIntToMessage(identity_instance->product_code, communication_buffer_runner);
 
-    *(communication_buffer_runner)++ = CIP_Identity::revision_.minor_revision;
+    *(communication_buffer_runner)++ = identity_instance->revision.major_revision;
 
-    NET_Endianconv::AddIntToMessage(CIP_Identity::status_, communication_buffer_runner);
+    *(communication_buffer_runner)++ = identity_instance->revision.minor_revision;
 
-    NET_Endianconv::AddDintToMessage(CIP_Identity::serial_number_, communication_buffer_runner);
+    NET_Endianconv::AddIntToMessage(identity_instance->status.val, communication_buffer_runner);
 
-    *communication_buffer_runner++ = (unsigned char)CIP_Identity::product_name_.length;
+    NET_Endianconv::AddDintToMessage(identity_instance->serial_number, communication_buffer_runner);
 
-    memcpy(communication_buffer_runner, CIP_Identity::product_name_.string, CIP_Identity::product_name_.length);
+    *communication_buffer_runner++ = (unsigned char)identity_instance->product_name.length;
 
-    communication_buffer_runner += CIP_Identity::product_name_.length;
+    memcpy(communication_buffer_runner, identity_instance->product_name.string, identity_instance->product_name.length);
+
+    communication_buffer_runner += identity_instance->product_name.length;
 
     *communication_buffer_runner++ = 0xFF;
 

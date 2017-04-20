@@ -24,17 +24,9 @@
  * --------------------
  */
 
+#include <cip/ciptypes.hpp>
 #include "CIP_Identity.hpp"
 #include "../../../OpENer_Interface.hpp"
-
-//Static variables
-CipUint         CIP_Identity::vendor_id_;
-CipUint         CIP_Identity::device_type_;
-CipUint         CIP_Identity::product_code_;
-CipRevision     CIP_Identity::revision_;
-CipUint         CIP_Identity::status_;
-CipUdint        CIP_Identity::serial_number_;
-CipShortString  CIP_Identity::product_name_;
 
 //Methods
 
@@ -43,7 +35,7 @@ CipShortString  CIP_Identity::product_name_;
  */
 void CIP_Identity::SetDeviceSerialNumber(CipUdint serial_number)
 {
-    serial_number_ = serial_number;
+    serial_number = serial_number;
 }
 
 /** Private functions, sets the devices status
@@ -51,7 +43,7 @@ void CIP_Identity::SetDeviceSerialNumber(CipUdint serial_number)
  */
 void CIP_Identity::SetDeviceStatus(CipUint status)
 {
-    status_ = status;
+    status = status;
 }
 
 /** Reset service
@@ -62,6 +54,7 @@ void CIP_Identity::SetDeviceStatus(CipUint status)
  * @returns Currently always kEipOkSend is returned
  */
  //                           pointer to message router request         -      pointer to message router response
+
 CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response)
 {
     CipStatus eip_status;
@@ -76,31 +69,30 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
     {
         switch (message_router_request->request_data[0])
         {
-        case 0: /* Reset type 0 -> emulate device reset / Power cycle */
-            if (kCipStatusError == OpENer_Interface::ResetDevice().status)
-            {
+            case 0: // Reset type 0 -> emulate device reset / Power cycle /
+                //todo: send message to reset if (kCipStatusError == OpENer_Interface::ResetDevice().status)
+                {
+                    message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
+                }
+                break;
+
+            case 1: // Reset type 1 -> reset to device settings/
+                //todo: send message to reset settings if (kCipStatusError == OpENer_Interface::ResetDeviceToInitialConfiguration().status)
+                {
+                    message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
+                }
+                break;
+
+            // case 2: Not supported Reset type 2 -> Return to factory defaults except communications parameters /
+
+            default:
                 message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
-            }
-            break;
-
-        case 1: /* Reset type 1 -> reset to device settings */
-            if (kCipStatusError == OpENer_Interface::ResetDeviceToInitialConfiguration().status)
-            {
-                message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
-            }
-            break;
-
-        /* case 2: Not supported Reset type 2 -> Return to factory defaults except communications parameters */
-
-        default:
-            message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
-            break;
+                break;
         }
     }
-    else /*TODO: Should be if (pa_stMRRequest->DataLength == 0)*/
+    else //TODO: Should be if (pa_stMRRequest->DataLength == 0)/
     {
-        /* The same behavior as if the data value given would be 0
-     emulate device reset */
+        // The same behavior as if the data value given would be 0 emulate device reset/
 
         if (kCipStatusError == OpENer_Interface::ResetDevice().status)
         {
@@ -108,7 +100,7 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
         }
         else
         {
-            /* eip_status = EIP_OK; */
+            // eip_status = EIP_OK; 
         }
     }
     message_router_response->response_data->clear ();
@@ -122,38 +114,47 @@ CipStatus CIP_Identity::Init()
 {
     if (number_of_instances == 0)
     {
-        // attributes in CIP Identity Object
-        vendor_id_     = OPENER_DEVICE_VENDOR_ID;
-        device_type_   = OPENER_DEVICE_TYPE;
-        product_code_  = OPENER_DEVICE_PRODUCT_CODE;
-        revision_      = {OPENER_DEVICE_MAJOR_REVISION, OPENER_DEVICE_MINOR_REVISION};
-        status_        = 0;
-        serial_number_ = 0;
-        product_name_  = {sizeof(OPENER_DEVICE_NAME) - 1, (CipByte *) OPENER_DEVICE_NAME};
 
         class_id = kCipIdentityClassCode;
         //get_all_class_attributes_mask = MASK4(1, 2, 6, 7);
         //get_all_instance_attributes_mask = MASK7(1, 2, 3, 4, 5, 6, 7);
         class_name = "Identity";
-        revision = 1;
 
         CIP_Identity *instance = new CIP_Identity();
         AddClassInstance(instance, 0);
 
-        instance->classAttributesProperties.emplace(1, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "&vendor_id"     });
-        instance->classAttributesProperties.emplace(2, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "&device_type_"  });
-        instance->classAttributesProperties.emplace(3, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "&product_code_" });
-        instance->classAttributesProperties.emplace(4, CipAttributeProperties_t{kCipUsintUsint , sizeof(CipByteArray  ), kGetableSingleAndAll, "&revision_"     });
-        instance->classAttributesProperties.emplace(5, CipAttributeProperties_t{kCipWord       , sizeof(CipWord       ), kGetableSingleAndAll, "&status_"       });
-        instance->classAttributesProperties.emplace(6, CipAttributeProperties_t{kCipUdint      , sizeof(CipUdint      ), kGetableSingleAndAll, "&serial_number_"});
-        instance->classAttributesProperties.emplace(7, CipAttributeProperties_t{kCipShortString, sizeof(CipShortString), kGetableSingleAndAll, "&product_name_" });
+        instance->revision = CipRevision {1,0};
+
+        instance->instanceAttributesProperties.emplace(1, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "vendor_id"    });
+        instance->instanceAttributesProperties.emplace(2, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "device_type"  });
+        instance->instanceAttributesProperties.emplace(3, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "product_code" });
+        instance->instanceAttributesProperties.emplace(4, CipAttributeProperties_t{kCipUsintUsint , sizeof(CipByteArray  ), kGetableSingleAndAll, "revision"     });
+        instance->instanceAttributesProperties.emplace(5, CipAttributeProperties_t{kCipWord       , sizeof(CipWord       ), kGetableSingleAndAll, "status"       });
+        instance->instanceAttributesProperties.emplace(6, CipAttributeProperties_t{kCipUdint      , sizeof(CipUdint      ), kGetableSingleAndAll, "serial_number"});
+        instance->instanceAttributesProperties.emplace(7, CipAttributeProperties_t{kCipShortString, sizeof(CipShortString), kGetableSingleAndAll, "product_name" });
     }
     return kCipGeneralStatusCodeSuccess;
 }
 
+CipStatus CIP_Identity::Create()
+{
+    CIP_Identity *instance = new CIP_Identity();
+    AddClassInstance(instance, 0);
+
+    // attributes in CIP Identity Object
+    instance->vendor_id     = OPENER_DEVICE_VENDOR_ID;
+    instance->device_type   = OPENER_DEVICE_TYPE;
+    instance->product_code  = OPENER_DEVICE_PRODUCT_CODE;
+    instance->revision      = {OPENER_DEVICE_MAJOR_REVISION, OPENER_DEVICE_MINOR_REVISION};
+    //instance->status        =
+    instance->serial_number = 0;
+    instance->product_name  = {sizeof(OPENER_DEVICE_NAME) - 1, (CipByte *) OPENER_DEVICE_NAME};
+
+}
+
 CipStatus CIP_Identity::Shut(void)
 {
-
+	return kCipGeneralStatusCodeSuccess;
 }
 
 void * CIP_Identity::retrieveAttribute(CipUsint attributeNumber)
@@ -162,20 +163,13 @@ void * CIP_Identity::retrieveAttribute(CipUsint attributeNumber)
     {
         switch(attributeNumber)
         {
-            case 1:
-                return &this->vendor_id_;
-            case 2:
-                return &this->device_type_;
-            case 3:
-                return &this->product_code_;
-            case 4:
-                return &this->revision_;
-            case 5:
-                return &this->status_;
-            case 6:
-                return &this->serial_number_;
-            case 7:
-                return &this->product_name_;
+            case 1:return &this->vendor_id;
+            case 2:return &this->device_type;
+            case 3:return &this->product_code;
+            case 4:return &this->revision;
+            case 5:return &this->status;
+            case 6:return &this->serial_number;
+            case 7:return &this->product_name;
             default:
                 return nullptr;
         }
@@ -188,5 +182,7 @@ void * CIP_Identity::retrieveAttribute(CipUsint attributeNumber)
 
 CipStatus CIP_Identity::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
 {
-
+	CipStatus stat;
+	stat.status = kCipGeneralStatusCodeServiceNotSupported;
+	return stat;
 }

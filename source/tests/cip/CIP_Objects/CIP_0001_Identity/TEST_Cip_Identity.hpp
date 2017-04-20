@@ -5,11 +5,6 @@
 #ifndef OPENERMAIN_TEST_CIP_IDENTITY_H
 #define OPENERMAIN_TEST_CIP_IDENTITY_H
 
-
-class TEST_Cip_Template
-{
-
-};
-
+#include "../../../../src/cip/CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
 
 #endif //OPENERMAIN_TEST_CIP_IDENTITY_H

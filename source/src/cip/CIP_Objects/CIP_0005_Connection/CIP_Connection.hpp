@@ -9,7 +9,7 @@
 #include "CIP_Connection_LinkConsumer.hpp"
 #include "CIP_Connection_LinkProducer.hpp"
 #include <vector>
-#include <cip/connection/network/NET_Connection.hpp>
+#include "../../connection/network/NET_Connection.hpp"
 
 
 #define MAX_BOUND_CONN 10
