@@ -4,4 +4,4 @@ set( CIP_CLASS_SRC CIP_Connection.cpp CIP_Connection_LinkProducer.cpp CIP_Connec
 
 add_library( CIP_CLASS0005_CONNECTION STATIC ${CIP_CLASS_SRC})
 
-target_link_libraries(CIP_CLASS0005_CONNECTION OpENer_CONN)
+target_link_libraries(CIP_CLASS0005_CONNECTION OpENer_CONN CIP_CLASS0002_MSGROUTER)

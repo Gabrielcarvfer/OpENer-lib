@@ -8,10 +8,9 @@ cmake_minimum_required( VERSION 2.8.9 )
 #######################################
 project(OpENerMain CXX)
 
-
 add_definitions(-std=c++11)
 set(runtests ON)
-
+set(OpENer_USETHREAD ON)
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
@@ -37,6 +36,11 @@ set_property(CACHE OpENer_PLATFORM PROPERTY STRINGS ${OpENer_KNOWN_PLATFORMS} )
 
 if (OpENer_PLATFORM STREQUAL WIN32)
   add_definitions(-D__WIN32__)
+  set (__WIN32__)
+endif()
+
+if (OpENer_USETHREAD)
+    add_definitions(-DUSETHREAD)
 endif()
 
 #######################################
@@ -85,4 +89,15 @@ endif(runtests)
 
 add_subdirectory( src )
 add_executable(OpENerMain src/main.cpp)
-target_link_libraries(OpENerMain OpENer)
+
+
+if(__WIN32__)
+    if(MINGW)
+        target_link_libraries(OpENerMain OpENerLib winmm)
+    else ()
+        add_definitions(-DVSTUDIO)
+        target_link_libraries(OpENerMain OpENerLib)
+    endif()
+else()
+    target_link_libraries(OpENerMain OpENerLib)
+endif()

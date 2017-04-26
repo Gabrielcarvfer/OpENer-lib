@@ -91,7 +91,7 @@ const  CIP_Connection* CIP_AppConnType::GetIoConnectionForConnectionData(const C
 
     if (nullptr != io_connection)
     {
-        CIP_ConnectionManager::CopyConnectionData((CIP_Connection*)io_connection, connection_manager->producing_instance);
+        //todo: fix CIP_ConnectionManager::CopyConnectionData((CIP_Connection*)io_connection, connection_manager->producing_instance);
     }
 
     return io_connection;
@@ -110,7 +110,7 @@ const  CIP_Connection* CIP_AppConnType::GetExclusiveOwnerConnection(const CIP_Co
         {
 
             /* check if on other connection point with the same output assembly is currently connected */
-            if (nullptr != CIP_ConnectionManager::GetConnectedOutputAssembly(connection_manager->connection_path.connection_point[0]))
+            //todo: fix if (nullptr != CIP_ConnectionManager::GetConnectedOutputAssembly(connection_manager->connection_path.connection_point[0]))
             {
                 *extended_error = CIP_ConnectionManager::kConnMgrStatusCodeErrorOwnershipConflict;
                 break;
@@ -254,7 +254,7 @@ const CIP_Connection* CIP_AppConnType::GetNextNonControlMasterConnection(CipUdin
     return next_non_control_master_connection_manager->producing_instance;
 }
 
-void CIP_AppConnType::CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_Connection::ConnectionType Instance_type)
+void CIP_AppConnType::CloseAllConnectionsForInputWithSameType(CipUdint input_point, CIP_Connection::ConnectionType_e Instance_type)
 {
     const CIP_ConnectionManager* connection_manager;
     const CIP_Connection* connection_to_delete;
@@ -271,7 +271,7 @@ void CIP_AppConnType::CloseAllConnectionsForInputWithSameType(CipUdint input_poi
 
             /* FIXME check if this is ok */
             //connection_to_delete->connection_close_function(connection_to_delete);
-            CIP_ConnectionManager::CloseConnection ((CIP_ConnectionManager*)connection_manager); /*will remove the connection from the active connection list */
+            //todo:fix CIP_ConnectionManager::CloseConnection ((CIP_ConnectionManager*)connection_manager); /*will remove the connection from the active connection list */
         }
     }
 }
@@ -283,7 +283,7 @@ void CIP_AppConnType::CloseAllConnections(void)
     {
         connection_manager = (CIP_ConnectionManager*)CIP_ConnectionManager::active_connections_set->at(i);
         /*FIXME check if m_pfCloseFunc would be suitable*/
-        CIP_ConnectionManager::CloseConnection(connection_manager);
+        //todo: fix CIP_ConnectionManager::CloseConnection(connection_manager);
         /* Close connection will remove the connection from the list therefore we
      * need to get again the start until there is no connection left
      */

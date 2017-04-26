@@ -195,6 +195,11 @@ CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_rou
 {
     CipUdint j;
     CipStatus status;
+
+    //Router request fields
+    CipUint instance_count = 0;
+    std::vector<CipUint> connection_instance_list;
+    CipEpath * producing_application_path;
     
     if ( ( j = (CipUdint) object_Set.size() ) < 1)
     {
@@ -213,11 +218,13 @@ CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_rou
         {
             if (CipEpath::check_if_equal (producing_application_path, &conn->Produced_connection_path))
             {
-                (*instance_count)++;
-                connection_instance_list->push_back (conn->id);
+                instance_count++;
+                connection_instance_list.push_back (conn->id);
             }
         }
     }
+
+    //write instance count and conn_instance_list back to router response
 
     status.status = 0x0;
     status.extended_status = 0x0;

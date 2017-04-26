@@ -6,11 +6,13 @@
 //Includes
 #include <cstring>
 #include "NET_EthIP_Encap.hpp"
-#include "cip/CIP_Objects/CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
+#include "../../../CIP_Objects/CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
 #include "eip_endianconv.hpp"
 #include "../NET_Endianconv.hpp"
 #include "../NET_NetworkHandler.hpp"
 #include "../../../CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
+
+#include "../../CIP_CommonPacket.hpp"
 
 //Static variables
 const int NET_EthIP_Encap::kOpENerEthernetPort = 0xAF12;
@@ -453,8 +455,7 @@ CipStatus NET_EthIP_Encap::HandleReceivedSendUnitDataCommand(EncapsulationData* 
  *  @return status 	0 .. success.
  * 					-1 .. error
  */
-CipStatus NET_EthIP_Encap::HandleReceivedSendRequestResponseDataCommand(
-    EncapsulationData* receive_data)
+CipStatus NET_EthIP_Encap::HandleReceivedSendRequestResponseDataCommand(EncapsulationData* receive_data)
 {
     CipInt send_size;
     CipStatus return_value = kCipGeneralStatusCodeSuccess;

@@ -1,12 +1,11 @@
-//
-// Created by Gabriel Ferreira (@gabrielcarvfer) on 11/11/2016.
-//
-//
+/*******************************************************************************
+ * Copyright (c) 2009, Rockwell Automation, Inc.
+ * All rights reserved.
+ *
+ ******************************************************************************/
 
 #ifndef OPENER_OPENER_INTERFACE_H
 #define OPENER_OPENER_INTERFACE_H
-
-//#define USETHREAD
 
 #include <cassert>
 #include <signal.h>
@@ -17,6 +16,10 @@
 #include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "OpENer_IOConnection.hpp"
 #include "OpENer_ExplicitConnection.hpp"
+
+#ifdef __WIN32__
+#include <windows.h>
+#endif
 
 #ifdef USETHREAD
 #include <thread>

@@ -174,8 +174,7 @@ private:
 
     static CipStatus HandleReceivedSendUnitDataCommand(EncapsulationData* receive_data);
 
-    static CipStatus HandleReceivedSendRequestResponseDataCommand(
-            EncapsulationData* receive_data);
+    static CipStatus HandleReceivedSendRequestResponseDataCommand(EncapsulationData* receive_data);
 
     static int GetFreeSessionIndex(void);
 

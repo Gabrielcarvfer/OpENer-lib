@@ -131,9 +131,7 @@ void * CIP_Object<T>::GetCipAttribute(CipUsint attribute_number)
 	OPENER_TRACE_WARN("attribute %d not defined\n", attribute_number);
 	return nullptr;
 }
-/*
 
-// TODO: this needs to check for buffer overflow
 template <class T>
 CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_router_request,
                                             CipMessageRouterResponse_t* message_router_response)
@@ -141,7 +139,7 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
     // Mask for filtering get-ability
     CipByte get_mask;
 
-    CIP_Attribute* attribute = this->GetCipAttribute(message_router_request->request_path.attribute_number);
+    CipAttributeProperties_t* attribute = &instanceAttributesProperties.at(message_router_request->request_path.attribute_number);
     CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     message_router_response->reply_service = (0x80 | message_router_request->service);
@@ -159,16 +157,16 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
         get_mask = kGetableSingle;
     }
 
-    if ((attribute != 0) && (attribute->getData() != 0))
+    if ((attribute != nullptr) && (retrieveAttribute(message_router_request->request_path.attribute_number) != 0))
     {
-        if (attribute->getFlag() & get_mask)
+        if (attribute->attributeFlag & get_mask)
         {
             OPENER_TRACE_INFO("getAttribute %d\n",
                 message_router_request->request_path.attribute_number); // create a reply message containing the data
             //TODO think if it is better to put this code in an own getAssemblyAttributeSingle functions which will call get attribute single.
             
 
-            if (attribute->getType() == kCipByteArray && this->class_id == kCipAssemblyClassCode)
+            if (attribute->attributeType == kCipByteArray && this->class_id == kCipAssemblyClassCode)
             {
                 // we are getting a byte array of a assembly object, kick out to the app callback
                 OPENER_TRACE_INFO(" -> getAttributeSingle CIP_BYTE_ARRAY\r\n");
@@ -198,19 +196,14 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
         OPENER_TRACE_INFO("GetAttributeAll: instance number 2\n");
     }
 
-    CIP_Service * service;
-    CIP_Attribute* attribute;
-    std::map<CipUsint, CIP_Service*>* servicePtr;
+    CipServiceProperties_t * serviceProperties;
+    CipAttributeProperties_t * attributeProperties;
 
-    if (id == 0)
-        servicePtr = &classServices;
-    else
-        servicePtr = &instanceServices;
+    auto it = instanceServicesProperties.find(kGetAttributeAll);
 
-    auto it = servicePtr->find(kGetAttributeSingle);
-    if ( it != servicePtr->end())
+    if ( it != instanceServicesProperties.end())
     {
-        service = it->second;
+        serviceProperties = it->second;
         if (0 == this->attributes.size())
         {
             //there are no attributes to be sent back
@@ -220,10 +213,11 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
         }
         else
         {
-            for (int j = 0; j < class_ptr->attributes.size(); j++) // for each instance attribute of this class 
+            auto attrIt = instanceAttributesProperties.begin ();
+            for (; attrIt != instanceAttributesProperties.end(); attrIt++) // for each instance attribute of this class
             {
-                attribute = attributes[j];
-                int attrNum = attribute->getNumber();
+                attributeProperties = attrIt->second;
+                int attrNum = attrIt->first;
 
                 // only return attributes that are flagged as being part of GetAttributeALl
                 if (attrNum < 32 && (class_ptr->get_all_class_attributes_mask & 1 << attrNum))
@@ -245,7 +239,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
     }
     return CipStatus(kCipGeneralStatusCodeSuccess); // Return kCipGeneralStatusCodeSuccess if cannot find GET_ATTRIBUTE_SINGLE service
 }
-*/
+
 template <class T>
 CipStatus CIP_Object<T>::InstanceServices(int service, CipMessageRouterRequest_t* msg_router_request,
                                           CipMessageRouterResponse_t* msg_router_response)

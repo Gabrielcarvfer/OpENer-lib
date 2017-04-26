@@ -12,6 +12,7 @@
 
 #include "../template/CIP_Object.hpp"
 #include "../../ciptypes.hpp"
+
 class CIP_TCPIP_Interface;
 class CIP_TCPIP_Interface : public CIP_Object<CIP_TCPIP_Interface>
 {
@@ -163,7 +164,7 @@ private:
     void ConfigureHostName(CipString * hostname);
     //CipStatus SetAttributeSingleTcp(CipMessageRouterRequest_t* message_router_request, CipMessageRouterResponse_t* message_router_response);
 
-private:
+
     void * retrieveAttribute(CipUsint attributeNumber);
     CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };

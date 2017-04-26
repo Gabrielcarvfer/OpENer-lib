@@ -14,9 +14,8 @@
     #include <iostream>
     #include <iphlpapi.h>
     #include <sstream>
-#include <cip/ciptypes.hpp>
 
-#ifdef VSTUDIO
+    #ifdef VSTUDIO
 		#pragma comment(lib, "Ws2_32.lib")
 		#pragma comment(lib, "iphlpapi.lib")
 	#endif
@@ -30,6 +29,10 @@
 
 //Defines
 #define SZ(x) (sizeof(x))
+
+CipUsint CIP_TCPIP_Interface::g_time_to_live_value;
+CIP_TCPIP_Interface::multicast_address_configuration_t CIP_TCPIP_Interface::g_multicast_configuration;
+CipTcpIpNetworkInterfaceConfiguration CIP_TCPIP_Interface::interface_configuration_;
 
 //Methods
 CipStatus CIP_TCPIP_Interface::ConfigureNetworkInterface(const char* ip_address,   const char* subnet_mask, const char* gateway)

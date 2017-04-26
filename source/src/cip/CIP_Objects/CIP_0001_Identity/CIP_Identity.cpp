@@ -26,7 +26,6 @@
 
 #include <cip/ciptypes.hpp>
 #include "CIP_Identity.hpp"
-#include "../../../OpENer_Interface.hpp"
 
 //Methods
 
@@ -70,22 +69,26 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
         switch (message_router_request->request_data[0])
         {
             case 0: // Reset type 0 -> emulate device reset / Power cycle /
-                //todo: send message to reset if (kCipStatusError == OpENer_Interface::ResetDevice().status)
+                //todo: emulate reset if (kCipStatusError == OpENer_Interface::ResetDevice().status)
                 {
                     message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
                 }
                 break;
 
             case 1: // Reset type 1 -> reset to device settings/
-                //todo: send message to reset settings if (kCipStatusError == OpENer_Interface::ResetDeviceToInitialConfiguration().status)
+                //todo: try to reset settings if (kCipStatusError == OpENer_Interface::ResetDeviceToInitialConfiguration().status)
                 {
                     message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
                 }
                 break;
 
-            // case 2: Not supported Reset type 2 -> Return to factory defaults except communications parameters /
+            case 2: // Reset type 2 -> Return to factory defaults except communications parameters /
+                {}
+                break;
 
-            default:
+            //-----Vendor specific ranging from 100 to 199------
+
+            default: // Reserved by CIP ranging from 3 to 99 and from 200 to 255
                 message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
                 break;
         }
@@ -94,11 +97,11 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
     {
         // The same behavior as if the data value given would be 0 emulate device reset/
 
-        if (kCipStatusError == OpENer_Interface::ResetDevice().status)
+        //todo: fix if (kCipStatusError == OpENer_Interface::ResetDevice().status)
         {
             message_router_response->general_status = kCipGeneralStatusCodeInvalidParameter;
         }
-        else
+        //else
         {
             // eip_status = EIP_OK; 
         }

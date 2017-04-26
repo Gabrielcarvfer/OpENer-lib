@@ -8,4 +8,15 @@ set( CIP_NET_SRC NET_Encapsulation.cpp NET_Connection.cpp NET_NetworkHandler.cpp
 
 add_library( OpENer_NET STATIC ${CIP_NET_SRC})
 
-target_link_libraries(OpENer_NET CIP_NET_ETHIP CIP_NET_DNET CIP_CLASS00F6_ETHERNETLINK)
+if(__WIN32__)
+	#if MINGW
+	if(MINGW)
+		target_link_libraries(OpENer_NET OpENerLib OpENer_CONN CIP_NET_ETHIP CIP_NET_DNET CIP_CLASS00F6_ETHERNETLINK CIP_CLASS0001_IDENTITY ws2_32 wsock32)
+	#if Visual Studio
+	else ()
+		add_definitions(-DVSTUDIO)
+		target_link_libraries(OpENer_NET OpENerLib OpENer_CONN CIP_NET_ETHIP CIP_NET_DNET CIP_CLASS00F6_ETHERNETLINK CIP_CLASS0001_IDENTITY)
+	endif()
+elseif(LINUX)
+	target_link_libraries(OpENer_NET OpENerLib OpENer_CONN CIP_NET_ETHIP CIP_NET_DNET CIP_CLASS00F6_ETHERNETLINK CIP_CLASS0001_IDENTITY)
+endif()

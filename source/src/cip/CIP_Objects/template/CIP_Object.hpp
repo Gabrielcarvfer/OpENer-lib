@@ -157,7 +157,7 @@ class CIP_Object
      * @return status  >0 .. success
      *          -1 .. requested attribute not available
      */
-     CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
+    CipStatus GetAttributeSingle(CipMessageRouterRequest_t * message_router_request,
                                  CipMessageRouterResponse_t* message_router_response);
 
     CipStatus InstanceServices(int service, CipMessageRouterRequest_t * msg_router_request,
