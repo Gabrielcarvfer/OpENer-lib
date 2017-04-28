@@ -9,8 +9,8 @@ cmake_minimum_required( VERSION 2.8.9 )
 project(OpENerMain CXX)
 
 add_definitions(-std=c++11)
-set(runtests ON)
-set(OpENer_USETHREAD ON)
+
+#set(OpENer_USETHREAD ON)
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
@@ -37,6 +37,9 @@ set_property(CACHE OpENer_PLATFORM PROPERTY STRINGS ${OpENer_KNOWN_PLATFORMS} )
 if (OpENer_PLATFORM STREQUAL WIN32)
   add_definitions(-D__WIN32__)
   set (__WIN32__)
+else()
+  add_definitions(-D__linux__)
+  unset(__WIN32__)
 endif()
 
 if (OpENer_USETHREAD)
@@ -65,10 +68,7 @@ endif(OpENer_TRACES)
 set( OpENer_TESTS OFF CACHE BOOL "Enable tests to be built" )
 if( OpENer_TESTS )
   enable_testing()
-  enable_language( CXX )
-  set( CPPUTEST_HOME "" CACHE PATH "Path to CppUTest directory" )
-  INCLUDE( ${OpENer_BUILDSUPPORT_DIR}/OpENer_Tests.cmake )
-  add_subdirectory( tests )
+  add_subdirectory(tests)
 endif( OpENer_TESTS )
 
 #######################################
@@ -81,11 +81,6 @@ set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall" )
 # Add subdirectories                  #
 #######################################
 opener_common_includes()
-
-if (runtests)
-  enable_testing()
-  add_subdirectory(tests)
-endif(runtests)
 
 add_subdirectory( src )
 add_executable(OpENerMain src/main.cpp)

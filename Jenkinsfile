@@ -9,22 +9,23 @@ pipeline
 			steps
 			{
 				
-				sh 'cd ./bin/posix && cmake -DOpENer_PLATFORM:STRING="POSIX" ../../source' 
-				sh 'make all'
+				sh 'cd ./bin/posix'
+				sh 'cmake -DOpENer_PLATFORM:STRING="POSIX" -DOpENer_TESTS:BOOL='ON' ../../source' 
+				sh 'make all -j4'
 			}
 		}
 		stage('Test') 
 		{
 			steps
 			{
-				sh 'ctest'
+				sh 'ctest -j4'
 			}
 		}
 		stage('Install')
 		{
 			steps
 			{
-				sh 'make install'
+				sh 'make install -j4'
 			}
 		}
 	}	
