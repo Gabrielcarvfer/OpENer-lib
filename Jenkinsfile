@@ -10,7 +10,7 @@ pipeline
 			{
 				
 				sh 'cd ./bin/posix'
-				sh 'cmake -DOpENer_PLATFORM:STRING="POSIX" -DOpENer_TESTS:BOOL='ON' ../../source' 
+				sh 'cmake -DOpENer_PLATFORM:STRING="POSIX" -DOpENer_TESTS:BOOL="ON" ../../source' 
 				sh 'make all -j4'
 			}
 		}
