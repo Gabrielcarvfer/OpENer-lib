@@ -313,3 +313,7 @@ source/cmake-build-debug/src/utils/CMakeFiles/OpENer_UTILS.dir/link.txt
 source/.vs/
 source/cmake-build-debug/
 source/.idea/
+*.obj
+*.exe
+*.log
+*.json

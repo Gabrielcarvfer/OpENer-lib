@@ -2,7 +2,7 @@ opENer_common_includes()
 
 add_subdirectory(CIP_0001_Identity)
 add_subdirectory(CIP_0002_MessageRouter)
-add_subdirectory(CIP_0003_DeviceNET)
+#add_subdirectory(CIP_0003_DeviceNET)
 add_subdirectory(CIP_0004_Assembly)
 add_subdirectory(CIP_0005_Connection)
 add_subdirectory(CIP_0006_ConnectionManager)
@@ -18,7 +18,7 @@ target_link_libraries(
         CIP_Objects
         CIP_CLASS0001_IDENTITY
         CIP_CLASS0002_MSGROUTER
-        CIP_CLASS0003_DEVICENET
+        #CIP_CLASS0003_DEVICENET
         CIP_CLASS0004_ASSEMBLY
         CIP_CLASS0005_CONNECTION
         CIP_CLASS0006_CONNECTIONMANAGER

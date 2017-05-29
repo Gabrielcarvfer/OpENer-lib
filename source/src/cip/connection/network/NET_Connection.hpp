@@ -28,7 +28,11 @@ class NET_Connection
         static int SelectRemove (int socket_handle, int select_set_option);
 
         //Instance stuff
-        typedef enum { kOriginatorAddress, kRemoteAddress} AddressOptions;
+        typedef enum
+		{
+			kOriginatorAddress, kRemoteAddress
+		} AddressOptions;
+
         NET_Connection(
 		       struct sockaddr *originator_address = nullptr,
 		       struct sockaddr *remote_address = nullptr,
@@ -39,14 +43,14 @@ class NET_Connection
 		       int sock = -1
 		       )
         {
-	   this->originator_address = originator_address;
-	   this->remote_address = remote_address;
-	   this->type = type;
-	   this->reuse = reuse;
-	   this->direction = direction;
-	   this->val = val;
-	   this->sock = sock;
-        }
+		   this->originator_address = originator_address;
+		   this->remote_address = remote_address;
+		   this->type = type;
+		   this->reuse = reuse;
+		   this->direction = direction;
+		   this->val = val;
+		   this->sock = sock;
+        };
 
         ~NET_Connection ();
 

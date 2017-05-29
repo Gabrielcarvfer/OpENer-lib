@@ -3,8 +3,8 @@
  * All rights reserved. 
  *
  ******************************************************************************/
-#ifndef OPENER_ENCAP_H_
-#define OPENER_ENCAP_H_
+#ifndef OPENER_ENCAP_ETHIP_H_
+#define OPENER_ENCAP_ETHIP_H_
 
 #define ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES 2 /**< According to EIP spec at least 2 delayed message requests should be supported */
 
@@ -30,6 +30,8 @@ typedef enum {
 class NET_EthIP_Encap
 {
 public:
+    NET_EthIP_Encap();
+    ~NET_EthIP_Encap();
 /*** defines ***/
 
 #define ENCAPSULATION_HEADER_LENGTH 24
@@ -58,14 +60,16 @@ public:
 /** @ingroup ENCAP
  * @brief Initialize the encapsulation layer.
  */
-    static  void EncapsulationInit (void);
+    static bool EncapsulationInit();
+    static bool EncapsulationShutdown();
+
 
 /** @ingroup ENCAP
  * @brief Shutdown the encapsulation layer.
  *
  * This means that all open sessions including their sockets are closed.
  */
-    static void EncapsulationShutDown (void);
+
 
 /** @ingroup ENCAP
  * @brief Handle delayed encapsulation message responses
@@ -104,10 +108,11 @@ public:
  * over after we're done here
  * @return length of reply that need to be sent back
  */
-    static int HandleReceivedExplictUdpData (int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast);
+    static int HandleReceivedExplictUdpData (int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, bool unicast);
 
 
 private:
+    static bool initialized;
     static const int kSupportedProtocolVersion; /**< Supported Encapsulation protocol version */
 
     static const int kEncapsulationHeaderOptionsFlag; /**< Mask of which options are supported as of the current CIP specs no other option value as 0 should be supported.*/
@@ -122,7 +127,8 @@ private:
     static const int kSenderContextSize; /**< size of sender context in encapsulation header*/
 
 /** @brief definition of known encapsulation commands */
-    typedef enum {
+    typedef enum
+    {
         kEncapsulationCommandNoOperation = 0x0000, /**< only allowed for TCP */
         kEncapsulationCommandListServices = 0x0004, /**< allowed for both UDP and TCP */
         kEncapsulationCommandListIdentity = 0x0063, /**< allowed for both UDP and TCP */
@@ -134,7 +140,8 @@ private:
     } EncapsulationCommand;
 
 /** @brief definition of capability flags */
-    typedef enum {
+    typedef enum
+    {
         kCapabilityFlagsCipTcp = 0x0020,
         kCapabilityFlagsCipUdpClass0or1 = 0x0100
     } CapabilityFlags;
@@ -143,7 +150,8 @@ private:
 /* Encapsulation layer data  */
 
 /** @brief Delayed Encapsulation Message structure */
-    typedef struct {
+    typedef struct
+    {
         CipDint time_out; /**< time out in milli seconds */
         int socket; /**< associated socket */
         struct sockaddr_in *receiver;
@@ -166,8 +174,7 @@ private:
 
     static void HandleReceivedListIdentityCommandUdp(int socket, struct sockaddr_in* from_address, EncapsulationData* receive_data);
 
-    static void HandleReceivedRegisterSessionCommand(int socket,
-                                              EncapsulationData* receive_data);
+    static void HandleReceivedRegisterSessionCommand(int socket, EncapsulationData* receive_data);
 
     static CipStatus HandleReceivedUnregisterSessionCommand(
             EncapsulationData* receive_data);
@@ -194,4 +201,4 @@ private:
 
 
 };
-#endif /* OPENER_ENCAP_H_ */
+#endif /* OPENER_ENCAP_ETHIP_H_ */

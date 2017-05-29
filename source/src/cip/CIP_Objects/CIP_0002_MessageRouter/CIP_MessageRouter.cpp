@@ -5,10 +5,11 @@
  ******************************************************************************/
 
 //Includes
-#include <cip/ciptypes.hpp>
-#include <cip/CIP_Segment.hpp>
-#include <cip/CIP_ElectronicKey.hpp>
+#include "../../ciptypes.hpp"
+#include "../../CIP_Segment.hpp"
+#include "../../CIP_ElectronicKey.hpp"
 #include "CIP_MessageRouter.hpp"
+#include "../../CIP_Common.hpp"
 
 #define ROUTER_MESSAGE_BUFFER_SIZE 100
 

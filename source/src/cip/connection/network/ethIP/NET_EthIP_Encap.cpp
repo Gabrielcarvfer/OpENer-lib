@@ -11,10 +11,10 @@
 #include "../NET_Endianconv.hpp"
 #include "../NET_NetworkHandler.hpp"
 #include "../../../CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
-
 #include "../../CIP_CommonPacket.hpp"
 
 //Static variables
+bool NET_EthIP_Encap::initialized = false;
 const int NET_EthIP_Encap::kOpENerEthernetPort = 0xAF12;
 EncapsulationInterfaceInformation NET_EthIP_Encap::g_interface_information;
 int NET_EthIP_Encap::g_registered_sessions[OPENER_NUMBER_OF_SUPPORTED_SESSIONS];
@@ -28,37 +28,53 @@ const int NET_EthIP_Encap::kSenderContextSize = 8; /**< size of sender context i
 
 
 //Methods
-/*   @brief Initializes session list and interface information. */
-void NET_EthIP_Encap::EncapsulationInit(void)
+
+NET_EthIP_Encap::NET_EthIP_Encap()
 {
 
-    NET_Endianconv::DetermineEndianess();
+};
 
-    /*initialize random numbers for random delayed response message generation
-   * we use the ip address as seed as suggested in the spec */
-    //srand(interface_configuration_.ip_address);
+NET_EthIP_Encap::~NET_EthIP_Encap()
+{
 
-    /* initialize Sessions to invalid == free session */
-    for (unsigned int i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; i++)
+};
+/*   @brief Initializes session list and interface information. */
+
+bool NET_EthIP_Encap::EncapsulationInit()
+{
+    if (!initialized)
     {
-        g_registered_sessions[i] = kEipInvalidSocket;
+        NET_Endianconv::DetermineEndianess();
+
+        /*initialize random numbers for random delayed response message generation
+       * we use the ip address as seed as suggested in the spec */
+        //srand(interface_configuration_.ip_address);
+
+        /* initialize Sessions to invalid == free session */
+        for (unsigned int i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; i++)
+        {
+            g_registered_sessions[i] = kEipInvalidSocket;
+        }
+
+        for (unsigned int i = 0; i < ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES; i++)
+        {
+            g_delayed_encapsulation_messages[i].socket = -1;
+        }
+
+        /*TODO make the interface information configurable*/
+        /* initialize interface information */
+        g_interface_information.type_code = CIP_CommonPacket::kCipItemIdListServiceResponse;
+        g_interface_information.length = sizeof(g_interface_information);
+        g_interface_information.encapsulation_protocol_version = 1;
+        g_interface_information.capability_flags = kCapabilityFlagsCipTcp | kCapabilityFlagsCipUdpClass0or1;
+        strcpy((char*)g_interface_information.name_of_service, "Communications");
+
+        initialized = true;
+        return true;
     }
-
-    for (unsigned int i = 0; i < ENCAP_NUMBER_OF_SUPPORTED_DELAYED_ENCAP_MESSAGES; i++)
-    {
-        g_delayed_encapsulation_messages[i].socket = -1;
-    }
-
-    /*TODO make the interface information configurable*/
-    /* initialize interface information */
-    g_interface_information.type_code = CIP_CommonPacket::kCipItemIdListServiceResponse;
-    g_interface_information.length = sizeof(g_interface_information);
-    g_interface_information.encapsulation_protocol_version = 1;
-    g_interface_information.capability_flags = kCapabilityFlagsCipTcp | kCapabilityFlagsCipUdpClass0or1;
-    strcpy((char*)g_interface_information.name_of_service, "Communications");
-
-    //CIP_EthernetIP_Link::CipEthernetLinkInit ();
+    return false;
 }
+
 
 int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
     unsigned int length, int* remaining_bytes)
@@ -130,7 +146,7 @@ int NET_EthIP_Encap::HandleReceivedExplictTcpData(int socket, CipUsint* buffer,
     return return_value.status;
 }
 
-int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, int unicast)
+int NET_EthIP_Encap::HandleReceivedExplictUdpData(int socket, struct sockaddr* from_address, CipUsint* buffer, unsigned int buffer_length, int* number_of_remaining_bytes, bool unicast)
 {
     CipStatus status = kCipGeneralStatusCodeSuccess;
     EncapsulationData encapsulation_data;
@@ -561,17 +577,23 @@ void NET_EthIP_Encap::CloseSession(int socket)
     }
 }
 
-void NET_EthIP_Encap::EncapsulationShutDown(void)
+bool NET_EthIP_Encap::EncapsulationShutdown()
 {
-    for (int i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; ++i)
+    if (initialized)
     {
-        if (kEipInvalidSocket != g_registered_sessions[i])
+        for (int i = 0; i < OPENER_NUMBER_OF_SUPPORTED_SESSIONS; ++i)
         {
-            //IApp_CloseSocket_tcp(g_registered_sessions[i]);
-            g_registered_sessions[i] = kEipInvalidSocket;
+            if (kEipInvalidSocket != g_registered_sessions[i])
+            {
+                //IApp_CloseSocket_tcp(g_registered_sessions[i]);
+                g_registered_sessions[i] = kEipInvalidSocket;
+            }
         }
+        CIP_EthernetIP_Link::Shut();
+        initialized=false;
+        return true;
     }
-    CIP_EthernetIP_Link::Shut();
+    return false;
 }
 
 void NET_EthIP_Encap::ManageEncapsulationMessages(MilliSeconds elapsed_time)

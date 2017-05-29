@@ -31,6 +31,8 @@ typedef struct encapsulation_interface_information
 class NET_Encapsulation
 {
 public:
+    NET_Encapsulation()=default;
+    ~NET_Encapsulation()=default;
     static CipStatus Initialize();
     static CipStatus Shutdown();
 };

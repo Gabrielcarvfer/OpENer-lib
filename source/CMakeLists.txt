@@ -10,7 +10,9 @@ project(OpENerMain CXX)
 
 add_definitions(-std=c++11)
 
-#set(OpENer_USETHREAD ON)
+set(OpENer_USETHREAD ON)
+set(OpENer_TESTS ON)
+set(OpENer_PLATFORM "WIN32")
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)

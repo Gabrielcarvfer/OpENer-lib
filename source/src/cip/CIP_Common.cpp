@@ -15,6 +15,7 @@
 #include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
 #include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "CIP_Objects/CIP_Objects.hpp"
+#include "connection/network/NET_Encapsulation.hpp"
 
 //Static variables
 

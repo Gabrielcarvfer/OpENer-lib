@@ -1,5 +1,5 @@
-#ifndef OPENER_DNET_ENCAP_H_
-#define OPENER_DNET_ENCAP_H_
+#ifndef OPENER_ENCAP_DNET_H_
+#define OPENER_ENCAP_DNET_H_
 
 #include "../../../ciptypes.hpp"
 
@@ -54,4 +54,4 @@ void EncapsulationShutDown(void);
  */
 void ManageEncapsulationMessages(MilliSeconds elapsed_time);
 
-#endif /* OPENER_ENCAP_H_ */
+#endif /* OPENER_ENCAP_DNET_H_ */
