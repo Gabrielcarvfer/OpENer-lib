@@ -545,7 +545,7 @@ class OpENer_Interface
 
     /*! \brief Flag indicating if the stack should end its execution
        */
-    static int g_end_stack;
+    static bool g_end_stack;
 
     //Execute everything needed to make library work and then go back to the main program/or run in a thread
     static void OpENerWorker();

@@ -64,8 +64,17 @@ void CIP_Common::ShutdownCipStack (void)
     /* First close all connections */
     CIP_AppConnType::CloseAllConnections ();
 
-    /*clean the data needed for the assembly object's attribute 3*/
-    CIP_Assembly::Shut ();
+    int pointOfFail = CIP_Objects::ShutObjects();
+
+    switch(pointOfFail)
+    {
+        case (0):
+            break;
+        default:
+            std::cout << "Failed to shutdown CIP Object with code " << pointOfFail << std::endl;
+            exit(-1);
+
+    }
 
     NET_Encapsulation::Shutdown ();
 
@@ -226,7 +235,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)
 
         case (kCipUsintUsint):
         {
-            CipRevision *revision = (CipRevision *) data;
+            identityRevision_t *revision = (identityRevision_t *) data;
 
             *message = revision->major_revision;
             ++(*message);

@@ -1,5 +1,5 @@
-#ifndef OPENER_CLASSES_ANALOG_INPUT_POINT_H_
-#define OPENER_CLASSES_ANALOG_INPUT_POINT_H_
+#ifndef CIP_CLASSES_ANALOGINPUTPOINT_H
+#define CIP_CLASSES_ANALOGINPUTPOINT_H
 
 // Based on Jim Brady's work http://jbrady.com/devicenet.html
 //
@@ -45,4 +45,4 @@ public:
 	}
 };
 
-#endif //OPENER_CLASSES_ANALOG_INPUT_POINT_H_
+#endif //CIP_CLASSES_ANALOGINPUTPOINT_H

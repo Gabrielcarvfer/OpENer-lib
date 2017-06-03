@@ -113,36 +113,59 @@ CipStatus CIP_Identity::Reset( CipMessageRouterRequest_t* message_router_request
 /** @brief CIP Identity object constructor
  *
  */
-CipStatus CIP_Identity::Init()
-{
-    if (number_of_instances == 0)
-    {
+CipStatus CIP_Identity::Init() {
+    CipStatus stat;
+
+    if (number_of_instances == 0) {
 
         class_id = kCipIdentityClassCode;
         //get_all_class_attributes_mask = MASK4(1, 2, 6, 7);
         //get_all_instance_attributes_mask = MASK7(1, 2, 3, 4, 5, 6, 7);
         class_name = "Identity";
+        RegisterGenericClassAttributes();
 
         CIP_Identity *instance = new CIP_Identity();
         AddClassInstance(instance, 0);
 
-        instance->revision = CipRevision {1,0};
+        instance->revision = identityRevision_t {1, 0};
 
-        instance->instanceAttributesProperties.emplace(1, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "vendor_id"    });
-        instance->instanceAttributesProperties.emplace(2, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "device_type"  });
-        instance->instanceAttributesProperties.emplace(3, CipAttributeProperties_t{kCipUint       , sizeof(CipUint       ), kGetableSingleAndAll, "product_code" });
-        instance->instanceAttributesProperties.emplace(4, CipAttributeProperties_t{kCipUsintUsint , sizeof(CipByteArray  ), kGetableSingleAndAll, "revision"     });
-        instance->instanceAttributesProperties.emplace(5, CipAttributeProperties_t{kCipWord       , sizeof(CipWord       ), kGetableSingleAndAll, "status"       });
-        instance->instanceAttributesProperties.emplace(6, CipAttributeProperties_t{kCipUdint      , sizeof(CipUdint      ), kGetableSingleAndAll, "serial_number"});
-        instance->instanceAttributesProperties.emplace(7, CipAttributeProperties_t{kCipShortString, sizeof(CipShortString), kGetableSingleAndAll, "product_name" });
+        instAttrInfo.emplace(1, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "vendor_id"});
+        instAttrInfo.emplace(2, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "device_type"});
+        instAttrInfo.emplace(3, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "product_code"});
+        instAttrInfo.emplace(4,
+                             CipAttrInfo_t{kCipUsintUsint, SZ(identityRevision_t), kGetableSingleAndAll, "revision"});
+        instAttrInfo.emplace(5, CipAttrInfo_t{kCipWord, SZ(CipWord), kGetableSingleAndAll, "status"});
+        instAttrInfo.emplace(6, CipAttrInfo_t{kCipUdint, SZ(CipUdint), kGetableSingleAndAll, "serial_number"});
+        instAttrInfo.emplace(7,
+                             CipAttrInfo_t{kCipShortString, SZ(CipShortString), kGetableSingleAndAll, "product_name"});
+        instAttrInfo.emplace(8, CipAttrInfo_t{kCipUsint, SZ(CipUsint), kGetableSingleAndAll, "State"});
+        instAttrInfo.emplace(9, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll,
+                                              "Configuration_consistency_value"});
+        instAttrInfo.emplace(10, CipAttrInfo_t{kCipUsint, SZ(CipUsint), kGetableSingleAndAll, "Heartbeat Interval"});
+
+        /*  todo:
+        instAttrInfo.emplace(11, CipAttrInfo_t{kCipUsint), 3*SZ(CipUsint    ), kSetable            , "Active Language"});
+        instAttrInfo.emplace(12, CipAttrInfo_t{kCip,SZ(),kGetable,"Supported Language List"});
+        instAttrInfo.emplace(13, CipAttrInfo_t{kCip,SZ(),kGetable,"International Product Name"});
+        instAttrInfo.emplace(14, CipAttrInfo_t{kCip,SZ(),kGetable,"Semaphore"});
+        instAttrInfo.emplace(15, CipAttrInfo_t{kCip,SZ(),kGetable,"Assigned_Name"});
+        instAttrInfo.emplace(16, CipAttrInfo_t{kCip,SZ(),kGetable,"AssignedDescription"});
+        instAttrInfo.emplace(17, CipAttrInfo_t{kCip,SZ(),kGetable,"Geographic_Location"});
+        instAttrInfo.emplace(18, CipAttrInfo_t{kCip,sizeof(v7.c5.),kNotSetOrGetable,"Modbus Identity Info"});
+         */
+        stat.status = kCipStatusOk;
     }
-    return kCipGeneralStatusCodeSuccess;
+    else
+    {
+        stat.status = kCipStatusError;
+    }
+    return stat;
 }
 
 CipStatus CIP_Identity::Create()
 {
     CIP_Identity *instance = new CIP_Identity();
-    AddClassInstance(instance, 0);
+    AddClassInstance(instance, -1);
 
     // attributes in CIP Identity Object
     instance->vendor_id     = OPENER_DEVICE_VENDOR_ID;
@@ -155,9 +178,9 @@ CipStatus CIP_Identity::Create()
 
 }
 
-CipStatus CIP_Identity::Shut(void)
+CipStatus CIP_Identity::Shut()
 {
-	return kCipGeneralStatusCodeSuccess;
+	return kCipStatusOk;
 }
 
 void * CIP_Identity::retrieveAttribute(CipUsint attributeNumber)

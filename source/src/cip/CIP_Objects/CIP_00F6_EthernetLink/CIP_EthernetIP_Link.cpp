@@ -14,6 +14,7 @@ void CIP_EthernetIP_Link::ConfigureMacAddress(const CipUsint* mac_address)
 
 CipStatus CIP_EthernetIP_Link::Init()
 {
+    CipStatus stat;
     if (number_of_instances == 0)
     {
         //Init class attributes from 1 to 7
@@ -30,13 +31,18 @@ CipStatus CIP_EthernetIP_Link::Init()
 
 
         // bind attributes to the instance
-        instance->instanceAttributesProperties.emplace(1, CipAttributeProperties_t{kCipUdint , sizeof(CipUdint)    , kGetableSingleAndAll, "InterfaceSpeed" } );
-        instance->instanceAttributesProperties.emplace(2, CipAttributeProperties_t{kCipDword , sizeof(CipDword)    , kGetableSingleAndAll, "InterfaceFlags" } );
-        instance->instanceAttributesProperties.emplace(3, CipAttributeProperties_t{kCip6Usint, sizeof(CipByteArray), kGetableSingleAndAll, "PhysicalAddress"} );
+        instance->instAttrInfo.emplace(1, CipAttrInfo_t{kCipUdint , sizeof(CipUdint)    , kGetableSingleAndAll, "InterfaceSpeed" } );
+        instance->instAttrInfo.emplace(2, CipAttrInfo_t{kCipDword , sizeof(CipDword)    , kGetableSingleAndAll, "InterfaceFlags" } );
+        instance->instAttrInfo.emplace(3, CipAttrInfo_t{kCip6Usint, sizeof(CipByteArray), kGetableSingleAndAll, "PhysicalAddress"} );
 
+        stat.status = kCipStatusOk;
+    }
+    else
+    {
+        stat.status = kCipStatusError;
     }
 
-    return kCipGeneralStatusCodeSuccess;
+    return stat;
 }
 
 CipStatus CIP_EthernetIP_Link::Shut ()

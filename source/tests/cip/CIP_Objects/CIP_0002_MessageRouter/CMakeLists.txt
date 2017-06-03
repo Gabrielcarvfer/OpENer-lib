@@ -1,0 +1,8 @@
+opENer_common_includes()
+
+set( CIP_TEST_SRC ./TEST_Cip_MessageRouter.cpp)
+
+add_executable( TEST_CIP_CLASS0002_MESSAGEROUTER ${CIP_TEST_SRC})
+target_link_libraries (TEST_CIP_CLASS0002_MESSAGEROUTER OpENerLib)
+
+add_test(UNITTEST_CIP_CLASS0002_MESSAGEROUTER TEST_CIP_CLASS0002_MESSAGEROUTER )

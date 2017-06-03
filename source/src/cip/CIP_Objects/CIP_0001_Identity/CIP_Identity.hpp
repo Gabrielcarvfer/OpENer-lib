@@ -3,8 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_CIPIDENTITY_H_
-#define OPENER_CIPIDENTITY_H_
+#ifndef CIP_CLASSES_IDENTITY_H
+#define CIP_CLASSES_IDENTITY_H
 
 #include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
@@ -18,26 +18,26 @@ private:
     typedef enum
     {
         // Indicates that the device has an owner
-                kOwned = 0x0001,
+        kOwned = 0x0001,
 
         // Indicates that the device is configured to do something different, than the out-of-the-box default.
-                kConfigured = 0x0004,
+        kConfigured = 0x0004,
 
         // Indicates that the device detected a fault with itself, which was thought to be recoverable.
         // The device did not switch to a faulted state.
-                kMinorRecoverableFault = 0x0100,
+        kMinorRecoverableFault = 0x0100,
 
         // Indicates that the device detected a fault with itself, which was thought to be recoverable.
         // The device did not switch to a faulted state.
-                kMinorUncoverableFault = 0x0200,
+        kMinorUncoverableFault = 0x0200,
 
         // Indicates that the device detected a fault with itself,which was thought to be recoverable.
         // The device changed to the "Major Recoverable Fault" state
-                kMajorRecoveralbeFault = 0x0400,
+        kMajorRecoveralbeFault = 0x0400,
 
         // Indicates that the device detected a fault with itself,which was thought to be recoverable.
         // The device changed to the "Major Unrecoverable Fault" state
-                kMajorUnrecoverableFault = 0x0800
+        kMajorUnrecoverableFault = 0x0800
 
     } CipIdentityStatus_e;
 
@@ -87,6 +87,8 @@ private:
             } bitfield_u;
     } identityStatus_t;
 
+
+
     void * retrieveAttribute(CipUsint attributeNumber);
     CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 public:
@@ -95,17 +97,17 @@ public:
     static void SetDeviceSerialNumber(CipUdint serial_number);
 
     // Object instance attributes 1 to 18
-    CipUint          vendor_id;
-    CipUint          device_type;
-    CipUint          product_code;
-    CipRevision      revision;
-    identityStatus_t status;
-    CipUint          serial_number;
-    CipShortString   product_name;
-    CipUsint         state;
-    CipUint          configurationConsistencyVal;
-    CipUsint         heartbeatInterval;
-    activeLanguage_t activeLanguage;
+    CipUint            vendor_id;
+    CipUint            device_type;
+    CipUint            product_code;
+    identityRevision_t revision;
+    identityStatus_t   status;
+    CipUint            serial_number;
+    CipShortString     product_name;
+    CipUsint           state;
+    CipUint            configurationConsistencyVal;
+    CipUsint           heartbeatInterval;
+    activeLanguage_t   activeLanguage;
     std::vector<activeLanguage_t> supporterLanguageList;
     CipString/*stringi?*/ internationalProductName;
     semaphore_t      semaphore;
@@ -124,4 +126,4 @@ public:
     static CipStatus Init (void);
     static CipStatus Shut (void);
 };
-#endif /* OPENER_CIPIDENTITY_H_ */
+#endif /* CIP_CLASSES_IDENTITY_H */

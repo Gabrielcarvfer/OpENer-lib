@@ -86,10 +86,11 @@ typedef enum
 class CipStatus
 {
     public:
-        CipStatus(CipUsint status=kCipStatusOk, CipUsint extended_status=0x00){status = status; extended_status = extended_status;};
-        ~CipStatus(){};
+        CipStatus(CipUsint status=kCipStatusOk, CipDint extended_status=0x00)
+        {this->status = status; this->extended_status = extended_status;};
+        ~CipStatus() = default;
         CipUsint status;
-        CipUdint extended_status;
+        CipDint extended_status;
 };
 
 /** @brief Communication direction of an UDP socket; consuming is receiver,

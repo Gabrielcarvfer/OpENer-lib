@@ -8,14 +8,18 @@
 
 int main()
 {
-	CIP_Identity::Init();
+	if (CIP_Identity::Init().status == kCipStatusOk)
+	{
 
-	CIP_Identity * identity_instance = (CIP_Identity*)CIP_Identity::GetInstance(0);
+		CIP_Identity *identity_instance = (CIP_Identity *) CIP_Identity::GetInstance(0);
 
-	identity_instance->product_code = 0;
+		identity_instance->product_code = 0;
 
-	std::cout << "prodcode " << identity_instance->product_code << " " << std::endl;
-	CIP_Identity::Shut();
+		std::cout << "prodcode " << identity_instance->product_code << " " << std::endl;
+		CIP_Identity::Shut();
 
-    return 0;
+		return 0;
+	}
+	else
+		return -1;
 }

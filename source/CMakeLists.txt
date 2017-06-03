@@ -85,7 +85,7 @@ set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall" )
 opener_common_includes()
 
 add_subdirectory( src )
-add_executable(OpENerMain src/main.cpp)
+add_executable(OpENerMain src/main.cpp tests/cip/CIP_Objects/CIP_0002_MessageRouter/TEST_CIP_MessageRouter.cpp tests/cip/CIP_Objects/CIP_0002_MessageRouter/TEST_CIP_MessageRouter.h)
 
 
 if(__WIN32__)

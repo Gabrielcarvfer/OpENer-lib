@@ -12,6 +12,7 @@
 // create the CIP Assembly object with zero instances
 CipStatus CIP_Assembly::Init(void)
 {
+    CipStatus stat;
     if (number_of_instances == 0)
     {
         class_id = kCipAssemblyClassCode;
@@ -22,12 +23,18 @@ CipStatus CIP_Assembly::Init(void)
 
         object_Set.emplace(object_Set.size(), instance);
 
-        instance->classAttributesProperties.emplace(3, CipAttributeProperties_t{kCipByteArray, sizeof(CipByteArray), kGetableSingle, "AssemblyByteArray"});
+        instance->classAttrInfo.emplace(3, CipAttrInfo_t{kCipByteArray, sizeof(CipByteArray), kGetableSingle, "AssemblyByteArray"});
 
         /* Attribute 4 Number of bytes in Attribute 3 */
-        instance->classAttributesProperties.emplace(4, CipAttributeProperties_t{kCipUint, sizeof(CipUint), kGetableSingle, "AssemblyByteArrayLength"});
+        instance->classAttrInfo.emplace(4, CipAttrInfo_t{kCipUint, sizeof(CipUint), kGetableSingle, "AssemblyByteArrayLength"});
+
+        stat.status = kCipStatusOk;
     }
-    return kCipGeneralStatusCodeSuccess;
+    else
+    {
+        stat.status = kCipStatusError;
+    }
+    return stat;
 }
 
 CipStatus CIP_Assembly::Shut(void)

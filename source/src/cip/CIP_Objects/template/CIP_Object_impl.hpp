@@ -23,9 +23,9 @@ template<class T> CipUint     CIP_Object<T>::maximum_id_number_class_attributes;
 template<class T> CipUint     CIP_Object<T>::maximum_id_number_instance_attributes;
 template<class T> std::map<CipUdint, const T *> CIP_Object<T>::object_Set;
 
-template<class T> std::map<CipUsint, CipAttributeProperties_t> CIP_Object<T>::classAttributesProperties;
+template<class T> std::map<CipUsint, CipAttrInfo_t> CIP_Object<T>::classAttrInfo;
 template<class T> std::map<CipUsint, CipServiceProperties_t>   CIP_Object<T>::classServicesProperties;
-template<class T> std::map<CipUsint, CipAttributeProperties_t> CIP_Object<T>::instanceAttributesProperties;
+template<class T> std::map<CipUsint, CipAttrInfo_t> CIP_Object<T>::instAttrInfo;
 template<class T> std::map<CipUsint, CipServiceProperties_t>   CIP_Object<T>::instanceServicesProperties;
 
 //Methods
@@ -78,9 +78,25 @@ CipDint CIP_Object<T>::GetInstanceNumber(const T  * instance)
 }
 
 template <class T>
-bool CIP_Object<T>::AddClassInstance(T  * instance, CipUdint position)
+bool CIP_Object<T>::AddClassInstance(T  * instance, CipDint position)
 {
+    //If passed position is -1, then search first free position
+    if (position == -1)
+    {
+        int i;
+        for ( i = 1; i < object_Set.size(); i++)
+        {
+            auto it = object_Set.find(i);
+            if (it == object_Set.end())
+                break;
+        }
+        position = i;
+    }
+
+    //Emplace instance
     object_Set.emplace(position,instance);
+
+    //Check if instance was added correctly
     auto it = object_Set.find(position);
     return (it != object_Set.end());
 }
@@ -119,12 +135,12 @@ void * CIP_Object<T>::GetCipAttribute(CipUsint attribute_number)
 	bool isClass = this->id == 0;
 	if (isClass)
 	{
-		if(classAttributesProperties.find(attribute_number) != classAttributesProperties.end())
+		if(classAttrInfo.find(attribute_number) != classAttrInfo.end())
 			return this->retrieveAttribute(attribute_number);
 	}
 	else
 	{
-		if (instanceAttributesProperties.find(attribute_number) != instanceAttributesProperties.end())
+		if (instAttrInfo.find(attribute_number) != instAttrInfo.end())
 			return this->retrieveAttribute(attribute_number);
 	}
 
@@ -139,7 +155,7 @@ CipStatus CIP_Object<T>::GetAttributeSingle(CipMessageRouterRequest_t* message_r
     // Mask for filtering get-ability
     CipByte get_mask;
 
-    CipAttributeProperties_t* attribute = &instanceAttributesProperties.at(message_router_request->request_path.attribute_number);
+    CipAttrInfo_t* attribute = &instAttrInfo.at(message_router_request->request_path.attribute_number);
     CipByte* message = (CipByte*)&message_router_response->response_data[0];
 
     message_router_response->reply_service = (0x80 | message_router_request->service);
@@ -197,7 +213,7 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
     }
 
     CipServiceProperties_t * serviceProperties;
-    CipAttributeProperties_t * attributeProperties;
+    CipAttrInfo_t * attributeProperties;
 
     auto it = instanceServicesProperties.find(kGetAttributeAll);
 
@@ -213,8 +229,8 @@ CipStatus CIP_Object<T>::GetAttributeAll(CipMessageRouterRequest_t* message_rout
         }
         else
         {
-            auto attrIt = instanceAttributesProperties.begin ();
-            for (; attrIt != instanceAttributesProperties.end(); attrIt++) // for each instance attribute of this class
+            auto attrIt = instAttrInfo.begin ();
+            for (; attrIt != instAttrInfo.end(); attrIt++) // for each instance attribute of this class
             {
                 attributeProperties = attrIt->second;
                 int attrNum = attrIt->first;
@@ -282,6 +298,23 @@ CipStatus CIP_Object<T>::SetAttributeAll(CipMessageRouterRequest_t * message_rou
     return kCipGeneralStatusCodeSuccess;
 }
 
+template <class T>
+void CIP_Object<T>::RegisterGenericClassAttributes()
+{
+    if (classAttrInfo.size() == 0)
+    {
+        //Register class attributes
+        classAttrInfo.emplace(1, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "Revision"});
+        classAttrInfo.emplace(2, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "Max Instance"});
+        classAttrInfo.emplace(3, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "Number of Instances"});
+        //classAttrInfo.emplace(4 , CipAttrInfo_t{kCipUsintUsint, SZ(identityRevision_t), kGetableSingleAndAll, "Optional attribute list"});
+        //classAttrInfo.emplace(5 , CipAttrInfo_t{kCipWord  , SZ(CipWord), kGetableSingleAndAll, "Optional service list"});
+        classAttrInfo.emplace(6, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll,
+                                               "Maximum ID Number Class Attributes"});
+        classAttrInfo.emplace(7, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll,
+                                               "Maximum ID Number Instance Attributes"});
+    }
+}
 
 
 #endif

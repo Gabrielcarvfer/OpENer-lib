@@ -2,8 +2,8 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 25/01/17.
 //
 
-#ifndef OPENERMAIN_CIP_CONNECTION_H
-#define OPENERMAIN_CIP_CONNECTION_H
+#ifndef CIP_CLASSES_CONNECTION_H
+#define CIP_CLASSES_CONNECTION_H
 
 #include "../template/CIP_Object.hpp"
 #include "CIP_Connection_LinkConsumer.hpp"
@@ -183,4 +183,4 @@ private:
 };
 
 
-#endif //OPENERMAIN_CIP_CONNECTION_H
+#endif //CIP_CLASSES_CONNECTION_H

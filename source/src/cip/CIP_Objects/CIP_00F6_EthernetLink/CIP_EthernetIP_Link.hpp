@@ -3,8 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_CIPETHERNETLINK_H_
-#define OPENER_CIPETHERNETLINK_H_
+#ifndef CIP_CLASSES_ETHERNETLINK_H
+#define CIP_CLASSES_ETHERNETLINK_H
 
 #include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"
@@ -147,4 +147,4 @@ private:
     CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
 
-#endif /* OPENER_CIPETHERNETLINK_H_*/
+#endif /* CIP_CLASSES_ETHERNETLINK_H*/

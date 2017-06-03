@@ -17,47 +17,37 @@ CipStatus CIP_Connection::Init()
         class_name = "Connection";
         revision = 1;
 
-        CIP_Connection *instance = new CIP_Connection();
-
-		//Setup class attributes
-        //Chapter 4 vol 1 - Common CIP attributes added on template itself
-        instance->classAttributesProperties.emplace(1, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "Revision"                         });
-        instance->classAttributesProperties.emplace(2, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "MaxInstances"                     });
-        instance->classAttributesProperties.emplace(3, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "NumberOfInstances"                });
-        instance->classAttributesProperties.emplace(4, CipAttributeProperties_t{ kCipUdint, sizeof(CipUdint), kGetableSingleAndAll, "OptionalAttributeList"            });
-        instance->classAttributesProperties.emplace(5, CipAttributeProperties_t{ kCipUdint, sizeof(CipUdint), kGetableSingleAndAll, "OptionalServiceList"              });
-        instance->classAttributesProperties.emplace(6, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "MaximumIDNumberClassAttributes"   });
-        instance->classAttributesProperties.emplace(7, CipAttributeProperties_t{ kCipUint , sizeof(CipUint) , kGetableSingleAndAll, "MaximumIDNumberInstanceAttributes"});
-	
+        RegisterGenericClassAttributes();
         //Chapter 5 vol 5
         //todo: recheck sizes
-        //instance->InsertAttribute(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
-        //instance->InsertAttribute(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
+        //classAttrInfo.emplace(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
+        //classAttrInfo.emplace(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
 
+
+        CIP_Connection *instance = new CIP_Connection();
+        AddClassInstance(instance,0);
 
 		//Setup instances attributes
 		//Chapter 3-4.4 vol 1
-		instance->instanceAttributesProperties.emplace( 1, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "State"                                 });
-		instance->instanceAttributesProperties.emplace( 2, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Instance_type"                         });
-		instance->instanceAttributesProperties.emplace( 3, CipAttributeProperties_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "TransportClass_trigger"                });
-		instance->instanceAttributesProperties.emplace( 4, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_produced_connection_id"      });
-		instance->instanceAttributesProperties.emplace( 5, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_consumed_connection_id"      });
-		instance->instanceAttributesProperties.emplace( 6, CipAttributeProperties_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "DeviceNet_initial_comm_characteristics"});
-		instance->instanceAttributesProperties.emplace( 7, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_size"              });
-		instance->instanceAttributesProperties.emplace( 8, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_size"              });
-		instance->instanceAttributesProperties.emplace( 9, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Expected_packet_rate"                  });
-		instance->instanceAttributesProperties.emplace(10, CipAttributeProperties_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_produced_connection_id"            });
-		instance->instanceAttributesProperties.emplace(11, CipAttributeProperties_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_consumed_connection_id"            });
-		instance->instanceAttributesProperties.emplace(12, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Watchdog_timeout_action"               });
-		instance->instanceAttributesProperties.emplace(13, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_path_length"       });
-		instance->instanceAttributesProperties.emplace(14, CipAttributeProperties_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Produced_connection_path"              });
-		instance->instanceAttributesProperties.emplace(15, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_path_length"       });
-		instance->instanceAttributesProperties.emplace(16, CipAttributeProperties_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Consumed_connection_path"              });
-		instance->instanceAttributesProperties.emplace(17, CipAttributeProperties_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Production_inhibit_time"               });
-		instance->instanceAttributesProperties.emplace(18, CipAttributeProperties_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Connection_timeout_multiplier"         });
-		instance->instanceAttributesProperties.emplace(19, CipAttributeProperties_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "Connection_binding_list"               });
-
-        object_Set.emplace(object_Set.size(), instance);
+		instAttrInfo.emplace( 1, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "State"                                 });
+		instAttrInfo.emplace( 2, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Instance_type"                         });
+		instAttrInfo.emplace( 3, CipAttrInfo_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "TransportClass_trigger"                });
+		instAttrInfo.emplace( 4, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_produced_connection_id"      });
+		instAttrInfo.emplace( 5, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_consumed_connection_id"      });
+		instAttrInfo.emplace( 6, CipAttrInfo_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "DeviceNet_initial_comm_characteristics"});
+		instAttrInfo.emplace( 7, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_size"              });
+		instAttrInfo.emplace( 8, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_size"              });
+		instAttrInfo.emplace( 9, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Expected_packet_rate"                  });
+		instAttrInfo.emplace(10, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_produced_connection_id"            });
+		instAttrInfo.emplace(11, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_consumed_connection_id"            });
+		instAttrInfo.emplace(12, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Watchdog_timeout_action"               });
+		instAttrInfo.emplace(13, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_path_length"       });
+		instAttrInfo.emplace(14, CipAttrInfo_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Produced_connection_path"              });
+		instAttrInfo.emplace(15, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_path_length"       });
+		instAttrInfo.emplace(16, CipAttrInfo_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Consumed_connection_path"              });
+		instAttrInfo.emplace(17, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Production_inhibit_time"               });
+		instAttrInfo.emplace(18, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Connection_timeout_multiplier"         });
+		instAttrInfo.emplace(19, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "Connection_binding_list"               });
 
         //Class services
         classServicesProperties.emplace(kConnectionServiceCreate                      , CipServiceProperties_t{ "Create"            });

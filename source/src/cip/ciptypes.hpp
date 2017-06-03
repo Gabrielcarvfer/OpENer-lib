@@ -12,6 +12,7 @@
 #include <string>
 #include <vector>
 
+#define SZ(x) (sizeof(x))
 /** @brief Segment type Enum
  *
  * Bits 7-5 in the Segment Type/Format byte
@@ -245,11 +246,7 @@ typedef struct
 
 
 
-typedef struct
-{
-    CipUsint major_revision;
-    CipUsint minor_revision;
-} CipRevision;
+
 
 
 
@@ -353,6 +350,12 @@ typedef enum
     kCipNotificationSent,
     kCipNotificationFailed
 } CipNotification;
+
+typedef struct
+{
+    CipUsint major_revision;
+    CipUsint minor_revision;
+} identityRevision_t;
 
 #define SET_BIT_N(n)       ((0x01)<< n)
 #define X_SET_BIT_N(n,x)   (SET_BIT_N(n)|x)

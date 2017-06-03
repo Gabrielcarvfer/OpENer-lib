@@ -3,8 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_CIPASSEMBLY_H_
-#define OPENER_CIPASSEMBLY_H_
+#ifndef CIP_CLASSES_ASSEMBLY_H
+#define CIP_CLASSES_ASSEMBLY_H
 
 #include "../../ciptypes.hpp"
 #include "../template/CIP_Object.hpp"

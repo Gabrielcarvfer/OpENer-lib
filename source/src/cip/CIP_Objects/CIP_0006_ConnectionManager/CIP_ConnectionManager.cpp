@@ -26,7 +26,7 @@ CipUdint CIP_ConnectionManager::GetConnectionId (void)
 
 CipStatus CIP_ConnectionManager::Init ()
 {
-    CipStatus status;
+    CipStatus stat;
     if (number_of_instances == 0)
     {
 
@@ -41,9 +41,13 @@ CipStatus CIP_ConnectionManager::Init ()
         object_Set.emplace(object_Set.size(), instance);
 
         //g_incarnation_id = ((CipUdint) unique_connection_id) << 16;
-        return kCipGeneralStatusCodeSuccess;
+        stat.status = kCipStatusOk;
     }
-    return kCipStatusError;
+    else
+    {
+        stat.status = kCipStatusError;
+    }
+    return stat;
 }
 
 

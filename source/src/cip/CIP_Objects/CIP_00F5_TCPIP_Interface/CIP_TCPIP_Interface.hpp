@@ -2,8 +2,8 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 25/01/17.
 //
 
-#ifndef OPENER_CIPTCPIPINTERFACE_H_
-#define OPENER_CIPTCPIPINTERFACE_H_
+#ifndef CIP_CLASSES_TCPIPINTERFACE_H
+#define CIP_CLASSES_TCPIPINTERFACE_H
 
 /**
  * @brief Public interface of the TCP/IP Interface Object
@@ -168,4 +168,4 @@ private:
     void * retrieveAttribute(CipUsint attributeNumber);
     CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 };
-#endif /* OPENER_CIPTCPIPINTERFACE_H_ */
+#endif /* CIP_CLASSES_TCPIPINTERFACE_H */

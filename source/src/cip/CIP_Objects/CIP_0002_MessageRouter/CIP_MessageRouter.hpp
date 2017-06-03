@@ -3,8 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_CIPMESSAGEROUTER_H_
-#define OPENER_CIPMESSAGEROUTER_H_
+#ifndef CIP_CLASSES_MESSAGEROUTER_H
+#define CIP_CLASSES_MESSAGEROUTER_H
 
 
 #include "../../ciptypes.hpp"
@@ -30,18 +30,25 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
            kCipSymbolicPathSegmentError           = 2 //syntax can't be understood by the node
         } CipSymbolicPath_e;
 
-        static CipMessageRouterRequest_t  *g_message_router_request;
-        static CipMessageRouterResponse_t *g_message_router_response;
+        static CipMessageRouterRequest_t  g_message_router_request;
+        static CipMessageRouterResponse_t g_message_router_response;
 
-        static std::vector<CipUsint> *g_message_data_reply_buffer;
+        static std::vector<CipUsint> g_message_data_reply_buffer;
         /** @brief Initialize the data structures of the message router
          *  @return kCipGeneralStatusCodeSuccess if class was initialized, otherwise kCipStatusError
          */
-        static CipStatus Init (void);
-        static CipStatus Shut (void);
+        static CipStatus Init ();
+        static CipStatus Shut ();
+
+        CIP_MessageRouter()=default;
+        ~CIP_MessageRouter()=default;
+        static CipStatus Create();
+        void * retrieveAttribute(CipUsint attributeNumber);
+        CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
 
 
-        /** @brief A class registry
+
+    /** @brief A class registry
          *
          * A std::map is used as the registry of classes known to the message router
          * for small devices with very limited memory it could make sense to change this list into an
@@ -125,8 +132,8 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 
     //CIP services
     static CipStatus symbolic_translation(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response);
-    static std::map<CipUdint, void*> *registered_objects;
+    static std::map<CipUdint, void*> registered_objects;
 };
 
 
-#endif /* OPENER_CIPMESSAGEROUTER_H_ */
+#endif /* CIP_CLASSES_MESSAGEROUTER_H */

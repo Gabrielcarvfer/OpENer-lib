@@ -14,49 +14,65 @@
 #define ROUTER_MESSAGE_BUFFER_SIZE 100
 
 
-CipMessageRouterRequest_t  *CIP_MessageRouter::g_message_router_request;
-CipMessageRouterResponse_t *CIP_MessageRouter::g_message_router_response;
-std::vector<CipUsint>      *CIP_MessageRouter::g_message_data_reply_buffer;
-std::map<CipUdint, void*> *CIP_MessageRouter::registered_objects;
+CipMessageRouterRequest_t  CIP_MessageRouter::g_message_router_request;
+CipMessageRouterResponse_t CIP_MessageRouter::g_message_router_response;
+std::vector<CipUsint>      CIP_MessageRouter::g_message_data_reply_buffer;
+std::map<CipUdint, void*>  CIP_MessageRouter::registered_objects;
 
 //Methods
 CipStatus CIP_MessageRouter::Init()
 {
-
+    CipStatus stat;
 
     if (number_of_instances == 0)
     {
         //Init static variables
-        g_message_data_reply_buffer->reserve (ROUTER_MESSAGE_BUFFER_SIZE);
-
-        registered_objects = new std::map<CipUdint, void*>();
+        g_message_data_reply_buffer.reserve (ROUTER_MESSAGE_BUFFER_SIZE);
 
         //Build class instance
         max_instances = 1;
         revision = 1;
         class_name = "message router";
         class_id = kCipMessageRouterClassCode;
-        /*message_router = CIP_ClassInstance(kCipMessageRouterClassCode, / class ID
-                                                           0, // # of class attributes
-                                                  0xffffffff, // class getAttributeAll mask
-                                                           0, // # of class services
-                                                           0, // # of instance attributes
-                                                  0xffffffff, // instance getAttributeAll mask
-                                                           0, // # of instance services
-                                                           1, // # of instances
-                                            "message router", // class name
-                                                           1  // revision
-                                  );
-        */
+
+        RegisterGenericClassAttributes();
+
+        CIP_MessageRouter *instance = new CIP_MessageRouter();
+        AddClassInstance(instance, 0);
+
+
+        //Register instance attributes
+        //instAttrInfo.emplace(1 , CipAttrInfo_t{kCipUsint , SZ(object_list_struct), kGetableSingleAndAll, "Object_list"});
+        //instAttrInfo.emplace(2 , CipAttrInfo_t{kCipUint  , SZ(CipUint), kGetableSingleAndAll, "Number Available"});
+        //instAttrInfo.emplace(3 , CipAttrInfo_t{kCipUsint , SZ(CipUint), kGetableSingleAndAll, "Number Active"});
+        //instAttrInfo.emplace(4 , CipAttrInfo_t{kCipUsint , SZ(CipUintArray), kGetableSingleAndAll, "Active Connections"});
 
 
         /* reserved for future use -> set to zero */
-        g_message_router_response->reserved = 0;
+        g_message_router_response.reserved = 0;
 
         // set reply buffer, using a fixed buffer (about 100 bytes)
-        g_message_router_response->response_data = g_message_data_reply_buffer;
+        g_message_router_response.response_data = &g_message_data_reply_buffer;
+
+        stat.status = kCipStatusOk;
     }
-    return kCipGeneralStatusCodeSuccess;
+    else
+    {
+        stat.status = kCipStatusError;
+    }
+    return stat;
+}
+
+CipStatus CIP_MessageRouter::Create()
+{
+    CIP_MessageRouter *instance = new CIP_MessageRouter();
+    AddClassInstance(instance, -1);
+
+    // attributes in CIP Message Router Object
+    CipStatus stat;
+    stat.status = kCipStatusOk;
+    stat.extended_status = GetInstanceNumber(instance);
+    return stat;
 }
 
 void * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
@@ -88,21 +104,21 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     CipStatus cip_status = kCipGeneralStatusCodeSuccess;
     CipStatus nStatus;
 
-    g_message_router_response->response_data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
+    g_message_router_response.response_data = &g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
 
     OPENER_TRACE_INFO("notifyMR: routing unconnected message\n");
     /* error from create MR structure*/
-    nStatus = CreateMessageRouterRequestStructure(data, (CipInt) data_length, g_message_router_request);
+    nStatus = CreateMessageRouterRequestStructure(data, (CipInt) data_length, &g_message_router_request);
 
     if ( kCipGeneralStatusCodeSuccess != nStatus.status )
     {
         OPENER_TRACE_ERR("notifyMR: error from createMRRequeststructure\n");
 
-        g_message_router_response->general_status = nStatus.status;
-        g_message_router_response->size_additional_status = 0;
-        g_message_router_response->reserved = 0;
+        g_message_router_response.general_status = nStatus.status;
+        g_message_router_response.size_additional_status = 0;
+        g_message_router_response.reserved = 0;
         //g_message_router_response->data_length = 0;
-        g_message_router_response->reply_service = (CipUsint) (0x80 | g_message_router_request->service);
+        g_message_router_response.reply_service = (CipUsint) (0x80 | g_message_router_request.service);
     }
     else
     {
@@ -116,17 +132,17 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
                 "notifyMR: sending CIP_ERROR_OBJECT_DOES_NOT_EXIST reply, class id 0x%x is not registered\n",
                 (unsigned)g_message_router_request.request_path.class_id);
 
-            g_message_router_response->general_status = kCipGeneralStatusCodePathDestinationUnknown; /*according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;*/
-            g_message_router_response->size_additional_status = 0;
-            g_message_router_response->reserved = 0;
+            g_message_router_response.general_status = kCipGeneralStatusCodePathDestinationUnknown; /*according to the test tool this should be the correct error flag instead of CIP_ERROR_OBJECT_DOES_NOT_EXIST;*/
+            g_message_router_response.size_additional_status = 0;
+            g_message_router_response.reserved = 0;
             //g_message_router_response->data_length = 0;
-            g_message_router_response->reply_service = (CipUsint)(0x80 | g_message_router_request->service);
+            g_message_router_response.reply_service = (CipUsint)(0x80 | g_message_router_request.service);
         }
         else
         {
             /* call notify function from Object with ClassID (gMRRequest.RequestPath.ClassID)
             object will or will not make an reply into gMRResponse*/
-            g_message_router_response->reserved = 0;
+            g_message_router_response.reserved = 0;
             //OPENER_ASSERT(nullptr != registered_object->CIP_ClassInstance);
 
             OPENER_TRACE_INFO("notifyMR: calling notify function of class '%s'\n",
@@ -264,7 +280,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
     }
 
     //Find registered class/CIP_Object
-    if (registered_objects->find(request->request_path.class_id) == registered_objects->end())
+    if (registered_objects.find(request->request_path.class_id) == registered_objects.end())
     {
         //todo: class not registered, return error
         stat.extended_status = 0;
@@ -272,7 +288,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
         return stat;
     }
 
-    CIP_Object * ptr = (CIP_Object*)registered_objects->at(request->request_path.class_id);
+    CIP_Object * ptr = (CIP_Object*)registered_objects.at(request->request_path.class_id);
 
     //Pick the instance of CIP_Object
     if(ptr->GetInstance (request->request_path.instance_number) == nullptr)
@@ -312,4 +328,29 @@ CipStatus CIP_MessageRouter::symbolic_translation(CipMessageRouterRequest_t *req
 CipStatus CIP_MessageRouter::Shut()
 {
 
+}
+
+void * CIP_MessageRouter::retrieveAttribute(CipUsint attributeNumber)
+{
+    if (this->id == 0)
+    {
+        switch(attributeNumber)
+        {
+            case 1:return &this->revision;
+            //todo: put rest of attributes
+            default:
+                return nullptr;
+        }
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
+CipStatus CIP_MessageRouter::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
+{
+    CipStatus stat;
+    stat.status = kCipGeneralStatusCodeServiceNotSupported;
+    return stat;
 }

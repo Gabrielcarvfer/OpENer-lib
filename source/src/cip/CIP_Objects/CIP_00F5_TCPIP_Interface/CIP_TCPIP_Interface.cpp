@@ -120,23 +120,24 @@ CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest_t* 
 */
 CipStatus CIP_TCPIP_Interface::Init()
 {
-    CIP_TCPIP_Interface *instance;
+    CipStatus stat;
+
 
     if (number_of_instances == 0)
     {
+        //Static variables
         class_name = "TCP/IP interface";
         class_id = kCipTcpIpInterfaceClassCode;
-
-        //Static variables
         revision = 0;
         g_time_to_live_value = 1;
 
+        CIP_TCPIP_Interface *instance;
         instance = new CIP_TCPIP_Interface ();
 
         //Class attributes from Vol 2 Chapter 5
-        instance->classAttributesProperties.emplace (1, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Revision" });
-        instance->classAttributesProperties.emplace (2, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "MaxInstances" });
-        instance->classAttributesProperties.emplace (3, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "NumberOfInstances" });
+        instance->classAttrInfo.emplace (1, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Revision" });
+        instance->classAttrInfo.emplace (2, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "MaxInstances" });
+        instance->classAttrInfo.emplace (3, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "NumberOfInstances" });
 
         //Class optional attributes (4-7) from Vol 1 Chapter 4
 
@@ -145,25 +146,27 @@ CipStatus CIP_TCPIP_Interface::Init()
         //Setup instance attributes
         //Instance attributes
         //TODO: fix attribute access
-        instance->instanceAttributesProperties.emplace(1 , CipAttributeProperties_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
-        instance->instanceAttributesProperties.emplace(2 , CipAttributeProperties_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
-        instance->instanceAttributesProperties.emplace(3 , CipAttributeProperties_t{ kCipDword                            , SZ(CipDword)                         , kSetAndGetAble      , "" });
-        instance->instanceAttributesProperties.emplace(4 , CipAttributeProperties_t{ SZ(physical_link_object_t)           , SZ(physical_link_object_t)           , kGetableSingleAndAll, "PhysicalLinkObject" });
-        instance->instanceAttributesProperties.emplace(5 , CipAttributeProperties_t{ SZ(interface_configuration_t)        , SZ(interface_configuration_t)        , kSetAndGetAble      , "InterfaceConfiguration" });
-        instance->instanceAttributesProperties.emplace(6 , CipAttributeProperties_t{ kCipString                           , SZ(CipString)                        , kSetAndGetAble      , "" });
-        //instance->classAttributesProperties.emplace(7, //CipAttributeProperties_t{ TODO:8 octets safety_network_number
-        instance->instanceAttributesProperties.emplace(8 , CipAttributeProperties_t{ kCipUsint                            , SZ(CipUsint)                         , kSetAndGetAble      , "" });
-        instance->instanceAttributesProperties.emplace(9 , CipAttributeProperties_t{ SZ(multicast_address_configuration_t), SZ(multicast_address_configuration_t), kSetAndGetAble      , "MulticastAddressConfiguration"});
-        instance->instanceAttributesProperties.emplace(10, CipAttributeProperties_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
-        instance->instanceAttributesProperties.emplace(11, CipAttributeProperties_t{ SZ(last_conflict_detected_t)         , SZ(last_conflict_detected_t)         , kSetable            , "LastConflictDetected" });
-        instance->instanceAttributesProperties.emplace(12, CipAttributeProperties_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
+        instance->instAttrInfo.emplace(1 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
+        instance->instAttrInfo.emplace(2 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
+        instance->instAttrInfo.emplace(3 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kSetAndGetAble      , "" });
+        instance->instAttrInfo.emplace(4 , CipAttrInfo_t{ SZ(physical_link_object_t)           , SZ(physical_link_object_t)           , kGetableSingleAndAll, "PhysicalLinkObject" });
+        instance->instAttrInfo.emplace(5 , CipAttrInfo_t{ SZ(interface_configuration_t)        , SZ(interface_configuration_t)        , kSetAndGetAble      , "InterfaceConfiguration" });
+        instance->instAttrInfo.emplace(6 , CipAttrInfo_t{ kCipString                           , SZ(CipString)                        , kSetAndGetAble      , "" });
+        //instance->classAttrInfo.emplace(7, //CipAttrInfo_t{ TODO:8 octets safety_network_number
+        instance->instAttrInfo.emplace(8 , CipAttrInfo_t{ kCipUsint                            , SZ(CipUsint)                         , kSetAndGetAble      , "" });
+        instance->instAttrInfo.emplace(9 , CipAttrInfo_t{ SZ(multicast_address_configuration_t), SZ(multicast_address_configuration_t), kSetAndGetAble      , "MulticastAddressConfiguration"});
+        instance->instAttrInfo.emplace(10, CipAttrInfo_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
+        instance->instAttrInfo.emplace(11, CipAttrInfo_t{ SZ(last_conflict_detected_t)         , SZ(last_conflict_detected_t)         , kSetable            , "LastConflictDetected" });
+        instance->instAttrInfo.emplace(12, CipAttrInfo_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
+
+        stat.status = kCipStatusOk;
     }
     else
     {
-        return kCipStatusError;
+        stat.status = kCipStatusError;
     }
 
-    return kCipGeneralStatusCodeSuccess;
+    return stat;
 }
 
 CipStatus CIP_TCPIP_Interface::Shut()

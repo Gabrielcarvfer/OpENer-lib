@@ -14,7 +14,7 @@ public:
 	static CipUint vendor_id_;
 	static CipUint device_type_;
 	static CipUint product_code_;
-	static CipRevision revision_;
+	static identityRevision_t revision_;
 	static CipUint status_;
 	static CipUdint serial_number_;
 	static CipShortString product_name_;

@@ -14,7 +14,7 @@ typedef struct
 	CipUsint attributeSize;
 	CipAttributeFlag attributeFlag;
 	std::string attributeName;
-}CipAttributeProperties_t;
+}CipAttrInfo_t;
 
 
 typedef struct
@@ -30,7 +30,7 @@ class CIP_Object
         static const T * GetClass();
         static CipUdint GetNumberOfInstances();
         static CipDint  GetInstanceNumber(const T * instance);
-        static bool AddClassInstance(T * instance, CipUdint position);
+        static bool AddClassInstance(T * instance, CipDint position);
         static bool RemoveClassInstance(T * instance);
         static bool RemoveClassInstance(CipUdint position);
 
@@ -51,9 +51,9 @@ class CIP_Object
         static CipUint  maximum_id_number_instance_attributes;
 		
 
-		static std::map<CipUsint, CipAttributeProperties_t> classAttributesProperties;
+		static std::map<CipUsint, CipAttrInfo_t> classAttrInfo;
 		static std::map<CipUsint, CipServiceProperties_t>   classServicesProperties;
-		static std::map<CipUsint, CipAttributeProperties_t> instanceAttributesProperties;
+		static std::map<CipUsint, CipAttrInfo_t> instAttrInfo;
 		static std::map<CipUsint, CipServiceProperties_t>   instanceServicesProperties;
 
 		
@@ -169,7 +169,9 @@ class CIP_Object
     CipStatus SetAttributeAll(CipMessageRouterRequest_t * message_router_request,
                               CipMessageRouterResponse_t* message_router_response);
 
-	
+
+	//Register all 7 generic class attributes
+	static void RegisterGenericClassAttributes();
 
     //Instance stuff
     CipUint id;
@@ -178,7 +180,7 @@ class CIP_Object
         static T * class_ptr;
         static std::map<CipUdint, const T *> object_Set;
 		virtual void * retrieveAttribute(CipUsint attributeNumber) = 0;
-		virtual CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)  = 0;
+		virtual CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp) = 0;
 
 
 };

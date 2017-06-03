@@ -3,8 +3,8 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#ifndef OPENER_CIP_CONNECTION_H_
-#define OPENER_CIP_CONNECTION_H_
+#ifndef CIP_CLASSES_CONNECTIONMANAGER_H
+#define CIP_CLASSES_CONNECTIONMANAGER_H
 
 
 #include <map>

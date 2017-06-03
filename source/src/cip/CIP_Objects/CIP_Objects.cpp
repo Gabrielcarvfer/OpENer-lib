@@ -15,82 +15,99 @@
 
 int CIP_Objects::InitObjects()
 {
-#ifdef OPENER_CIPIDENTITY_H_
-    //init CIP Identiry object and return object ID in case of failure
-    if (CIP_Identity::Init().status != kCipGeneralStatusCodeSuccess)
+
+#ifdef CIP_CLASSES_IDENTITY_H
+    //init CIP Identity object and return object ID in case of failure
+    if (CIP_Identity::Init().status != kCipStatusOk)
         return CIP_Identity::class_id;
 #endif
 
-#ifdef OPENER_CIPMESSAGEROUTER_H_
-    if (CIP_MessageRouter::Init().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_MESSAGEROUTER_H
+    if (CIP_MessageRouter::Init().status != kCipStatusOk)
         return CIP_MessageRouter::class_id;
 #endif
 
-    //if (CIP_DeviceNET_Link::Init().status != kCipGeneralStatusCodeSuccess)
+    //if (CIP_DeviceNET_Link::Init().status != kCipStatusOk)
     //    return CIP_DeviceNET_Link::class_id;
 
-#ifdef OPENER_CIPASSEMBLY_H_
-    if (CIP_Assembly::Init().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_ASSEMBLY_H
+    if (CIP_Assembly::Init().status != kCipStatusOk)
         return CIP_Assembly ::class_id;
 #endif
 
-#ifdef OPENERMAIN_CIP_CONNECTION_H
-    if (CIP_Connection::Init().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_CONNECTION_H
+    if (CIP_Connection::Init().status != kCipStatusOk)
         return CIP_Connection::class_id;
 #endif
 
-#ifdef OPENER_CIP_CONNECTION_H_
-    if (CIP_ConnectionManager::Init().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_CONNECTIONMANAGER_H
+    if (CIP_ConnectionManager::Init().status != kCipStatusOk)
         return CIP_ConnectionManager::class_id;
 #endif
 
-#ifdef OPENER_CLASSES_ANALOG_INPUT_POINT_H_
-    if (CIP_AnalogInputPoint::Init().status != kCipGeneralStatusCodeSuccess)
-        return CIP_AnalogInputPoint::class_id;
+#ifdef CIP_CLASSES_ANALOGINPUTPOINT_H
+    //if (CIP_AnalogInputPoint::Init().status != kCipStatusOk)
+    //    return CIP_AnalogInputPoint::class_id;
 #endif
 
-#ifdef OPENER_CIPTCPIPINTERFACE_H_
-    if (CIP_TCPIP_Interface::Init().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_TCPIPINTERFACE_H
+    if (CIP_TCPIP_Interface::Init().status != kCipStatusOk)
         return CIP_TCPIP_Interface::class_id;
 #endif
 
-#ifdef OPENER_CIPETHERNETLINK_H_
-    if (CIP_EthernetIP_Link::Init().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_ETHERNETLINK_H
+    if (CIP_EthernetIP_Link::Init().status != kCipStatusOk)
         return CIP_EthernetIP_Link::class_id;
 #endif
 
-    return 0; //OK
+    return kCipStatusOk;
 }
 
 int CIP_Objects::ShutObjects()
 {
-    //shut CIP Identiry object and return object ID in case of failure
-    if (CIP_Identity::Shut().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_IDENTITY_H
+    //shutdown CIP Identity object and return object ID in case of failure
+    if (CIP_Identity::Shut().status != kCipStatusOk)
         return CIP_Identity::class_id;
+#endif
 
-    if (CIP_MessageRouter::Shut().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_MESSAGEROUTER_H
+    if (CIP_MessageRouter::Shut().status != kCipStatusOk)
         return CIP_MessageRouter::class_id;
+#endif
 
-    //if (CIP_DeviceNET_Link::Shut().status != kCipGeneralStatusCodeSuccess)
+    //if (CIP_DeviceNET_Link::Shut().status != kCipStatusOk)
     //    return CIP_DeviceNET_Link::class_id;
 
-    if (CIP_Assembly::Shut().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_ASSEMBLY_H
+    if (CIP_Assembly::Shut().status != kCipStatusOk)
         return CIP_Assembly ::class_id;
+#endif
 
-    if (CIP_Connection::Shut().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_CONNECTION_H
+    if (CIP_Connection::Shut().status != kCipStatusOk)
         return CIP_Connection::class_id;
+#endif
 
-    if (CIP_ConnectionManager::Shut().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_CONNECTIONMANAGER_H
+    if (CIP_ConnectionManager::Shut().status != kCipStatusOk)
         return CIP_ConnectionManager::class_id;
+#endif
 
-    if (CIP_AnalogInputPoint::Shut().status != kCipGeneralStatusCodeSuccess)
-        return CIP_AnalogInputPoint::class_id;
+#ifdef CIP_CLASSES_ANALOGINPUTPOINT_H
+    //if (CIP_AnalogInputPoint::Shut().status != kCipStatusOk)
+    //    return CIP_AnalogInputPoint::class_id;
+#endif
 
-    if (CIP_TCPIP_Interface::Shut().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_TCPIPINTERFACE_H
+    if (CIP_TCPIP_Interface::Shut().status != kCipStatusOk)
         return CIP_TCPIP_Interface::class_id;
+#endif
 
-    if (CIP_EthernetIP_Link::Shut().status != kCipGeneralStatusCodeSuccess)
+#ifdef CIP_CLASSES_ETHERNETLINK_H
+    if (CIP_EthernetIP_Link::Shut().status != kCipStatusOk)
         return CIP_EthernetIP_Link::class_id;
+#endif
 
-    return 0; //OK
+    return kCipStatusOk;
 }

@@ -15,7 +15,7 @@
 #endif
 
 //Initialize static variables
-int OpENer_Interface::g_end_stack = 0;
+bool OpENer_Interface::g_end_stack = false;
 std::map<CipUdint, OpENer_IOConnection*> OpENer_Interface::IO_Connection_set;
 std::map<CipUdint, OpENer_ExplicitConnection*> OpENer_Interface::Explicit_Connection_set;
 
@@ -95,7 +95,7 @@ void OpENer_Interface::OpENerWorker()
         //Check every pending connection and timer, send and receive data
         if (kCipGeneralStatusCodeSuccess != NET_NetworkHandler::NetworkHandlerProcessOnce ().status)
         {
-#ifdef USETHREAD
+#ifndef USETHREAD
             break;
 #endif
         }

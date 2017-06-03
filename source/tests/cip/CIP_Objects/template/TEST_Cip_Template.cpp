@@ -9,7 +9,7 @@
 CipUint TEST_Cip_Template1::vendor_id_;
 CipUint TEST_Cip_Template1::device_type_;
 CipUint TEST_Cip_Template1::product_code_;
-CipRevision TEST_Cip_Template1::revision_;
+identityRevision_t TEST_Cip_Template1::revision_;
 CipUint TEST_Cip_Template1::status_;
 CipUdint TEST_Cip_Template1::serial_number_;
 CipShortString TEST_Cip_Template1::product_name_;
@@ -102,8 +102,8 @@ CipStatus TEST_Cip_Template1::Init()
 		TEST_Cip_Template1 *instance = new TEST_Cip_Template1();
 		AddClassInstance(instance, 0);
 		auto f = std::bind(&TEST_Cip_Template1::getProductCode, instance, std::placeholders::_1, std::placeholders::_2);
-		instance->classAttributesProperties.emplace(1, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Vendor ID" });
-		instance->classAttributesProperties.emplace(2, CipAttributeProperties_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Product Code" });
+		instance->classAttrInfo.emplace(1, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Vendor ID" });
+		instance->classAttrInfo.emplace(2, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Product Code" });
 		instance->classServicesProperties.emplace(1, CipServiceProperties_t{ "GetVendorID" });
 		instance->classServicesProperties.emplace(2, CipServiceProperties_t{"GetProductCode"});
 
