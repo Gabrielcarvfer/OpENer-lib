@@ -13,14 +13,14 @@
 #include <cip/CIP_Segment.hpp>
 #include "../../ciptypes.hpp"
 #include "../../connection/CIP_CommonPacket.hpp"
-#include "../template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 #include "../../connection/network/NET_Connection.hpp"
 #include "../../../OpENer_Interface.hpp"
 #include "../CIP_0004_Assembly/CIP_Assembly.hpp"
 
 class CIP_ConnectionManager;
 
-class CIP_ConnectionManager :   public CIP_Object<CIP_ConnectionManager>
+class CIP_ConnectionManager :   public CIP_Object_template<CIP_ConnectionManager>
 {
 
 public:

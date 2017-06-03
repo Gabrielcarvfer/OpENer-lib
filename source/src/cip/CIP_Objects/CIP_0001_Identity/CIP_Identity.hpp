@@ -7,10 +7,10 @@
 #define CIP_CLASSES_IDENTITY_H
 
 #include "../../ciptypes.hpp"
-#include "../template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 
 class CIP_Identity;
-class CIP_Identity : public CIP_Object<CIP_Identity>
+class CIP_Identity : public CIP_Object_template<CIP_Identity>
 {
 
 private:

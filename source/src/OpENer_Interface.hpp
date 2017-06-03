@@ -11,7 +11,7 @@
 #include <signal.h>
 #include "cip/ciperror.hpp"
 #include "cip/ciptypes.hpp"
-#include "cip/CIP_Objects/template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 #include "typedefs.hpp"
 #include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "OpENer_IOConnection.hpp"

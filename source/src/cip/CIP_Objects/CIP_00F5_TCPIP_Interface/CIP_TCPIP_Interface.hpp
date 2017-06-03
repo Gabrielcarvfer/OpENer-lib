@@ -10,11 +10,11 @@
  *
  */
 
-#include "../template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 #include "../../ciptypes.hpp"
 
 class CIP_TCPIP_Interface;
-class CIP_TCPIP_Interface : public CIP_Object<CIP_TCPIP_Interface>
+class CIP_TCPIP_Interface : public CIP_Object_template<CIP_TCPIP_Interface>
 {
 public:
 

@@ -14,10 +14,10 @@
 #define ROUTER_MESSAGE_BUFFER_SIZE 100
 
 
-CipMessageRouterRequest_t  CIP_MessageRouter::g_message_router_request;
-CipMessageRouterResponse_t CIP_MessageRouter::g_message_router_response;
-std::vector<CipUsint>      CIP_MessageRouter::g_message_data_reply_buffer;
-std::map<CipUdint, void*>  CIP_MessageRouter::registered_objects;
+CipMessageRouterRequest_t        CIP_MessageRouter::g_message_router_request;
+CipMessageRouterResponse_t       CIP_MessageRouter::g_message_router_response;
+std::vector<CipUsint>            CIP_MessageRouter::g_message_data_reply_buffer;
+std::map<CipUdint, CIP_Object*>  CIP_MessageRouter::message_router_registered_classes;
 
 //Methods
 CipStatus CIP_MessageRouter::Init()
@@ -75,27 +75,32 @@ CipStatus CIP_MessageRouter::Create()
     return stat;
 }
 
-void * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
+CIP_Object * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
 {
     // for each entry in list
-    /*for(auto ptr : message_router_registered_classes)
-    {
-      // return registration node if it matches class ID
-      if (*ptr->class_id == class_id)
-        return ptr;
-    }
-*/
-    return 0;
+    auto ret = message_router_registered_classes.find(class_id);
+    if (ret == message_router_registered_classes.end())
+        return nullptr;
+    else
+        return message_router_registered_classes[class_id];
 }
 
-CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance)
+CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance, CipUsint classId)
 {
-    //message_router_registered_classes.insert(message_router_registered_classes.size(), CIP_ClassInstance);
+    CipStatus stat;
+    auto ret = message_router_registered_classes.find(classId);
 
-    //if (ret::second)
-        return kCipGeneralStatusCodeSuccess;
-    //else
-        //return kCipStatusError;
+    if (ret == message_router_registered_classes.end())
+    {
+
+        message_router_registered_classes.emplace(classId, (CIP_Object*)CIP_ClassInstance);
+        stat.status = kCipStatusOk;
+    }
+    else
+    {
+        stat.status = kCipStatusError;
+    }
+    return stat;
 
 }
 
@@ -242,9 +247,9 @@ CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint t
     //todo: implement message routing for notifications
     //Parse Epath
 
-    //Find registered class/CIP_Object
+    //Find registered class/CIP_Object_template
 
-    //Pick the instnace of CIP_Object
+    //Pick the instnace of CIP_Object_template
 
     //Set notification flags?
 }
@@ -279,8 +284,8 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
             break;
     }
 
-    //Find registered class/CIP_Object
-    if (registered_objects.find(request->request_path.class_id) == registered_objects.end())
+    //Find registered class/CIP_Object_template
+    if (message_router_registered_classes.find(request->request_path.class_id) == message_router_registered_classes.end())
     {
         //todo: class not registered, return error
         stat.extended_status = 0;
@@ -288,9 +293,9 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
         return stat;
     }
 
-    CIP_Object * ptr = (CIP_Object*)registered_objects.at(request->request_path.class_id);
+    CIP_Object_template * ptr = (CIP_Object_template*)message_router_registered_classes.at(request->request_path.class_id);
 
-    //Pick the instance of CIP_Object
+    //Pick the instance of CIP_Object_template
     if(ptr->GetInstance (request->request_path.instance_number) == nullptr)
     {
         //todo: instance doesnt exist, return error
@@ -299,7 +304,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
         return stat;
     }
 
-    CIP_Object * instance = (CIP_Object*)ptr->GetInstance (request->request_path.instance_number);
+    CIP_Object_template * instance = (CIP_Object_template*)ptr->GetInstance (request->request_path.instance_number);
 
     //Routes service to specified object
     //todo: check if service exists and then execute, else return error

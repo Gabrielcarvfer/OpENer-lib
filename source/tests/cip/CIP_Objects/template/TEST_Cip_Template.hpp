@@ -6,9 +6,9 @@
 #define OPENERMAIN_TEST_CIP_Template_H
 
 
-#include "../../../../src/cip/CIP_Objects/template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 
-class TEST_Cip_Template1 : public CIP_Object<TEST_Cip_Template1>
+class TEST_Cip_Template1 : public CIP_Object_template<TEST_Cip_Template1>
 {
 public:
 	static CipUint vendor_id_;
@@ -31,7 +31,7 @@ public:
 private:
 };
 
-class TEST_Cip_Template2 : public CIP_Object<TEST_Cip_Template2>
+class TEST_Cip_Template2 : public CIP_Object_template<TEST_Cip_Template2>
 {
 public:
 	static CipUint product_code_;

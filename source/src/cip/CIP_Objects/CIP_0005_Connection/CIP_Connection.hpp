@@ -5,7 +5,7 @@
 #ifndef CIP_CLASSES_CONNECTION_H
 #define CIP_CLASSES_CONNECTION_H
 
-#include "../template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 #include "CIP_Connection_LinkConsumer.hpp"
 #include "CIP_Connection_LinkProducer.hpp"
 #include <vector>
@@ -14,7 +14,7 @@
 
 #define MAX_BOUND_CONN 10
 class CIP_Connection;
-class CIP_Connection : public CIP_Object<CIP_Connection>
+class CIP_Connection : public CIP_Object_template<CIP_Connection>
 {
 public:
     /** @brief States of a connection */

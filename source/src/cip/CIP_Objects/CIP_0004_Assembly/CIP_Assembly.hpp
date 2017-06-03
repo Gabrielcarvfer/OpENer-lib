@@ -7,9 +7,9 @@
 #define CIP_CLASSES_ASSEMBLY_H
 
 #include "../../ciptypes.hpp"
-#include "../template/CIP_Object.hpp"
+#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 class CIP_Assembly;
-class CIP_Assembly : public CIP_Object<CIP_Assembly>
+class CIP_Assembly : public CIP_Object_template<CIP_Assembly>
 {
 public:
         static CipStatus Create(CipByte* data = nullptr, CipUint data_length = 0);

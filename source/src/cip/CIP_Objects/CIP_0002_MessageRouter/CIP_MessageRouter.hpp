@@ -8,7 +8,8 @@
 
 
 #include "../../ciptypes.hpp"
-#include "../template/CIP_Object.hpp"
+#include "../template/CIP_Object_template.hpp"
+#include "../CIP_Object.hpp"
 #include <map>
 
 
@@ -18,7 +19,7 @@
  *  by assembleLinearMsg.
  */
 class CIP_MessageRouter;
-class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
+class CIP_MessageRouter : public CIP_Object_template<CIP_MessageRouter>
 {
     public:
 
@@ -55,7 +56,7 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
          * array with a given max size for removing the need for having to dynamically allocate
          * memory. The size of the array could be a parameter in the platform config file.
          */
-        static std::map<CipUdint, void*> message_router_registered_classes;
+        static std::map<CipUdint, CIP_Object*> message_router_registered_classes;
 
 
         /*! Register a class at the message router.
@@ -71,7 +72,7 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
          *  @return status      0 .. success
          *                     -1 .. error no memory available to register more objects
          */
-        static CipStatus RegisterCIPClass(void * CIP_ClassInstance);
+        static CipStatus RegisterCIPClass(void * CIP_ClassInstance, CipUsint classId);
 
 
         /** @brief Get the registered MessageRouter object corresponding to ClassID.
@@ -81,7 +82,7 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
          *  @return Pointer to registered message router object
          *      0 .. Class not registered
          */
-        static void* GetRegisteredObject(CipUdint class_id);
+        static CIP_Object* GetRegisteredObject(CipUdint class_id);
 
 
         /** @brief Create Message Router Request structure out of the received data.
@@ -132,7 +133,6 @@ class CIP_MessageRouter : public CIP_Object<CIP_MessageRouter>
 
     //CIP services
     static CipStatus symbolic_translation(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response);
-    static std::map<CipUdint, void*> registered_objects;
 };
 
 

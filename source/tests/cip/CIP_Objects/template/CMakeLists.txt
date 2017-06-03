@@ -1,6 +1,6 @@
 opENer_common_includes()
 
-set( CIP_TEST_SRC ./TEST_Cip_Template.cpp ../../../../src/cip/CIP_Objects/template/CIP_Object.hpp)
+set( CIP_TEST_SRC ./TEST_Cip_Template.cpp ../../../../src/cip/CIP_Objects/template/CIP_Object_template.hpp)
 
 add_executable( TEST_CIP_template ${CIP_TEST_SRC})
 

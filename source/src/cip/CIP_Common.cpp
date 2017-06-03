@@ -14,7 +14,7 @@
 #include "CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
 #include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
 #include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
-#include "CIP_Objects/CIP_Objects.hpp"
+#include "CIP_Objects/CIP_ClassStack.hpp"
 #include "connection/network/NET_Encapsulation.hpp"
 
 //Static variables
@@ -29,7 +29,7 @@ void CIP_Common::CipStackInit (CipUint unique_connection_id)
 
     int pointOfFail = 0; // OK
 
-    pointOfFail = CIP_Objects::InitObjects();
+    pointOfFail = CIP_ClassStack::InitObjects();
 
     switch(pointOfFail)
     {
@@ -64,7 +64,7 @@ void CIP_Common::ShutdownCipStack (void)
     /* First close all connections */
     CIP_AppConnType::CloseAllConnections ();
 
-    int pointOfFail = CIP_Objects::ShutObjects();
+    int pointOfFail = CIP_ClassStack::ShutObjects();
 
     switch(pointOfFail)
     {
