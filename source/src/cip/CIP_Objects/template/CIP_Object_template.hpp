@@ -131,7 +131,7 @@ class CIP_Object_template
      * @return pointer to attribute
      *          0 if instance is not in the object
      */
-     void * GetCipAttribute(CipUsint attribute_number);
+    CIP_Attribute GetCipAttribute(CipUsint attribute_number);
 
 
     /** @brief Generic implementation of the GetAttributeAll CIP service
@@ -175,7 +175,9 @@ class CIP_Object_template
 
     //Instance stuff
     CipUint id;
+
     protected:
+
         //Class stuff
         static T * class_ptr;
         static std::map<CipUdint, const T *> object_Set;

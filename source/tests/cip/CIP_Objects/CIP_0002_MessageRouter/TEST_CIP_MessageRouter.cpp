@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cip/ciptypes.hpp>
 #include <cip/CIP_Objects/CIP_ClassStack.hpp>
+#include <cip/CIP_Objects/CIP_Object.hpp>
 
 int main()
 {
@@ -23,17 +24,33 @@ int main()
     CIP_MessageRouter::RegisterCIPClass((void*)identity_class_ptr,identity_class_ptr->class_id);
 
     //Retrieve registered class instance from msg_router
-    CIP_Object * registered_class_ptr = CIP_MessageRouter::GetRegisteredObject(1);
+    CIP_Object registered_class_ptr{CIP_MessageRouter::GetRegisteredObject(1)};
 
-    //Try to access direct values
-    std::cout << "prodcode " << registered_class_ptr->identity->revision.major_revision << " " << std::endl;
+    //Try to access direct values from registered class
+    std::cout << "prodcode " << registered_class_ptr.identity->revision.major_revision << " " << std::endl;
 
-    //Try to retrieve attributes
+    //Try to retrieve attributes from registered class
+    CIP_Attribute attr = registered_class_ptr.identity->GetCipAttribute(1);
 
-    //Try to call services
+    //Try to call services from registered class
+    CipMessageRouterRequest_t  req{};
+    CipMessageRouterResponse_t resp{};
+    CipStatus stat{};
 
-    //Try to shutdown
-    registered_class_ptr->identity->Shut();
+    stat = registered_class_ptr.identity->InstanceServices(1,&req,&resp);
+
+    //Exit of registered service call failed
+    if (stat.status != kCipGeneralStatusCodeServiceNotSupported)
+        exit(-1);
+
+    //Try to shutdown registered class
+    registered_class_ptr.identity->Shut();
+
+    //todo:Try to access direct values from message router
+
+    //todo:Try to retrieve attributes from message router
+
+    //todo:Try to call services from message router
 
     CIP_MessageRouter::Shut();
 

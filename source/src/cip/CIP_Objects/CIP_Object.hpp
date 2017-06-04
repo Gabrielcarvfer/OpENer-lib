@@ -18,6 +18,7 @@
 typedef union
 {
     void * raw_ptr;
+
     #ifdef CIP_CLASSES_IDENTITY_H
         //Cip Identity pointer
         CIP_Identity * identity;
@@ -58,5 +59,7 @@ typedef union
         CIP_EthernetIP_Link * ethernetIPLink;
     #endif
 } CIP_Object;
+
+
 
 #endif //OPENERMAIN_CIP_OBJECT_H

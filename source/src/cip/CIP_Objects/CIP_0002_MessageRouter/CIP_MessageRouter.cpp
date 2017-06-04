@@ -85,7 +85,7 @@ CIP_Object * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
         return message_router_registered_classes[class_id];
 }
 
-CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance, CipUsint classId)
+CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance, CipUdint classId)
 {
     CipStatus stat;
     auto ret = message_router_registered_classes.find(classId);

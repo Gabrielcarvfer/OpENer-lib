@@ -72,7 +72,7 @@ class CIP_MessageRouter : public CIP_Object_template<CIP_MessageRouter>
          *  @return status      0 .. success
          *                     -1 .. error no memory available to register more objects
          */
-        static CipStatus RegisterCIPClass(void * CIP_ClassInstance, CipUsint classId);
+        static CipStatus RegisterCIPClass(void * CIP_ClassInstance, CipUdint classId);
 
 
         /** @brief Get the registered MessageRouter object corresponding to ClassID.

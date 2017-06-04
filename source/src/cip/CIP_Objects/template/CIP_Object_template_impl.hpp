@@ -12,15 +12,15 @@
 #include "../../ciptypes.hpp"
 
 //Static variables
-template<class T> CipUdint    CIP_Object_template<T>::class_id;
-template<class T> std::string CIP_Object_template<T>::class_name;
-template<class T> CipUint     CIP_Object_template<T>::revision;
-template<class T> CipUint     CIP_Object_template<T>::max_instances;
-template<class T> CipUint     CIP_Object_template<T>::number_of_instances;
-template<class T> CipUdint    CIP_Object_template<T>::optional_attribute_list;
-template<class T> CipUdint    CIP_Object_template<T>::optional_service_list;
-template<class T> CipUint     CIP_Object_template<T>::maximum_id_number_class_attributes;
-template<class T> CipUint     CIP_Object_template<T>::maximum_id_number_instance_attributes;
+template<class T> CipUdint    CIP_Object_template<T>::class_id = 0;
+template<class T> std::string CIP_Object_template<T>::class_name = "";
+template<class T> CipUint     CIP_Object_template<T>::revision = 0;
+template<class T> CipUint     CIP_Object_template<T>::max_instances = 1;
+template<class T> CipUint     CIP_Object_template<T>::number_of_instances = 0;
+template<class T> CipUdint    CIP_Object_template<T>::optional_attribute_list = 0;
+template<class T> CipUdint    CIP_Object_template<T>::optional_service_list = 0;
+template<class T> CipUint     CIP_Object_template<T>::maximum_id_number_class_attributes = 0;
+template<class T> CipUint     CIP_Object_template<T>::maximum_id_number_instance_attributes = 0;
 template<class T> std::map<CipUdint, const T *> CIP_Object_template<T>::object_Set;
 
 template<class T> std::map<CipUsint, CipAttrInfo_t> CIP_Object_template<T>::classAttrInfo;
@@ -32,8 +32,15 @@ template<class T> std::map<CipUsint, CipServiceProperties_t>   CIP_Object_templa
 template <class T>
 CIP_Object_template<T>::CIP_Object_template()
 {
-  id = number_of_instances;
-  number_of_instances++;
+    if (number_of_instances < max_instances)
+    {
+        id = number_of_instances;
+        number_of_instances++;
+    }
+    else
+    {
+        delete this;
+    }
 }
 
 template <class T>
@@ -130,22 +137,29 @@ bool CIP_Object_template<T>::RemoveClassInstance(CipUdint position)
 }
 
 template <class T>
-void * CIP_Object_template<T>::GetCipAttribute(CipUsint attribute_number)
+CIP_Attribute CIP_Object_template<T>::GetCipAttribute(CipUsint attribute_number)
 {
 	bool isClass = this->id == 0;
+    //todo: check if attribute is Gettable here or outside? If here, we can return a nullptr instead of the memory
+    //  so that we can identify that, although attribute exists (by it's type), it's read protected
 	if (isClass)
 	{
+        //If class instance, check if attribute exists
 		if(classAttrInfo.find(attribute_number) != classAttrInfo.end())
-			return this->retrieveAttribute(attribute_number);
+            //If attribute exists, then return an attribute containing attribute content type and pointer to it
+			return CIP_Attribute{classAttrInfo[attribute_number].attributeType,this->retrieveAttribute(attribute_number)};
 	}
 	else
 	{
-		if (instAttrInfo.find(attribute_number) != instAttrInfo.end())
-			return this->retrieveAttribute(attribute_number);
+        //If a common instance, check if attribute exists
+        if (instAttrInfo.find(attribute_number) != instAttrInfo.end())
+            //If attribute exists, then return an attribute containing attribute content type and pointer to it
+            return CIP_Attribute{instAttrInfo[attribute_number].attributeType,this->retrieveAttribute(attribute_number)};
 	}
 
+    //Log error and return an attribute containing an invalid Cip type and a nullptr
 	OPENER_TRACE_WARN("attribute %d not defined\n", attribute_number);
-	return nullptr;
+	return CIP_Attribute{kCipAny, nullptr};
 }
 
 template <class T>

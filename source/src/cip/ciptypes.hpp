@@ -115,6 +115,31 @@ typedef enum cip_data_types
     kInternalUint6  = 0xF0 // bogus hack, for port class attribute 9, TODO figure out the right way to handle it
 } CipDataType;
 
+
+typedef struct
+{
+    CipUsint type_id; //So retrieved together with pointer when using GetAttribute
+    union
+    {
+        void * raw_ptr;
+
+        //Cip default types
+        CipOctet * Octet;
+        CipBool  * Bool ;
+        CipByte  * Byte ;
+        CipWord  * Word ;
+        CipDword * Dword;
+        CipUsint * Usint;
+        CipUint  * Uint ;
+        CipUdint * Udint;
+        CipSint  * Sint ;
+        CipInt   * Int  ;
+        CipDint  * Dint ;
+        CipReal  * Real ;
+        CipLreal * Lreal;
+    } value_u;
+} CIP_Attribute;
+
 /** @brief Definition of CIP service codes
  *
  * An Enum with all CIP service codes. Common services codes range from 0x01 to
