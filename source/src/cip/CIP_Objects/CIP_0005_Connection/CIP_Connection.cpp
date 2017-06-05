@@ -16,6 +16,7 @@ CipStatus CIP_Connection::Init()
         class_id = 5;
         class_name = "Connection";
         revision = 1;
+        max_instances = 10;
 
         RegisterGenericClassAttributes();
         //Chapter 5 vol 5
@@ -67,12 +68,19 @@ CipStatus CIP_Connection::Init()
 CipStatus CIP_Connection::Create(CipMessageRouterRequest_t* message_router_request,
                                  CipMessageRouterResponse_t* message_router_response)
 {
-    CIP_Connection *instance = new CIP_Connection();    
-
-    object_Set.emplace(object_Set.size(), instance);
-
     CipStatus stat;
-    stat.status = kCipGeneralStatusCodeSuccess;
+    CIP_Connection *instance;
+    try
+    {
+         instance = new CIP_Connection();
+    }
+    catch (const std::range_error& error)
+    {
+        stat.status = kCipStatusError;
+        return stat;
+    }
+    AddClassInstance(instance,-1);
+    stat.status = kCipStatusOk;
     stat.extended_status = (CipUsint) instance->id;
     return stat;
 }

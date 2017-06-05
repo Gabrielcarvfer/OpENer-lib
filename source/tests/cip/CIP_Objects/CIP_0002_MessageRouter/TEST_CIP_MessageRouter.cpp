@@ -1,12 +1,9 @@
 //
-// Created by gabriel on 02/06/2017.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 02/06/2017.
 //
 
 #include "TEST_CIP_MessageRouter.h"
 #include <iostream>
-#include <cip/ciptypes.hpp>
-#include <cip/CIP_Objects/CIP_ClassStack.hpp>
-#include <cip/CIP_Objects/CIP_Object.hpp>
 
 int main()
 {

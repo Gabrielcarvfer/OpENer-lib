@@ -4,17 +4,18 @@
  *
  ******************************************************************************/
 //Includes
+
+#include "CIP_Common.hpp"
 #include <cstring>
 #include <iostream>
-#include "CIP_Common.hpp"
 #include "connection/CIP_CommonPacket.hpp"
 #include "CIP_AppConnType.hpp"
 #include "connection/network/NET_Endianconv.hpp"
-#include "CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-#include "CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
-#include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
-#include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "CIP_Objects/CIP_ClassStack.hpp"
+//#include "CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
+//#include "CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
+//#include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
+//#include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "connection/network/NET_Encapsulation.hpp"
 
 //Static variables
@@ -79,7 +80,7 @@ void CIP_Common::ShutdownCipStack (void)
     NET_Encapsulation::Shutdown ();
 
     /*no clear all the instances and classes */
-    CIP_MessageRouter::DeleteAllClasses ();
+    //CIP_MessageRouter::DeleteAllClasses ();
 }
 /*
 CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest_t *message_router_request, CipMessageRouterResponse_t *message_router_response)

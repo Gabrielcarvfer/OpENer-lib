@@ -1,12 +1,12 @@
 //
-// Created by gabriel on 03/06/2017.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 03/06/2017.
 //
 
 #ifndef OPENERMAIN_CIP_OBJECT_H
 #define OPENERMAIN_CIP_OBJECT_H
 
 #include "CIP_0001_Identity/CIP_Identity.hpp"
-#include "CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
+//#include "CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
 //#include "CIP_0003_DeviceNET/CIP_DeviceNetLink.hpp"
 #include "CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "CIP_0005_Connection/CIP_Connection.hpp"

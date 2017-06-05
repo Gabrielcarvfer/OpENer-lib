@@ -9,4 +9,5 @@
 #include "../../../../src/cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp"
 
 
+
 #endif //OPENERMAIN_TEST_CIP_Connection_H

@@ -37,6 +37,18 @@ MACRO(HEADER_DIRECTORIES return_list)
   SET(${return_list} ${dir_list})
 ENDMACRO()
 
+
+macro(get_sources_from_folder folder)
+  SOURCE_FILES(folder source_files)
+  set(CIP_SRC ${source_files})
+endmacro()
+
+MACRO(SOURCE_FILES folder return_list)
+  FILE(GLOB_RECURSE f_list ${folder}/*.hpp ${folder}/*.cpp)
+  LIST(REMOVE_DUPLICATES f_list)
+  SET(${return_list} ${f_list})
+ENDMACRO()
+
 MACRO(opener_add_cip_object NAME DESCRIPTION)
   set(OpENer_CIP_OBJECT_${NAME} OFF CACHE BOOL "${DESCRIPTION}")
   FOREACH(dependencies ${ARGN})

@@ -1,8 +1,8 @@
 //
 // Created by Gabriel Ferreira (@gabrielcarvfer)
 //
-#ifndef OPENER_CIPDEVICENETLINK_H_
-#define OPENER_CIPDEVICENETLINK_H_
+#ifndef CIP_CLASSES_DEVICENET_H
+#define CIP_CLASSES_DEVICENET_H
 
 #include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 #include "../../ciptypes.hpp"
@@ -64,4 +64,4 @@ public:
 
 };
 
-#endif /* OPENER_CIPDEVICENETLINK_H_*/
+#endif /* CIP_CLASSES_DEVICENET_H*/

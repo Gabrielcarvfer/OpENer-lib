@@ -1,5 +1,9 @@
+//
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 20/04/2017.
+//
 
 #include "TEST_Cip_Connection.hpp"
+#include <iostream>
 
 int main()
 {
@@ -7,11 +11,18 @@ int main()
 
 	int instance_number;
 
-	instance_number = CIP_Connection::Create(nullptr, nullptr).extended_status;
+    CipStatus stat;
 
-	CIP_Connection* instance = nullptr;
+	stat = CIP_Connection::Create(nullptr, nullptr);
 
-	instance = (CIP_Connection*)CIP_Connection::GetInstance(instance_number);
+    if (stat.status != kCipStatusOk)
+        exit(-1);
+
+    instance_number = stat.extended_status;
+
+	CIP_Connection* instance = (CIP_Connection*)CIP_Connection::GetInstance(instance_number);
+
+    std::cout << instance->id << std::endl;
 
 	CIP_Connection::Shut();
 

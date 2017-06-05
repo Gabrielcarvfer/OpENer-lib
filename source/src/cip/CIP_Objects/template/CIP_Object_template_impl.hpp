@@ -39,7 +39,7 @@ CIP_Object_template<T>::CIP_Object_template()
     }
     else
     {
-        delete this;
+        throw std::range_error("Requested instance exceeds maximum specified to " + class_name);
     }
 }
 
@@ -87,6 +87,10 @@ CipDint CIP_Object_template<T>::GetInstanceNumber(const T  * instance)
 template <class T>
 bool CIP_Object_template<T>::AddClassInstance(T  * instance, CipDint position)
 {
+    if (instance == nullptr)
+    {
+        return false;
+    }
     //If passed position is -1, then search first free position
     if (position == -1)
     {
@@ -327,6 +331,7 @@ void CIP_Object_template<T>::RegisterGenericClassAttributes()
                                                "Maximum ID Number Class Attributes"});
         classAttrInfo.emplace(7, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll,
                                                "Maximum ID Number Instance Attributes"});
+
     }
 }
 

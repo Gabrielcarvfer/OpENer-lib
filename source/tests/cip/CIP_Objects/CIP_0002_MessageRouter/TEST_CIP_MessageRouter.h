@@ -1,5 +1,5 @@
 //
-// Created by gabriel on 02/06/2017.
+// Created by Gabriel Ferreira (@gabrielcarvfer) on 02/06/2017.
 //
 
 #ifndef OPENERMAIN_TEST_CIP_CLASS0002_MESSAGEROUTER_H
