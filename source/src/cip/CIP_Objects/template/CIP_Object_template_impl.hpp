@@ -259,7 +259,7 @@ CipStatus CIP_Object_template<T>::GetAttributeAll(CipMessageRouterRequest_t* mes
                     message_router_request->request_path.attribute_number = attrNum;
                     if (kCipGeneralStatusCodeSuccess != this->InstanceServices(kGetAttributeAll, message_router_request, message_router_response).status)
                     {
-                        message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
+                        message_router_response->response_data.emplace (message_router_response->response_data.begin (), reply);
 
                         return CipStatus(kCipStatusError);
                     }
@@ -267,7 +267,7 @@ CipStatus CIP_Object_template<T>::GetAttributeAll(CipMessageRouterRequest_t* mes
                 }
             }
             //message_router_response->data_length = message_router_response->data - reply;
-            message_router_response->response_data->emplace (message_router_response->response_data->begin (), reply);
+            message_router_response->response_data.emplace (message_router_response->response_data.begin (), reply);
         }
         return CipStatus(kCipGeneralStatusCodeSuccess);
     }

@@ -38,16 +38,16 @@ public:
     } ConnectionType_e;
 
     typedef enum {
-        kConnectionServiceCreate           = 0x08,
-        kConnectionClassNInstServiceDelete = 0x09,
-        kConnectionClassNInstServiceReset  = 0x05,
-        kConnectionServiceFindNextInstance = 0x11,
+        kConnectionServiceCreate                       = 0x08,
+        kConnectionClassNInstServiceDelete             = 0x09,
+        kConnectionClassNInstServiceReset              = 0x05,
+        kConnectionServiceFindNextInstance             = 0x11,
         kConnectionClassNInstServiceGetAttributeSingle = 0x0E,
-        kConnectionServiceBind             = 0x4B,
-        kConnectionServiceProducingLookup  = 0x4C,
-        kConnectionServiceSafetyClose      = 0x4E,
-        kConnectionServiceSafetyOpen       = 0x54,
-        kConnectionInstSetAttributeSingle  = 0x10,
+        kConnectionServiceBind                         = 0x4B,
+        kConnectionServiceProducingLookup              = 0x4C,
+        kConnectionServiceSafetyClose                  = 0x4E,
+        kConnectionServiceSafetyOpen                   = 0x54,
+        kConnectionInstSetAttributeSingle              = 0x10,
     } ConnectionServices_e;
 
     /** #brief transportClass_trigger

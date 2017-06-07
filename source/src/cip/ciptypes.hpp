@@ -233,10 +233,10 @@ typedef struct
 class CipEpath
 {
 public:
-    CipUsint path_size;       // Size of the Path in 16-bit words TODO: Fix, should be UINT(EIP_UINT16)
-    CipUint class_id;         // Class ID of the linked object */
-    CipUint instance_number;  // Requested Instance Number of the linked object */
-    CipUint attribute_number; // Requested Attribute Number of the linked object */
+    CipUsint path_size;        // Size of the Path in 16-bit words TODO: Fix, should be UINT(EIP_UINT16)
+    CipUint  class_id;         // Class ID of the linked object */
+    CipUint  instance_number;  // Requested Instance Number of the linked object */
+    CipUint  attribute_number; // Requested Attribute Number of the linked object */
 
     static bool check_if_equal(CipEpath* path0, CipEpath* path1)
     {
@@ -253,6 +253,18 @@ public:
             return false;
 
         return true;
+    }
+
+    void to_bytes(std::vector<CipUsint> * byteVec)
+    {
+        //todo: fix for big endian
+        byteVec->push_back(this->path_size);
+        byteVec->push_back( ((CipUsint*)&this->class_id)[0] );
+        byteVec->push_back( ((CipUsint*)&this->class_id)[1] );
+        byteVec->push_back( ((CipUsint*)&this->instance_number)[0] );
+        byteVec->push_back( ((CipUsint*)&this->instance_number)[1] );
+        byteVec->push_back( ((CipUsint*)&this->attribute_number)[0] );
+        byteVec->push_back( ((CipUsint*)&this->attribute_number)[1] );
     }
 };
 
@@ -296,7 +308,7 @@ typedef struct
     CipUsint  general_status;             // One of the General Status codes listed in CIP Specification Volume 1, Appendix B
     CipUsint  size_additional_status;     // Number of additional 16 bit words in Additional Status Array
     CipUint*  additional_status;          // Array of 16 bit words; If SizeOfAdditionalStatus is 0. there is no Additional Status
-    std::vector<CipUsint> *response_data; // Array of octet; Response data per object definition from request
+    std::vector<CipUsint> response_data;  // Array of octet; Response data per object definition from request
 } CipMessageRouterResponse_t;
 
 

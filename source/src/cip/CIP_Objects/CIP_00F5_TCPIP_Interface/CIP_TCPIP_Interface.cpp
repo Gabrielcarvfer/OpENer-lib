@@ -113,7 +113,7 @@ CipStatus CIP_TCPIP_Interface::SetAttributeSingleTcp(CipMessageRouterRequest_t* 
     }
 
     message_router_response->size_additional_status = 0;
-    message_router_response->response_data->clear();
+   message_router_response->response_data.clear();
     message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
     return kCipGeneralStatusCodeSuccess;
 }
@@ -224,7 +224,7 @@ CipStatus CIP_TCPIP_Interface::GetAttributeSingleTcpIpInterface(CipMessageRouter
     if (9 == message_router_request->request_path.attribute_number)
     { 
         // attribute 9 can not be easily handled with the default mechanism therefore we will do it by hand
-        message_router_response->response_data->clear ();
+       message_router_response->response_data.clear ();
         message_router_response->reply_service = (CipUsint) (0x80 | message_router_request->service);
         message_router_response->general_status = kCipGeneralStatusCodeSuccess;
         message_router_response->size_additional_status = 0;

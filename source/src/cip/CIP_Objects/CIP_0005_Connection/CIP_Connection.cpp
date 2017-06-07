@@ -122,11 +122,12 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
     bindArgs = (bindRequestParams_t*)&message_router_request->request_data[0];
 
     CipStatus status;
-    const CIP_Connection * conn0, * conn1;
-    if ( (conn0 = GetInstance(bindArgs->bound_instances[0])) == nullptr
-         | (conn1 = GetInstance(bindArgs->bound_instances[1])) == nullptr)
-    {
+    CIP_Connection * conn0 = nullptr, * conn1 = nullptr;
+    conn0 = (CIP_Connection*)GetInstance(bindArgs->bound_instances[0]);
+    conn1 = (CIP_Connection*)GetInstance(bindArgs->bound_instances[1]);
 
+    if ( (conn0 == nullptr) | (conn1 == nullptr))
+    {
         //One or both connections don't exist
         status.extended_status = 0x01;
         status.status = kCipGeneralStatusCodeResourceUnavailable;
@@ -181,7 +182,14 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
         return status;
     }
 
-    //all checks passed
+    //all checks passed, add both connections to each other binding lists
+
+    (conn0->Connection_binding_list.num_connections)++;
+    (conn1->Connection_binding_list.num_connections)++;
+
+    conn0->Connection_binding_list.connections_list.push_back(conn1->id);
+    conn1->Connection_binding_list.connections_list.push_back(conn0->id);
+
     status.status = kCipGeneralStatusCodeSuccess;
     return status;
 
@@ -197,7 +205,7 @@ CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_rou
     //Router request fields
     CipUint instance_count = 0;
     std::vector<CipUint> connection_instance_list;
-    CipEpath * producing_application_path;
+    CipEpath * producing_application_path = (CipEpath *)&message_router_request->request_data[0];
     
     if ( ( j = (CipUdint) object_Set.size() ) < 1)
     {
@@ -223,6 +231,14 @@ CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_rou
     }
 
     //write instance count and conn_instance_list back to router response
+   message_router_response->response_data.push_back(((CipUsint*)&instance_count)[0]);
+   message_router_response->response_data.push_back(((CipUsint*)&instance_count)[1]);
+
+    for (CipUdint i = 0; i < connection_instance_list.size(); i++)
+    {
+       message_router_response->response_data.push_back(((CipUsint*)&connection_instance_list)[0]);
+       message_router_response->response_data.push_back(((CipUsint*)&connection_instance_list)[1]);
+    }
 
     status.status = 0x0;
     status.extended_status = 0x0;
@@ -459,7 +475,20 @@ void * CIP_Connection::retrieveAttribute(CipUsint attributeNumber)
 
 CipStatus CIP_Connection::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
 {
+    switch(serviceNumber)
+    {
+        case kConnectionServiceCreate                      : return Create(req,resp);
+        case kConnectionClassNInstServiceDelete            : return Delete(req,resp);
+        case kConnectionClassNInstServiceReset             : return Reset(req,resp);
+        case kConnectionServiceFindNextInstance            : return FindNextInstance(req,resp);
+        case kConnectionClassNInstServiceGetAttributeSingle: return GetAttributeSingle(req,resp);
+        case kConnectionServiceBind                        : return Bind(req,resp);
+        case kConnectionServiceProducingLookup             : return ProducingLookup(req,resp);
+        case kConnectionServiceSafetyClose                 : return SafetyClose(req,resp);
+        case kConnectionServiceSafetyOpen                  : return SafetyOpen(req,resp);
+        case kConnectionInstSetAttributeSingle             : return SetAttributeSingle(req,resp);
 
+    }
 }
 
 

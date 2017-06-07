@@ -52,7 +52,7 @@ CipStatus CIP_MessageRouter::Init()
         g_message_router_response.reserved = 0;
 
         // set reply buffer, using a fixed buffer (about 100 bytes)
-        g_message_router_response.response_data = &g_message_data_reply_buffer;
+        g_message_router_response.response_data = g_message_data_reply_buffer;
 
         stat.status = kCipStatusOk;
     }
@@ -109,7 +109,7 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     CipStatus cip_status = kCipGeneralStatusCodeSuccess;
     CipStatus nStatus;
 
-    g_message_router_response.response_data = &g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
+    g_message_router_response.response_data = g_message_data_reply_buffer; /* set reply buffer, using a fixed buffer (about 100 bytes) */
 
     OPENER_TRACE_INFO("notifyMR: routing unconnected message\n");
     /* error from create MR structure*/
