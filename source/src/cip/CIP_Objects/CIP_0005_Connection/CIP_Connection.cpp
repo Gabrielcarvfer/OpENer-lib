@@ -94,12 +94,50 @@ CipStatus CIP_Connection::ApplyAttributes(CipMessageRouterResponse_t* message_ro
 CipStatus CIP_Connection::Delete(CipMessageRouterRequest_t* message_router_request,
                                  CipMessageRouterResponse_t* message_router_response)
 {
-
+    if (this->id == 0)
+    {
+        //If class, close and delete all connections other than the class instance
+        for (int i = 1; i < object_Set.size(); i++)
+        {
+            delete object_Set[i];
+            object_Set.erase(i);
+        }
+    }
+    else
+    {
+        //If instance, kill itself
+        delete this;
+    }
 }
 
 CipStatus CIP_Connection::Reset(CipMessageRouterRequest_t* message_router_request,
                                 CipMessageRouterResponse_t* message_router_response)
 {
+
+    if (this->id == 0)
+    {
+        //The class instance resets all instances that are resettable
+        for (int i = 1; i < object_Set.size(); i++)
+        {
+            // In case of I/O conns, for Established and Timed out
+            if ( object_Set[i]->Instance_type == kConnectionTypeIo
+                 && (object_Set[i]->State == kConnectionStateEstablished
+                     || object_Set[i]->State == kConnectionStateTimedOut) )
+            {
+                object_Set[i]->State = kConnectionStateEstablished;
+            }
+
+            // In case of explicit conns, Established and Deferred Delete
+            if ( object_Set[i]->Instance_type == kConnectionTypeExplicit
+                    && (object_Set[i]->State == kConnectionStateEstablished
+                        || object_Set[i]->State == kConnectionStateDeferredDelete) )
+            {
+                object_Set[i]->State = kConnectionStateEstablished;
+            }
+
+            // In case of bridged conns, there's no reset
+        }
+    }
 
 }
 
@@ -477,16 +515,16 @@ CipStatus CIP_Connection::retrieveService(CipUsint serviceNumber, CipMessageRout
 {
     switch(serviceNumber)
     {
-        case kConnectionServiceCreate                      : return Create(req,resp);
-        case kConnectionClassNInstServiceDelete            : return Delete(req,resp);
-        case kConnectionClassNInstServiceReset             : return Reset(req,resp);
-        case kConnectionServiceFindNextInstance            : return FindNextInstance(req,resp);
-        case kConnectionClassNInstServiceGetAttributeSingle: return GetAttributeSingle(req,resp);
-        case kConnectionServiceBind                        : return Bind(req,resp);
-        case kConnectionServiceProducingLookup             : return ProducingLookup(req,resp);
-        case kConnectionServiceSafetyClose                 : return SafetyClose(req,resp);
-        case kConnectionServiceSafetyOpen                  : return SafetyOpen(req,resp);
-        case kConnectionInstSetAttributeSingle             : return SetAttributeSingle(req,resp);
+        case kConnectionServiceCreate                      : return this->Create(req,resp);
+        case kConnectionClassNInstServiceDelete            : return this->Delete(req,resp);
+        case kConnectionClassNInstServiceReset             : return this->Reset(req,resp);
+        case kConnectionServiceFindNextInstance            : return this->FindNextInstance(req,resp);
+        case kConnectionClassNInstServiceGetAttributeSingle: return this->GetAttributeSingle(req,resp);
+        case kConnectionServiceBind                        : return this->Bind(req,resp);
+        case kConnectionServiceProducingLookup             : return this->ProducingLookup(req,resp);
+        case kConnectionServiceSafetyClose                 : return this->SafetyClose(req,resp);
+        case kConnectionServiceSafetyOpen                  : return this->SafetyOpen(req,resp);
+        case kConnectionInstSetAttributeSingle             : return this->SetAttributeSingle(req,resp);
 
     }
 }

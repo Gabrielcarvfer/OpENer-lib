@@ -145,32 +145,32 @@ public:
     static CipStatus Shut();
 
     //Class services
-    static CipStatus Create(CipMessageRouterRequest_t* message_router_request,
-                            CipMessageRouterResponse_t* message_router_response);
+    CipStatus Create(CipMessageRouterRequest_t* message_router_request,
+                     CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus Delete(CipMessageRouterRequest_t* message_router_request,
-                            CipMessageRouterResponse_t* message_router_response);
+    CipStatus Delete(CipMessageRouterRequest_t* message_router_request,
+                     CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus Reset(CipMessageRouterRequest_t* message_router_request,
-                           CipMessageRouterResponse_t* message_router_response);
+    CipStatus Reset(CipMessageRouterRequest_t* message_router_request,
+                    CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus FindNextInstance(CipMessageRouterRequest_t* message_router_request,
-                                      CipMessageRouterResponse_t* message_router_response);
+    CipStatus FindNextInstance(CipMessageRouterRequest_t* message_router_request,
+                               CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus ApplyAttributes(CipMessageRouterResponse_t* message_router_request,
-                              CipMessageRouterResponse_t* message_router_response);
+    CipStatus ApplyAttributes(CipMessageRouterResponse_t* message_router_request,
+                       CipMessageRouterResponse_t* message_router_response);
 
-    static CipStatus Bind(CipMessageRouterRequest_t* message_router_request,
-                          CipMessageRouterResponse_t* message_router_response);//CipUint bound_instances[2]);
+    CipStatus Bind(CipMessageRouterRequest_t* message_router_request,
+                   CipMessageRouterResponse_t* message_router_response);//CipUint bound_instances[2]);
 
-    static CipStatus ProducingLookup(CipMessageRouterRequest_t* message_router_request,
-                                     CipMessageRouterResponse_t* message_router_response);//CipEpath * producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list);
+    CipStatus ProducingLookup(CipMessageRouterRequest_t* message_router_request,
+                              CipMessageRouterResponse_t* message_router_response);//CipEpath * producing_application_path, CipUint *instance_count, std::vector<CipUint> *connection_instance_list);
 
-    static CipStatus SafetyClose(CipMessageRouterRequest_t* message_router_request,
-                                 CipMessageRouterResponse_t* message_router_response);
+    CipStatus SafetyClose(CipMessageRouterRequest_t* message_router_request,
+                          CipMessageRouterResponse_t* message_router_response);
 
-    static  CipStatus SafetyOpen(CipMessageRouterRequest_t* message_router_request,
-                                CipMessageRouterResponse_t* message_router_response);
+    CipStatus SafetyOpen(CipMessageRouterRequest_t* message_router_request,
+                         CipMessageRouterResponse_t* message_router_response);
 
 
     //Temporary

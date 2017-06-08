@@ -7,18 +7,6 @@
 #include <cip/ciptypes.hpp>
 
 
-bool test_allocation()
-{
-    CipStatus stat;
-
-    stat = CIP_Connection::Create(nullptr, nullptr);
-
-    if (stat.status != kCipStatusOk)
-        return false;
-
-    return true;
-}
-
 bool test_class_services()
 {
     CIP_Connection * class_instance = (CIP_Connection*)CIP_Connection::GetInstance(0);
@@ -28,22 +16,29 @@ bool test_class_services()
     CipStatus stat;
 
     //Test instance creation (service 0x08)
-        //stat = class_instance->InstanceServices(0x08,&req,&resp);
+        stat = class_instance->InstanceServices(0x08,&req,&resp);
 
     //Test instance deletion (service 0x09)
-        //stat = class_instance->InstanceServices(0x09,&req,&resp);
+        stat = class_instance->InstanceServices(0x09,&req,&resp);
 
     //Test reset (service 0x05)
-        //stat = class_instance->InstanceServices(0x05,&req,&resp);
+        stat = class_instance->InstanceServices(0x05,&req,&resp);
 
     //Test find_next_object_instance (service 0x11)
-        //stat = class_instance->InstanceServices(0x11,&req,&resp);
+        req.request_data.clear();
+        resp.response_data.clear();
+        req.request_data.push_back(1); // Maximum number of connection id's to return
+        stat = class_instance->InstanceServices(0x11,&req,&resp);
 
     //Test Get_Attribute_Single (service 0x0E)
         //stat = class_instance->InstanceServices(0x0E,&req,&resp);
 
     //Test Connection bind (service 0x4B)
-        CIP_Connection::Create(nullptr, nullptr);
+        class_instance->Create(nullptr, nullptr);
+        class_instance->Create(nullptr, nullptr);
+
+        req.request_data.clear();
+        resp.response_data.clear();
 
         req.request_data.push_back(1); //Number of first connection to be bound
         req.request_data.push_back(0);
@@ -68,6 +63,8 @@ bool test_class_services()
 
     //Test producing application lookup (service 0x4C)
         //req.request_data = EPATH to Producing application
+        req.request_data.clear();
+        resp.response_data.clear();
         CipEpath path;
 
         path.to_bytes(&req.request_data);
@@ -101,9 +98,6 @@ bool test_instance_services()
 int main()
 {
 	CIP_Connection::Init();
-
-    if ( !test_allocation() )
-        exit(-1);
 
 	if ( !test_class_services() )
         exit(-1);
