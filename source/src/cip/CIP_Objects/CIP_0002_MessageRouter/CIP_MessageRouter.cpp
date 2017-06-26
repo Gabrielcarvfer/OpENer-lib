@@ -42,10 +42,10 @@ CipStatus CIP_MessageRouter::Init()
 
 
         //Register instance attributes
-        //instAttrInfo.emplace(1 , CipAttrInfo_t{kCipUsint , SZ(object_list_struct), kGetableSingleAndAll, "Object_list"});
-        //instAttrInfo.emplace(2 , CipAttrInfo_t{kCipUint  , SZ(CipUint), kGetableSingleAndAll, "Number Available"});
-        //instAttrInfo.emplace(3 , CipAttrInfo_t{kCipUsint , SZ(CipUint), kGetableSingleAndAll, "Number Active"});
-        //instAttrInfo.emplace(4 , CipAttrInfo_t{kCipUsint , SZ(CipUintArray), kGetableSingleAndAll, "Active Connections"});
+        //instAttrInfo.emplace(1 , CipAttrInfo_t{kCipUsint , SZ(object_list_struct), kAttrFlagGetableSingleAndAll, "Object_list"});
+        //instAttrInfo.emplace(2 , CipAttrInfo_t{kCipUint  , SZ(CipUint), kAttrFlagGetableSingleAndAll, "Number Available"});
+        //instAttrInfo.emplace(3 , CipAttrInfo_t{kCipUsint , SZ(CipUint), kAttrFlagGetableSingleAndAll, "Number Active"});
+        //instAttrInfo.emplace(4 , CipAttrInfo_t{kCipUsint , SZ(CipUintArray), kAttrFlagGetableSingleAndAll, "Active Connections"});
 
 
         /* reserved for future use -> set to zero */
@@ -252,6 +252,8 @@ CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint t
     //Pick the instnace of CIP_Object_template
 
     //Set notification flags?
+	CipStatus stat;
+	return stat;
 }
 
 CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response)
@@ -314,6 +316,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
 
     //Routes response back to originator
     //todo: reverse CipEpath and return response to sender
+	return stat;
 }
 
 CipStatus CIP_MessageRouter::symbolic_translation(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response)
@@ -332,7 +335,8 @@ CipStatus CIP_MessageRouter::symbolic_translation(CipMessageRouterRequest_t *req
 
 CipStatus CIP_MessageRouter::Shut()
 {
-
+	CipStatus stat;
+	return stat;
 }
 
 void * CIP_MessageRouter::retrieveAttribute(CipUsint attributeNumber)

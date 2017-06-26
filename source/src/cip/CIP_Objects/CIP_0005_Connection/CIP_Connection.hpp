@@ -5,7 +5,7 @@
 #ifndef CIP_CLASSES_CONNECTION_H
 #define CIP_CLASSES_CONNECTION_H
 
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
+#include "../template/CIP_Object_template.hpp"
 #include "CIP_Connection_LinkConsumer.hpp"
 #include "CIP_Connection_LinkProducer.hpp"
 #include <vector>

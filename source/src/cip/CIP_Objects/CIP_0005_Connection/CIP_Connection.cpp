@@ -21,8 +21,8 @@ CipStatus CIP_Connection::Init()
         RegisterGenericClassAttributes();
         //Chapter 5 vol 5
         //todo: recheck sizes
-        //classAttrInfo.emplace(8, kCipUint, &ConnectionRequestErrorCount, kGetableSingleAndAll));
-        //classAttrInfo.emplace(9, kCipUint, &SafetyConnectionCounters   , kGetableSingleAndAll));
+        //classAttrInfo.emplace(8, kCipUint, &ConnectionRequestErrorCount, kAttrFlagGetableSingleAndAll));
+        //classAttrInfo.emplace(9, kCipUint, &SafetyConnectionCounters   , kAttrFlagGetableSingleAndAll));
 
 
         CIP_Connection *instance = new CIP_Connection();
@@ -30,25 +30,25 @@ CipStatus CIP_Connection::Init()
 
 		//Setup instances attributes
 		//Chapter 3-4.4 vol 1
-		instAttrInfo.emplace( 1, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "State"                                 });
-		instAttrInfo.emplace( 2, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Instance_type"                         });
-		instAttrInfo.emplace( 3, CipAttrInfo_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "TransportClass_trigger"                });
-		instAttrInfo.emplace( 4, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_produced_connection_id"      });
-		instAttrInfo.emplace( 5, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "DeviceNet_consumed_connection_id"      });
-		instAttrInfo.emplace( 6, CipAttrInfo_t{ kCipByte , sizeof( CipByte ), kGetableSingleAndAll, "DeviceNet_initial_comm_characteristics"});
-		instAttrInfo.emplace( 7, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_size"              });
-		instAttrInfo.emplace( 8, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_size"              });
-		instAttrInfo.emplace( 9, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Expected_packet_rate"                  });
-		instAttrInfo.emplace(10, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_produced_connection_id"            });
-		instAttrInfo.emplace(11, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "CIP_consumed_connection_id"            });
-		instAttrInfo.emplace(12, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Watchdog_timeout_action"               });
-		instAttrInfo.emplace(13, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Produced_connection_path_length"       });
-		instAttrInfo.emplace(14, CipAttrInfo_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Produced_connection_path"              });
-		instAttrInfo.emplace(15, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Consumed_connection_path_length"       });
-		instAttrInfo.emplace(16, CipAttrInfo_t{ kCipEpath, sizeof( CipEpath), kGetableSingleAndAll, "Consumed_connection_path"              });
-		instAttrInfo.emplace(17, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kGetableSingleAndAll, "Production_inhibit_time"               });
-		instAttrInfo.emplace(18, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kGetableSingleAndAll, "Connection_timeout_multiplier"         });
-		instAttrInfo.emplace(19, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kGetableSingleAndAll, "Connection_binding_list"               });
+		instAttrInfo.emplace( 1, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kAttrFlagGetableSingleAndAll, "State"                                 });
+		instAttrInfo.emplace( 2, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kAttrFlagGetableSingleAndAll, "Instance_type"                         });
+		instAttrInfo.emplace( 3, CipAttrInfo_t{ kCipByte , sizeof( CipByte ), kAttrFlagGetableSingleAndAll, "TransportClass_trigger"                });
+		instAttrInfo.emplace( 4, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "DeviceNet_produced_connection_id"      });
+		instAttrInfo.emplace( 5, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "DeviceNet_consumed_connection_id"      });
+		instAttrInfo.emplace( 6, CipAttrInfo_t{ kCipByte , sizeof( CipByte ), kAttrFlagGetableSingleAndAll, "DeviceNet_initial_comm_characteristics"});
+		instAttrInfo.emplace( 7, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "Produced_connection_size"              });
+		instAttrInfo.emplace( 8, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "Consumed_connection_size"              });
+		instAttrInfo.emplace( 9, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "Expected_packet_rate"                  });
+		instAttrInfo.emplace(10, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kAttrFlagGetableSingleAndAll, "CIP_produced_connection_id"            });
+		instAttrInfo.emplace(11, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kAttrFlagGetableSingleAndAll, "CIP_consumed_connection_id"            });
+		instAttrInfo.emplace(12, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kAttrFlagGetableSingleAndAll, "Watchdog_timeout_action"               });
+		instAttrInfo.emplace(13, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "Produced_connection_path_length"       });
+		instAttrInfo.emplace(14, CipAttrInfo_t{ kCipEpath, sizeof( CipEpath), kAttrFlagGetableSingleAndAll, "Produced_connection_path"              });
+		instAttrInfo.emplace(15, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "Consumed_connection_path_length"       });
+		instAttrInfo.emplace(16, CipAttrInfo_t{ kCipEpath, sizeof( CipEpath), kAttrFlagGetableSingleAndAll, "Consumed_connection_path"              });
+		instAttrInfo.emplace(17, CipAttrInfo_t{ kCipUint , sizeof( CipUint ), kAttrFlagGetableSingleAndAll, "Production_inhibit_time"               });
+		instAttrInfo.emplace(18, CipAttrInfo_t{ kCipUsint, sizeof( CipUsint), kAttrFlagGetableSingleAndAll, "Connection_timeout_multiplier"         });
+		instAttrInfo.emplace(19, CipAttrInfo_t{ kCipUdint, sizeof( CipUdint), kAttrFlagGetableSingleAndAll, "Connection_binding_list"               });
 
         //Class services
         classServicesProperties.emplace(kConnectionServiceCreate                      , CipServiceProperties_t{ "Create"            });
@@ -88,7 +88,8 @@ CipStatus CIP_Connection::Create(CipMessageRouterRequest_t* message_router_reque
 CipStatus CIP_Connection::ApplyAttributes(CipMessageRouterResponse_t* message_router_request,
                           CipMessageRouterResponse_t* message_router_response)
 {
-
+	CipStatus stat;
+	return stat;
 }
 
 CipStatus CIP_Connection::Delete(CipMessageRouterRequest_t* message_router_request,
@@ -108,6 +109,8 @@ CipStatus CIP_Connection::Delete(CipMessageRouterRequest_t* message_router_reque
         //If instance, kill itself
         delete this;
     }
+	CipStatus stat;
+	return stat;
 }
 
 CipStatus CIP_Connection::Reset(CipMessageRouterRequest_t* message_router_request,
@@ -124,7 +127,7 @@ CipStatus CIP_Connection::Reset(CipMessageRouterRequest_t* message_router_reques
                  && (object_Set[i]->State == kConnectionStateEstablished
                      || object_Set[i]->State == kConnectionStateTimedOut) )
             {
-                object_Set[i]->State = kConnectionStateEstablished;
+                ((CIP_Connection*)object_Set[i])->State = kConnectionStateEstablished;
             }
 
             // In case of explicit conns, Established and Deferred Delete
@@ -132,19 +135,22 @@ CipStatus CIP_Connection::Reset(CipMessageRouterRequest_t* message_router_reques
                     && (object_Set[i]->State == kConnectionStateEstablished
                         || object_Set[i]->State == kConnectionStateDeferredDelete) )
             {
-                object_Set[i]->State = kConnectionStateEstablished;
+                ((CIP_Connection*)object_Set[i])->State = kConnectionStateEstablished;
             }
 
             // In case of bridged conns, there's no reset
         }
     }
+	CipStatus stat;
+	return stat;
 
 }
 
 CipStatus CIP_Connection::FindNextInstance(CipMessageRouterRequest_t* message_router_request,
                                            CipMessageRouterResponse_t* message_router_response)
 {
-
+	CipStatus stat;
+	return stat;
 }
 
 //Instance services
@@ -174,8 +180,8 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
 
     //if both connections exist, then
     //check if there are resources to bound
-    if (conn0->Connection_binding_list.num_connections == MAX_BOUND_CONN
-         | conn1->Connection_binding_list.num_connections == MAX_BOUND_CONN)
+    if ( (conn0->Connection_binding_list.num_connections == MAX_BOUND_CONN)
+         | (conn1->Connection_binding_list.num_connections == MAX_BOUND_CONN) )
     {
         //Class or instance out of resources to bind
         status.extended_status = 0x02;
@@ -183,8 +189,8 @@ CipStatus CIP_Connection::Bind(CipMessageRouterRequest_t* message_router_request
         return status;
     }
 
-    if (conn0->State != kConnectionStateEstablished
-        | conn1->State != kConnectionStateEstablished)
+    if ( (conn0->State != kConnectionStateEstablished)
+        | (conn1->State != kConnectionStateEstablished) )
     {
         //Both instances exist, but at least one is not in Established state
         status.extended_status = 0x01;
@@ -286,13 +292,15 @@ CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_rou
 CipStatus CIP_Connection::SafetyClose(CipMessageRouterRequest_t* message_router_request,
                                       CipMessageRouterResponse_t* message_router_response)
 {
-
+	CipStatus stat;
+	return stat;
 }
 
 CipStatus CIP_Connection::SafetyOpen(CipMessageRouterRequest_t* message_router_request,
                                      CipMessageRouterResponse_t* message_router_response)
 {
-
+	CipStatus stat;
+	return stat;
 }
 
 
@@ -446,6 +454,8 @@ CipStatus CIP_Connection::Behaviour()
 
 
     }
+	CipStatus stat;
+	return stat;
 }
 
 

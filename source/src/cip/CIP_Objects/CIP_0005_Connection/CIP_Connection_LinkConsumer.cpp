@@ -16,5 +16,6 @@ CIP_Connection_LinkConsumer::~CIP_Connection_LinkConsumer ()
 
 CipStatus CIP_Connection_LinkConsumer::Receive()
 {
-
+	CipStatus stat;
+	return stat;
 }

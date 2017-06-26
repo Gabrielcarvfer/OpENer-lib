@@ -12,7 +12,6 @@ add_definitions(-std=c++11)
 
 set(OpENer_USETHREAD ON)
 set(OpENer_TESTS ON)
-set(OpENer_PLATFORM "WIN32")
 
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_DISABLE_SOURCE_CHANGES  ON)
@@ -37,11 +36,8 @@ set( OpENer_PLATFORM CACHE STRINGS "Platform OpENer will be built for" )
 set_property(CACHE OpENer_PLATFORM PROPERTY STRINGS ${OpENer_KNOWN_PLATFORMS} )
 
 if (OpENer_PLATFORM STREQUAL WIN32)
-  add_definitions(-D__WIN32__)
-  set (__WIN32__)
 else()
   add_definitions(-D__linux__)
-  unset(__WIN32__)
 endif()
 
 if (OpENer_USETHREAD)
@@ -67,7 +63,7 @@ endif(OpENer_TRACES)
 #######################################
 # Test switch                         #
 #######################################
-set( OpENer_TESTS OFF CACHE BOOL "Enable tests to be built" )
+set( OpENer_TESTS TRUE CACHE BOOL "Enable tests to be built" )
 if( OpENer_TESTS )
   enable_testing()
   add_subdirectory(tests)
@@ -88,13 +84,9 @@ add_subdirectory( src )
 
 add_executable(OpENerMain main.cpp)
 
-if(__WIN32__)
-    if(MINGW)
-        target_link_libraries(OpENerMain OpENerLib winmm)
-    else ()
-        add_definitions(-DVSTUDIO)
-        target_link_libraries(OpENerMain OpENerLib)
-    endif()
+
+if(WIN32)
+    target_link_libraries(OpENerMain OpENerLib winmm.lib)
 else()
     target_link_libraries(OpENerMain OpENerLib)
 endif()

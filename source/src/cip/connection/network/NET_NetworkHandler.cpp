@@ -28,7 +28,7 @@ NET_Connection *NET_NetworkHandler::netStats[3];
 
 //Methods
 CipStatus NET_NetworkHandler::NetworkHandlerInitialize() {
-#ifdef __WIN32__
+#ifdef WIN
     WORD wVersionRequested;
     WSADATA wsaData;
     wVersionRequested = MAKEWORD(2, 2);
@@ -206,8 +206,10 @@ CipStatus NET_NetworkHandler::NetworkHandlerProcessOnce(void) {
         CheckAndHandleUdpGlobalBroadcastSocket();
         CheckAndHandleConsumingUdpSockets();
 
-        for (int socket = 0; socket <= highest_socket_handle; socket++) {
-            if (CheckSocketSet) {
+        for (int socket = 0; socket <= highest_socket_handle; socket++) 
+		{
+            if ( CheckSocketSet(socket) )
+			{
                 // if it is still checked it is a TCP receive
                 if (kCipStatusError == HandleDataOnTcpSocket(socket).status) // if error
                 {
@@ -559,7 +561,7 @@ void NET_NetworkHandler::CheckAndHandleConsumingUdpSockets(void) {
     CIP_Connection *current_connection_instance = nullptr;
 
     // see a message on one of the registered UDP sockets has been received
-    for (int i = 0; i < CIP_ConnectionManager::active_connections_set->size(); i++) {
+    for (unsigned int i = 0; i < CIP_ConnectionManager::active_connections_set->size(); i++) {
 
         // do this at the beginning as the close function may can make the entry invalid
         connection_manager_instance = (CIP_ConnectionManager *) CIP_ConnectionManager::active_connections_set->at(i);
@@ -610,7 +612,7 @@ int NET_NetworkHandler::GetMaxSocket(int socket1, int socket2, int socket3, int 
 }
 
 MicroSeconds NET_NetworkHandler::GetMicroSeconds() {
-#ifdef __WIN32__
+#ifdef WIN
     LARGE_INTEGER performance_counter;
     LARGE_INTEGER performance_frequency;
 

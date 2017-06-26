@@ -17,7 +17,8 @@
 #include "OpENer_IOConnection.hpp"
 #include "OpENer_ExplicitConnection.hpp"
 
-#ifdef __WIN32__
+
+#ifdef WIN
 #include <windows.h>
 #endif
 
@@ -560,7 +561,7 @@ class OpENer_Interface
         static std::thread *workerThread;
         static bool OpENer_active;
 #else
-    #ifdef __WIN32__
+    #ifdef WIN
         static void alarmRinging(UINT uTimerID, UINT uMsg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2);
     #elif __linux__
         static void alarmRinging(int signal);

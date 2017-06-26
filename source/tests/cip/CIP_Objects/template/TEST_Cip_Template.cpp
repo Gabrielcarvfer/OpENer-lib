@@ -102,14 +102,14 @@ CipStatus TEST_Cip_Template1::Init()
 		TEST_Cip_Template1 *instance = new TEST_Cip_Template1();
 		AddClassInstance(instance, 0);
 		auto f = std::bind(&TEST_Cip_Template1::getProductCode, instance, std::placeholders::_1, std::placeholders::_2);
-		instance->classAttrInfo.emplace(1, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Vendor ID" });
-		instance->classAttrInfo.emplace(2, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Product Code" });
+		instance->classAttrInfo.emplace(1, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kAttrFlagGetableSingleAndAll, "Vendor ID" });
+		instance->classAttrInfo.emplace(2, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kAttrFlagGetableSingleAndAll, "Product Code" });
 		instance->classServicesProperties.emplace(1, CipServiceProperties_t{ "GetVendorID" });
 		instance->classServicesProperties.emplace(2, CipServiceProperties_t{"GetProductCode"});
 
 		instance->InstanceServices(2, nullptr, nullptr);
 
-		CipUint * ptr = (CipUint*) instance->GetCipAttribute(2);
+		CipUint * ptr = instance->GetCipAttribute(2).value_u.Uint;
 
 		stat.status = kCipGeneralStatusCodeSuccess;
 		stat.extended_status = 0;
@@ -152,8 +152,8 @@ CipStatus TEST_Cip_Template2::Init()
 		TEST_Cip_Template2 *instance = new TEST_Cip_Template2();
 		AddClassInstance(instance, 0);
 
-		//instance->InsertAttribute(1, kCipUint, &product_code_, kGetableSingleAndAll);
-		//instance->InsertAttribute(2, kCipUsintUsint, &revision_, kGetableSingleAndAll);
+		//instance->InsertAttribute(1, kCipUint, &product_code_, kAttrFlagGetableSingleAndAll);
+		//instance->InsertAttribute(2, kCipUsintUsint, &revision_, kAttrFlagGetableSingleAndAll);
 
 		stat.status = kCipGeneralStatusCodeSuccess;
 		stat.extended_status = 0;

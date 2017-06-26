@@ -6,11 +6,9 @@
 #include "cip/connection/network/NET_NetworkHandler.hpp"
 #include "cip/CIP_Common.hpp"
 
-#ifdef __WIN32__
+#ifdef WIN
 	#include <windows.h>
-	#ifdef VSTUDIO
-		#pragma comment(lib, "winmm.lib")
-	#endif
+	#pragma comment(lib, "winmm.lib")
 #else
 #endif
 
@@ -57,7 +55,7 @@ bool OpENer_Interface::OpENer_Initialize()
         OpENer_active = true;
         workerThread = new std::thread(OpENerWorker);
 #else
-    #ifndef __WIN32__
+    #ifndef WIN32
         // register for closing signals so that we can trigger the stack to end
         signal(SIGALRM, alarmRinging);
     #endif
@@ -109,7 +107,7 @@ void OpENer_Interface::OpENerWorker()
     //Set a alarm to the smaller interval of refresh that connections are configured, so that we don't loose data
     alarmRang = false;
 
-    #ifdef __WIN32__
+    #ifdef WIN
         DWORD_PTR ptr = (DWORD_PTR) nullptr;
         timeSetEvent(smallerInterval, smallerInterval, (LPTIMECALLBACK)alarmRinging, ptr, TIME_ONESHOT);
     #else
@@ -119,7 +117,7 @@ void OpENer_Interface::OpENerWorker()
 }
 
 #ifndef USETHREAD
-    #ifdef __WIN32__
+    #ifdef WIN
     void OpENer_Interface::alarmRinging(UINT      uTimerID,
                                         UINT      uMsg,
                                         DWORD_PTR dwUser,

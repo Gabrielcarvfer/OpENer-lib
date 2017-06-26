@@ -21,9 +21,9 @@
  *    - ntohl
  *    - inet_addr
  */
-#ifdef __WIN32__
+#undef WIN#if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)#define WIN#endif
+#ifdef WIN
 typedef unsigned short in_port_t;
-#else
 #endif
 
 /*! Identity configuration of the device */

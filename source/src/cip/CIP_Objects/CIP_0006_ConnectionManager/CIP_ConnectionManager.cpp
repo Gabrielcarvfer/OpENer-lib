@@ -304,10 +304,11 @@ CipStatus CIP_ConnectionManager::LargeForwardOpen(CipMessageRouterRequest_t* mes
 
 void * CIP_ConnectionManager::retrieveAttribute(CipUsint attributeNumber)
 {
-
+	return nullptr;
 }
 
 CipStatus CIP_ConnectionManager::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
 {
-
+	CipStatus stat;
+	return stat;
 }

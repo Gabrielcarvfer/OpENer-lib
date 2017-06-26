@@ -10,15 +10,20 @@
 #include "CIP_TCPIP_Interface.hpp"
 #include "../../connection/network/NET_Connection.hpp"
 
-#ifdef __WIN32__
+#undef WIN
+#if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define WIN
+#endif
+
+#ifdef WIN
+
     #include <iostream>
     #include <iphlpapi.h>
     #include <sstream>
 
-    #ifdef VSTUDIO
-		#pragma comment(lib, "Ws2_32.lib")
-		#pragma comment(lib, "iphlpapi.lib")
-	#endif
+    
+
+	#pragma comment(lib, "iphlpapi.lib")
 #elif __linux__
     #include <netdb.h>
     #include <ifaddrs.h>
@@ -135,9 +140,9 @@ CipStatus CIP_TCPIP_Interface::Init()
         instance = new CIP_TCPIP_Interface ();
 
         //Class attributes from Vol 2 Chapter 5
-        instance->classAttrInfo.emplace (1, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "Revision" });
-        instance->classAttrInfo.emplace (2, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "MaxInstances" });
-        instance->classAttrInfo.emplace (3, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kGetableSingleAndAll, "NumberOfInstances" });
+        instance->classAttrInfo.emplace (1, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kAttrFlagGetableSingleAndAll, "Revision" });
+        instance->classAttrInfo.emplace (2, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kAttrFlagGetableSingleAndAll, "MaxInstances" });
+        instance->classAttrInfo.emplace (3, CipAttrInfo_t{ kCipUint, sizeof(CipUint), kAttrFlagGetableSingleAndAll, "NumberOfInstances" });
 
         //Class optional attributes (4-7) from Vol 1 Chapter 4
 
@@ -146,18 +151,18 @@ CipStatus CIP_TCPIP_Interface::Init()
         //Setup instance attributes
         //Instance attributes
         //TODO: fix attribute access
-        instance->instAttrInfo.emplace(1 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
-        instance->instAttrInfo.emplace(2 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kGetableSingleAndAll, "" });
-        instance->instAttrInfo.emplace(3 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kSetAndGetAble      , "" });
-        instance->instAttrInfo.emplace(4 , CipAttrInfo_t{ SZ(physical_link_object_t)           , SZ(physical_link_object_t)           , kGetableSingleAndAll, "PhysicalLinkObject" });
-        instance->instAttrInfo.emplace(5 , CipAttrInfo_t{ SZ(interface_configuration_t)        , SZ(interface_configuration_t)        , kSetAndGetAble      , "InterfaceConfiguration" });
-        instance->instAttrInfo.emplace(6 , CipAttrInfo_t{ kCipString                           , SZ(CipString)                        , kSetAndGetAble      , "" });
+        instance->instAttrInfo.emplace(1 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kAttrFlagGetableSingleAndAll, "" });
+        instance->instAttrInfo.emplace(2 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kAttrFlagGetableSingleAndAll, "" });
+        instance->instAttrInfo.emplace(3 , CipAttrInfo_t{ kCipDword                            , SZ(CipDword)                         , kAttrFlagSetAndGetAble      , "" });
+        instance->instAttrInfo.emplace(4 , CipAttrInfo_t{ SZ(physical_link_object_t)           , SZ(physical_link_object_t)           , kAttrFlagGetableSingleAndAll, "PhysicalLinkObject" });
+        instance->instAttrInfo.emplace(5 , CipAttrInfo_t{ SZ(interface_configuration_t)        , SZ(interface_configuration_t)        , kAttrFlagSetAndGetAble      , "InterfaceConfiguration" });
+        instance->instAttrInfo.emplace(6 , CipAttrInfo_t{ kCipString                           , SZ(CipString)                        , kAttrFlagSetAndGetAble      , "" });
         //instance->classAttrInfo.emplace(7, //CipAttrInfo_t{ TODO:8 octets safety_network_number
-        instance->instAttrInfo.emplace(8 , CipAttrInfo_t{ kCipUsint                            , SZ(CipUsint)                         , kSetAndGetAble      , "" });
-        instance->instAttrInfo.emplace(9 , CipAttrInfo_t{ SZ(multicast_address_configuration_t), SZ(multicast_address_configuration_t), kSetAndGetAble      , "MulticastAddressConfiguration"});
-        instance->instAttrInfo.emplace(10, CipAttrInfo_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
-        instance->instAttrInfo.emplace(11, CipAttrInfo_t{ SZ(last_conflict_detected_t)         , SZ(last_conflict_detected_t)         , kSetable            , "LastConflictDetected" });
-        instance->instAttrInfo.emplace(12, CipAttrInfo_t{ kCipBool                             , SZ(CipBool)                          , kSetable            , "" });
+        instance->instAttrInfo.emplace(8 , CipAttrInfo_t{ kCipUsint                            , SZ(CipUsint)                         , kAttrFlagSetAndGetAble      , "" });
+        instance->instAttrInfo.emplace(9 , CipAttrInfo_t{ SZ(multicast_address_configuration_t), SZ(multicast_address_configuration_t), kAttrFlagSetAndGetAble      , "MulticastAddressConfiguration"});
+        instance->instAttrInfo.emplace(10, CipAttrInfo_t{ kCipBool                             , SZ(CipBool)                          , kAttrFlagSetable            , "" });
+        instance->instAttrInfo.emplace(11, CipAttrInfo_t{ SZ(last_conflict_detected_t)         , SZ(last_conflict_detected_t)         , kAttrFlagSetable            , "LastConflictDetected" });
+        instance->instAttrInfo.emplace(12, CipAttrInfo_t{ kCipBool                             , SZ(CipBool)                          , kAttrFlagSetable            , "" });
 
         stat.status = kCipStatusOk;
     }
@@ -337,7 +342,12 @@ CipStatus CIP_TCPIP_Interface::ScanInterfaces()
 	return kCipGeneralStatusCodeSuccess;
 }
 
-#ifdef __WIN32__
+#undef WIN
+#if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define WIN
+#endif
+
+#ifdef WIN
 //Windows version based on Silver Moon ( m00n.silv3r@gmail.com ) : http://www.binarytides.com/get-mac-address-from-ip-in-winsock/
 
 //Functions
@@ -546,7 +556,7 @@ int GetInterfacesList(ip_interface **interface_ptr)
 
 void * CIP_TCPIP_Interface::retrieveAttribute(CipUsint attributeNumber)
 {
-
+	return nullptr;
 }
 
 CipStatus CIP_TCPIP_Interface::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
@@ -555,8 +565,8 @@ CipStatus CIP_TCPIP_Interface::retrieveService(CipUsint serviceNumber, CipMessag
     {
         switch(serviceNumber)
         {
-            case kGetAttributeSingle: return this->GetAttributeSingleTcpIpInterface (req, resp);
-            //case    kGetAttributeAll: return this->GetAttributeAllTcpIpInterface (req, resp);
+            case kServiceGetAttributeSingle: return this->GetAttributeSingleTcpIpInterface (req, resp);
+            //case    kServiceGetAttributeAll: return this->GetAttributeAllTcpIpInterface (req, resp);
             //case kSetAttributeSingle: return this->SetAttributeSingleTcp (req, resp);
             default:
                 return kCipStatusError;

@@ -7,7 +7,8 @@
 //Methods
 CipStatus CIP_AnalogInputPoint::Init()
 {
-
+	CipStatus stat;
+	return stat;
 }
 
 // Handle Explicit requests to the class

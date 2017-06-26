@@ -149,48 +149,48 @@ typedef struct
 typedef enum
 {
     /* Start CIP common services */
-    kGetAttributeAll        = 0x01,
-    kSetAttributeAll        = 0x02,
-    kGetAttributeList       = 0x03,
-    kSetAttributeList       = 0x04,
-    kReset                  = 0x05,
-    kStart                  = 0x06,
-    kStop                   = 0x07,
-    kCreate                 = 0x08,
-    kDelete                 = 0x09,
-    kMultipleServicePacket  = 0x0A,
-    kApplyAttributes        = 0x0D,
-    kGetAttributeSingle     = 0x0E,
-    kSetAttributeSingle     = 0x10,
-    kFindNextObjectInstance = 0x11,
-    kRestore                = 0x15,
-    kSave                   = 0x16,
-    kNoOperation            = 0x17,
-    kGetMember              = 0x18,
-    kSetMember              = 0x19,
-    kInsertMember           = 0x1A,
-    kRemoveMember           = 0x1B,
-    kGroupSync              = 0x1C,
+    kServiceGetAttributeAll        = 0x01,
+    kServiceSetAttributeAll        = 0x02,
+    kServiceGetAttributeList       = 0x03,
+    kServiceSetAttributeList       = 0x04,
+    kServiceReset                  = 0x05,
+    kServiceStart                  = 0x06,
+    kServiceStop                   = 0x07,
+    kServiceCreate                 = 0x08,
+    kServiceDelete                 = 0x09,
+    kServiceMultipleServicePacket  = 0x0A,
+    kServiceApplyAttributes        = 0x0D,
+    kServiceGetAttributeSingle     = 0x0E,
+    kServiceSetAttributeSingle     = 0x10,
+    kServiceFindNextObjectInstance = 0x11,
+    kServiceRestore                = 0x15,
+    kServiceSave                   = 0x16,
+    kServiceNoOperation            = 0x17,
+    kServiceGetMember              = 0x18,
+    kServiceSetMember              = 0x19,
+    kServiceInsertMember           = 0x1A,
+    kServiceRemoveMember           = 0x1B,
+    kServiceGroupSync              = 0x1C,
     /* End CIP common services */
 
     /* Start CIP object-specific services */
-    kForwardOpen            = 0x54,
-    kForwardClose           = 0x4E,
-    kUnconnectedSend        = 0x52,
-    kGetConnectionOwner     = 0x5A
+    kServiceForwardOpen            = 0x54,
+    kServiceForwardClose           = 0x4E,
+    kServiceUnconnectedSend        = 0x52,
+    kServiceGetConnectionOwner     = 0x5A
     /* End CIP object-specific services */
 } CipServiceCode;
 
 /** @brief Definition of Get and Set Flags for CIP Attributes */
 typedef enum
 { /* TODO: Rework */
-    kNotSetOrGetable = 0x00, // Neither set-able nor get-able */
-    kGetableAll      = 0x01, // Get-able, also part of Get Attribute All service */
-    kGetableSingle   = 0x02, // Get-able via Get Attribute */
-    kSetable         = 0x04, // Set-able via Set Attribute */
+    kAttrFlagNotSetOrGetable = 0x00, // Neither set-able nor get-able */
+    kAttrFlagGetableAll      = 0x01, // Get-able, also part of Get Attribute All service */
+    kAttrFlagGetableSingle   = 0x02, // Get-able via Get Attribute */
+    kAttrFlagSetable         = 0x04, // Set-able via Set Attribute */
     /* combined for convenience */
-    kSetAndGetAble   = 0x07, // both set and get-able */
-    kGetableSingleAndAll = 0x03 // both single and all */
+    kAttrFlagSetAndGetAble   = 0x07, // both set and get-able */
+    kAttrFlagGetableSingleAndAll = 0x03 // both single and all */
 } CipAttributeFlag;
 
 typedef enum

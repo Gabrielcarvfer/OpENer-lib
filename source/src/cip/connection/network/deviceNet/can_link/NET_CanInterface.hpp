@@ -7,7 +7,8 @@
 #if __linux__
 	#include <linux/can.h>
 #else
-	#ifdef __WIN32__
+
+#ifdef WIN
 		#include <Windows.h>
 	#endif
 	#include <cstdint>
@@ -51,7 +52,7 @@ class NET_CanInterface
 
     private:
 
-#ifdef __WIN32__
+#ifdef WIN
 		HANDLE soc;
 		kCanBaudRate baudRate;
 #elif __linux__

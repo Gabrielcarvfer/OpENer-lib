@@ -31,9 +31,9 @@ CipStatus CIP_EthernetIP_Link::Init()
 
 
         // bind attributes to the instance
-        instance->instAttrInfo.emplace(1, CipAttrInfo_t{kCipUdint , sizeof(CipUdint)    , kGetableSingleAndAll, "InterfaceSpeed" } );
-        instance->instAttrInfo.emplace(2, CipAttrInfo_t{kCipDword , sizeof(CipDword)    , kGetableSingleAndAll, "InterfaceFlags" } );
-        instance->instAttrInfo.emplace(3, CipAttrInfo_t{kCip6Usint, sizeof(CipByteArray), kGetableSingleAndAll, "PhysicalAddress"} );
+        instance->instAttrInfo.emplace(1, CipAttrInfo_t{kCipUdint , sizeof(CipUdint)    , kAttrFlagGetableSingleAndAll, "InterfaceSpeed" } );
+        instance->instAttrInfo.emplace(2, CipAttrInfo_t{kCipDword , sizeof(CipDword)    , kAttrFlagGetableSingleAndAll, "InterfaceFlags" } );
+        instance->instAttrInfo.emplace(3, CipAttrInfo_t{kCip6Usint, sizeof(CipByteArray), kAttrFlagGetableSingleAndAll, "PhysicalAddress"} );
 
         stat.status = kCipStatusOk;
     }
@@ -62,9 +62,11 @@ void * CIP_EthernetIP_Link::retrieveAttribute (CipUsint attributeNumber)
             default: return nullptr;
         }
     }
+	return nullptr;
 }
 
 CipStatus CIP_EthernetIP_Link::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
 {
-
+	CipStatus stat;
+	return stat;
 }

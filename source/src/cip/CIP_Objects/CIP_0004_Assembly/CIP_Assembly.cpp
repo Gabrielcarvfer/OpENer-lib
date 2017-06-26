@@ -23,10 +23,10 @@ CipStatus CIP_Assembly::Init(void)
 
         object_Set.emplace(object_Set.size(), instance);
 
-        instance->classAttrInfo.emplace(3, CipAttrInfo_t{kCipByteArray, sizeof(CipByteArray), kGetableSingle, "AssemblyByteArray"});
+        instance->classAttrInfo.emplace(3, CipAttrInfo_t{kCipByteArray, sizeof(CipByteArray), kAttrFlagGetableSingle, "AssemblyByteArray"});
 
         /* Attribute 4 Number of bytes in Attribute 3 */
-        instance->classAttrInfo.emplace(4, CipAttrInfo_t{kCipUint, sizeof(CipUint), kGetableSingle, "AssemblyByteArrayLength"});
+        instance->classAttrInfo.emplace(4, CipAttrInfo_t{kCipUint, sizeof(CipUint), kAttrFlagGetableSingle, "AssemblyByteArrayLength"});
 
         stat.status = kCipStatusOk;
     }
@@ -47,6 +47,7 @@ CipStatus CIP_Assembly::Shut(void)
 
 CipStatus CIP_Assembly::Create(CipByte* data, CipUint data_length)
 {
+	CipStatus stat;
     CIP_Assembly* instance;
 
     /* add instances (always succeeds (or asserts))*/
@@ -54,11 +55,13 @@ CipStatus CIP_Assembly::Create(CipByte* data, CipUint data_length)
 
     instance->assemblyByteArray.length = data_length;
     instance->assemblyByteArray.data   = data;
+
+	return stat;
 }
 
 CipStatus CIP_Assembly::NotifyAssemblyConnectedDataReceived(CipUsint* data, CipUint data_length)
 {
-    CipByteArray* assemblyByteArray;
+	CipByteArray* assemblyByteArray = nullptr;;
 
     /* empty path (path size = 0) need to be checked and taken care of in future */
     /* copy received data to Attribute 3 */
@@ -163,7 +166,7 @@ void * CIP_Assembly::retrieveAttribute(CipUsint attributeNumber)
     {
         switch(attributeNumber)
         {
-
+			case 1:
             default:
                 return nullptr;
         }
@@ -176,5 +179,6 @@ void * CIP_Assembly::retrieveAttribute(CipUsint attributeNumber)
 
 CipStatus CIP_Assembly::retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp)
 {
-
+	CipStatus stat;
+	return stat;
 }

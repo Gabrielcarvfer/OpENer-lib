@@ -5,7 +5,12 @@
 #ifndef OPENERMAIN_NET_ETHIP_INCLUDES_H
 #define OPENERMAIN_NET_ETHIP_INCLUDES_H
 
-#ifdef __WIN32__
+#undef WIN
+#if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define WIN
+#endif
+
+#ifdef WIN
     #include <winsock2.h>
     #include <windows.h>
     #include <winsock.h>

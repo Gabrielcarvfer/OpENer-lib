@@ -49,31 +49,31 @@ CipStatus CIP_DeviceNET_Link::Init()
 		CIP_DeviceNET_Link * class_ptr = new CIP_DeviceNET_Link();
 
         //DeviceNet Object Attribute - Revision
-        class_ptr->classAttrInfo.emplace(1, CipAttrInfo_t{kCipUint,  sizeof(CipUint), kGetableSingle, "Revision"});
+        class_ptr->classAttrInfo.emplace(1, CipAttrInfo_t{kCipUint,  sizeof(CipUint), kAttrFlagGetableSingle, "Revision"});
 
         //DeviceNet Object Service - GetAttributeSingle
-		//class_ptr->InsertService(kGetAttributeSingle,    &GetAttributeSingleDeviceNetInterface, "GetAttributeSingleDeviceNetInterface");
+		//class_ptr->InsertService(kServiceGetAttributeSingle,    &GetAttributeSingleDeviceNetInterface, "GetAttributeSingleDeviceNetInterface");
         //service code 0E
 		object_Set.emplace(0, class_ptr);
 
         //DeviceNet instance attributes
-		class_ptr->instAttrInfo.emplace( 1, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kSetAndGetAble, "mac_id"   }); // bind attributes to the instance
-		class_ptr->instAttrInfo.emplace( 2, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kSetAndGetAble, "baud_rate"});
-		class_ptr->instAttrInfo.emplace( 3, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kSetAndGetAble, "BOI"      });
-		class_ptr->instAttrInfo.emplace( 4, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kSetAndGetAble, "BOC"      });
+		class_ptr->instAttrInfo.emplace( 1, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kAttrFlagSetAndGetAble, "mac_id"   }); // bind attributes to the instance
+		class_ptr->instAttrInfo.emplace( 2, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kAttrFlagSetAndGetAble, "baud_rate"});
+		class_ptr->instAttrInfo.emplace( 3, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kAttrFlagSetAndGetAble, "BOI"      });
+		class_ptr->instAttrInfo.emplace( 4, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kAttrFlagSetAndGetAble, "BOC"      });
 
         //Allocation Information (STRUCT)
         //Allocation Choice Byte (BYTE)
         //Master MAC ID (USINT)
-		class_ptr->instAttrInfo.emplace( 6, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kGetableSingleAndAll, "mac_id_switch"       });
-		class_ptr->instAttrInfo.emplace( 7, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kGetableSingleAndAll, "baud_rate_switch"    });
-		class_ptr->instAttrInfo.emplace( 8, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kGetableSingleAndAll, "mac_id_switch_val"   });
-		class_ptr->instAttrInfo.emplace( 9, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kGetableSingleAndAll, "baud_rate_switch_val"});
-		class_ptr->instAttrInfo.emplace(10, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kSetable            , "quick_connect"       });
+		class_ptr->instAttrInfo.emplace( 6, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kAttrFlagGetableSingleAndAll, "mac_id_switch"       });
+		class_ptr->instAttrInfo.emplace( 7, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kAttrFlagGetableSingleAndAll, "baud_rate_switch"    });
+		class_ptr->instAttrInfo.emplace( 8, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kAttrFlagGetableSingleAndAll, "mac_id_switch_val"   });
+		class_ptr->instAttrInfo.emplace( 9, CipAttrInfo_t{kCipUsint, sizeof(CipUsint), kAttrFlagGetableSingleAndAll, "baud_rate_switch_val"});
+		class_ptr->instAttrInfo.emplace(10, CipAttrInfo_t{kCipBool , sizeof(CipBool ), kAttrFlagSetable            , "quick_connect"       });
 
         //Safety Network Number
         //instAttrInfo.emplace(3, kCipBool,
-        //                &physical_address, kGetableSingleAndAll);
+        //                &physical_address, kAttrFlagGetableSingleAndAll);
 
         //Diagnostic Counters (STRUCT)
         //Diagnostic Counters Descriptor (WORD)

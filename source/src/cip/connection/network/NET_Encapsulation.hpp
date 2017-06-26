@@ -7,6 +7,8 @@
 
 #include "../../ciptypes.hpp"
 
+
+
 typedef struct encapsulation_data
 {
     CipUint command_code;

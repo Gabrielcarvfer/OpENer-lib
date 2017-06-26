@@ -17,6 +17,7 @@ CIP_Connection_LinkProducer::~CIP_Connection_LinkProducer ()
 
 CipStatus CIP_Connection_LinkProducer::Send()
 {
-
+	CipStatus stat;
+	return stat;
 }
 

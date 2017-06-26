@@ -6,6 +6,11 @@
 #ifndef OPENER_CIP_TYPEDEFS_H_
 #define OPENER_CIP_TYPEDEFS_H_
 
+#undef WIN
+#if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)
+#define WIN
+#endif
+
 #include <cstdint>
 
 /** @file typedefs.h

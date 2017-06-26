@@ -129,28 +129,28 @@ CipStatus CIP_Identity::Init() {
 
         instance->revision = identityRevision_t {1, 0};
 
-        instAttrInfo.emplace(1, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "vendor_id"});
-        instAttrInfo.emplace(2, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "device_type"});
-        instAttrInfo.emplace(3, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll, "product_code"});
+        instAttrInfo.emplace(1, CipAttrInfo_t{kCipUint, SZ(CipUint), kAttrFlagGetableSingleAndAll, "vendor_id"});
+        instAttrInfo.emplace(2, CipAttrInfo_t{kCipUint, SZ(CipUint), kAttrFlagGetableSingleAndAll, "device_type"});
+        instAttrInfo.emplace(3, CipAttrInfo_t{kCipUint, SZ(CipUint), kAttrFlagGetableSingleAndAll, "product_code"});
         instAttrInfo.emplace(4,
-                             CipAttrInfo_t{kCipUsintUsint, SZ(identityRevision_t), kGetableSingleAndAll, "revision"});
-        instAttrInfo.emplace(5, CipAttrInfo_t{kCipWord, SZ(CipWord), kGetableSingleAndAll, "status"});
-        instAttrInfo.emplace(6, CipAttrInfo_t{kCipUdint, SZ(CipUdint), kGetableSingleAndAll, "serial_number"});
+                             CipAttrInfo_t{kCipUsintUsint, SZ(identityRevision_t), kAttrFlagGetableSingleAndAll, "revision"});
+        instAttrInfo.emplace(5, CipAttrInfo_t{kCipWord, SZ(CipWord), kAttrFlagGetableSingleAndAll, "status"});
+        instAttrInfo.emplace(6, CipAttrInfo_t{kCipUdint, SZ(CipUdint), kAttrFlagGetableSingleAndAll, "serial_number"});
         instAttrInfo.emplace(7,
-                             CipAttrInfo_t{kCipShortString, SZ(CipShortString), kGetableSingleAndAll, "product_name"});
-        instAttrInfo.emplace(8, CipAttrInfo_t{kCipUsint, SZ(CipUsint), kGetableSingleAndAll, "State"});
-        instAttrInfo.emplace(9, CipAttrInfo_t{kCipUint, SZ(CipUint), kGetableSingleAndAll,
+                             CipAttrInfo_t{kCipShortString, SZ(CipShortString), kAttrFlagGetableSingleAndAll, "product_name"});
+        instAttrInfo.emplace(8, CipAttrInfo_t{kCipUsint, SZ(CipUsint), kAttrFlagGetableSingleAndAll, "State"});
+        instAttrInfo.emplace(9, CipAttrInfo_t{kCipUint, SZ(CipUint), kAttrFlagGetableSingleAndAll,
                                               "Configuration_consistency_value"});
-        instAttrInfo.emplace(10, CipAttrInfo_t{kCipUsint, SZ(CipUsint), kGetableSingleAndAll, "Heartbeat Interval"});
+        instAttrInfo.emplace(10, CipAttrInfo_t{kCipUsint, SZ(CipUsint), kAttrFlagGetableSingleAndAll, "Heartbeat Interval"});
 
         /*  todo:
-        instAttrInfo.emplace(11, CipAttrInfo_t{kCipUsint), 3*SZ(CipUsint    ), kSetable            , "Active Language"});
-        instAttrInfo.emplace(12, CipAttrInfo_t{kCip,SZ(),kGetable,"Supported Language List"});
-        instAttrInfo.emplace(13, CipAttrInfo_t{kCip,SZ(),kGetable,"International Product Name"});
-        instAttrInfo.emplace(14, CipAttrInfo_t{kCip,SZ(),kGetable,"Semaphore"});
-        instAttrInfo.emplace(15, CipAttrInfo_t{kCip,SZ(),kGetable,"Assigned_Name"});
-        instAttrInfo.emplace(16, CipAttrInfo_t{kCip,SZ(),kGetable,"AssignedDescription"});
-        instAttrInfo.emplace(17, CipAttrInfo_t{kCip,SZ(),kGetable,"Geographic_Location"});
+        instAttrInfo.emplace(11, CipAttrInfo_t{kCipUsint), 3*SZ(CipUsint    ), kAttrFlagSetable            , "Active Language"});
+        instAttrInfo.emplace(12, CipAttrInfo_t{kCip,SZ(),kAttrFlagGetable,"Supported Language List"});
+        instAttrInfo.emplace(13, CipAttrInfo_t{kCip,SZ(),kAttrFlagGetable,"International Product Name"});
+        instAttrInfo.emplace(14, CipAttrInfo_t{kCip,SZ(),kAttrFlagGetable,"Semaphore"});
+        instAttrInfo.emplace(15, CipAttrInfo_t{kCip,SZ(),kAttrFlagGetable,"Assigned_Name"});
+        instAttrInfo.emplace(16, CipAttrInfo_t{kCip,SZ(),kAttrFlagGetable,"AssignedDescription"});
+        instAttrInfo.emplace(17, CipAttrInfo_t{kCip,SZ(),kAttrFlagGetable,"Geographic_Location"});
         instAttrInfo.emplace(18, CipAttrInfo_t{kCip,sizeof(v7.c5.),kNotSetOrGetable,"Modbus Identity Info"});
          */
         stat.status = kCipStatusOk;
@@ -164,6 +164,7 @@ CipStatus CIP_Identity::Init() {
 
 CipStatus CIP_Identity::Create()
 {
+	CipStatus stat;
     CIP_Identity *instance = new CIP_Identity();
     AddClassInstance(instance, -1);
 
@@ -176,6 +177,7 @@ CipStatus CIP_Identity::Create()
     instance->serial_number = 0;
     instance->product_name  = {sizeof(OPENER_DEVICE_NAME) - 1, (CipByte *) OPENER_DEVICE_NAME};
 
+	return stat;
 }
 
 CipStatus CIP_Identity::Shut()

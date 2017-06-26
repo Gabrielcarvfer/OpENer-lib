@@ -10,7 +10,7 @@
 bool test_class_services()
 {
     CIP_Connection * class_instance = (CIP_Connection*)CIP_Connection::GetInstance(0);
-
+    CIP_Connection* conn;
     CipMessageRouterRequest_t req;
     CipMessageRouterResponse_t resp;
     CipStatus stat;
@@ -22,6 +22,9 @@ bool test_class_services()
         stat = class_instance->InstanceServices(0x09,&req,&resp);
 
     //Test reset (service 0x05)
+        class_instance->Create(nullptr, nullptr);
+        conn = (CIP_Connection*)CIP_Connection::GetInstance(1);
+        conn->State = CIP_Connection::kConnectionStateTimedOut;
         stat = class_instance->InstanceServices(0x05,&req,&resp);
 
     //Test find_next_object_instance (service 0x11)
@@ -50,7 +53,7 @@ bool test_class_services()
             return false;
 
         //Set connections as established and try to bind again
-        CIP_Connection* conn = (CIP_Connection*)CIP_Connection::GetInstance(1);
+        conn = (CIP_Connection*)CIP_Connection::GetInstance(1);
         conn->State = CIP_Connection::kConnectionStateEstablished;
 
         conn = (CIP_Connection*)CIP_Connection::GetInstance(2);
@@ -58,7 +61,7 @@ bool test_class_services()
 
         stat = class_instance->InstanceServices(0x4B,&req,&resp);
 
-        if (stat.status != kCipGeneralStatusCodeSuccess) //As connections are not set as configured
+        if (stat.status != kCipGeneralStatusCodeSuccess) //As connections are set as configured
             return false;
 
     //Test producing application lookup (service 0x4C)
@@ -93,6 +96,7 @@ bool test_instance_services()
     //Test Reset (service 0x05)
 
     //Test Delete (service 0x09)
+	return true;
 }
 
 int main()

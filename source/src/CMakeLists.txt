@@ -12,11 +12,10 @@ add_library( OpENerLib STATIC ${OPENER_SRC} )
 
 
 
-if(__WIN32__)
+if(WIN32)
   if(MINGW)
-	target_link_libraries(OpENerLib OpENer_CIP OpENer_UTILS winmm )
+	target_link_libraries(OpENerLib OpENer_CIP OpENer_UTILS winmm.lib)
   else ()
-	add_definitions(-DVSTUDIO)
 	target_link_libraries(OpENerLib OpENer_CIP OpENer_UTILS )
   endif()
 else()

@@ -29,7 +29,6 @@
 #define OPENER_TRACE_LEVEL_INFO 0x08
 
 #ifndef OPENER_TRACE_LEVEL
-#ifdef __WIN32__
 #pragma message( \
     "OPENER_TRACE_LEVEL was not defined setting it to OPENER_TRACE_LEVEL_ERROR")
 #else
@@ -37,7 +36,7 @@
 #endif
 
 #define OPENER_TRACE_LEVEL OPENER_TRACE_LEVEL_ERROR
-#endif
+
 
 /* @def OPENER_TRACE_ENABLED Can be used for conditional code compilation */
 #define OPENER_TRACE_ENABLED
@@ -80,7 +79,7 @@
     do {                                                  \
         if (OPENER_TRACE_LEVEL_INFO & OPENER_TRACE_LEVEL) \
             LOG_TRACE(__VA_ARGS__);                       \
-    } while (0)
+    } while (0);
 
 #else
 /* define the tracing macros empty in order to save space */
@@ -89,7 +88,7 @@
 #define OPENER_TRACE_WARN(...)
 #define OPENER_TRACE_STATE(...)
 #define OPENER_TRACE_INFO(...)
-#endif
+#endif //OPENER_WITH_TRACES
 /* TRACING *******************************************************************/
 
 #endif //OPENER_CIP_TRACE_H_
