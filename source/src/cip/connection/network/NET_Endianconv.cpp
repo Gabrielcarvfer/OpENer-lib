@@ -89,16 +89,14 @@ int NET_Endianconv::AddDintToMessage(CipUdint data, CipUsint* buffer)
     return 4;
 }
 
-#ifdef OPENER_SUPPORT_64BIT_DATATYPES
-
 /**
  *   @brief Reads CipUlint from *pa_buf and converts little endian to host.
  *   @param pa_buf pointer where data should be reed.
  *   @return CipUlint value
  */
-CipUlint UTIL_Endianconv::GetLintFromMessage(CipUsint* buffer)
+CipUlint NET_Endianconv::GetLintFromMessage(CipUsint* buffer)
 {
-    CipUsint* buffer_address = *buffer;
+    CipUsint* buffer_address = buffer;
     CipUlint data = ((((CipUlint)buffer_address[0]) << 56)
                          & 0xFF00000000000000LL)
         + ((((CipUlint)buffer_address[1]) << 48) & 0x00FF000000000000LL)
@@ -117,9 +115,9 @@ CipUlint UTIL_Endianconv::GetLintFromMessage(CipUsint* buffer)
  * @param data value to be written
  * @param buffer pointer where data should be written.
  */
-int UTIL_Endianconv::AddLintToMessage(CipUlint data, CipUsint* buffer)
+int NET_Endianconv::AddLintToMessage(CipUlint data, CipUsint* buffer)
 {
-    CipUsint* buffer_address = *buffer;
+    CipUsint* buffer_address = buffer;
     buffer_address[0] = (CipUsint)(data >> 56) & 0xFF;
     buffer_address[1] = (CipUsint)(data >> 48) & 0xFF;
     buffer_address[2] = (CipUsint)(data >> 40) & 0xFF;
@@ -132,7 +130,6 @@ int UTIL_Endianconv::AddLintToMessage(CipUlint data, CipUsint* buffer)
     return 8;
 }
 
-#endif
 
 /**
  * @brief Detects Endianess of the platform and sets global g_nOpENerPlatformEndianess variable accordingly

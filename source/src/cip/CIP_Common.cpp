@@ -381,14 +381,14 @@ int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint *message)
             number_of_decoded_bytes = 4;
             break;
 
-#ifdef OPENER_SUPPORT_64BIT_DATATYPES
         case (kCipLint):
         case (kCipUlint):
-        case (kCipLword): {
-            (*(CipUlint*)(data)) = GetLintFromMessage(message);
-            number_of_decoded_bytes = 8;
-        } break;
-#endif
+        case (kCipLword):
+            {
+                (*(CipUlint*)(data)) = NET_Endianconv::GetLintFromMessage(message);
+                number_of_decoded_bytes = 8;
+            }
+            break;
 
         case (kCipString):
         {

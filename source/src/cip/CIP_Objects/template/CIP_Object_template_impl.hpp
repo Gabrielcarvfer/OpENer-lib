@@ -12,7 +12,7 @@
 #include "../../ciptypes.hpp"
 
 //Static variables
-template<class T> CipUdint    CIP_Object_template<T>::class_id = 0;
+template<class T> CipUint    CIP_Object_template<T>::class_id = 0;
 template<class T> std::string CIP_Object_template<T>::class_name = "";
 template<class T> CipUint     CIP_Object_template<T>::revision = 0;
 template<class T> CipUint     CIP_Object_template<T>::max_instances = 1;

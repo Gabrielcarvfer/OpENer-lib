@@ -1,4 +1,5 @@
-#opENer_common_includes()
+opENer_common_includes()
+
 
 set( CIP_TEST_SRC ./TEST_Cip_Connection.hpp ./TEST_Cip_Connection.cpp)
 

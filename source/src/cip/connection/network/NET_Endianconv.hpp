@@ -72,9 +72,8 @@ public:
  */
     static  int AddDintToMessage (CipUdint data, CipUsint *buffer);
 
-#ifdef OPENER_SUPPORT_64BIT_DATATYPES
 
-    CipUlint GetLintFromMessage(CipUsint** buffer);
+    static CipUlint GetLintFromMessage(CipUsint* buffer);
 
     /** @ingroup ENCAP
      *
@@ -84,9 +83,8 @@ public:
      *
      * @return Length in bytes of the encoded message
      */
-    int AddLintToMessage(CipUlint pa_unData, CipUsint** buffer);
+    static int AddLintToMessage(CipUlint pa_unData, CipUsint* buffer);
 
-#endif
 
 /** Identify if we are running on a big or little endian system and set
  * variable.

@@ -249,7 +249,8 @@ CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_rou
     //Router request fields
     CipUint instance_count = 0;
     std::vector<CipUint> connection_instance_list;
-    CipEpath * producing_application_path = (CipEpath *)&message_router_request->request_data[0];
+    CipEpath producing_application_path;
+    producing_application_path.from_bytes(&message_router_request->request_data);
     
     if ( ( j = (CipUdint) object_Set.size() ) < 1)
     {
@@ -266,7 +267,7 @@ CipStatus CIP_Connection::ProducingLookup(CipMessageRouterRequest_t* message_rou
         conn = (CIP_Connection*)GetInstance(i);
         if (conn->State == kConnectionStateEstablished)
         {
-            if (CipEpath::check_if_equal (producing_application_path, &conn->Produced_connection_path))
+            if (CipEpath::check_if_equal (&producing_application_path, &conn->Produced_connection_path))
             {
                 instance_count++;
                 connection_instance_list.push_back (conn->id);

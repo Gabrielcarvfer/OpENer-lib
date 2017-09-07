@@ -40,7 +40,7 @@ class CIP_Object_template
         virtual ~CIP_Object_template();
 
         //CIP class/object attributes
-        static CipUdint class_id;
+        static CipUint class_id;
         static std::string class_name;
         static CipUint  revision;
         static CipUint  max_instances;

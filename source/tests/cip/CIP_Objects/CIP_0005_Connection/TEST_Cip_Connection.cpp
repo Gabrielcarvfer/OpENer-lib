@@ -40,7 +40,7 @@ bool test_class_services()
         req.request_path.attribute_number=1; //Get attribute 1, or connection state
         stat = class_instance->InstanceServices(0x0E,&req,&resp);
         if (stat.status != kCipGeneralStatusCodeSuccess)
-            return -1;
+            return false;
 
     //Test Connection bind (service 0x4B)
         class_instance->Create(nullptr, nullptr);
@@ -75,7 +75,9 @@ bool test_class_services()
         req.request_data.clear();
         resp.response_data.clear();
         CipEpath path;
-
+        path.attribute_number = 1;
+        path.class_id = CIP_Connection::class_id;
+        path.instance_number = 1;
         path.to_bytes(&req.request_data);
 
         stat = class_instance->InstanceServices(0x4C,&req,&resp);
@@ -110,10 +112,10 @@ int main()
 	CIP_Connection::Init();
 
 	if ( !test_class_services() )
-        exit(-1);
+        return -1;
 
     if ( !test_instance_services() )
-        exit(-1);
+        return -1;
 
 	CIP_Connection::Shut();
 

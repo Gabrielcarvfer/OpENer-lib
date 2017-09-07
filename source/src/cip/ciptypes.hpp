@@ -266,6 +266,15 @@ public:
         byteVec->push_back( ((CipUsint*)&this->attribute_number)[0] );
         byteVec->push_back( ((CipUsint*)&this->attribute_number)[1] );
     }
+
+    void from_bytes(std::vector<CipUsint> * byteVec)
+    {
+        //todo: fix for big endian
+        this->path_size = (CipUsint) (*byteVec)[0];
+        this->class_id  = (CipUint)  (*byteVec)[1];
+        this->instance_number  = (CipUint) (*byteVec)[3];
+        this->attribute_number = (CipUint) (*byteVec)[5];
+    }
 };
 
 /** @brief CIP Connection Path
