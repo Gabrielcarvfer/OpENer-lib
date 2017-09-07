@@ -173,8 +173,9 @@ CipStatus CIP_Object_template<T>::GetAttributeSingle(CipMessageRouterRequest_t* 
     // Mask for filtering get-ability
     CipByte get_mask;
 
-    CipAttrInfo_t* attribute = &instAttrInfo.at(message_router_request->request_path.attribute_number);
-    CipByte* message = (CipByte*)&message_router_response->response_data[0];
+    CipUsint attribute_number = message_router_request->request_path.attribute_number;
+    CipAttrInfo_t* attribute = &instAttrInfo.at(attribute_number);
+
 
     message_router_response->reply_service = (0x80 | message_router_request->service);
     message_router_response->general_status = kCipGeneralStatusCodeAttributeNotSupported;
@@ -208,7 +209,7 @@ CipStatus CIP_Object_template<T>::GetAttributeSingle(CipMessageRouterRequest_t* 
                 //TODO:build an alternative
                 //BeforeAssemblyDataSend(this);
             }
-            //message_router_response->data_length = (CipInt)CIP_Common::EncodeData(attribute->getType(), attribute->getData(), &message);
+            CIP_Common::EncodeData(attribute->attributeType, this->retrieveAttribute(attribute_number), &(message_router_response->response_data));
             message_router_response->general_status = kCipGeneralStatusCodeSuccess;
         }
     }

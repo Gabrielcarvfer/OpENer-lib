@@ -57,7 +57,7 @@ class CIP_Common
      *  @return length of attribute in bytes
      *          -1 .. error
      */
-	static int EncodeData(CipUsint cip_type, void* data, CipUsint* message);
+	static int EncodeData(CipUsint cip_type, void* data, std::vector<CipUsint> * message);
 	private:
 		static const CipUint kCipUintZero = 0;
 		static int EncodeEPath(CipEpath* epath, CipUsint* message);

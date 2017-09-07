@@ -12,6 +12,7 @@ add_subdirectory(CIP_0002_MessageRouter)
 
 set(CIP_OBJECTS_SRC
         template/CIP_Object_template.hpp
+        #template/CIP_Object_template_impl.hpp
         CIP_ClassStack.cpp
         CIP_ClassStack.hpp
         CIP_Object.hpp

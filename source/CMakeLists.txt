@@ -8,7 +8,7 @@ cmake_minimum_required( VERSION 2.8.9 )
 #######################################
 project(OpENerMain CXX)
 
-add_definitions(-std=c++11)
+add_definitions(-std=c++11 -g)
 
 set(OpENer_USETHREAD ON)
 set(OpENer_TESTS ON)

@@ -5,6 +5,7 @@
 #include "TEST_Cip_Connection.hpp"
 #include <iostream>
 #include <cip/ciptypes.hpp>
+#include <ciptypes.hpp>
 
 
 bool test_class_services()
@@ -34,7 +35,12 @@ bool test_class_services()
         stat = class_instance->InstanceServices(0x11,&req,&resp);
 
     //Test Get_Attribute_Single (service 0x0E)
-        //stat = class_instance->InstanceServices(0x0E,&req,&resp);
+        req.request_data.clear();
+        resp.response_data.clear();
+        req.request_path.attribute_number=1; //Get attribute 1, or connection state
+        stat = class_instance->InstanceServices(0x0E,&req,&resp);
+        if (stat.status != kCipGeneralStatusCodeSuccess)
+            return -1;
 
     //Test Connection bind (service 0x4B)
         class_instance->Create(nullptr, nullptr);

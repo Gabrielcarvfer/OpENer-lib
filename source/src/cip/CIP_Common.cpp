@@ -139,46 +139,94 @@ CipStatus CIP_Common::NotifyClass (CipMessageRouterRequest_t *message_router_req
     return kCipGeneralStatusCodeSuccess;
 }
 */
-int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)
+int CIP_Common::EncodeData (CipUsint cip_type, void *data, std::vector<CipUsint> *message)
 {
     int counter = 0;
 
     switch (cip_type)
-        /* check the data type of attribute */
+    /* check the data type of attribute */
     {
         case (kCipBool):
         case (kCipSint):
         case (kCipUsint):
         case (kCipByte):
-            *message = *(CipUsint *) (data);
-            ++(*message);
-            counter = 1;
+            message->push_back(* (CipUsint*) data);
             break;
 
         case (kCipInt):
         case (kCipUint):
         case (kCipWord):
-            NET_Endianconv::AddIntToMessage (*(CipUint *) (data), message);
-            counter = 2;
+            switch(NET_Endianconv::g_opENer_platform_endianess)
+            {
+                case NET_Endianconv::kOpENerEndianessLittle:
+                    message->push_back(* (CipUsint*) (data)  );
+                    message->push_back(* (CipUsint*) (data+4));
+                    break;
+                case NET_Endianconv::kOpENerEndianessBig:
+                    message->push_back(* (CipUsint*) (data+4));
+                    message->push_back(* (CipUsint*) (data)  );
+                    break;
+                default:
+                    //todo: Report error
+                    break;
+            }
             break;
 
         case (kCipDint):
         case (kCipUdint):
         case (kCipDword):
         case (kCipReal):
-            NET_Endianconv::AddDintToMessage (*(CipUdint *) (data), message);
-            counter = 4;
+            switch(NET_Endianconv::g_opENer_platform_endianess)
+            {
+                case NET_Endianconv::kOpENerEndianessLittle:
+                    message->push_back(* (CipUsint*) (data)   );
+                    message->push_back(* (CipUsint*) (data+4) );
+                    message->push_back(* (CipUsint*) (data+8) );
+                    message->push_back(* (CipUsint*) (data+12));
+                    break;
+                case NET_Endianconv::kOpENerEndianessBig:
+                    message->push_back(* (CipUsint*) (data+12));
+                    message->push_back(* (CipUsint*) (data+8) );
+                    message->push_back(* (CipUsint*) (data+4) );
+                    message->push_back(* (CipUsint*) (data)   );
+                    break;
+                default:
+                    //todo: Report error
+                    break;
+            }
             break;
 
-#ifdef OPENER_SUPPORT_64BIT_DATATYPES
         case (kCipLint):
         case (kCipUlint):
         case (kCipLword):
         case (kCipLreal):
-            AddLintToMessage(*(CipUlint*)(data), message);
-            counter = 8;
-            break;
-#endif
+            switch(NET_Endianconv::g_opENer_platform_endianess)
+            {
+                case NET_Endianconv::kOpENerEndianessLittle:
+                    message->push_back(* (CipUsint*) (data)   );
+                    message->push_back(* (CipUsint*) (data+4) );
+                    message->push_back(* (CipUsint*) (data+8) );
+                    message->push_back(* (CipUsint*) (data+12));
+                    message->push_back(* (CipUsint*) (data+16));
+                    message->push_back(* (CipUsint*) (data+20));
+                    message->push_back(* (CipUsint*) (data+24));
+                    message->push_back(* (CipUsint*) (data+28));
+                    break;
+                case NET_Endianconv::kOpENerEndianessBig:
+                    message->push_back(* (CipUsint*) (data+28));
+                    message->push_back(* (CipUsint*) (data+24));
+                    message->push_back(* (CipUsint*) (data+20));
+                    message->push_back(* (CipUsint*) (data+16));
+                    message->push_back(* (CipUsint*) (data+12));
+                    message->push_back(* (CipUsint*) (data+8) );
+                    message->push_back(* (CipUsint*) (data+4) );
+                    message->push_back(* (CipUsint*) (data)   );
+                    break;
+                default:
+                    //todo: Report error
+                    break;
+            }
+/*
 
         case (kCipStime):
         case (kCipDate):
@@ -187,16 +235,16 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)
             break;
         case (kCipString):
         {
-            CipString *string = (CipString *) data;
+            auto *string = (CipString *) data;
 
             NET_Endianconv::AddIntToMessage (* &(string->length), message);
             memcpy (message, string->string, string->length);
             *message += string->length;
 
-            counter = string->length + 2; /* we have a two byte length field */
+            counter = string->length + 2; // we have a two byte length field
             if (counter & 0x01)
             {
-                /* we have an odd byte count */
+                // we have an odd byte count
                 *message = 0;
                 ++(*message);
                 counter++;
@@ -248,7 +296,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)
 
         case (kCipUdintUdintUdintUdintUdintString):
         {
-            /* TCP/IP attribute 5 */
+            // TCP/IP attribute 5
             CipTcpIpNetworkInterfaceConfiguration *tcp_ip_network_interface_configuration = (CipTcpIpNetworkInterfaceConfiguration *) data;
             NET_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->ip_address), message);
             NET_Endianconv::AddDintToMessage (NET_Connection::endian_ntohl (tcp_ip_network_interface_configuration->network_mask), message);
@@ -282,7 +330,7 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)
         }
             break;
 
-        case (kInternalUint6): /* TODO for port class attribute 9, hopefully we can find a better way to do this*/
+        case (kInternalUint6): // TODO for port class attribute 9, hopefully we can find a better way to do this
         {
             CipUint *internal_unit16_6 = (CipUint *) data;
 
@@ -295,11 +343,12 @@ int CIP_Common::EncodeData (CipUsint cip_type, void *data, CipUsint *message)
             counter = 12;
             break;
         }
+    */
         default:
             break;
     }
 
-    return counter;
+    return (int) message->size();
 }
 
 int CIP_Common::DecodeData (CipUsint cip_type, void *data, CipUsint *message)
