@@ -14,7 +14,7 @@
 #include "CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "CIP_0005_Connection/CIP_Connection.hpp"
 #include "CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-//#include "CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp"
+#include "CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp"
 #include "CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
 #include "CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
 
@@ -26,7 +26,7 @@ class CIP_Object_glue: public CIP_Object_template<CIP_Object_glue>
 {
     public:
     CipStatus InstanceServices(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
-
+    CIP_Attribute GetCipAttribute(CipUsint attribute_number);
     const CIP_Object_glue * GetInstance(CipUdint instance_number);
 
         void * retrieveAttribute(CipUsint attributeNumber);

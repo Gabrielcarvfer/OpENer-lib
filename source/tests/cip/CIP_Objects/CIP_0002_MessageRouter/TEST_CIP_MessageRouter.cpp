@@ -31,6 +31,8 @@ int main()
     //Try to retrieve attributes from registered class
     char* attr = (char*)registered_class_ptr->glue.retrieveAttribute(1);
 
+    CIP_Attribute attr1 = registered_class_ptr->glue.GetCipAttribute(1);
+
     //Try to call services from registered class
     CipMessageRouterRequest_t  req{};
     CipMessageRouterResponse_t resp{};

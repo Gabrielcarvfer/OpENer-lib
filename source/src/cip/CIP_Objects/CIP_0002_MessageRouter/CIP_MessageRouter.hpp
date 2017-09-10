@@ -41,8 +41,8 @@ class CIP_MessageRouter : public CIP_Object_template<CIP_MessageRouter>
         static CipStatus Init ();
         static CipStatus Shut ();
 
-        CIP_MessageRouter()=default;
-        ~CIP_MessageRouter()=default;
+        CIP_MessageRouter();
+        ~CIP_MessageRouter();
         static CipStatus Create();
         void * retrieveAttribute(CipUsint attributeNumber);
         CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
@@ -111,7 +111,7 @@ class CIP_MessageRouter : public CIP_Object_template<CIP_MessageRouter>
 
         /** @brief Free all data allocated by the classes created in the CIP stack
          */
-        static void DeleteAllClasses(void);
+        static void DeleteAllClasses();
 
         //temporary
         static CipStatus notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification *notification);

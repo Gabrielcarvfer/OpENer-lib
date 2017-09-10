@@ -40,7 +40,7 @@ CipStatus CIP_MessageRouter::Init()
 
         RegisterGenericClassAttributes();
 
-        CIP_MessageRouter *instance = new CIP_MessageRouter();
+        auto *instance = new CIP_MessageRouter();
         AddClassInstance(instance, 0);
 
 
@@ -68,7 +68,7 @@ CipStatus CIP_MessageRouter::Init()
 
 CipStatus CIP_MessageRouter::Create()
 {
-    CIP_MessageRouter *instance = new CIP_MessageRouter();
+    auto *instance = new CIP_MessageRouter();
     AddClassInstance(instance, -1);
 
     // attributes in CIP Message Router Object
@@ -131,10 +131,8 @@ CipStatus CIP_MessageRouter::NotifyMR(CipUsint* data, int data_length)
     else
     {
         /* forward request to appropriate Object if it is registered*/
-        CIP_MessageRouter* registered_object = nullptr;
-
-        //registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
-        if (registered_object == 0)
+        CIP_Object_generic * registered_object = GetRegisteredObject(g_message_router_request.request_path.class_id);
+        if (registered_object == nullptr)
         {
             OPENER_TRACE_ERR(
                 "notifyMR: sending CIP_ERROR_OBJECT_DOES_NOT_EXIST reply, class id 0x%x is not registered\n",
@@ -200,7 +198,7 @@ CipStatus CIP_MessageRouter::CreateMessageRouterRequestStructure(CipUsint* data,
         return kCipGeneralStatusCodeSuccess;
 }
 
-void CIP_MessageRouter::DeleteAllClasses(void)
+void CIP_MessageRouter::DeleteAllClasses()
 {
     /*TODO: fix
     while (message_router_registered_classes.size() != 0)
@@ -255,7 +253,7 @@ CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint t
     CipUsint epath_instance_id = 0; // instance 0, or the class itself
 
     //Find registered class/CIP_Object_template
-    CIP_Object_generic * registered_class_ptr = (CIP_Object_generic*)CIP_MessageRouter::GetRegisteredObject(epath_class_id);
+    auto * registered_class_ptr = (CIP_Object_generic*)CIP_MessageRouter::GetRegisteredObject(epath_class_id);
 
     if (registered_class_ptr == nullptr)
     {
@@ -264,7 +262,7 @@ CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint t
     }
 
     //Pick the instance of CIP_Object_template
-    CIP_Object_generic * registered_instance_ptr = (CIP_Object_generic*)registered_class_ptr->glue.GetInstance(epath_instance_id);
+    auto * registered_instance_ptr = (CIP_Object_generic*)registered_class_ptr->glue.GetInstance(epath_instance_id);
 
     //Set notification flags?
 
@@ -275,14 +273,14 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
 {
     CipStatus stat;
 
-    CIP_Segment * segment = (CIP_Segment*)&request->request_path;
+    auto * segment = (CIP_Segment*)&request->request_path;
 
     switch(segment->segment_header.bitfield_u.seg_type)
     {
         case (CIP_Segment::segtype_logical_segment):
         {
             //Process eletronic key segment
-            CIP_ElectronicKey *key = (CIP_ElectronicKey *) &segment->segment_payload[0];
+            auto *key = (CIP_ElectronicKey *) &segment->segment_payload[0];
             stat = key->validate_key ();
 
             //check if return was ok and then proceed, or return error
@@ -321,7 +319,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
         return stat;
     }
 
-    CIP_Object_generic *instance = (CIP_Object_generic*)ptr->glue.GetInstance (request->request_path.instance_number);
+    auto *instance = (CIP_Object_generic*)ptr->glue.GetInstance (request->request_path.instance_number);
 
     //Routes service to specified object
     //todo: check if service exists and then execute, else return error
@@ -337,7 +335,7 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
 CipStatus CIP_MessageRouter::symbolic_translation(CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response)
 //CipEpath *symbolic_epath, CipEpath *logical_epath)
 {
-    CipEpath *symbolic_path = (CipEpath*)&request->request_data[0];
+    auto *symbolic_path = (CipEpath*)&request->request_data[0];
     CipEpath logical_epath; // copy to response->response_data after translation
     CipStatus stat;
 
