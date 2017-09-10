@@ -5,6 +5,7 @@
  ******************************************************************************/
 
 //Includes
+#include "../CIP_Object.hpp"
 #include "../../ciptypes.hpp"
 #include "../../CIP_Common.hpp"
 #include "../../CIP_Segment.hpp"
@@ -12,12 +13,14 @@
 #include "CIP_MessageRouter.hpp"
 
 #define ROUTER_MESSAGE_BUFFER_SIZE 100
+#include <typeinfo>
+#include <CIP_Objects/CIP_Object.hpp>
 
 
 CipMessageRouterRequest_t        CIP_MessageRouter::g_message_router_request;
 CipMessageRouterResponse_t       CIP_MessageRouter::g_message_router_response;
 std::vector<CipUsint>            CIP_MessageRouter::g_message_data_reply_buffer;
-std::map<CipUdint, CIP_Object*>  CIP_MessageRouter::message_router_registered_classes;
+std::map<CipUdint, CIP_Object_generic*>  CIP_MessageRouter::message_router_registered_classes;
 
 //Methods
 CipStatus CIP_MessageRouter::Init()
@@ -75,7 +78,7 @@ CipStatus CIP_MessageRouter::Create()
     return stat;
 }
 
-CIP_Object * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
+CIP_Object_generic * CIP_MessageRouter::GetRegisteredObject(CipUdint class_id)
 {
     // for each entry in list
     auto ret = message_router_registered_classes.find(class_id);
@@ -93,7 +96,7 @@ CipStatus CIP_MessageRouter::RegisterCIPClass(void* CIP_ClassInstance, CipUdint 
     if (ret == message_router_registered_classes.end())
     {
 
-        message_router_registered_classes.emplace(classId, (CIP_Object*)CIP_ClassInstance);
+        message_router_registered_classes.emplace(classId, (CIP_Object_generic*)CIP_ClassInstance);
         stat.status = kCipStatusOk;
     }
     else
@@ -242,17 +245,29 @@ void CIP_MessageRouter::DeleteAllClasses(void)
      */
 }
 
-CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification notification )
+CipStatus CIP_MessageRouter::notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification * notification )
 {
+    CipStatus stat;
     //todo: implement message routing for notifications
     //Parse Epath
 
-    //Find registered class/CIP_Object_template
+    CipUsint epath_class_id = 1; // identity class
+    CipUsint epath_instance_id = 0; // instance 0, or the class itself
 
-    //Pick the instnace of CIP_Object_template
+    //Find registered class/CIP_Object_template
+    CIP_Object_generic * registered_class_ptr = (CIP_Object_generic*)CIP_MessageRouter::GetRegisteredObject(epath_class_id);
+
+    if (registered_class_ptr == nullptr)
+    {
+        stat = kCipGeneralStatusCodeObjectDoesNotExist;
+        return stat;
+    }
+
+    //Pick the instance of CIP_Object_template
+    CIP_Object_generic * registered_instance_ptr = (CIP_Object_generic*)registered_class_ptr->glue.GetInstance(epath_instance_id);
 
     //Set notification flags?
-	CipStatus stat;
+
 	return stat;
 }
 
@@ -295,10 +310,10 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
         return stat;
     }
 
-    CIP_Object_template * ptr = (CIP_Object_template*)message_router_registered_classes.at(request->request_path.class_id);
+    CIP_Object_generic *ptr = message_router_registered_classes.at(request->request_path.class_id);
 
     //Pick the instance of CIP_Object_template
-    if(ptr->GetInstance (request->request_path.instance_number) == nullptr)
+    if(ptr->glue.GetInstance(request->request_path.instance_number) == nullptr)
     {
         //todo: instance doesnt exist, return error
         stat.extended_status = 0;
@@ -306,11 +321,11 @@ CipStatus CIP_MessageRouter::route_message(CipMessageRouterRequest_t *request, C
         return stat;
     }
 
-    CIP_Object_template * instance = (CIP_Object_template*)ptr->GetInstance (request->request_path.instance_number);
+    CIP_Object_generic *instance = (CIP_Object_generic*)ptr->glue.GetInstance (request->request_path.instance_number);
 
     //Routes service to specified object
     //todo: check if service exists and then execute, else return error
-    stat = instance->InstanceServices (request->service, request, response);
+    stat = instance->glue.retrieveService (request->service, request, response);
 
     //Interpret service directed to it (??)
 

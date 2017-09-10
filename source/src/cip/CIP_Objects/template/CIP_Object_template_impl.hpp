@@ -9,6 +9,7 @@
 #include "../../CIP_Common.hpp"
 #include "../../../opener_user_conf.hpp"
 #include <utility>
+#include <ciptypes.hpp>
 #include "../../ciptypes.hpp"
 
 //Static variables
@@ -35,6 +36,7 @@ CIP_Object_template<T>::CIP_Object_template()
     if (number_of_instances < max_instances)
     {
         id = number_of_instances;
+        classId = class_id;
         number_of_instances++;
     }
     else
@@ -144,26 +146,35 @@ template <class T>
 CIP_Attribute CIP_Object_template<T>::GetCipAttribute(CipUsint attribute_number)
 {
 	bool isClass = this->id == 0;
+    CIP_Attribute attr{kCipAny, nullptr};
+
     //todo: check if attribute is Gettable here or outside? If here, we can return a nullptr instead of the memory
     //  so that we can identify that, although attribute exists (by it's type), it's read protected
 	if (isClass)
-	{
+    {
         //If class instance, check if attribute exists
-		if(classAttrInfo.find(attribute_number) != classAttrInfo.end())
+        if (classAttrInfo.find(attribute_number) != classAttrInfo.end())
+        {
             //If attribute exists, then return an attribute containing attribute content type and pointer to it
-			return CIP_Attribute{classAttrInfo[attribute_number].attributeType,this->retrieveAttribute(attribute_number)};
-	}
+            attr.type_id = classAttrInfo[attribute_number].attributeType;
+            attr.value_ptr.raw_ptr = this->retrieveAttribute(attribute_number);
+
+        }
+    }
 	else
 	{
         //If a common instance, check if attribute exists
         if (instAttrInfo.find(attribute_number) != instAttrInfo.end())
+        {
             //If attribute exists, then return an attribute containing attribute content type and pointer to it
-            return CIP_Attribute{instAttrInfo[attribute_number].attributeType,this->retrieveAttribute(attribute_number)};
+            attr.type_id = instAttrInfo[attribute_number].attributeType;
+            attr.value_ptr.raw_ptr = this->retrieveAttribute(attribute_number);
+        }
 	}
 
     //Log error and return an attribute containing an invalid Cip type and a nullptr
 	OPENER_TRACE_WARN("attribute %d not defined\n", attribute_number);
-	return CIP_Attribute{kCipAny, nullptr};
+	return attr;
 }
 
 template <class T>
@@ -223,20 +234,15 @@ CipStatus CIP_Object_template<T>::GetAttributeAll(CipMessageRouterRequest_t* mes
 {
     std::vector<CipUsint> reply;
 
-    if (this->id == 2)//?
-    {
-        OPENER_TRACE_INFO("GetAttributeAll: instance number 2\n");
-    }
-
-    CipServiceProperties_t * serviceProperties;
-    CipAttrInfo_t * attributeProperties;
+    CipServiceProperties_t serviceProperties;
+    CipAttrInfo_t attributeProperties;
 
     auto it = instanceServicesProperties.find(kServiceGetAttributeAll);
 
     if ( it != instanceServicesProperties.end())
     {
         serviceProperties = it->second;
-        if (0 == this->attributes.size())
+        if (0 == classAttrInfo.size())
         {
             //there are no attributes to be sent back
             message_router_response->reply_service = (0x80 | message_router_request->service);
@@ -253,7 +259,7 @@ CipStatus CIP_Object_template<T>::GetAttributeAll(CipMessageRouterRequest_t* mes
                 int attrNum = attrIt->first;
 
                 // only return attributes that are flagged as being part of GetAttributeALl
-                if (attrNum < max_attribute_id && (attributeProperties->attributeFlag & kAttrFlagGetableAll))
+                if (attrNum < max_attribute_id && (attributeProperties.attributeFlag & kAttrFlagGetableAll))
                 {
                     if (kCipGeneralStatusCodeSuccess != this->InstanceServices(kServiceGetAttributeAll, message_router_request, message_router_response).status)
                     {

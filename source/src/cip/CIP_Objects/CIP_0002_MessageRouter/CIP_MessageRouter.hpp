@@ -56,7 +56,7 @@ class CIP_MessageRouter : public CIP_Object_template<CIP_MessageRouter>
          * array with a given max size for removing the need for having to dynamically allocate
          * memory. The size of the array could be a parameter in the platform config file.
          */
-        static std::map<CipUdint, CIP_Object*> message_router_registered_classes;
+        static std::map<CipUdint, CIP_Object_generic*> message_router_registered_classes;
 
 
         /*! Register a class at the message router.
@@ -82,7 +82,7 @@ class CIP_MessageRouter : public CIP_Object_template<CIP_MessageRouter>
          *  @return Pointer to registered message router object
          *      0 .. Class not registered
          */
-        static CIP_Object* GetRegisteredObject(CipUdint class_id);
+        static CIP_Object_generic* GetRegisteredObject(CipUdint class_id);
 
 
         /** @brief Create Message Router Request structure out of the received data.
@@ -114,7 +114,7 @@ class CIP_MessageRouter : public CIP_Object_template<CIP_MessageRouter>
         static void DeleteAllClasses(void);
 
         //temporary
-        static CipStatus notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification notification);
+        static CipStatus notify_application(CipEpath target_epath, CipUint target_epath_size, CipNotification *notification);
         static CipStatus route_message( CipMessageRouterRequest_t *request, CipMessageRouterResponse_t *response );
 
     typedef struct

@@ -5,6 +5,7 @@
 #include "TEST_Cip_Template.hpp"
 
 #include <functional>
+#include <ciptypes.hpp>
 
 CipUint TEST_Cip_Template1::vendor_id_;
 CipUint TEST_Cip_Template1::device_type_;
@@ -109,7 +110,7 @@ CipStatus TEST_Cip_Template1::Init()
 
 		instance->InstanceServices(2, nullptr, nullptr);
 
-		CipUint * ptr = instance->GetCipAttribute(2).value_u.Uint;
+		CipUint * ptr = instance->GetCipAttribute(2).value_ptr.Uint;
 
 		stat.status = kCipGeneralStatusCodeSuccess;
 		stat.extended_status = 0;

@@ -16,9 +16,9 @@ macro(opener_common_includes)
 
     #workaround for test building without calling process_options
     if(OpENer_DEBUG)
-        add_definitions(-std=c++11)
-    else()
         add_definitions(-std=c++11 -g)
+    else()
+        add_definitions(-std=c++11 -O3)
     endif()
 endmacro(opener_common_includes)
 
@@ -59,13 +59,13 @@ macro(process_options)
 
     #process debug switch
     if(OpENer_DEBUG)
-        add_definitions(-std=c++11)
-    else()
         add_definitions(-std=c++11 -g)
+    else()
+        add_definitions(-std=c++11 -O3)
     endif()
 endmacro()
 #----------------------------------------------
 
 #Copy all header files to outputfolder/include/
-FILE(GLOB_RECURSE include_files ${PROJECT_SOURCE_DIR}/*.hpp)
-file(COPY ${include_files} DESTINATION ${CMAKE_HEADER_OUTPUT_DIRECTORY})
+#FILE(GLOB_RECURSE include_files ${PROJECT_SOURCE_DIR}/*.hpp)
+file(COPY ${includes} DESTINATION ${CMAKE_HEADER_OUTPUT_DIRECTORY})

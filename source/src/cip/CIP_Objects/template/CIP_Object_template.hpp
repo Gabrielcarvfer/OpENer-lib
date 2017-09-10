@@ -8,6 +8,7 @@
 #include "../../ciptypes.hpp"
 #include <map>
 #include <string>
+
 typedef struct
 {
 	CipUsint attributeType;
@@ -22,8 +23,15 @@ typedef struct
 	std::string serviceName;
 }CipServiceProperties_t;
 
+
+class CIP_Object_base
+{
+public:
+	CipUint classId;
+};
+
 template <class T>
-class CIP_Object_template
+class CIP_Object_template : public CIP_Object_base
 {
     public:
         static const T * GetInstance(CipUdint instance_number);
@@ -40,7 +48,7 @@ class CIP_Object_template
         virtual ~CIP_Object_template();
 
         //CIP class/object attributes
-        static CipUint class_id;
+		static CipUint class_id;
         static std::string class_name;
         static CipUint  revision;
         static CipUint  max_instances;
@@ -175,7 +183,6 @@ class CIP_Object_template
 
     //Instance stuff
     CipUint id;
-
     protected:
 
         //Class stuff

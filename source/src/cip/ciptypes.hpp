@@ -115,29 +115,30 @@ typedef enum cip_data_types
     kInternalUint6  = 0xF0 // bogus hack, for port class attribute 9, TODO figure out the right way to handle it
 } CipDataType;
 
+typedef union
+{
+    void * raw_ptr;
+
+    //Cip default types
+    CipOctet * Octet;
+    CipBool  * Bool ;
+    CipByte  * Byte ;
+    CipWord  * Word ;
+    CipDword * Dword;
+    CipUsint * Usint;
+    CipUint  * Uint ;
+    CipUdint * Udint;
+    CipSint  * Sint ;
+    CipInt   * Int  ;
+    CipDint  * Dint ;
+    CipReal  * Real ;
+    CipLreal * Lreal;
+} value_u;
 
 typedef struct
 {
     CipUsint type_id; //So retrieved together with pointer when using GetAttribute
-    union
-    {
-        void * raw_ptr;
-
-        //Cip default types
-        CipOctet * Octet;
-        CipBool  * Bool ;
-        CipByte  * Byte ;
-        CipWord  * Word ;
-        CipDword * Dword;
-        CipUsint * Usint;
-        CipUint  * Uint ;
-        CipUdint * Udint;
-        CipSint  * Sint ;
-        CipInt   * Int  ;
-        CipDint  * Dint ;
-        CipReal  * Real ;
-        CipLreal * Lreal;
-    } value_u;
+    value_u  value_ptr;
 } CIP_Attribute;
 
 /** @brief Definition of CIP service codes
@@ -382,9 +383,11 @@ typedef enum
     kCipIdentityClassCode          = 0x01,
     kCipMessageRouterClassCode     = 0x02,
     kCipDeviceNetLinkClassCode     = 0x03,
-    kCipAssemblyClassCode          = 0x04,       //Assembly Class Code
+    kCipAssemblyClassCode          = 0x04,
+    kCipConnectionClassCode        = 0x05,
     kCipConnectionManagerClassCode = 0x06,
-    kCipTcpIpInterfaceClassCode    = 0xF5, // TCP/IP Interface Object class code
+    kCipAnalogInputPointClassCode  = 0x0A,
+    kCipTcpIpInterfaceClassCode    = 0xF5,
     kCipEthernetLinkClassCode      = 0xF6,
 
 } CipClassCodes;

@@ -13,7 +13,7 @@ CipStatus CIP_Connection::Init()
 {
     if (number_of_instances == 0)
     {
-        class_id = 5;
+        class_id = kCipConnectionClassCode;
         class_name = "Connection";
         revision = 1;
         max_instances = 10;
@@ -324,7 +324,7 @@ CipStatus CIP_Connection::Behaviour()
                         case kConnectionTriggerTransportClass0:
                             //Link_consumer consumes a message and then notifies application
                             Link_consumer->Receive();
-                            CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, notification);//
+                            CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, &notification);//
 
                         case kConnectionTriggerTransportClass1:
                             //Link_consumer consumes a message, check for duplicates (based on last received sequence count,
@@ -332,7 +332,7 @@ CipStatus CIP_Connection::Behaviour()
 
                             Link_consumer->Receive ();
                             check_for_duplicate(last_msg_ptr, recv_data_ptr) ? notification = kCipNotificationDuplicate : notification = kCipNotificationReceived;
-                            CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, notification);
+                            CIP_MessageRouter::notify_application(Consumed_connection_path, Consumed_connection_path_length, &notification);
 
                             //todo: implement class 1 server behaviour
 

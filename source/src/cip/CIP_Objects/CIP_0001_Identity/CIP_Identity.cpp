@@ -27,6 +27,7 @@
 #include <cip/ciptypes.hpp>
 #include "CIP_Identity.hpp"
 
+
 //Methods
 
 /** Private functions, sets the devices serial number

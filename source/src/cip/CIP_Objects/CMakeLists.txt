@@ -16,6 +16,7 @@ set(CIP_OBJECTS_SRC
         CIP_ClassStack.cpp
         CIP_ClassStack.hpp
         CIP_Object.hpp
+        CIP_Object.cpp
         )
 
 add_library(CIP_Objects STATIC ${CIP_OBJECTS_SRC})

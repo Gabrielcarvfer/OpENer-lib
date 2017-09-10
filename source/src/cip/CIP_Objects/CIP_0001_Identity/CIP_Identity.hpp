@@ -6,6 +6,7 @@
 #ifndef CIP_CLASSES_IDENTITY_H
 #define CIP_CLASSES_IDENTITY_H
 
+#include <CIP_Objects/template/CIP_Object_template.hpp>
 #include "../../ciptypes.hpp"
 #include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 
