@@ -23,6 +23,16 @@ std::vector<CipUsint>            CIP_MessageRouter::g_message_data_reply_buffer;
 std::map<CipUdint, CIP_Object_generic*>  CIP_MessageRouter::message_router_registered_classes;
 
 //Methods
+CIP_MessageRouter::CIP_MessageRouter()
+{
+
+}
+
+CIP_MessageRouter::~CIP_MessageRouter()
+{
+
+}
+
 CipStatus CIP_MessageRouter::Init()
 {
     CipStatus stat;

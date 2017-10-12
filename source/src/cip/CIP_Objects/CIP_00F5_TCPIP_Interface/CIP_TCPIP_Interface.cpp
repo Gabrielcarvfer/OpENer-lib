@@ -335,6 +335,7 @@ CipStatus CIP_TCPIP_Interface::ScanInterfaces()
         //(*interfaces)[i].mac
     }
 
+
     //Turn data list into CIP_TCPIP_Interface objects, checking before if the interface is already registered
 
     delete[] *interfaces;
@@ -395,10 +396,10 @@ CipStatus CIP_TCPIP_Interface::ScanInterfaces()
         ret = SendArp(destip , srcip , MacAddr , &PhyAddrLen);
 
         //Prepare the mac address
-        if(PhyAddrLen)
+        if(PhyAddrLen == 6)
         {
             BYTE *bMacAddr = (BYTE *) & MacAddr;
-            sprintf(mac, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",(char)bMacAddr[0], (char)bMacAddr[1], (char)bMacAddr[2], (char)bMacAddr[3], (char)bMacAddr[4], (char)bMacAddr[5]);
+            sprintf(mac, "%.2X:%.2X:%.2X:%.2X:%.2X:%.2X",(CipUsint)bMacAddr[0], (CipUsint)bMacAddr[1], (CipUsint)bMacAddr[2], (CipUsint)bMacAddr[3], (CipUsint)bMacAddr[4], (CipUsint)bMacAddr[5]);
 
         }
         return ret;
@@ -457,6 +458,7 @@ CipStatus CIP_TCPIP_Interface::ScanInterfaces()
             (*interface_ptr)[i].mcast = (bool) (nFlags & IFF_MULTICAST);
         }
 
+        //TODO: create TCPIP links and EthernetIP instances
 
         WSACleanup();
         return nNumInterfaces;

@@ -2,10 +2,11 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 18/11/2016.
 //
 
-#ifndef OPENER_CIP_OBJECT_H
-#define OPENER_CIP_OBJECT_H
+#ifndef OPENER_CIP_OBJECT_TEMPLATE_H
+#define OPENER_CIP_OBJECT_TEMPLATE_H
 
-#include "../../ciptypes.hpp"
+
+#include "CIP_Object_base.h"
 #include <map>
 #include <string>
 
@@ -24,11 +25,7 @@ typedef struct
 }CipServiceProperties_t;
 
 
-class CIP_Object_base
-{
-public:
-	CipUint classId;
-};
+
 
 template <class T>
 class CIP_Object_template : public CIP_Object_base
@@ -195,4 +192,4 @@ class CIP_Object_template : public CIP_Object_base
 };
 
 #include "CIP_Object_template_impl.hpp"
-#endif //OPENER_CIP_OBJECT_H
+#endif //OPENER_CIP_OBJECT_TEMPLATE_H

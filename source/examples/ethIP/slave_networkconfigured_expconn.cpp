@@ -1,5 +1,5 @@
+#include <cip/CIP_Objects/CIP_Object.hpp>
 #include "OpENer_Interface.hpp"
-
 
 
 int main(int argc, char* arg[])
@@ -7,15 +7,18 @@ int main(int argc, char* arg[])
     //
     // Before using OpENer, we need to initialize everything and configure it properly
     //
-    OpENer_Interface::OpENer_Initialize ();
+    OpENer_Interface::OpENer_Initialize (12345);
 
-    //TODO: configuration stuff
+    //We get the TCPIP class
+    CIP_Object_generic * tcpIpInterfaceClass = OpENer_Interface::getClass(kCipTcpIpInterfaceClassCode);
 
-
+    //Let the TCPIP class scan for network interfaces and populate TCPIP objects and EthernetIP link objects
+    tcpIpInterfaceClass->tcpipInterface.ScanInterfaces();
+    
     //
     // Using an implicit connection on your program
     //
-    int imp_conn_handle = OpENer_Interface::OpENer_CreateIOConnection ();
+    //int imp_conn_handle = OpENer_Interface::OpENer_CreateIOConnection ();
 
     //TODO: implement IOConnection interface
     //OpENer_IOConnection * imp_conn = OpENer_IOConnection::GetInstance(imp_conn_handle);
@@ -29,7 +32,7 @@ int main(int argc, char* arg[])
     //
     // Using an explicit connection on your program
     //
-    int exp_conn_handle = OpENer_Interface::OpENer_CreateExplicitConnection ();
+    //int exp_conn_handle = OpENer_Interface::OpENer_CreateExplicitConnection ();
 
     //TODO: implement ExplicitConnection interface
     //OpENer_ExplicitConnection * exp_conn = OpENer_ExplicitConnection::GetInstance(exp_conn_handle);

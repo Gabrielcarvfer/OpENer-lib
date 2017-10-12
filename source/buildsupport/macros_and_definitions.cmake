@@ -7,6 +7,10 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../build/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/../build/bin)
 set(CMAKE_HEADER_OUTPUT_DIRECTORY  ${PROJECT_SOURCE_DIR}/../build/include)
 
+#Copy all header files to outputfolder/include/
+FILE(GLOB_RECURSE include_files ${PROJECT_SOURCE_DIR}/*.hpp)
+file(COPY ${includes} DESTINATION ${CMAKE_HEADER_OUTPUT_DIRECTORY})
+
 #macros
 
 #fetch all .hpp files with full path and set as ${includes}
@@ -15,7 +19,7 @@ macro(opener_common_includes)
     include_directories(${includes})
 
     #workaround for test building without calling process_options
-    if(OpENer_DEBUG)
+    if(${OpENer_DEBUG})
         add_definitions(-std=c++11 -g)
     else()
         add_definitions(-std=c++11 -O3)
@@ -37,28 +41,25 @@ ENDMACRO()
 #process all options passed in main cmakeLists
 macro(process_options)
     #process platform switch
-    if (OpENer_PLATFORM STREQUAL WIN32)
+    if (${OpENer_PLATFORM} STREQUAL WIN32)
     else()
         add_definitions(-D__linux__)
     endif()
 
     #process thread switch
-    if (OpENer_USETHREAD)
+    if (${OpENer_USETHREAD})
         add_definitions(-DUSETHREAD)
     endif()
 
     #process trace switch
-    if(OpENer_TRACES)
+    if(${OpENer_TRACES})
         createTraceLevelOptions()
-    endif(OpENer_TRACES)
+    endif()
 
-    #process test switch
-    if( OpENer_TESTS )
-        add_subdirectory(tests)
-    endif( OpENer_TESTS )
+
 
     #process debug switch
-    if(OpENer_DEBUG)
+    if(${OpENer_DEBUG})
         add_definitions(-std=c++11 -g)
     else()
         add_definitions(-std=c++11 -O3)
@@ -66,6 +67,26 @@ macro(process_options)
 endmacro()
 #----------------------------------------------
 
-#Copy all header files to outputfolder/include/
-#FILE(GLOB_RECURSE include_files ${PROJECT_SOURCE_DIR}/*.hpp)
-file(COPY ${includes} DESTINATION ${CMAKE_HEADER_OUTPUT_DIRECTORY})
+macro(build_tests)
+    #process test switch
+    if(${OpENer_TESTS})
+        add_subdirectory(tests)
+    endif()
+endmacro()
+
+macro(build_example net_type example_name)
+    add_executable(${net_type}-${example_name} ${example_name}.cpp)
+
+   if(WIN32)
+       target_link_libraries(${net_type}-${example_name} OpENerLib winmm.lib)
+   else()
+       target_link_libraries(${net_type}-${example_name} OpENerLib)
+   endif()
+
+    set_target_properties( ${net_type}-${example_name}
+            PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples/${net_type}
+            )
+endmacro()
+
+

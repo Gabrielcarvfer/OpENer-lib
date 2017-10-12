@@ -12,3 +12,5 @@ set( CIP_CLASS0002_SRC
 
 add_library( CIP_CLASS0002_MSGROUTER STATIC ${CIP_CLASS0002_SRC})
 target_link_libraries(CIP_CLASS0002_MSGROUTER OpENer_CIP)
+
+build_tests()

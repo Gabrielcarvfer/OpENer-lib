@@ -15,51 +15,59 @@
 
 int CIP_ClassStack::InitObjects()
 {
+    #ifdef CIP_CLASSES_MESSAGEROUTER_H
+        if (CIP_MessageRouter::Init().status != kCipStatusOk)
+            return CIP_MessageRouter::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_MessageRouter::GetClass(),CIP_MessageRouter::class_id);
+    #endif
 
     #ifdef CIP_CLASSES_IDENTITY_H
         //init CIP Identity object and return object ID in case of failure
         if (CIP_Identity::Init().status != kCipStatusOk)
             return CIP_Identity::class_id;
-    #endif
-
-    #ifdef CIP_CLASSES_MESSAGEROUTER_H
-        if (CIP_MessageRouter::Init().status != kCipStatusOk)
-            return CIP_MessageRouter::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_Identity::GetClass(),CIP_Identity::class_id);
     #endif
 
     #ifdef CIP_CLASSES_DEVICENET_H
         if (CIP_DeviceNET_Link::Init().status != kCipStatusOk)
             return CIP_DeviceNET_Link::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_DeviceNET_Link::GetClass(),CIP_DeviceNET_Link::class_id);
     #endif
 
     #ifdef CIP_CLASSES_ASSEMBLY_H
         if (CIP_Assembly::Init().status != kCipStatusOk)
             return CIP_Assembly ::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_Assembly::GetClass(),CIP_Assembly::class_id);
     #endif
 
     #ifdef CIP_CLASSES_CONNECTION_H
         if (CIP_Connection::Init().status != kCipStatusOk)
             return CIP_Connection::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_Connection::GetClass(),CIP_Connection::class_id);
     #endif
 
     #ifdef CIP_CLASSES_CONNECTIONMANAGER_H
         if (CIP_ConnectionManager::Init().status != kCipStatusOk)
             return CIP_ConnectionManager::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_ConnectionManager::GetClass(),CIP_ConnectionManager::class_id);
     #endif
 
     #ifdef CIP_CLASSES_ANALOGINPUTPOINT_H
         if (CIP_AnalogInputPoint::Init().status != kCipStatusOk)
             return CIP_AnalogInputPoint::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_AnalogInputPoint::GetClass(),CIP_AnalogInputPoint::class_id);
     #endif
 
     #ifdef CIP_CLASSES_TCPIPINTERFACE_H
         if (CIP_TCPIP_Interface::Init().status != kCipStatusOk)
             return CIP_TCPIP_Interface::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_TCPIP_Interface::GetClass(),CIP_TCPIP_Interface::class_id);
     #endif
 
     #ifdef CIP_CLASSES_ETHERNETLINK_H
         if (CIP_EthernetIP_Link::Init().status != kCipStatusOk)
             return CIP_EthernetIP_Link::class_id;
+        CIP_MessageRouter::RegisterCIPClass((void*)CIP_EthernetIP_Link::GetClass(),CIP_EthernetIP_Link::class_id);
     #endif
 
     return kCipStatusOk;
@@ -73,13 +81,8 @@ int CIP_ClassStack::ShutObjects()
             return CIP_Identity::class_id;
     #endif
 
-    #ifdef CIP_CLASSES_MESSAGEROUTER_H
-        if (CIP_MessageRouter::Shut().status != kCipStatusOk)
-            return CIP_MessageRouter::class_id;
-    #endif
-
-        //if (CIP_DeviceNET_Link::Shut().status != kCipStatusOk)
-        //    return CIP_DeviceNET_Link::class_id;
+    //if (CIP_DeviceNET_Link::Shut().status != kCipStatusOk)
+    //    return CIP_DeviceNET_Link::class_id;
 
     #ifdef CIP_CLASSES_ASSEMBLY_H
         if (CIP_Assembly::Shut().status != kCipStatusOk)
@@ -109,6 +112,11 @@ int CIP_ClassStack::ShutObjects()
     #ifdef CIP_CLASSES_ETHERNETLINK_H
         if (CIP_EthernetIP_Link::Shut().status != kCipStatusOk)
             return CIP_EthernetIP_Link::class_id;
+    #endif
+
+    #ifdef CIP_CLASSES_MESSAGEROUTER_H
+        if (CIP_MessageRouter::Shut().status != kCipStatusOk)
+            return CIP_MessageRouter::class_id;
     #endif
 
     return kCipStatusOk;

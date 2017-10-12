@@ -58,12 +58,5 @@ opener_common_includes()
 
 add_subdirectory( src )
 
-add_executable(OpENerMain main.cpp)
 
-
-if(WIN32)
-    target_link_libraries(OpENerMain OpENerLib winmm.lib)
-else()
-    target_link_libraries(OpENerMain OpENerLib)
-endif()
-
+add_subdirectory(examples)

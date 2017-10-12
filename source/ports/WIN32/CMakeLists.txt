@@ -11,6 +11,6 @@ opener_common_includes()
 opener_platform_support("INCLUDES")
 
 
-add_executable(OpENerMain ../../main.cpp)
+add_executable(OpENerMain ../../examples/maintemplate.cpp)
 
 target_link_libraries( OpENerMain OpENer )#SAMPLE_APP  )

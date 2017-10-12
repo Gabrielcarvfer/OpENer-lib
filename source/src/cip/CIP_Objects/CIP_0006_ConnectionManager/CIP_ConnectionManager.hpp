@@ -15,7 +15,6 @@
 #include "../../connection/CIP_CommonPacket.hpp"
 #include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 #include "../../connection/network/NET_Connection.hpp"
-#include "../../../OpENer_Interface.hpp"
 #include "../CIP_0004_Assembly/CIP_Assembly.hpp"
 
 class CIP_ConnectionManager;

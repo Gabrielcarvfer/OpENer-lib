@@ -1,5 +1,6 @@
 opENer_common_includes()
 
+add_subdirectory(template)
 add_subdirectory(CIP_0001_Identity)
 #add_subdirectory(CIP_0003_DeviceNET)
 add_subdirectory(CIP_0004_Assembly)
@@ -11,6 +12,8 @@ add_subdirectory(CIP_00F6_EthernetLink)
 add_subdirectory(CIP_0002_MessageRouter)
 
 set(CIP_OBJECTS_SRC
+        template/CIP_Object_base.h
+        template/CIP_Object_base.cpp
         template/CIP_Object_template.hpp
         template/CIP_Object_template_impl.hpp
         CIP_ClassStack.cpp

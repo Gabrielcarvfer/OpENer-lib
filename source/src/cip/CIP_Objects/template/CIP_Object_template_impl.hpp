@@ -6,7 +6,7 @@
 #define CIP_OBJECT_IMPL_H
 
 #include "../../../trace.hpp"
-#include "../../CIP_Common.hpp"
+//#include "../../CIP_Common.hpp"
 #include "../../../opener_user_conf.hpp"
 #include <utility>
 #include <ciptypes.hpp>
@@ -220,7 +220,7 @@ CipStatus CIP_Object_template<T>::GetAttributeSingle(CipMessageRouterRequest_t* 
                 //TODO:build an alternative
                 //BeforeAssemblyDataSend(this);
             }
-            CIP_Common::EncodeData(attribute->attributeType, this->retrieveAttribute(attribute_number), &(message_router_response->response_data));
+            EncodeData(attribute->attributeType, this->retrieveAttribute(attribute_number), &(message_router_response->response_data));
             message_router_response->general_status = kCipGeneralStatusCodeSuccess;
         }
     }

@@ -8,7 +8,6 @@
 
 #include <CIP_Objects/template/CIP_Object_template.hpp>
 #include "../../ciptypes.hpp"
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 
 class CIP_Identity;
 class CIP_Identity : public CIP_Object_template<CIP_Identity>

@@ -12,6 +12,8 @@
 #include "ciptypes.hpp"
 #include <array>
 #include <map>
+#include <cip/CIP_Objects/CIP_Object.hpp>
+#include "cip/CIP_Objects/CIP_Object.hpp"
 
 class CIP_Common
 {
@@ -58,7 +60,10 @@ class CIP_Common
      *          -1 .. error
      */
 	static int EncodeData(CipUsint cip_type, void* data, std::vector<CipUsint> * message);
-	private:
+	static CIP_Object_generic * getClassInstance(CipUint class_id, CipUint instance_id);
+	static CIP_Object_generic * getClass(CipUint class_id);
+
+private:
 		static const CipUint kCipUintZero = 0;
 		static int EncodeEPath(CipEpath* epath, CipUsint* message);
 

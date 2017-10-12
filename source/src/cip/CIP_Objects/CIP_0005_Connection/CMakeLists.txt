@@ -10,3 +10,5 @@ set( CIP_CLASS_SRC
 add_library( CIP_CLASS0005_CONNECTION STATIC ${CIP_CLASS_SRC})
 
 target_link_libraries(CIP_CLASS0005_CONNECTION CIP_Objects)
+
+build_tests()

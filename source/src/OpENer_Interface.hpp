@@ -11,11 +11,11 @@
 #include <signal.h>
 #include "cip/ciperror.hpp"
 #include "cip/ciptypes.hpp"
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
 #include "typedefs.hpp"
 #include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
 #include "OpENer_IOConnection.hpp"
 #include "OpENer_ExplicitConnection.hpp"
+#include "cip/CIP_Common.hpp"
 
 
 #ifdef WIN
@@ -214,7 +214,7 @@ class OpENer_Interface
 
     public:
         //Initialize or shutdown OpENer CIP stack
-        static bool OpENer_Initialize();
+        static bool OpENer_Initialize(CipUint serial_number);
 
         /******************************************************************************/
         /*!\brief Signal handler function for ending stack execution
@@ -547,6 +547,9 @@ class OpENer_Interface
     /*! \brief Flag indicating if the stack should end its execution
        */
     static bool g_end_stack;
+
+    static CIP_Object_generic * getClassInstance(CipUint class_id, CipUint instance_id);
+    static CIP_Object_generic * getClass(CipUint class_id);
 
     //Execute everything needed to make library work and then go back to the main program/or run in a thread
     static void OpENerWorker();

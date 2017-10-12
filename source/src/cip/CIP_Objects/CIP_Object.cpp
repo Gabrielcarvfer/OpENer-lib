@@ -15,12 +15,12 @@ case kCipConnectionClassCode: \
 return Y((CIP_Connection *) this)->X; \
 case kCipConnectionManagerClassCode: \
 return Y((CIP_ConnectionManager *) this)->X; \
-case kCipAnalogInputPointClassCode: \
-return Y((CIP_AnalogInputPoint *) this)->X; \
 case kCipTcpIpInterfaceClassCode: \
 return Y((CIP_TCPIP_Interface *) this)->X; \
 case kCipEthernetLinkClassCode: \
 return Y((CIP_EthernetIP_Link *) this)->X; \
+/*case kCipAnalogInputPointClassCode: \
+return Y((CIP_AnalogInputPoint *) this)->X; \*/
 
 #define SWITCH_OBJECTS_X(X) SWITCH_OBJECTS_XY(X, )
 

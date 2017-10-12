@@ -2,8 +2,8 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 03/06/2017.
 //
 
-#ifndef OPENERMAIN_CIP_OBJECT_H
-#define OPENERMAIN_CIP_OBJECT_H
+#ifndef OPENER_CIP_OBJECT_H
+#define OPENER_CIP_OBJECT_H
 
 #include <ciptypes.hpp>
 #include "template/CIP_Object_template.hpp"
@@ -14,7 +14,7 @@
 #include "CIP_0004_Assembly/CIP_Assembly.hpp"
 #include "CIP_0005_Connection/CIP_Connection.hpp"
 #include "CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-#include "CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp"
+//#include "CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp"
 #include "CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
 #include "CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
 
@@ -82,4 +82,4 @@ typedef union
     CIP_Object_glue glue;
 } CIP_Object_generic;
 
-#endif //OPENERMAIN_CIP_OBJECT_H
+#endif //OPENER_CIP_OBJECT_H

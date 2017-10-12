@@ -5,6 +5,7 @@
 #include "OpENer_Interface.hpp"
 #include "cip/connection/network/NET_NetworkHandler.hpp"
 #include "cip/CIP_Common.hpp"
+#include <random>
 
 #ifdef WIN
 	#include <windows.h>
@@ -28,18 +29,19 @@ std::map<CipUdint, OpENer_ExplicitConnection*> OpENer_Interface::Explicit_Connec
 #endif
 
 //Methods
-bool OpENer_Interface::OpENer_Initialize()
+bool OpENer_Interface::OpENer_Initialize(CipUint serialNumber)
 {
     g_end_stack = 0;
     CipUint unique_connection_id;
 
     //for a real device the serial number should be unique per device
-    SetDeviceSerialNumber(123456789);
+    SetDeviceSerialNumber(serialNumber);
 
     // nUniqueConnectionID should be sufficiently random or incremented and stored
     //  in non-volatile memory each time the device boots.
-
-    unique_connection_id = 12321;//rand();
+    std::default_random_engine generator;
+    std::uniform_int_distribution<int> distribution(0,UINT16_MAX);
+    unique_connection_id = (CipUint)distribution(generator);
 
     // Setup the CIP Layer
     CipStackInit(unique_connection_id);
@@ -93,7 +95,7 @@ void OpENer_Interface::OpENerWorker()
         //Check every pending connection and timer, send and receive data
         if (kCipGeneralStatusCodeSuccess != NET_NetworkHandler::NetworkHandlerProcessOnce ().status)
         {
-#ifndef USETHREAD
+#ifdef USETHREAD
             break;
 #endif
         }
@@ -245,3 +247,15 @@ void OpENer_Interface::ShutdownCipStack(void)
 {
     CIP_Common::ShutdownCipStack ();
 }
+
+CIP_Object_generic * OpENer_Interface::getClass(CipUint class_id)
+{
+    return CIP_Common::getClass(class_id);
+}
+
+CIP_Object_generic * OpENer_Interface::getClassInstance(CipUint class_id, CipUint instance_id)
+{
+    return CIP_Common::getClassInstance(class_id, instance_id);
+}
+
+
