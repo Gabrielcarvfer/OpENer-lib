@@ -6,8 +6,8 @@
 
 #include <cstring> /*needed for memcpy */
 #include <cstdlib>
-#include "CIP_Assembly.hpp"
-#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
+#include <CIP_Assembly.hpp>
+#include <cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp>
 
 // create the CIP Assembly object with zero instances
 CipStatus CIP_Assembly::Init(void)

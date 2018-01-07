@@ -127,7 +127,7 @@ static const int kOpENerProducedDataHasRunIdleHeader = 0;
     } while (0)
 
 /* else use standard assert() */
-//#include "assert.h>
+//#include <assert.h>
 //#include <stdio.h>
 //#define OPENER_ASSERT(assertion) assert(assertion)
 #else
@@ -143,7 +143,7 @@ static const int kOpENerProducedDataHasRunIdleHeader = 0;
 /* else if you still want assertions to stop execution but without tracing, use the following */
 //#define OPENER_ASSERT(assertion) do { if(!(assertion)) { while(1){;} } } while (0)
 /* else use standard assert() */
-//#include "assert.h>
+//#include <assert.h>
 //#include <stdio.h>
 //#define OPENER_ASSERT(assertion) assert(assertion)
 

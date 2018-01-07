@@ -12,9 +12,9 @@
 
 //Includes
 #include <cmath>
-#include "NET_Endianconv.hpp"
-#include "NET_NetworkHandler.hpp"
-#include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
+#include <NET_Endianconv.hpp>
+#include <NET_NetworkHandler.hpp>
+#include <cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp>
 
 //Static variables
 CipUsint        NET_NetworkHandler::g_ethernet_communication_buffer[PC_OPENER_ETHERNET_BUFFER_SIZE];

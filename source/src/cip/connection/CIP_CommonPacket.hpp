@@ -6,9 +6,9 @@
 #ifndef OPENER_COMMONPACKETFORMAT_H_
 #define OPENER_COMMONPACKETFORMAT_H_
 
-#include "../ciptypes.hpp"
-#include "network/ethIP/NET_EthIP_Encap.hpp"
-#include "network/deviceNet/NET_DeviceNetEncapsulation.h"
+#include <ciptypes.hpp>
+#include <network/ethIP/NET_EthIP_Encap.hpp>
+#include <network/deviceNet/NET_DeviceNetEncapsulation.hpp>
 
 
 /** @ingroup ENCAP

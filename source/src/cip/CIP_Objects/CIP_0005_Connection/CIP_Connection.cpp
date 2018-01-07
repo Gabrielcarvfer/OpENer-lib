@@ -7,7 +7,7 @@
 #include <cstring>
 #include <cip/CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
 #include <cip/ciptypes.hpp>
-#include "CIP_Connection.hpp"
+#include <CIP_Connection.hpp>
 
 CipStatus CIP_Connection::Init()
 {

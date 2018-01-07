@@ -5,10 +5,10 @@
  ******************************************************************************/
 
 #include <stdio.h>
-#include "eip_endianconv.hpp"
-#include "../NET_Connection.hpp"
-#include "../NET_Endianconv.hpp"
-#include "NET_EthIP_Includes.h"
+#include <eip_endianconv.hpp>
+#include <NET_Connection.hpp>
+#include <NET_Endianconv.hpp>
+#include <NET_EthIP_Includes.hpp>
 
 int EncapsulateIpAddress(CipUint port, CipUdint address, CipByte* communication_buffer)
 {

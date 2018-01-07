@@ -6,8 +6,8 @@
 #ifndef CIP_CLASSES_ASSEMBLY_H
 #define CIP_CLASSES_ASSEMBLY_H
 
-#include "../../ciptypes.hpp"
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
+#include <ciptypes.hpp>
+#include <cip/CIP_Objects/template/CIP_Object_template.hpp>
 class CIP_Assembly;
 class CIP_Assembly : public CIP_Object_template<CIP_Assembly>
 {

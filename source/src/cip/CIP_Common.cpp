@@ -5,19 +5,19 @@
  ******************************************************************************/
 //Includes
 
-#include "CIP_Common.hpp"
+#include <CIP_Common.hpp>
 #include <cstring>
 #include <iostream>
 #include <cip/CIP_Objects/CIP_Object.hpp>
-#include "connection/CIP_CommonPacket.hpp"
-#include "CIP_AppConnType.hpp"
-#include "connection/network/NET_Endianconv.hpp"
-#include "CIP_Objects/CIP_ClassStack.hpp"
-//#include "CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-//#include "CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
-#include "CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
-//#include "CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp"
-#include "connection/network/NET_Encapsulation.hpp"
+#include <connection/CIP_CommonPacket.hpp>
+#include <CIP_AppConnType.hpp>
+#include <connection/network/NET_Endianconv.hpp>
+#include <CIP_Objects/CIP_ClassStack.hpp>
+//#include <CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp>
+//#include <CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp>
+#include <CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
+//#include <CIP_Objects/CIP_0004_Assembly/CIP_Assembly.hpp>
+#include <connection/network/NET_Encapsulation.hpp>
 
 //Static variables
 

@@ -7,7 +7,7 @@ add_subdirectory( ${OpENer_PLATFORM} )
 #######################################
 # Add common includes                 #
 #######################################
-opener_common_includes()
+
 
 #######################################
 # Add platform-specific includes      #

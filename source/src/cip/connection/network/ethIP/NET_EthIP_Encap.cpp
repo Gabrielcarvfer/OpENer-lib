@@ -5,13 +5,13 @@
  ******************************************************************************/
 //Includes
 #include <cstring>
-#include "NET_EthIP_Encap.hpp"
-#include "../../../CIP_Objects/CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
-#include "eip_endianconv.hpp"
-#include "../NET_Endianconv.hpp"
-#include "../NET_NetworkHandler.hpp"
-#include "../../../CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp"
-#include "../../CIP_CommonPacket.hpp"
+#include <NET_EthIP_Encap.hpp>
+#include <CIP_Objects/CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp>
+#include <eip_endianconv.hpp>
+#include <NET_Endianconv.hpp>
+#include <NET_NetworkHandler.hpp>
+#include <CIP_Objects/CIP_0001_Identity/CIP_Identity.hpp>
+#include <CIP_CommonPacket.hpp>
 
 //Static variables
 bool NET_EthIP_Encap::initialized = false;

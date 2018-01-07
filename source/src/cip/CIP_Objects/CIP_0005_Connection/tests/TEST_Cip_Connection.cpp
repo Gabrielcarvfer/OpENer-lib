@@ -2,7 +2,7 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 20/04/2017.
 //
 
-#include "TEST_Cip_Connection.hpp"
+#include <TEST_Cip_Connection.hpp>
 #include <iostream>
 #include <cip/ciptypes.hpp>
 #include <ciptypes.hpp>

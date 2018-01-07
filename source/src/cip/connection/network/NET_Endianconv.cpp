@@ -1,5 +1,5 @@
 //Includes
-#include "NET_Endianconv.hpp"
+#include <NET_Endianconv.hpp>
 #include <cstring>
 
 //Static variables

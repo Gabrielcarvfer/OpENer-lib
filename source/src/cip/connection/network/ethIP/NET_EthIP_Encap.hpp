@@ -10,9 +10,9 @@
 
 #define ENCAP_MAX_DELAYED_ENCAP_MESSAGE_SIZE (ENCAPSULATION_HEADER_LENGTH + 39 + sizeof(OPENER_DEVICE_NAME)) /* currently we only have the size of an encapsulation message */
 
-#include "../../../ciptypes.hpp"
-#include "../../../../opener_user_conf.hpp"
-#include "../NET_Encapsulation.hpp"
+#include <ciptypes.hpp>
+#include <opener_user_conf.hpp>
+#include <NET_Encapsulation.hpp>
 
 /** @file encap.h
  * @brief This file contains the public interface of the encapsulation layer

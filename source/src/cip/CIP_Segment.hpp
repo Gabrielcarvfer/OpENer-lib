@@ -5,7 +5,7 @@
 #ifndef CIP_SEGMENT_H
 #define CIP_SEGMENT_H
 
-#include "ciptypes.hpp"
+#include <ciptypes.hpp>
 
 class CIP_Segment
 {

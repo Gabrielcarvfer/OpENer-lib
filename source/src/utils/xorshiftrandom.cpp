@@ -5,7 +5,7 @@
  *      Author: mmm
  */
 
-#include "xorshiftrandom.hpp"
+#include <xorshiftrandom.hpp>
 
 static uint32_t xor_shift_seed; /** < File-global variable holding the current seed*/
 

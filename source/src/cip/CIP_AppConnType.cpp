@@ -3,7 +3,7 @@
  * All rights reserved.
  *
  ******************************************************************************/
-#include "CIP_AppConnType.hpp"
+#include <CIP_AppConnType.hpp>
 
 //Static variables
 CIP_AppConnType::ExclusiveOwnerConnection * CIP_AppConnType::g_exlusive_owner_connections;

@@ -2,9 +2,9 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 11/11/2016.
 //
 
-#include "OpENer_Interface.hpp"
-#include "cip/connection/network/NET_NetworkHandler.hpp"
-#include "cip/CIP_Common.hpp"
+#include <OpENer_Interface.hpp>
+#include <cip/connection/network/NET_NetworkHandler.hpp>
+#include <cip/CIP_Common.hpp>
 #include <random>
 
 #ifdef WIN

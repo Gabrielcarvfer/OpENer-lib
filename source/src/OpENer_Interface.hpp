@@ -9,13 +9,13 @@
 
 #include <cassert>
 #include <signal.h>
-#include "cip/ciperror.hpp"
-#include "cip/ciptypes.hpp"
-#include "typedefs.hpp"
-#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-#include "OpENer_IOConnection.hpp"
-#include "OpENer_ExplicitConnection.hpp"
-#include "cip/CIP_Common.hpp"
+#include <cip/ciperror.hpp>
+#include <cip/ciptypes.hpp>
+#include <typedefs.hpp>
+#include <cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp>
+#include <OpENer_IOConnection.hpp>
+#include <OpENer_ExplicitConnection.hpp>
+#include <cip/CIP_Common.hpp>
 
 
 #ifdef WIN

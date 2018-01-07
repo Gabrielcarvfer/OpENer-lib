@@ -11,11 +11,11 @@
 #include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
 #include <cip/CIP_ElectronicKey.hpp>
 #include <cip/CIP_Segment.hpp>
-#include "../../ciptypes.hpp"
-#include "../../connection/CIP_CommonPacket.hpp"
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
-#include "../../connection/network/NET_Connection.hpp"
-#include "../CIP_0004_Assembly/CIP_Assembly.hpp"
+#include <ciptypes.hpp>
+#include <connection/CIP_CommonPacket.hpp>
+#include <cip/CIP_Objects/template/CIP_Object_template.hpp>
+#include <connection/network/NET_Connection.hpp>
+#include <CIP_0004_Assembly/CIP_Assembly.hpp>
 
 class CIP_ConnectionManager;
 

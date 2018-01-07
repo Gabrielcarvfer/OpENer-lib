@@ -1,4 +1,4 @@
-opENer_common_includes()
+
 
 set( CIP_CLASS_SRC
         CIP_Connection.cpp
@@ -9,6 +9,6 @@ set( CIP_CLASS_SRC
 
 add_library( CIP_CLASS0005_CONNECTION STATIC ${CIP_CLASS_SRC})
 
-target_link_libraries(CIP_CLASS0005_CONNECTION CIP_Objects)
+target_link_libraries(CIP_CLASS0005_CONNECTION OpENerLib)
 
 build_tests()

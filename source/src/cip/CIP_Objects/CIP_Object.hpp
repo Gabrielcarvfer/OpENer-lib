@@ -6,35 +6,29 @@
 #define OPENER_CIP_OBJECT_H
 
 #include <ciptypes.hpp>
-#include "template/CIP_Object_template.hpp"
+#include <template/CIP_Object_template.hpp>
 
-#include "CIP_0001_Identity/CIP_Identity.hpp"
-//#include "CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
-//#include "CIP_0003_DeviceNET/CIP_DeviceNetLink.hpp"
-#include "CIP_0004_Assembly/CIP_Assembly.hpp"
-#include "CIP_0005_Connection/CIP_Connection.hpp"
-#include "CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-//#include "CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp"
-#include "CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
-#include "CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
+#include <CIP_0001_Identity/CIP_Identity.hpp>
+//#include <CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
+//#include <CIP_0003_DeviceNET/CIP_DeviceNetLink.hpp>
+#include <CIP_0004_Assembly/CIP_Assembly.hpp>
+#include <CIP_0005_Connection/CIP_Connection.hpp>
+#include <CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp>
+//#include <CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp>
+#include <CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp>
+#include <CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp>
 
 class CIP_Object_glue;
-
-
-
 class CIP_Object_glue: public CIP_Object_template<CIP_Object_glue>
 {
     public:
     CipStatus InstanceServices(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
     CIP_Attribute GetCipAttribute(CipUsint attribute_number);
     const CIP_Object_glue * GetInstance(CipUdint instance_number);
-
-        void * retrieveAttribute(CipUsint attributeNumber);
-        CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp);
+    void * retrieveAttribute(CipUsint attributeNumber) override;
+    CipStatus retrieveService(CipUsint serviceNumber, CipMessageRouterRequest_t *req, CipMessageRouterResponse_t *resp) override;
 
 };
-
-
 
 typedef union
 {

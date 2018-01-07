@@ -7,9 +7,10 @@
 #define CIP_CLASSES_MESSAGEROUTER_H
 
 
-#include "../../ciptypes.hpp"
-#include "../template/CIP_Object_template.hpp"
-#include "../CIP_Object.hpp"
+#include <ciptypes.hpp>
+#include <CIP_ElectronicKey.hpp>
+#include <template/CIP_Object_template.hpp>
+#include <CIP_Object.hpp>
 #include <map>
 
 

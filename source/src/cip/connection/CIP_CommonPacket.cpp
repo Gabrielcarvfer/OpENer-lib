@@ -5,12 +5,12 @@
  ******************************************************************************/
 #include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
 #include <cip/ciptypes.hpp>
-#include "CIP_CommonPacket.hpp"
-#include "../CIP_Common.hpp"
-#include "cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-#include "../CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
-#include "network/NET_Endianconv.hpp"
-#include "network/ethIP/eip_endianconv.hpp"
+#include <CIP_CommonPacket.hpp>
+#include <CIP_Common.hpp>
+#include <cip/CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp>
+#include <CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
+#include <network/NET_Endianconv.hpp>
+#include <network/ethIP/eip_endianconv.hpp>
 
 //Static variables
 CIP_CommonPacket::PacketFormat CIP_CommonPacket::common_packet_data;

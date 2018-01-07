@@ -6,9 +6,9 @@
 #ifndef CIP_CLASSES_ETHERNETLINK_H
 #define CIP_CLASSES_ETHERNETLINK_H
 
-#include "../../ciptypes.hpp"
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
-#include "cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
+#include <ciptypes.hpp>
+#include <cip/CIP_Objects/template/CIP_Object_template.hpp>
+#include <cip/CIP_Objects/CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp>
 class CIP_EthernetIP_Link;
 class CIP_EthernetIP_Link : public CIP_Object_template<CIP_EthernetIP_Link>
 {

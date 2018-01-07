@@ -5,12 +5,12 @@
 #ifndef CIP_OBJECT_IMPL_H
 #define CIP_OBJECT_IMPL_H
 
-#include "../../../trace.hpp"
-//#include "../../CIP_Common.hpp"
-#include "../../../opener_user_conf.hpp"
+#include <trace.hpp>
+//#include <CIP_Common.hpp>
+#include <opener_user_conf.hpp>
 #include <utility>
 #include <ciptypes.hpp>
-#include "../../ciptypes.hpp"
+#include <ciptypes.hpp>
 
 //Static variables
 template<class T> CipUint    CIP_Object_template<T>::class_id = 0;

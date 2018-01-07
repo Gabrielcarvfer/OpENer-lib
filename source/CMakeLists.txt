@@ -54,9 +54,5 @@ process_options()
 #######################################
 # Add subdirectories                  #
 #######################################
-opener_common_includes()
-
 add_subdirectory( src )
-
-
 add_subdirectory(examples)

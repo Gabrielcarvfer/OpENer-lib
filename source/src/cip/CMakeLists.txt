@@ -1,4 +1,4 @@
-opENer_common_includes()
+
 
 add_subdirectory(CIP_Objects)
 add_subdirectory(connection)
@@ -16,4 +16,5 @@ set( CIP_SRC
         ./connection/network/NET_Encapsulation.hpp)
 
 add_library(OpENer_CIP STATIC ${CIP_SRC})
+
 target_link_libraries(OpENer_CIP OpENer_CONN CIP_Objects CIP_CLASS0002_MSGROUTER )

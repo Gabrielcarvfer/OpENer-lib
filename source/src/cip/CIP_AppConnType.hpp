@@ -6,10 +6,10 @@
 #ifndef OPENER_APPCONTYPE_H_
 #define OPENER_APPCONTYPE_H_
 
-#include "CIP_Objects/template/CIP_Object_template.hpp"
-#include "CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-#include "ciptypes.hpp"
-#include "../opener_user_conf.hpp"
+#include <CIP_Objects/template/CIP_Object_template.hpp>
+#include <CIP_Objects/CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp>
+#include <ciptypes.hpp>
+#include <opener_user_conf.hpp>
 
 class CIP_AppConnType;
 class CIP_AppConnType : public CIP_Object_template<CIP_AppConnType>

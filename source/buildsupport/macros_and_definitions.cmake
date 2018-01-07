@@ -11,20 +11,14 @@ set(CMAKE_HEADER_OUTPUT_DIRECTORY  ${PROJECT_SOURCE_DIR}/../build/include)
 FILE(GLOB_RECURSE include_files ${PROJECT_SOURCE_DIR}/*.hpp)
 file(COPY ${includes} DESTINATION ${CMAKE_HEADER_OUTPUT_DIRECTORY})
 
+if (WIN32)
+    set(WIN32_LIBS winmm.lib ws2_32.lib wsock32)
+else()
+    set(WIN32_LIBS)
+endif()
 #macros
 
-#fetch all .hpp files with full path and set as ${includes}
-macro(opener_common_includes)
-    HEADER_DIRECTORIES(includes)
-    include_directories(${includes})
 
-    #workaround for test building without calling process_options
-    if(${OpENer_DEBUG})
-        add_definitions(-std=c++11 -g)
-    else()
-        add_definitions(-std=c++11 -O3)
-    endif()
-endmacro(opener_common_includes)
 
 MACRO(HEADER_DIRECTORIES return_list)
     FILE(GLOB_RECURSE new_list ${PROJECT_SOURCE_DIR}/*.hpp)
@@ -40,6 +34,10 @@ ENDMACRO()
 
 #process all options passed in main cmakeLists
 macro(process_options)
+    HEADER_DIRECTORIES(includes)
+    include_directories(${includes} ${CMAKE_HEADER_OUTPUT_DIRECTORY})
+    link_directories(${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+
     #process platform switch
     if (${OpENer_PLATFORM} STREQUAL WIN32)
     else()
@@ -60,9 +58,9 @@ macro(process_options)
 
     #process debug switch
     if(${OpENer_DEBUG})
-        add_definitions(-std=c++11 -g)
+        add_definitions(-std=c++11 -fPIC -g)
     else()
-        add_definitions(-std=c++11 -O3)
+        add_definitions(-std=c++11 -fPIC -O3)
     endif()
 endmacro()
 #----------------------------------------------
@@ -77,11 +75,7 @@ endmacro()
 macro(build_example net_type example_name)
     add_executable(${net_type}-${example_name} ${example_name}.cpp)
 
-   if(WIN32)
-       target_link_libraries(${net_type}-${example_name} OpENerLib winmm.lib)
-   else()
-       target_link_libraries(${net_type}-${example_name} OpENerLib)
-   endif()
+    target_link_libraries(${net_type}-${example_name} OpENerLib ${WIN32_LIBS})
 
     set_target_properties( ${net_type}-${example_name}
             PROPERTIES

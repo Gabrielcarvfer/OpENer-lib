@@ -1,4 +1,4 @@
-opENer_common_includes()
+
 
 set( CIP_TEST_SRC TEST_Cip_Template.cpp ../CIP_Object_template.hpp)
 

@@ -8,7 +8,7 @@
 #ifndef CIP_ELECTRONICKEY_H
 #define CIP_ELECTRONICKEY_H
 
-#include "ciptypes.hpp"
+#include <ciptypes.hpp>
 
 /** @brief CIP Electronic Key Segment struct
  *
@@ -16,6 +16,9 @@
 class CIP_ElectronicKey
 {
 public:
+    CIP_ElectronicKey() = default;
+    ~CIP_ElectronicKey() = default;
+
     CipUsint key_format;           // Key Format 0-3 reserved, 4 = see Key Format Table,5-255 = Reserved
 
     typedef union

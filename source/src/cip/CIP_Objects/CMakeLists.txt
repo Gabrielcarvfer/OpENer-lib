@@ -1,4 +1,4 @@
-opENer_common_includes()
+
 
 add_subdirectory(template)
 add_subdirectory(CIP_0001_Identity)
@@ -12,7 +12,7 @@ add_subdirectory(CIP_00F6_EthernetLink)
 add_subdirectory(CIP_0002_MessageRouter)
 
 set(CIP_OBJECTS_SRC
-        template/CIP_Object_base.h
+        template/CIP_Object_base.hpp
         template/CIP_Object_base.cpp
         template/CIP_Object_template.hpp
         template/CIP_Object_template_impl.hpp
@@ -26,8 +26,8 @@ add_library(CIP_Objects STATIC ${CIP_OBJECTS_SRC})
 
 target_link_libraries(
         CIP_Objects
+        CIP_Template
         CIP_CLASS0001_IDENTITY
-        CIP_CLASS0002_MSGROUTER
         #CIP_CLASS0003_DEVICENET
         CIP_CLASS0004_ASSEMBLY
         CIP_CLASS0005_CONNECTION
@@ -35,5 +35,6 @@ target_link_libraries(
         CIP_CLASS000A_ANALOGINPUT
         CIP_CLASS00F5_TCPIPINTERFACE
         CIP_CLASS00F6_ETHERNETLINK
+        CIP_CLASS0002_MSGROUTER
         )
 

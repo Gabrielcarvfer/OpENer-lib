@@ -16,7 +16,7 @@
 
 
 
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
+#include <cip/CIP_Objects/template/CIP_Object_template.hpp>
 
 class CIP_AnalogInputPoint;
 class CIP_AnalogInputPoint : public CIP_Object_template<CIP_AnalogInputPoint>

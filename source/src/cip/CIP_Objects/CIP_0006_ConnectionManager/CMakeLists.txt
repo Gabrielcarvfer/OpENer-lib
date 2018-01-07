@@ -1,6 +1,6 @@
-opENer_common_includes()
 
-set( CIP_CLASS_SRC CIP_ConnectionManager.cpp)
+
+set( CIP_CLASS_SRC CIP_ConnectionManager.cpp CIP_ConnectionManager.hpp)
 
 add_library( CIP_CLASS0006_CONNECTIONMANAGER STATIC ${CIP_CLASS_SRC})
 

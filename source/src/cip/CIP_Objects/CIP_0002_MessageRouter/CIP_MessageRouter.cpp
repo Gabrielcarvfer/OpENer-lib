@@ -5,16 +5,18 @@
  ******************************************************************************/
 
 //Includes
-#include "../CIP_Object.hpp"
-#include "../../ciptypes.hpp"
-#include "../../CIP_Common.hpp"
-#include "../../CIP_Segment.hpp"
-#include "../../CIP_ElectronicKey.hpp"
-#include "CIP_MessageRouter.hpp"
+#include <CIP_Object.hpp>
+#include <ciptypes.hpp>
+#include <CIP_Common.hpp>
+#include <CIP_Segment.hpp>
+#include <CIP_ElectronicKey.hpp>
+#include <CIP_MessageRouter.hpp>
 
 #define ROUTER_MESSAGE_BUFFER_SIZE 100
 #include <typeinfo>
 #include <CIP_Objects/CIP_Object.hpp>
+#include <trace.hpp>
+#include <cip/ciperror.hpp>
 
 
 CipMessageRouterRequest_t        CIP_MessageRouter::g_message_router_request;

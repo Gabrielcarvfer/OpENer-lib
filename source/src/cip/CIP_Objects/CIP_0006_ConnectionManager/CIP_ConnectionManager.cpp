@@ -4,7 +4,7 @@
  *
  ******************************************************************************/
 
-#include "CIP_ConnectionManager.hpp"
+#include <CIP_ConnectionManager.hpp>
 #include <cstring>
 
 std::map<CipUdint, const CIP_ConnectionManager *> *CIP_ConnectionManager::active_connections_set;

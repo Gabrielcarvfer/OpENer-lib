@@ -6,7 +6,7 @@
 #define OPENERMAIN_TEST_CIP_Connection_H
 
 
-#include "cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp"
+#include <cip/CIP_Objects/CIP_0005_Connection/CIP_Connection.hpp>
 
 
 

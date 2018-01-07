@@ -7,8 +7,8 @@
 #ifndef CIP_CIPTYPES_H
 #define CIP_CIPTYPES_H
 
-#include "../typedefs.hpp"
-#include "ciperror.hpp"
+#include <typedefs.hpp>
+#include <ciperror.hpp>
 #include <string>
 #include <vector>
 

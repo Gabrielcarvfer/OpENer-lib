@@ -25,7 +25,7 @@
  */
 
 #include <cip/ciptypes.hpp>
-#include "CIP_Identity.hpp"
+#include <CIP_Identity.hpp>
 
 
 //Methods

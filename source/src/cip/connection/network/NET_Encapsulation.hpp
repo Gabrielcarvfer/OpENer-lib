@@ -5,7 +5,7 @@
 #ifndef NET_ENCAPSULATION_H
 #define NET_ENCAPSULATION_H
 
-#include "../../ciptypes.hpp"
+#include <ciptypes.hpp>
 
 
 

@@ -1,17 +1,17 @@
 //
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 26/01/2017.
 //
-#include "CIP_ClassStack.hpp"
-#include "CIP_0001_Identity/CIP_Identity.hpp"
-#include "CIP_0002_MessageRouter/CIP_MessageRouter.hpp"
-//#include "CIP_0004_Assembly/CIP_Assembly.hpp"
-#include "CIP_0005_Connection/CIP_Connection.hpp"
-#include "CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp"
-//#include "CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp"
-#include "CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp"
-#include "CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp"
+#include <CIP_ClassStack.hpp>
+#include <CIP_0001_Identity/CIP_Identity.hpp>
+#include <CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
+//#include <CIP_0004_Assembly/CIP_Assembly.hpp>
+#include <CIP_0005_Connection/CIP_Connection.hpp>
+#include <CIP_0006_ConnectionManager/CIP_ConnectionManager.hpp>
+//#include <CIP_000A_AnalogInput/CIP_Analog_Input_Point.hpp>
+#include <CIP_00F5_TCPIP_Interface/CIP_TCPIP_Interface.hpp>
+#include <CIP_00F6_EthernetLink/CIP_EthernetIP_Link.hpp>
 
-//#include "CIP_0003_DeviceNET/CIP_DeviceNetLink.hpp"
+//#include <CIP_0003_DeviceNET/CIP_DeviceNetLink.hpp>
 
 int CIP_ClassStack::InitObjects()
 {

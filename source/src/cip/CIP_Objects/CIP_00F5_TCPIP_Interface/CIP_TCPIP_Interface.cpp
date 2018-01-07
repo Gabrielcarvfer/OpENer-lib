@@ -6,9 +6,9 @@
 
 //Includes
 #include <cstring>
-#include "../../ciptypes.hpp"
-#include "CIP_TCPIP_Interface.hpp"
-#include "../../connection/network/NET_Connection.hpp"
+#include <ciptypes.hpp>
+#include <CIP_TCPIP_Interface.hpp>
+#include <connection/network/NET_Connection.hpp>
 
 #undef WIN
 #if defined(_WIN32) || defined(WIN32) || defined(__CYGWIN__) || defined(__MINGW32__)

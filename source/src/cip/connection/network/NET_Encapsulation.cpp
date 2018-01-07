@@ -1,5 +1,5 @@
-#include "NET_Encapsulation.hpp"
-#include "ethIP/NET_EthIP_Encap.hpp"
+#include <NET_Encapsulation.hpp>
+#include <ethIP/NET_EthIP_Encap.hpp>
 
 
 CipStatus NET_Encapsulation::Initialize ()

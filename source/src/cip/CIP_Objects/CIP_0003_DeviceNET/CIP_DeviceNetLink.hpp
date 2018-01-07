@@ -4,9 +4,9 @@
 #ifndef CIP_CLASSES_DEVICENET_H
 #define CIP_CLASSES_DEVICENET_H
 
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
-#include "../../ciptypes.hpp"
-#include "NET_DeviceNetProtocol.hpp"
+#include <cip/CIP_Objects/template/CIP_Object_template.hpp>
+#include <ciptypes.hpp>
+#include <NET_DeviceNetProtocol.hpp>
 
 
 

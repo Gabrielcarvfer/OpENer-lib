@@ -40,7 +40,7 @@
 #include <bios.h>
 #include <dos.h>
 #include <math.h>
-#include <devnet.h>
+#include <devnet.hpp>
 
 
 

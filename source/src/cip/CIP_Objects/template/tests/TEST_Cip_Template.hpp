@@ -6,7 +6,7 @@
 #define OPENERMAIN_TEST_CIP_Template_H
 
 
-#include "cip/CIP_Objects/template/CIP_Object_template.hpp"
+#include <cip/CIP_Objects/template/CIP_Object_template.hpp>
 
 class TEST_Cip_Template1 : public CIP_Object_template<TEST_Cip_Template1>
 {

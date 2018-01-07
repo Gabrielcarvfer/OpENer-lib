@@ -5,7 +5,7 @@
  *      Author: mmm
  */
 
-#include "random.hpp"
+#include <random.hpp>
 
 RandomGen::RandomGen(uint32_t seed, uint32_t randGenerator)
 {

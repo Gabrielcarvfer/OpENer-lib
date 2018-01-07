@@ -1,6 +1,6 @@
 #include <cstring>
-#include "NET_DeviceNetProtocol.hpp"
-#include "can_link/NET_CanInterface.hpp"
+#include <NET_DeviceNetProtocol.hpp>
+#include <can_link/NET_CanInterface.hpp>
 //
 //	Get datagram group from CAN identifier
 //

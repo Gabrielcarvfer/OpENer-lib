@@ -1,4 +1,4 @@
-opENer_common_includes()
+
 
 set( CIP_TEST_SRC TEST_Cip_Identity.cpp)
 

@@ -2,7 +2,7 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer)  on 17/04/2017.
 //
 
-#include "TEST_Cip_Template.hpp"
+#include <TEST_Cip_Template.hpp>
 
 #include <functional>
 #include <ciptypes.hpp>

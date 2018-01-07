@@ -1,7 +1,7 @@
 #######################################
 # Add subdirectories                  #
 #######################################
-opENer_common_includes()
+
 
 add_subdirectory( utils )
 add_subdirectory( cip )
@@ -10,17 +10,12 @@ set( OPENER_SRC OpENer_ExplicitConnection.cpp OpENer_IOConnection.cpp OpENer_Int
 
 add_library( OpENerLib STATIC ${OPENER_SRC} )
 
+target_link_libraries(OpENerLib
+        CIP_CLASS0002_MSGROUTER
+        OpENer_CIP
+        OpENer_UTILS
+        ${WIN32_LIBS})
 
-
-if(WIN32)
-  if(MINGW)
-	target_link_libraries(OpENerLib OpENer_CIP OpENer_UTILS winmm.lib)
-  else ()
-	target_link_libraries(OpENerLib OpENer_CIP OpENer_UTILS )
-  endif()
-else()
-	target_link_libraries(OpENerLib OpENer_CIP OpENer_UTILS )
-endif()
 
 install (TARGETS OpENerLib
 		ARCHIVE DESTINATION lib/static)

@@ -5,7 +5,7 @@
 #ifndef OPENERMAIN_CIP_CONNECTION_LINKCONSUMER_HPP
 #define OPENERMAIN_CIP_CONNECTION_LINKCONSUMER_HPP
 
-#include "../../ciptypes.hpp"
+#include <ciptypes.hpp>
 
 class CIP_Connection_LinkConsumer
 {

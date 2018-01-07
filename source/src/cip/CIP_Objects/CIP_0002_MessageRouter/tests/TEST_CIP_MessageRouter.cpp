@@ -2,9 +2,9 @@
 // Created by Gabriel Ferreira (@gabrielcarvfer) on 02/06/2017.
 //
 
-#include "TEST_CIP_MessageRouter.h"
 #include <iostream>
 #include <ciptypes.hpp>
+#include <cip/CIP_Objects/CIP_0002_MessageRouter/CIP_MessageRouter.hpp>
 
 int main()
 {
@@ -45,7 +45,6 @@ int main()
         exit(-1);
 
     //Try to shutdown registered class
-    //todo: implement glue to registered_class_ptr->Shut();
 
     //todo:Try to access direct values from message router
 

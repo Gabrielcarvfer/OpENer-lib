@@ -3,7 +3,7 @@
 //
 
 #include <cip/connection/network/NET_Endianconv.hpp>
-#include "CIP_Object_base.h"
+#include <CIP_Object_base.hpp>
 
 
 int CIP_Object_base::EncodeData (CipUsint cip_type, void *data, std::vector<CipUsint> *message)

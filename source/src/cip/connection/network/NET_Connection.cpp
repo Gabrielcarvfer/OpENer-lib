@@ -9,8 +9,8 @@
 #include <unistd.h>
 #endif // !WIN32
 
-#include "../../../trace.hpp"
-#include "NET_Connection.hpp"
+#include <trace.hpp>
+#include <NET_Connection.hpp>
 
 //Static variables
 fd_set NET_Connection::select_set[2];

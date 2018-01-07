@@ -5,12 +5,11 @@
 #ifndef CIP_CLASSES_CONNECTION_H
 #define CIP_CLASSES_CONNECTION_H
 
-#include "../template/CIP_Object_template.hpp"
-#include "CIP_Connection_LinkConsumer.hpp"
-#include "CIP_Connection_LinkProducer.hpp"
+#include <template/CIP_Object_template.hpp>
 #include <vector>
-#include "../../connection/network/NET_Connection.hpp"
-
+#include <connection/network/NET_Connection.hpp>
+#include <CIP_Connection_LinkConsumer.hpp>
+#include <CIP_Connection_LinkProducer.hpp>
 
 #define MAX_BOUND_CONN 10
 class CIP_Connection;
@@ -137,9 +136,6 @@ public:
     CipUsint Connection_timeout_multiplier;
     Connection_binding_list_t Connection_binding_list;
 
-    //Links
-    CIP_Connection_LinkConsumer * Link_consumer;
-    CIP_Connection_LinkProducer * Link_producer;
 
     static CipStatus Init();
     static CipStatus Shut();
@@ -176,6 +172,12 @@ public:
     //Temporary
     NET_Connection * netConn;
 private:
+
+
+    //Links
+    CIP_Connection_LinkConsumer * Link_consumer;
+    CIP_Connection_LinkProducer * Link_producer;
+
     CipStatus Behaviour();
     bool check_for_duplicate(CipByte * last_msg_ptr, CipByte * curr_msg_ptr);
 	void * retrieveAttribute(CipUsint attributeNumber);

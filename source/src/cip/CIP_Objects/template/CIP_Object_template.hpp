@@ -6,7 +6,7 @@
 #define OPENER_CIP_OBJECT_TEMPLATE_H
 
 
-#include "CIP_Object_base.h"
+#include <CIP_Object_base.hpp>
 #include <map>
 #include <string>
 
@@ -126,7 +126,7 @@ class CIP_Object_template : public CIP_Object_base
     //static void InsertService(bool classService, CipUsint service_number, CipServiceFunction service_function, std::string service_name);
 
 
-    /** @ingroup CIP_API
+    virtual /** @ingroup CIP_API
      * @brief Get a pointer to an instance's attribute
      *
      * As instances and objects are selfsimilar this function can also be used
@@ -191,5 +191,5 @@ class CIP_Object_template : public CIP_Object_base
 
 };
 
-#include "CIP_Object_template_impl.hpp"
+#include <CIP_Object_template_impl.hpp>
 #endif //OPENER_CIP_OBJECT_TEMPLATE_H

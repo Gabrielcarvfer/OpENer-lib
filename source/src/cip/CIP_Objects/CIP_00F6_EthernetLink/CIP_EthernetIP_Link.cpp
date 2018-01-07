@@ -4,7 +4,7 @@
  *
  ******************************************************************************/
 #include <cstring>
-#include "CIP_EthernetIP_Link.hpp"
+#include <CIP_EthernetIP_Link.hpp>
 
 
 void CIP_EthernetIP_Link::ConfigureMacAddress(const CipUsint* mac_address)
